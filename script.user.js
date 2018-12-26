@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 下载增强
 // @name:zh-TW   nhentai 下載增強
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.0.0
+// @version      1.0.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page
 // @description:zh-CN  为 nhentai 本子页增加 zip 打包下载
@@ -131,9 +131,6 @@
 	async function download() {
 		btnState(false);
 		btnTxt(`Downloading 0/${pages.length}`);
-		let option = {
-			responseType: 'arraybuffer'
-		};
 		await multiThread(pages, pagePromise, THREAD);
 		btnState(true);
 	}
