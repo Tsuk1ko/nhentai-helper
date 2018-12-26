@@ -84,7 +84,7 @@
 		return {
 			mid: media_id,
 			pages: parsePages,
-			title: title.replace(/[/\\:*?"<>|.&\$ ]+/g, ' ')
+			title: title.replace(/[/\\:*?"<>|.&$ ]+/g, ' ')
 		};
 	});
 	btnState(true);
