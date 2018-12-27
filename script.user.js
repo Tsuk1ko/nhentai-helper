@@ -19,6 +19,8 @@
 // @require      https://unpkg.com/axios/dist/axios.min.js
 // @run-at       document-end
 // @noframes
+// @homepageURL  https://github.com/Tsuk1ko/nhentai-download-as-zip
+// @supportURL   https://github.com/Tsuk1ko/nhentai-download-as-zip/issues
 // @downloadURL  https://github.com/Tsuk1ko/nhentai-download-as-zip/raw/master/script.user.js
 // @updateURL    https://github.com/Tsuk1ko/nhentai-download-as-zip/raw/master/script.user.js
 // ==/UserScript==
