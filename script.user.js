@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 下载增强
 // @name:zh-TW   nhentai 下載增強
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.1.0
+// @version      1.2.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page
 // @description:zh-CN  为 nhentai 本子页增加 zip 打包下载
@@ -13,6 +13,9 @@
 // @connect      i.nhentai.net
 // @license      GPL-3.0
 // @grant        GM_addStyle
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // @require      https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js
 // @require      https://cdn.bootcss.com/jszip/3.1.4/jszip.min.js
 // @require      https://cdn.bootcss.com/FileSaver.js/1.3.2/FileSaver.min.js
@@ -27,7 +30,7 @@
 
 (async function () {
 	'use strict';
-	const THREAD = 8;
+	let THREAD = GM_getValue('thread_num', 8);
 	const MIME = {
 		png: "image/png",
 		jpg: "image/jpeg",
@@ -38,6 +41,17 @@
 		if (!MIME[suffix]) throw new Error(`Unknown suffix ${suffix}`);
 		return MIME[suffix];
 	};
+
+	GM_registerMenuCommand('设置 nhentai 下载线程数', () => {
+		let num;
+		do {
+			num = prompt(`请输入下载线程数 (1~32) [当前：${THREAD}]`, THREAD);
+			if (num === null) return;
+			num = parseInt(num);
+		} while (num.toString() == 'NaN' || num < 1 || num > 32);
+		THREAD = num;
+		GM_setValue('thread_num', num);
+	});
 
 	//插入按钮
 	GM_addStyle('#download-zip:disabled{cursor:wait}');
