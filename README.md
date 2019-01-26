@@ -1,5 +1,7 @@
 # nhentai-download-as-zip
-Add a "download zip" button for nhentai gallery page
+Add a "download zip" button for nhentai
+
+![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
 ![](https://i.loli.net/2018/12/26/5c23a39505d14.png)
 

@@ -1,5 +1,7 @@
 # nhentai-download-as-zip
-为 nhentai 本子页增加 zip 打包下载
+为 nhentai 增加 zip 打包下载方式
+
+![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
 ![](https://i.loli.net/2018/12/26/5c23a39505d14.png)
 
