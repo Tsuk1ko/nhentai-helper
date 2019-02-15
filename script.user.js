@@ -3,11 +3,11 @@
 // @name:zh-CN   nhentai 下载增强
 // @name:zh-TW   nhentai 下載增強
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.3.0
+// @version      1.3.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page
-// @description:zh-CN  为 nhentai 本子页增加 zip 打包下载
-// @description:zh-TW  爲 nhentai 本子頁增加 zip 打包下載
+// @description:zh-CN  为 nhentai 增加 zip 打包下载方式
+// @description:zh-TW  爲 nhentai 增加 zip 打包下載方式
 // @author       Jindai Kirin
 // @include      https://nhentai.net/*
 // @connect      i.nhentai.net
@@ -28,7 +28,7 @@
 // @updateURL    https://github.com/Tsuk1ko/nhentai-download-as-zip/raw/master/script.user.js
 // ==/UserScript==
 
-(async function () {
+(function () {
 	'use strict';
 	let THREAD = GM_getValue('thread_num', 8);
 	const MIME = {
@@ -75,7 +75,7 @@
 
 	if (/^https:\/\/nhentai\.net\/g\/[0-9]+\/$/.exec(window.location.href)) {
 		//插入按钮
-		$('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Collecting...</span></button>');
+		$('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Collecting</span></button>');
 		let $btn = $('.download-zip');
 		let $btnTxt = $('.download-zip-txt');
 
@@ -145,6 +145,19 @@
 			});
 		});
 	} else if ($('.gallery').length > 0) {
+		let queue = [];
+		let running = false;
+
+		async function startQueue() {
+			if (!running && queue.length > 0) {
+				running = true;
+				do {
+					await (queue.shift())();
+				} while (queue.length > 0);
+				running = false;
+			}
+		}
+
 		$('.gallery').each(function () {
 			let $this = $(this);
 			$this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
@@ -184,8 +197,7 @@
 			}
 
 			async function download() {
-				btnState(false);
-				btnTxt('Collecting...');
+				btnTxt('Collecting');
 
 				//获取本子信息
 				let $html = $($.parseHTML(await axios.get($this.find('a.cover').attr('href')).then(ret => ret.data)));
@@ -213,10 +225,14 @@
 					saveZip();
 					return;
 				}
-				download().then(() => {
+				btnState(false);
+				btnTxt('Wait');
+				queue.push(async () => {
+					await download();
 					btnTxt('√');
 					saveZip();
 				});
+				startQueue();
 			});
 		});
 	}
