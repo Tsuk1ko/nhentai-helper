@@ -1,5 +1,6 @@
-# nhentai-download-as-zip
-Add a "download zip" button for nhentai
+# nhentai-helper
+
+Add a "download zip" button for nhentai.
 
 ![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
@@ -8,3 +9,9 @@ Add a "download zip" button for nhentai
 If you think the download speed is too slow, you can try to increase the number of download threads from this menu command.
 
 ![](https://i.loli.net/2019/01/20/5c4403dedb085.png)
+
+## Other features
+
+You can select a language in the navigation bar to filter doujins.
+
+![](https://i.loli.net/2019/03/25/5c98d07cca0ac.png)
