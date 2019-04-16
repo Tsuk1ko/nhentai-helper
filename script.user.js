@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.4.0
+// @version      1.5.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -28,19 +28,10 @@
 // @updateURL    https://github.com/Tsuk1ko/nhentai-helper/raw/master/script.user.js
 // ==/UserScript==
 
-(function () {
+(function() {
 	'use strict';
-	let THREAD = GM_getValue('thread_num', 8);
-	const MIME = {
-		png: "image/png",
-		jpg: "image/jpeg",
-		gif: "image/gif"
-	};
 
-	let mimeType = (suffix) => {
-		if (!MIME[suffix]) throw new Error(`Unknown suffix ${suffix}`);
-		return MIME[suffix];
-	};
+	let THREAD = GM_getValue('thread_num', 8);
 
 	GM_registerMenuCommand('设置 nhentai 下载线程数', () => {
 		let num;
@@ -55,94 +46,142 @@
 
 	GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}');
 
+	const MIME = {
+		png: "image/png",
+		jpg: "image/jpeg",
+		gif: "image/gif"
+	};
+
+	const mimeType = (_ext) => {
+		if (!MIME[_ext]) throw new Error(`Unknown extension "${_ext}"`);
+		return MIME[_ext];
+	};
+
+	const EXT = {
+		p: 'png',
+		j: 'jpg',
+		g: 'gif'
+	};
+
+	const getExtension = (_t) => {
+		if (!EXT[_t]) throw new Error(`Unknown type "${_t}"`);
+		return EXT[_t];
+	};
+
 	//伪多线程
-	function multiThread(tasks, promiseFunc, threadNum) {
+	const multiThread = (tasks, promiseFunc) => {
 		let threads = [];
 		let taskIndex = 0;
 		//创建线程
-		for (let threadID = 0; threadID < threadNum; threadID++) {
+		for (let threadID = 0; threadID < THREAD; threadID++) {
 			threads.push(new Promise(async resolve => {
 				while (true) {
 					let i = taskIndex++;
 					if (i >= tasks.length) break;
-					await promiseFunc(threadID, tasks[i]);
+					await promiseFunc(tasks[i], threadID);
 				}
 				resolve();
 			}));
 		}
 		return Promise.all(threads);
-	}
+	};
+
+	//获取本子信息
+	const getGallery = async gid => {
+		let {
+			media_id,
+			title: {
+				english,
+				japanese
+			},
+			images: {
+				pages
+			}
+		} = gid > 0 ? await axios.get(`https://nhentai.net/api/gallery/${gid}`).then(r => r.data) : gallery;
+
+		let p = [];
+		pages.forEach((page, i) => {
+			p.push({
+				i: i + 1,
+				t: getExtension(page.t)
+			});
+		});
+
+		return {
+			mid: media_id,
+			title: japanese || english,
+			pages: p
+		};
+	};
+
+	//下载本子
+	const downloadG = async (gid, $btn, $btnTxt, headTxt = '') => {
+		let {
+			mid,
+			title,
+			pages
+		} = await getGallery(gid);
+		let done = 0;
+		let zip = new JSZip();
+
+		const btnUpdateProgress = () => {
+			if (done >= pages.length) $btnTxt.html(`${headTxt}√`);
+			else $btnTxt.html(`${headTxt}${done}/${pages.length}`);
+		};
+
+		btnUpdateProgress();
+
+		const dlPromise = (page, threadID) => {
+			let filename = `${page.i}.${page.t}`;
+			let url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
+			console.log(`[${threadID}] ${url}`);
+			return axios.get(url, {
+				responseType: 'arraybuffer'
+			}).then(r => {
+				zip.file(filename, new Blob([r.data], {
+					type: mimeType(page.t)
+				}), {
+					binary: true
+				});
+				done++;
+				btnUpdateProgress();
+			});
+		};
+
+		await multiThread(pages, dlPromise);
+
+		let data = await zip.generateAsync({
+			type: 'blob',
+			base64: true
+		});
+
+		$btn.attr('disabled', false);
+
+		return {
+			name: `${title}.zip`,
+			data
+		};
+	};
 
 	if (/^https:\/\/nhentai\.net\/g\/[0-9]+\/$/.exec(window.location.href)) {
-		//插入按钮
-		$('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Collecting</span></button>');
+		$('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download as zip</span></button>');
+
 		let $btn = $('.download-zip');
 		let $btnTxt = $('.download-zip-txt');
 
-		let btnState = (able) => {
-			$btn.attr('disabled', !able);
-		};
+		let zip;
 
-		let btnTxt = (txt) => {
-			$btnTxt.html(txt);
-		};
-
-		//获取本子信息
-		btnState(false);
-		let title = $('#info > h2').html() || $('#info > h1').html();
-		title = title.replace(/[\/\\:*?"<>|.&$ ]+/g, ' ');
-		let pages = [];
-		$('#thumbnail-container > .thumb-container img.lazyload').each(function () {
-			pages.push($(this).attr('data-src').replace('t.nhentai.net', 'i.nhentai.net').replace('t.', '.'));
-		});
-		btnState(true);
-		btnTxt(`Download as zip 0/${pages.length}`);
-
-		//下载&压缩
-		let zip = new JSZip();
-		let zipBlob = false;
-		let done = 0;
-
-		let pagePromise = (threadID, url) => {
-			let page = /([^\/]+)\.([^.]+)$/.exec(url);
-			console.log(`[${threadID}] Downloading ${url}`);
-			return axios.get(url, {
-				responseType: 'arraybuffer'
-			}).then(ret => {
-				let blob = new Blob([ret.data], {
-					type: mimeType(page[2])
-				});
-				zip.file(`${page[1]}.${page[2]}`, blob, {
-					binary: true
-				});
-				btnTxt(`Downloading ${++done}/${pages.length}`);
-			});
-		};
-
-		let download = async () => {
-			btnState(false);
-			btnTxt(`Downloading 0/${pages.length}`);
-			await multiThread(pages, pagePromise, THREAD);
-			btnState(true);
-		};
-
-		let saveZip = async () => {
-			if (!zipBlob) zipBlob = await zip.generateAsync({
-				type: 'blob',
-				base64: true
-			});
-			saveAs(zipBlob, `${title}.zip`);
-		};
-
-		$btn.click(() => {
-			if (done == pages.length) {
-				saveZip();
-				return;
+		$btn.click(async () => {
+			try {
+				if (!zip) {
+					$btn.attr('disabled', true);
+					zip = await downloadG(0, $btn, $btnTxt, 'Download as zip ');
+				}
+				saveAs(zip.data, zip.name);
+			} catch (error) {
+				$btnTxt.html('Error');
+				console.error(error);
 			}
-			download().then(() => {
-				btnTxt('Download as zip √');
-				saveZip();
-			});
 		});
 	} else if ($('.gallery').length > 0) {
 		$('ul.menu.left').append('<li style="padding:0 10px">LANG filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
@@ -150,7 +189,7 @@
 		let queue = [];
 		let running = false;
 
-		let startQueue = async () => {
+		const startQueue = async () => {
 			if (!running && queue.length > 0) {
 				running = true;
 				do {
@@ -160,9 +199,11 @@
 			}
 		};
 
-		$('.gallery').each(function () {
+		$('.gallery').each(function() {
 			let $this = $(this);
 			$this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
+
+			let gid = /[0-9]+/.exec($this.find('a.cover').attr('href'))[0];
 
 			let language = '';
 			let dataTags = $this.attr('data-tags').split(' ');
@@ -174,74 +215,24 @@
 			let $btn = $this.find('.download-zip');
 			let $btnTxt = $this.find('.download-zip-txt');
 
-			let title;
-			let pages = [];
-
-			let zip = new JSZip();
-			let zipBlob = false;
-			let done = 0;
-
-			let btnState = (able) => {
-				$btn.attr('disabled', !able);
-			};
-
-			let btnTxt = (txt) => {
-				$btnTxt.html(txt);
-			};
-
-			let pagePromise = (threadID, url) => {
-				let page = /([^\/]+)\.([^.]+)$/.exec(url);
-				console.log(`[${threadID}] Downloading ${url}`);
-				return axios.get(url, {
-					responseType: 'arraybuffer'
-				}).then(ret => {
-					let blob = new Blob([ret.data], {
-						type: mimeType(page[2])
-					});
-					zip.file(`${page[1]}.${page[2]}`, blob, {
-						binary: true
-					});
-					btnTxt(`${++done}/${pages.length}`);
-				});
-			};
-
-			let download = async () => {
-				btnTxt('Collecting');
-
-				//获取本子信息
-				let $html = $($.parseHTML(await axios.get($this.find('a.cover').attr('href')).then(ret => ret.data)));
-				title = $html.find('#info > h2').html() || $html.find('#info > h1').html();
-				title = title.replace(/[\/\\:*?"<>|.&$ ]+/g, ' ');
-				$html.find('#thumbnail-container > .thumb-container img.lazyload').each(function () {
-					pages.push($(this).attr('data-src').replace('t.nhentai.net', 'i.nhentai.net').replace('t.', '.'));
-				});
-
-				btnTxt(`0/${pages.length}`);
-				await multiThread(pages, pagePromise, THREAD);
-				btnState(true);
-			};
-
-			let saveZip = async () => {
-				if (!zipBlob) zipBlob = await zip.generateAsync({
-					type: 'blob',
-					base64: true
-				});
-				saveAs(zipBlob, `${title}.zip`);
-			};
+			let zip;
 
 			$btn.click(() => {
-				if (pages.length > 0 && done == pages.length) {
-					saveZip();
-					return;
+				if (zip) saveAs(zip.data, zip.name);
+				else {
+					$btn.attr('disabled', true);
+					$btnTxt.html('Wait');
+					queue.push(async () => {
+						try {
+							zip = await downloadG(gid, $btn, $btnTxt);
+							saveAs(zip.data, zip.name);
+						} catch (error) {
+							$btnTxt.html('Error');
+							console.error(error);
+						}
+					});
+					startQueue();
 				}
-				btnState(false);
-				btnTxt('Wait');
-				queue.push(async () => {
-					await download();
-					btnTxt('√');
-					saveZip();
-				});
-				startQueue();
 			});
 		});
 
@@ -254,7 +245,7 @@
 			}
 		};
 
-		$('#lang-filter').change(function () {
+		$('#lang-filter').change(function() {
 			langFilter(this.value);
 			sessionStorage.setItem('lang-filter', this.value);
 		});
