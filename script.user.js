@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.5.0
+// @version      1.5.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -135,7 +135,7 @@
 			let filename = `${page.i}.${page.t}`;
 			let url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
 			console.log(`[${threadID}] ${url}`);
-			return axios.get(url, {
+			return axios.get(`${url}?v=0`, {
 				responseType: 'arraybuffer'
 			}).then(r => {
 				zip.file(filename, new Blob([r.data], {
