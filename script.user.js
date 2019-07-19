@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      1.5.1
+// @version      1.5.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -16,20 +16,29 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @grant        GM_xmlhttpRequest
 // @require      https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js
 // @require      https://cdn.bootcss.com/jszip/3.1.4/jszip.min.js
 // @require      https://cdn.bootcss.com/FileSaver.js/1.3.2/FileSaver.min.js
-// @require      https://cdn.bootcss.com/axios/0.18.0/axios.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
-// @downloadURL  https://github.com/Tsuk1ko/nhentai-helper/raw/master/script.user.js
-// @updateURL    https://github.com/Tsuk1ko/nhentai-helper/raw/master/script.user.js
 // ==/UserScript==
 
 (function() {
 	'use strict';
+
+	//网络请求
+	const get = (url, responseType = 'json') => new Promise((resolve, reject) => {
+		GM_xmlhttpRequest({
+			method: 'GET',
+			url,
+			responseType,
+			onerror: reject,
+			onload: r => resolve(r.response)
+		});
+	});
 
 	let THREAD = GM_getValue('thread_num', 8);
 
@@ -97,7 +106,7 @@
 			images: {
 				pages
 			}
-		} = gid > 0 ? await axios.get(`https://nhentai.net/api/gallery/${gid}`).then(r => r.data) : gallery;
+		} = gid > 0 ? await get(`https://nhentai.net/api/gallery/${gid}`) : gallery;
 
 		let p = [];
 		pages.forEach((page, i) => {
@@ -135,14 +144,8 @@
 			let filename = `${page.i}.${page.t}`;
 			let url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
 			console.log(`[${threadID}] ${url}`);
-			return axios.get(`${url}?v=0`, {
-				responseType: 'arraybuffer'
-			}).then(r => {
-				zip.file(filename, new Blob([r.data], {
-					type: mimeType(page.t)
-				}), {
-					binary: true
-				});
+			return get(url, 'blob').then(r => {
+				zip.file(filename, r);
 				done++;
 				btnUpdateProgress();
 			});
