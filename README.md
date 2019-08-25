@@ -1,6 +1,10 @@
 # nhentai-helper
 
-Add a "download zip" button for nhentai.
+## Main features
+
+1. Add a "download zip" button for nhentai.
+2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
+3. Gallery page will open in a new window by default.
 
 ![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
