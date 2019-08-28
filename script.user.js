@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.0.0
+// @version      2.0.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -38,6 +38,12 @@
         return EXT[_t];
     };
 
+    // 页面类型
+    const pageType = {
+        gallery: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/$/.exec(window.location.href),
+        list: $('.gallery').length > 0,
+    };
+
     // 下载队列
     const queue = [];
     const queueInfo = [];
@@ -54,6 +60,7 @@
 
     // 更新下载队列面板
     const updateQueuePanel = downloading => {
+        if (pageType.gallery) return;
         if ($('#download-panel').length == 0) $('body').append('<div id="download-panel"></div>');
         const $panel = $('#download-panel');
 
@@ -180,8 +187,8 @@
         });
 
         $btn.attr('disabled', false);
-		queueInfo.shift();
-		updateQueuePanel();
+        queueInfo.shift();
+        updateQueuePanel();
 
         return {
             name: `${title}.zip`,
@@ -209,7 +216,7 @@
             N.init();
         }
 
-        if (/^https:\/\/nhentai\.net\/g\/[0-9]+\/$/.exec(window.location.href)) {
+        if (pageType.gallery) {
             // 本子详情页
             $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download as zip</span></button>');
 
@@ -230,7 +237,7 @@
                     console.error(error);
                 }
             });
-        } else if ($('.gallery').length > 0) {
+        } else if (pageType.list) {
             // 本子列表页
             if (first === true) $('ul.menu.left').append('<li style="padding:0 10px">LANG filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
 
