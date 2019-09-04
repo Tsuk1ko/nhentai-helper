@@ -16,6 +16,14 @@ If you think the download speed is too slow, you can try to increase the number 
 
 ## Other features
 
+### Language filter
+
 You can select a language in the navigation bar to filter doujins.
 
 ![](https://i.loli.net/2019/03/25/5c98d07cca0ac.png)
+
+### 100% view height
+
+Effective when reading online.
+
+![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
