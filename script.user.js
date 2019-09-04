@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.0.1
+// @version      2.1.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -30,7 +30,7 @@
 (function() {
     'use strict';
 
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}');
 
     const EXT = { p: 'png', j: 'jpg', g: 'gif' };
     const getExtension = _t => {
@@ -40,7 +40,8 @@
 
     // 页面类型
     const pageType = {
-        gallery: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/$/.exec(window.location.href),
+        gallery: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/(\?.*)?$/.exec(window.location.href),
+        galleryPage: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/[0-9]+\/(\?.*)?$/.exec(window.location.href),
         list: $('.gallery').length > 0,
     };
 
@@ -133,9 +134,9 @@
             media_id,
             title: { english, japanese },
             images: { pages },
-        } = gid > 0 ? await get(`https://nhentai.net/api/gallery/${gid}`) : gallery;
+        } = gid ? await get(`https://nhentai.net/api/gallery/${gid}`) : gallery;
 
-        let p = [];
+        const p = [];
         pages.forEach((page, i) => {
             p.push({
                 i: i + 1,
@@ -205,6 +206,12 @@
         }
     };
 
+    // 本子浏览模式
+    const applyGPViewStyle = gpViewMode => {
+        if (gpViewMode) $('body').append('<style id="gp-view-mode-style">#image-container img{width:auto;max-height:100vh}</style>');
+        else $('#gp-view-mode-style').remove();
+    };
+
     // 功能初始化
     const init = first => {
         if (first !== true) {
@@ -218,7 +225,7 @@
 
         if (pageType.gallery) {
             // 本子详情页
-            $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download as zip</span></button>');
+            $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download zip</span></button>');
 
             const $btn = $('.download-zip');
             const $btnTxt = $('.download-zip-txt');
@@ -229,7 +236,7 @@
                 try {
                     if (!zip) {
                         $btn.attr('disabled', true);
-                        zip = await downloadG(0, $btn, $btnTxt, 'Download as zip ');
+                        zip = await downloadG(null, $btn, $btnTxt, 'Download zip ');
                     }
                     saveAs(zip.data, zip.name);
                 } catch (error) {
@@ -300,6 +307,18 @@
                 $('#lang-filter')[0].value = rememberedLANG;
                 langFilter(rememberedLANG);
             }
+        } else if (pageType.galleryPage) {
+            const gpViewModeText = ['[off]', '[on]'];
+            let gpViewMode = GM_getValue('gp_view_mode', 0);
+            applyGPViewStyle(gpViewMode);
+            $('#page-container').prepend(`<button id="gp-view-mode-btn" class="btn btn-secondary"><i class="fa fa-arrows-v"></i> <span>100% view height</span> <span id="gp-view-mode-switch-text">${gpViewModeText[gpViewMode]}</span></button>`);
+            const $gpvmst = $('#gp-view-mode-switch-text');
+            $('#gp-view-mode-btn').click(() => {
+                gpViewMode = 1 - gpViewMode;
+                GM_setValue('gp_view_mode', gpViewMode);
+                $gpvmst.html(gpViewModeText[gpViewMode]);
+                applyGPViewStyle(gpViewMode);
+            });
         }
     };
 
