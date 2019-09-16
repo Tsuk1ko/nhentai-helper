@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.1.0
+// @version      2.1.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -30,7 +30,7 @@
 (function() {
     'use strict';
 
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-error{cursor:pointer}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}');
 
     const EXT = { p: 'png', j: 'jpg', g: 'gif' };
     const getExtension = _t => {
@@ -47,13 +47,14 @@
 
     // 下载队列
     const queue = [];
-    const queueInfo = [];
+    const queueInfo = JSON.parse(sessionStorage.getItem('queueInfo')) || [];
     let running = false;
     const startQueue = async () => {
         if (!running && queue.length > 0) {
             running = true;
             do {
-                await queue.shift()();
+                await queue[0]();
+                queue.shift();
             } while (queue.length > 0);
             running = false;
         }
@@ -66,11 +67,19 @@
         const $panel = $('#download-panel');
 
         if (downloading) {
-            const { page, done } = queueInfo[0];
+            const { page, done, error } = queueInfo[0];
             const width = page && done ? ((100 * done) / page).toFixed(2) : 0;
             const $item = $($('.download-item')[0]);
-            $item.find('.download-item-progress').attr('style', `width:${width}%`);
-            $item.find('.download-item-progress-text').html(`${width}%`);
+            $item.find('.download-item-progress').attr('style', `width:${error ? 100 : width}%`);
+            $item.find('.download-item-progress-text').html(error ? 'click to retry' : `${width}%`);
+            if (error) {
+                delete queueInfo[0].error;
+                $item.addClass('download-error');
+                $item.one('click', () => {
+                    running = false;
+                    startQueue();
+                });
+            }
         } else {
             let html = '';
             for (let { title, page, done } of queueInfo) {
@@ -79,6 +88,9 @@
             }
             $panel.html(html);
         }
+
+        // 保存队列信息
+        sessionStorage.setItem('queueInfo', JSON.stringify(queueInfo));
     };
 
     // 网络请求
@@ -108,7 +120,7 @@
 
     // 伪多线程
     const multiThread = (tasks, promiseFunc) => {
-        let threads = [];
+        const threads = [];
         let taskIndex = 0;
 
         const run = threadID =>
@@ -152,7 +164,7 @@
     };
 
     // 下载本子
-    const downloadG = async (gid, $btn, $btnTxt, headTxt = '') => {
+    const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => {
         const { mid, title, pages } = await getGallery(gid);
         const info = queueInfo[0] || {};
         info.title = title;
@@ -162,6 +174,7 @@
         const zip = new JSZip();
 
         const btnUpdateProgress = () => {
+            if (!$btnTxt) return;
             if (info.done >= pages.length) $btnTxt.html(`${headTxt}√`);
             else $btnTxt.html(`${headTxt}${info.done}/${pages.length}`);
         };
@@ -172,12 +185,18 @@
             const filename = `${page.i}.${page.t}`;
             const url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
             console.log(`[${threadID}] ${url}`);
-            return get(url, 'blob').then(r => {
-                zip.file(filename, r);
-                info.done++;
-                btnUpdateProgress();
-                updateQueuePanel(true);
-            });
+            return get(url, 'blob')
+                .then(r => {
+                    zip.file(filename, r);
+                    info.done++;
+                    btnUpdateProgress();
+                    updateQueuePanel(true);
+                })
+                .catch(e => {
+                    info.error = true;
+                    updateQueuePanel(true);
+                    throw e;
+                });
         };
 
         await multiThread(pages, dlPromise);
@@ -187,7 +206,7 @@
             base64: true,
         });
 
-        $btn.attr('disabled', false);
+        if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
         updateQueuePanel();
 
@@ -267,31 +286,22 @@
                 const $btn = $this.find('.download-zip');
                 const $btnTxt = $this.find('.download-zip-txt');
 
-                let zip;
-
                 $btn.click(() => {
-                    if (zip) saveAs(zip.data, zip.name);
-                    else {
-                        $btn.attr('disabled', true);
-                        $btnTxt.html('Wait');
-                        queueInfo.push({
-                            title: $this
-                                .find('.caption')
-                                .text()
-                                .trim(),
-                        });
-                        updateQueuePanel();
-                        queue.push(async () => {
-                            try {
-                                zip = await downloadG(gid, $btn, $btnTxt);
-                                saveAs(zip.data, zip.name);
-                            } catch (error) {
-                                $btnTxt.html('Error');
-                                console.error(error);
-                            }
-                        });
-                        startQueue();
-                    }
+                    $btn.attr('disabled', true);
+                    $btnTxt.html('Wait');
+                    queueInfo.push({
+                        gid,
+                        title: $this
+                            .find('.caption')
+                            .text()
+                            .trim(),
+                    });
+                    updateQueuePanel();
+                    queue.push(async () => {
+                        const { data, name } = await downloadG(gid, $btn, $btnTxt);
+                        saveAs(data, name);
+                    });
+                    startQueue();
                 });
             });
 
@@ -307,7 +317,18 @@
                 $('#lang-filter')[0].value = rememberedLANG;
                 langFilter(rememberedLANG);
             }
+
+            // 还原下载队列
+            updateQueuePanel();
+            for (const { gid } of queueInfo) {
+                queue.push(async () => {
+                    const { data, name } = await downloadG(gid);
+                    saveAs(data, name);
+                });
+            }
+            startQueue();
         } else if (pageType.galleryPage) {
+            // 本子在线阅读
             const gpViewModeText = ['[off]', '[on]'];
             let gpViewMode = GM_getValue('gp_view_mode', 0);
             applyGPViewStyle(gpViewMode);
