@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.1.1
+// @version      2.1.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -73,9 +73,9 @@
             $item.find('.download-item-progress').attr('style', `width:${error ? 100 : width}%`);
             $item.find('.download-item-progress-text').html(error ? 'click to retry' : `${width}%`);
             if (error) {
-                delete queueInfo[0].error;
                 $item.addClass('download-error');
                 $item.one('click', () => {
+                    delete queueInfo[0].error;
                     running = false;
                     startQueue();
                 });
@@ -182,6 +182,7 @@
         btnUpdateProgress();
 
         const dlPromise = (page, threadID) => {
+            if (info.error) return;
             const filename = `${page.i}.${page.t}`;
             const url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
             console.log(`[${threadID}] ${url}`);
