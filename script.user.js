@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.1.2
+// @version      2.2.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -17,10 +17,14 @@
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
+// @grant        GM_getResourceText
+// @resource     notycss https://cdn.bootcss.com/noty/3.1.4/noty.css
 // @require      https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js
 // @require      https://cdn.bootcss.com/jszip/3.1.4/jszip.min.js
 // @require      https://cdn.bootcss.com/FileSaver.js/1.3.2/FileSaver.min.js
 // @require      https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js
+// @require      https://cdn.bootcss.com/vue/2.6.10/vue.min.js
+// @require      https://cdn.bootcss.com/noty/3.1.4/noty.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
@@ -30,7 +34,12 @@
 (function() {
     'use strict';
 
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-error{cursor:pointer}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}');
+    GM_addStyle(GM_getResourceText('notycss'));
+    GM_addStyle(
+        '.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{position:fixed;top:20vh;right:0;width:200px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{white-space:nowrap;padding:2px}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-error{cursor:pointer}.download-item-progress-text{transform:scale(.8)}@media screen and (max-width:1200px){#download-panel{width:150px}}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}'
+    );
+
+    $('body').append('<div id="download-panel"></div>');
 
     const EXT = { p: 'png', j: 'jpg', g: 'gif' };
     const getExtension = _t => {
@@ -48,6 +57,7 @@
     // 下载队列
     const queue = [];
     const queueInfo = JSON.parse(sessionStorage.getItem('queueInfo')) || [];
+    const downloadHistory = JSON.parse(localStorage.getItem('history')) || [];
     let running = false;
     const startQueue = async () => {
         if (!running && queue.length > 0) {
@@ -60,38 +70,42 @@
         }
     };
 
-    // 更新下载队列面板
-    const updateQueuePanel = downloading => {
-        if (pageType.gallery) return;
-        if ($('#download-panel').length == 0) $('body').append('<div id="download-panel"></div>');
-        const $panel = $('#download-panel');
-
-        if (downloading) {
-            const { page, done, error } = queueInfo[0];
-            const width = page && done ? ((100 * done) / page).toFixed(2) : 0;
-            const $item = $($('.download-item')[0]);
-            $item.find('.download-item-progress').attr('style', `width:${error ? 100 : width}%`);
-            $item.find('.download-item-progress-text').html(error ? 'click to retry' : `${width}%`);
-            if (error) {
-                $item.addClass('download-error');
-                $item.one('click', () => {
-                    delete queueInfo[0].error;
-                    running = false;
-                    startQueue();
-                });
-            }
-        } else {
-            let html = '';
-            for (let { title, page, done } of queueInfo) {
-                const width = page && done ? ((100 * done) / page).toFixed(2) : 0;
-                html += `<div class="download-item" title="${title}"><div class="download-item-title">${title}</div><div class="download-item-progress" style="width:${width}%"><div class="download-item-progress-text">${width}%</div></div></div>`;
-            }
-            $panel.html(html);
-        }
-
-        // 保存队列信息
-        sessionStorage.setItem('queueInfo', JSON.stringify(queueInfo));
-    };
+    // 下载面板
+    Vue.component('download-item', {
+        props: ['item'],
+        computed: {
+            width() {
+                const { page, done } = this.item;
+                return page && done ? ((100 * done) / page).toFixed(2) : 0;
+            },
+        },
+        methods: {
+            retry() {
+                if (!this.item.error) return;
+                this.item.error = false;
+                running = false;
+                startQueue();
+            },
+        },
+        template: '<div :class="`download-item ${item.error?\'download-error\':\'\'}`" :title="item.title" @click="retry"><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="`width:${width}%`"><div class="download-item-progress-text"><templete v-if="item.error">click to retry</templete><templete v-else>{{width}}%</templete></div></div></div>',
+    });
+    Vue.component('download-list', {
+        props: ['list'],
+        template: '<div id="download-panel"><download-item v-for="item in list" :item="item" /></div>',
+    });
+    new Vue({
+        el: '#download-panel',
+        data: { queueInfo, downloadHistory },
+        watch: {
+            queueInfo(val) {
+                sessionStorage.setItem('queueInfo', JSON.stringify(val));
+            },
+            downloadHistory(val) {
+                sessionStorage.setItem('history', JSON.stringify(val));
+            },
+        },
+        template: '<download-list :list="queueInfo" />',
+    });
 
     // 网络请求
     const get = (url, responseType = 'json') =>
@@ -164,13 +178,9 @@
     };
 
     // 下载本子
-    const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => {
-        const { mid, title, pages } = await getGallery(gid);
+    const downloadGallery = async ({ mid, title, pages }, $btn = null, $btnTxt = null, headTxt = '') => {
         const info = queueInfo[0] || {};
-        info.title = title;
-        info.page = pages.length;
         info.done = 0;
-        updateQueuePanel();
         const zip = new JSZip();
 
         const btnUpdateProgress = () => {
@@ -191,11 +201,9 @@
                     zip.file(filename, r);
                     info.done++;
                     btnUpdateProgress();
-                    updateQueuePanel(true);
                 })
                 .catch(e => {
                     info.error = true;
-                    updateQueuePanel(true);
                     throw e;
                 });
         };
@@ -209,13 +217,13 @@
 
         if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
-        updateQueuePanel();
 
         return {
             name: `${title}.zip`,
             data,
         };
     };
+    const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => downloadGallery(await getGallery(gid), $btn, $btnTxt, headTxt);
 
     // 语言过滤
     const langFilter = lang => {
@@ -287,19 +295,45 @@
                 const $btn = $this.find('.download-zip');
                 const $btnTxt = $this.find('.download-zip-txt');
 
-                $btn.click(() => {
+                $btn.click(async () => {
                     $btn.attr('disabled', true);
                     $btnTxt.html('Wait');
+                    const gallery = await getGallery(gid);
+                    if (downloadHistory.includes(gallery.title)) {
+                        const abandon = new Promise(resolve => {
+                            const n = new Noty({
+                                type: 'error',
+                                layout: 'bottomRight',
+                                theme: 'nest',
+                                text: `"${gallery.title}" is already downloaded or in queue.<br>Do you want to download again?`,
+                                timeout: false,
+                                closeWith: [],
+                                buttons: [
+                                    Noty.button('YES', 'btn btn-noty-green btn-noty', function() {
+                                        resolve(false);
+                                        n.close();
+                                    }),
+                                    Noty.button('NO', 'btn btn-noty-blue btn-noty', function() {
+                                        resolve(true);
+                                        n.close();
+                                        $btn.attr('disabled', false);
+                                        $btnTxt.html('');
+                                    }),
+                                ],
+                            });
+                            n.show();
+                        });
+                        if (await abandon) return;
+                    } else downloadHistory.push(gallery.title);
                     queueInfo.push({
                         gid,
-                        title: $this
-                            .find('.caption')
-                            .text()
-                            .trim(),
+                        title: gallery.title,
+                        page: gallery.pages.length,
+                        done: 0,
+                        error: false,
                     });
-                    updateQueuePanel();
                     queue.push(async () => {
-                        const { data, name } = await downloadG(gid, $btn, $btnTxt);
+                        const { data, name } = await downloadGallery(gallery, $btn, $btnTxt);
                         saveAs(data, name);
                     });
                     startQueue();
@@ -320,12 +354,14 @@
             }
 
             // 还原下载队列
-            updateQueuePanel();
-            for (const { gid } of queueInfo) {
-                queue.push(async () => {
-                    const { data, name } = await downloadG(gid);
-                    saveAs(data, name);
-                });
+            if (first) {
+                console.warn(1);
+                for (const { gid } of queueInfo) {
+                    queue.push(async () => {
+                        const { data, name } = await downloadG(gid);
+                        saveAs(data, name);
+                    });
+                }
             }
             startQueue();
         } else if (pageType.galleryPage) {
@@ -345,6 +381,6 @@
     };
 
     $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content' });
-    $(document).on('pjax:end', init);
+    $(document).on('pjax:end', () => init());
     init(true);
 })();
