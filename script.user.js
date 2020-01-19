@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.2.1
+// @version      2.2.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -38,10 +38,28 @@
         if (index > -1) return this.splice(index, 1)[0];
     };
 
+    // 下载线程数
+    let THREAD = GM_getValue('thread_num', 8);
+    GM_registerMenuCommand('设置 nhentai 下载线程数', () => {
+        let num;
+        do {
+            num = prompt(`请输入下载线程数 (1~32) [当前：${THREAD}]`, THREAD);
+            if (num === null) return;
+            num = parseInt(num);
+        } while (num.toString() == 'NaN' || num < 1 || num > 32);
+        THREAD = num;
+        GM_setValue('thread_num', num);
+    });
+
+    // 在新窗口打开本子
+    let OPEN_ON_NEW_TAB = GM_getValue('open_on_new_tab', true);
+    GM_registerMenuCommand('设置在新窗口打开本子详情页', () => {
+        OPEN_ON_NEW_TAB = confirm(`是否需要在新窗口打开本子详情页？当前：${OPEN_ON_NEW_TAB ? '是' : '否'}\n确定->是，取消->否\n\n修改后请刷新页面以生效`);
+        GM_setValue('open_on_new_tab', OPEN_ON_NEW_TAB);
+    });
+
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle(
-        '.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}'
-    );
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -172,19 +190,6 @@
                 onload: r => resolve(r.response),
             });
         });
-
-    // 下载线程数
-    let THREAD = GM_getValue('thread_num', 8);
-    GM_registerMenuCommand('设置 nhentai 下载线程数', () => {
-        let num;
-        do {
-            num = prompt(`请输入下载线程数 (1~32) [当前：${THREAD}]`, THREAD);
-            if (num === null) return;
-            num = parseInt(num);
-        } while (num.toString() == 'NaN' || num < 1 || num > 32);
-        THREAD = num;
-        GM_setValue('thread_num', num);
-    });
 
     // 伪多线程
     const multiThread = (tasks, promiseFunc) => {
@@ -338,7 +343,7 @@
                 $this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
 
                 const $a = $this.find('a.cover');
-                $a.attr('target', '_blank');
+                if (OPEN_ON_NEW_TAB) $a.attr('target', '_blank');
                 const gid = /[0-9]+/.exec($a.attr('href'))[0];
 
                 // 用于语言过滤
