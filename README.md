@@ -4,7 +4,8 @@
 
 1. Add a "download zip" button for nhentai.
 2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
-3. Gallery page will open in a new window by default.
+3. Download queue support on dojin list page. It will warn you when you download a doujin that you have downloaded (even they were uploaded by different people but are the same doujin).
+4. Gallery page will be open on a new window by default (you can change this on the script menu "设置在新窗口打开本子详情页").
 
 ![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
