@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.2.2
+// @version      2.2.3
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -37,6 +37,8 @@
     Array.prototype.remove = function(index) {
         if (index > -1) return this.splice(index, 1)[0];
     };
+
+    const HISTORY_MAX = 500;
 
     // 下载线程数
     let THREAD = GM_getValue('thread_num', 8);
@@ -164,7 +166,7 @@
                 sessionStorage.setItem('queueInfo', JSON.stringify(val));
             },
             downloadHistory(val) {
-                while (val.length > 100) val.shift();
+                while (val.length > HISTORY_MAX) val.shift();
                 localStorage.setItem('downloadHistory', JSON.stringify(val));
             },
         },
