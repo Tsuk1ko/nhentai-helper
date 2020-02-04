@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.2.3
+// @version      2.2.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -30,6 +30,19 @@
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
 // ==/UserScript==
+
+// 防 nhentai console 屏蔽
+(function() {
+    const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
+    const c = unsafeWindow.console;
+    c._clear = c.clear;
+    c.clear = () => {};
+    c._log = c.log;
+    c.log = function() {
+        const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
+        if (args.length) return this._log(...args);
+    };
+})();
 
 (function() {
     'use strict';
