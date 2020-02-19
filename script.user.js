@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.2.4
+// @version      2.3.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -55,10 +55,10 @@
 
     // 下载线程数
     let THREAD = GM_getValue('thread_num', 8);
-    GM_registerMenuCommand('设置 nhentai 下载线程数', () => {
+    GM_registerMenuCommand('Download Thread', () => {
         let num;
         do {
-            num = prompt(`请输入下载线程数 (1~32) [当前：${THREAD}]`, THREAD);
+            num = prompt(`Please input the number of threads you want (1~32)\nCurrnet: ${THREAD}`, THREAD);
             if (num === null) return;
             num = parseInt(num);
         } while (num.toString() == 'NaN' || num < 1 || num > 32);
@@ -68,10 +68,20 @@
 
     // 在新窗口打开本子
     let OPEN_ON_NEW_TAB = GM_getValue('open_on_new_tab', true);
-    GM_registerMenuCommand('设置在新窗口打开本子详情页', () => {
-        OPEN_ON_NEW_TAB = confirm(`是否需要在新窗口打开本子详情页？当前：${OPEN_ON_NEW_TAB ? '是' : '否'}\n确定->是，取消->否\n\n修改后请刷新页面以生效`);
+    GM_registerMenuCommand('Open On New Tab', () => {
+        OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?\nCurrent: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}\n\nPlease refresh to take effect after modification.`);
         GM_setValue('open_on_new_tab', OPEN_ON_NEW_TAB);
     });
+
+    // 自定义下载地址
+    let CUSTOM_DOWNLOAD_URL = GM_getValue('custom_download_url', '');
+    GM_registerMenuCommand('Custom Download URL', () => {
+        const input = prompt(`WARNING: Please don't set it if you don't know what this does. Set it empty will restore it to default.`, CUSTOM_DOWNLOAD_URL);
+        if (input === null) return;
+        CUSTOM_DOWNLOAD_URL = input.trim();
+        GM_setValue('custom_download_url', CUSTOM_DOWNLOAD_URL);
+    });
+    const getTextFromTemplate = (template, values) => Object.keys(values).reduce((pre, key) => pre.replace(new RegExp(`{{${key}}}`, 'g'), values[key]), template);
 
     GM_addStyle(GM_getResourceText('notycss'));
     GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}');
@@ -189,21 +199,25 @@
     // 网络请求
     const get = (url, responseType = 'json', retry = 3) =>
         new Promise((resolve, reject) => {
-            GM_xmlhttpRequest({
-                method: 'GET',
-                url,
-                responseType,
-                onerror: e => {
-                    if (retry === 0) reject(e);
-                    else {
-                        console.warn('Network error, retry.');
-                        setTimeout(() => {
-                            resolve(get(url, responseType, retry--));
-                        }, 1000);
-                    }
-                },
-                onload: r => resolve(r.response),
-            });
+            try {
+                GM_xmlhttpRequest({
+                    method: 'GET',
+                    url,
+                    responseType,
+                    onerror: e => {
+                        if (retry === 0) reject(e);
+                        else {
+                            console.warn('Network error, retry.');
+                            setTimeout(() => {
+                                resolve(get(url, responseType, retry--));
+                            }, 1000);
+                        }
+                    },
+                    onload: r => resolve(r.response),
+                });
+            } catch (error) {
+                reject(error);
+            }
         });
 
     // 伪多线程
@@ -271,7 +285,7 @@
         const dlPromise = (page, threadID) => {
             if (info.error || downloadStatus.skip) return;
             const filename = `${page.i}.${page.t}`;
-            const url = `https://i.nhentai.net/galleries/${mid}/${filename}`;
+            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : `https://i.nhentai.net/galleries/${mid}/${filename}`;
             console.log(`[${threadID}] ${url}`);
             return get(url, 'blob')
                 .then(r => {
