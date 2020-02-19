@@ -4,16 +4,27 @@
 
 1. Add a "download zip" button for nhentai.
 2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
-3. Download queue support on dojin list page. It will warn you when you download a doujin that you have downloaded (even they were uploaded by different people but are the same doujin).
-4. Gallery page will be open on a new window by default (you can change this on the script menu "设置在新窗口打开本子详情页").
+3. Download queue support on dojin list page. It will warn you when you download a doujin which was already downloaded, even they were uploaded by different people but are the same doujin. Up to 500 history records.
 
 ![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
 ![](https://i.loli.net/2018/12/26/5c23a39505d14.png)
 
-If you think the download speed is too slow, you can try to increase the number of download threads from this menu command.
+## Setting
 
-![](https://i.loli.net/2019/01/20/5c4403dedb085.png)
+![](https://i.loli.net/2020/02/18/iZKI9hfcLymdrBj.png)
+
+1. **Download Thread**  
+   If you think the download speed is too slow, you can try to increase the number of download threads from this setting.
+2. **Open On New Tab**  
+   Gallery page will be open on a new window by default, turn off it if you don't like it.
+3. **Custom Download URL**  
+   **WARNING: Please don't set this if you don't know what it does.**  
+   Tip: You may need to add your domain into *XHR security* for this script.  
+   Provide a string containing the following placeholder:
+   - `{{mid}}` - Media ID
+   - `{{index}}` - Page index, starting from 1
+   - `{{ext}}` - Image file extension
 
 ## Other features
 
