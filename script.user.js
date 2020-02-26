@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.3.0
+// @version      2.3.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -18,13 +18,13 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
-// @resource     notycss https://cdn.bootcss.com/noty/3.1.4/noty.css
-// @require      https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js
-// @require      https://cdn.bootcss.com/jszip/3.1.4/jszip.min.js
-// @require      https://cdn.bootcss.com/FileSaver.js/1.3.2/FileSaver.min.js
-// @require      https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js
-// @require      https://cdn.bootcss.com/vue/2.6.10/vue.min.js
-// @require      https://cdn.bootcss.com/noty/3.1.4/noty.min.js
+// @resource     notycss https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
+// @require      https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js
+// @require      https://cdn.jsdelivr.net/npm/jszip@3.2.2/dist/jszip.min.js
+// @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
+// @require      https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
+// @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
@@ -42,6 +42,7 @@
         const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
         if (args.length) return this._log(...args);
     };
+    unsafeWindow.Date = Date;
 })();
 
 (function() {
