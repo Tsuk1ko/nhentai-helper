@@ -3,7 +3,7 @@
 // @name:zh-CN   nhentai 助手
 // @name:zh-TW   nhentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.3.2
+// @version      2.3.3
 // @icon         https://nhentai.net/favicon.ico
 // @description        Add a "download zip" button for nhentai gallery page and some useful feature
 // @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
@@ -176,7 +176,7 @@
                 }
             },
         },
-        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-zipping\': item.zipping }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="`width:${width}%`"><div class="download-item-progress-text">{{ item.zipping ? \'Zipping\' : `${width}%` }}</div></div></div>',
+        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-zipping\': item.zipping && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ item.zipping ? \'Zipping\' : `${width}%` }}</div></div></div>',
     });
     Vue.component('download-list', {
         props: ['list'],
