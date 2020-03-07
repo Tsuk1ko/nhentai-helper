@@ -1,16 +1,20 @@
 // ==UserScript==
-// @name         nhentai helper
-// @name:zh-CN   nhentai 助手
-// @name:zh-TW   nhentai 助手
+// @name         nHentai Helper
+// @name:zh-CN   nHentai 助手
+// @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.3.3
+// @version      2.4.0
 // @icon         https://nhentai.net/favicon.ico
-// @description        Add a "download zip" button for nhentai gallery page and some useful feature
-// @description:zh-CN  为 nhentai 增加 zip 打包下载方式以及一些辅助功能
-// @description:zh-TW  爲 nhentai 增加 zip 打包下載方式以及一些輔助功能
+// @description        Download nHentai doujin as ZIP easily, and add some useful features. Also support NyaHentai.
+// @description:zh-CN  为 nHentai 增加 ZIP 打包下载方式以及一些辅助功能，同时支持 NyaHentai
+// @description:zh-TW  爲 nHentai 增加 ZIP 打包下載方式以及一些輔助功能，同時支持 NyaHentai
 // @author       Jindai Kirin
-// @include      https://nhentai.net/*
+// @match        https://nhentai.net/*
+// @include      /^https:\/\/[^\/]*nyahentai/
+// @connect      nhentai.net
 // @connect      i.nhentai.net
+// @connect      json2jsonp.com
+// @connect      search.pstatic.net
 // @license      GPL-3.0
 // @grant        GM_addStyle
 // @grant        GM_getValue
@@ -40,7 +44,7 @@
     c._log = c.log;
     c.log = function() {
         const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
-        if (args.length) return this._log(...args);
+        if (args.length) return c._log(...args);
     };
     unsafeWindow.Date = Date;
 })();
@@ -105,10 +109,11 @@
 
     // 页面类型
     const pageType = {
-        gallery: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/(\?.*)?$/.exec(window.location.href),
-        galleryPage: !!/^https:\/\/nhentai\.net\/g\/[0-9]+\/[0-9]+\/(\?.*)?$/.exec(window.location.href),
+        gallery: /^\/g\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
+        galleryPage: /^\/g\/[0-9]+(\/list)?\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
         list: $('.gallery').length > 0,
     };
+    const isNyahentai = /nyahentai/.test(window.location.host);
 
     // 下载队列
     const queue = [];
@@ -220,6 +225,12 @@
                 reject(error);
             }
         });
+    const proxyGetJSON = url => get(`https://json2jsonp.com/?url=${encodeURIComponent(url)}&callback=cbfunc`, '').then(jsonp => JSON.parse(jsonp.replace(/^cbfunc\((.*)\)$/, '$1')));
+    const nhentaiGalleryApi = gid => {
+        const url = `https://nhentai.net/api/gallery/${gid}`;
+        return isNyahentai ? proxyGetJSON(url) : get(url);
+    };
+    const getDownloadURL = (mid, filename) => (isNyahentai ? `https://search.pstatic.net/common?src=https://i.nyahentai.net/galleries/${mid}/${filename}` : `https://i.nhentai.net/galleries/${mid}/${filename}`);
 
     // 伪多线程
     const multiThread = (tasks, promiseFunc) => {
@@ -249,7 +260,7 @@
             media_id,
             title: { english, japanese },
             images: { pages },
-        } = gid ? await get(`https://nhentai.net/api/gallery/${gid}`) : gallery;
+        } = gid ? await nhentaiGalleryApi(gid) : typeof gallery === 'undefined' ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1])) : gallery;
 
         const p = [];
         pages.forEach((page, i) => {
@@ -276,9 +287,7 @@
         const zip = new JSZip();
 
         const btnUpdateProgress = () => {
-            if (!$btnTxt) return;
-            if (info.done >= pages.length) $btnTxt.html(`${headTxt}√`);
-            else $btnTxt.html(`${headTxt}${info.done}/${pages.length}`);
+            if ($btnTxt) $btnTxt.html(`${headTxt}${info.done}/${pages.length}`);
         };
 
         btnUpdateProgress();
@@ -286,7 +295,7 @@
         const dlPromise = (page, threadID) => {
             if (info.error || downloadStatus.skip) return;
             const filename = `${page.i}.${page.t}`;
-            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : `https://i.nhentai.net/galleries/${mid}/${filename}`;
+            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, filename);
             console.log(`[${threadID}] ${url}`);
             return get(url, 'blob')
                 .then(r => {
@@ -305,11 +314,15 @@
         if (downloadStatus.skip) return {};
 
         info.zipping = true;
+        if ($btnTxt) $btnTxt.html('Zipping...');
+        console.log('Start zipping');
         const data = await zip.generateAsync({
             type: 'blob',
             base64: true,
         });
+        console.log('Finished');
 
+        if ($btnTxt) $btnTxt.html(`${headTxt}√`);
         if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
 
@@ -331,7 +344,7 @@
 
     // 本子浏览模式
     const applyGPViewStyle = gpViewMode => {
-        if (gpViewMode) $('body').append('<style id="gp-view-mode-style">#image-container img{width:auto;max-height:100vh}</style>');
+        if (gpViewMode) $('body').append(`<style id="gp-view-mode-style">#image-container img{width:auto;max-height:${isNyahentai ? 'calc(100vh - 65px)' : '100vh'}}</style>`);
         else $('#gp-view-mode-style').remove();
     };
 
@@ -343,12 +356,12 @@
                 $this.attr('href', $this.attr('href').replace(/(&?)_pjax=[^&]*(&?)/, ''));
             });
             // pjax 后需要初始化页面以加载 lazyload 图片
-            N.init();
+            if (typeof N !== 'undefined') N.init();
         }
 
         if (pageType.gallery) {
             // 本子详情页
-            $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download zip</span></button>');
+            $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ZIP</span></button>');
 
             const $btn = $('.download-zip');
             const $btnTxt = $('.download-zip-txt');
@@ -359,7 +372,7 @@
                 try {
                     if (!zip) {
                         $btn.attr('disabled', true);
-                        zip = await downloadG(null, $btn, $btnTxt, 'Download zip ');
+                        zip = await downloadG(null, $btn, $btnTxt, 'Download ZIP ');
                     }
                     saveAs(zip.data, zip.name);
                 } catch (error) {
@@ -443,7 +456,7 @@
 
             if (first) {
                 // 语言过滤
-                $('ul.menu.left').append('<li style="padding:0 10px">LANG filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
+                $('ul.menu.left').append('<li style="padding:0 10px">Filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
                 $('#lang-filter').change(function() {
                     langFilter(this.value);
                     sessionStorage.setItem('lang-filter', this.value);
@@ -499,7 +512,7 @@
         }
     };
 
-    $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content' });
+    $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content', timeout: 10000 });
     $(document).on('pjax:end', () => init());
     init(true);
 })();
