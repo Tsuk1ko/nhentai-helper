@@ -1,8 +1,10 @@
-# nhentai-helper
+# nHentai Helper
+
+Also support NyaHentai.
 
 ## Main features
 
-1. Add a "download zip" button for nhentai.
+1. You can download doujin as ZIP.
 2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
 3. Download queue support on dojin list page. It will warn you when you download a doujin which was already downloaded, even they were uploaded by different people but are the same doujin. Up to 500 history records.
 
