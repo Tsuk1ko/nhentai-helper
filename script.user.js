@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.4.0
+// @version      2.4.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as ZIP easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加 ZIP 打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -139,8 +139,8 @@
         props: ['item', 'index'],
         computed: {
             width() {
-                const { page, done } = this.item;
-                return page && done ? ((100 * done) / page).toFixed(2) : 0;
+                const { page, done, zipping, zippingPercent } = this.item;
+                return zipping ? zippingPercent.toFixed(2) : page && done ? ((100 * done) / page).toFixed(2) : 0;
             },
         },
         watch: {
@@ -181,7 +181,7 @@
                 }
             },
         },
-        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-zipping\': item.zipping && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ item.zipping ? \'Zipping\' : `${width}%` }}</div></div></div>',
+        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-zipping\': item.zipping && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
     });
     Vue.component('download-list', {
         props: ['list'],
@@ -281,16 +281,19 @@
     };
 
     // 下载本子
-    const downloadGallery = async ({ mid, title, pages }, $btn = null, $btnTxt = null, headTxt = '') => {
+    const downloadGallery = async ({ mid, title, pages }, $btn = null, $btnTxt = null, headTxt = false) => {
         const info = queueInfo[0] || {};
         info.done = 0;
         const zip = new JSZip();
 
-        const btnUpdateProgress = () => {
-            if ($btnTxt) $btnTxt.html(`${headTxt}${info.done}/${pages.length}`);
+        const btnDownloadProgress = () => {
+            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Download ZIP ' : ''}${info.done}/${pages.length}`);
+        };
+        const btnZippingProgress = (percent = 0) => {
+            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Zipping ' : ''}${percent.toFixed()}%`);
         };
 
-        btnUpdateProgress();
+        btnDownloadProgress();
 
         const dlPromise = (page, threadID) => {
             if (info.error || downloadStatus.skip) return;
@@ -301,7 +304,7 @@
                 .then(r => {
                     zip.file(filename, r);
                     info.done++;
-                    btnUpdateProgress();
+                    btnDownloadProgress();
                 })
                 .catch(e => {
                     info.error = true;
@@ -314,15 +317,20 @@
         if (downloadStatus.skip) return {};
 
         info.zipping = true;
-        if ($btnTxt) $btnTxt.html('Zipping...');
+        btnZippingProgress();
         console.log('Start zipping');
-        const data = await zip.generateAsync({
-            type: 'blob',
-            base64: true,
+        let lastZipFile = '';
+        const data = await zip.generateAsync({ type: 'blob' }, ({ percent, currentFile }) => {
+            if (lastZipFile !== currentFile && currentFile) {
+                lastZipFile = currentFile;
+                console.log(`${percent.toFixed(2)}%`, currentFile);
+            }
+            btnZippingProgress(percent);
+            info.zippingPercent = percent;
         });
         console.log('Finished');
 
-        if ($btnTxt) $btnTxt.html(`${headTxt}√`);
+        if ($btnTxt) $btnTxt.html(`${headTxt ? 'Download ZIP ' : ''}√`);
         if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
 
@@ -372,7 +380,7 @@
                 try {
                     if (!zip) {
                         $btn.attr('disabled', true);
-                        zip = await downloadG(null, $btn, $btnTxt, 'Download ZIP ');
+                        zip = await downloadG(null, $btn, $btnTxt, true);
                     }
                     saveAs(zip.data, zip.name);
                 } catch (error) {
@@ -438,6 +446,7 @@
                         done: 0,
                         error: false,
                         zipping: false,
+                        zippingPercent: 0,
                         cancel,
                     });
                     queue.push(async () => {
