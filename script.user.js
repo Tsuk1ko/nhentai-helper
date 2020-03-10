@@ -3,11 +3,11 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.4.1
+// @version      2.5.0
 // @icon         https://nhentai.net/favicon.ico
-// @description        Download nHentai doujin as ZIP easily, and add some useful features. Also support NyaHentai.
-// @description:zh-CN  为 nHentai 增加 ZIP 打包下载方式以及一些辅助功能，同时支持 NyaHentai
-// @description:zh-TW  爲 nHentai 增加 ZIP 打包下載方式以及一些輔助功能，同時支持 NyaHentai
+// @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
+// @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
+// @description:zh-TW  爲 nHentai 增加壓縮打包下載方式以及一些輔助功能，同時支持 NyaHentai
 // @author       Jindai Kirin
 // @match        https://nhentai.net/*
 // @include      /^https:\/\/[^\/]*nyahentai/
@@ -81,15 +81,44 @@
     // 自定义下载地址
     let CUSTOM_DOWNLOAD_URL = GM_getValue('custom_download_url', '');
     GM_registerMenuCommand('Custom Download URL', () => {
-        const input = prompt(`WARNING: Please don't set it if you don't know what this does. Set it empty will restore it to default.`, CUSTOM_DOWNLOAD_URL);
+        const input = prompt("WARNING: Please don't set it if you don't know what this does. Set it empty will restore it to default.", CUSTOM_DOWNLOAD_URL);
         if (input === null) return;
         CUSTOM_DOWNLOAD_URL = input.trim();
         GM_setValue('custom_download_url', CUSTOM_DOWNLOAD_URL);
     });
     const getTextFromTemplate = (template, values) => Object.keys(values).reduce((pre, key) => pre.replace(new RegExp(`{{${key}}}`, 'g'), values[key]), template);
 
+    // 自定义压缩文件扩展名
+    let CF_EXT = GM_getValue('cf_ext', 'zip');
+    GM_registerMenuCommand('Compression File Extension', () => {
+        const input = prompt('You can custom the extension of compression file, such as "cbz". Set it empty will restore it to default (zip).', CF_EXT);
+        if (input === null) return;
+        CF_EXT = input.trim() || 'zip';
+        GM_setValue('cf_ext', CF_EXT);
+    });
+
+    // 自定义压缩级别
+    let C_LEVEL = parseInt(GM_getValue('c_lv', '0')) || 0;
+    GM_registerMenuCommand('Compression Level', () => {
+        let num;
+        do {
+            num = prompt('Please input a number (0-9) as compression level.\n0: store (no compression)\n1: lowest (best speed)\n...\n9: highest (best compression)', C_LEVEL);
+            if (num === null) return;
+            num = parseInt(num.trim());
+        } while (isNaN(num) || num < 0 || num > 9);
+        C_LEVEL = num;
+        GM_setValue('c_lv', C_LEVEL);
+    });
+    const getCompressionOptions = () => {
+        if (C_LEVEL === 0) return {};
+        return {
+            compression: 'DEFLATE',
+            compressionOptions: { level: C_LEVEL },
+        };
+    };
+
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-zipping .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -139,8 +168,8 @@
         props: ['item', 'index'],
         computed: {
             width() {
-                const { page, done, zipping, zippingPercent } = this.item;
-                return zipping ? zippingPercent.toFixed(2) : page && done ? ((100 * done) / page).toFixed(2) : 0;
+                const { page, done, compressing, compressingPercent } = this.item;
+                return compressing ? compressingPercent.toFixed(2) : page && done ? ((100 * done) / page).toFixed(2) : 0;
             },
         },
         watch: {
@@ -181,7 +210,7 @@
                 }
             },
         },
-        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-zipping\': item.zipping && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
+        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-compressing\': item.compressing && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
     });
     Vue.component('download-list', {
         props: ['list'],
@@ -260,7 +289,7 @@
             media_id,
             title: { english, japanese },
             images: { pages },
-        } = gid ? await nhentaiGalleryApi(gid) : typeof gallery === 'undefined' ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1])) : gallery;
+        } = gid ? await nhentaiGalleryApi(gid) : typeof gallery === 'undefined' ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1])) : (gid = gallery.id) && gallery;
 
         const p = [];
         pages.forEach((page, i) => {
@@ -287,10 +316,10 @@
         const zip = new JSZip();
 
         const btnDownloadProgress = () => {
-            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Download ZIP ' : ''}${info.done}/${pages.length}`);
+            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${CF_EXT.toUpperCase()} ` : ''}${info.done}/${pages.length}`);
         };
-        const btnZippingProgress = (percent = 0) => {
-            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Zipping ' : ''}${percent.toFixed()}%`);
+        const btnCompressingProgress = (percent = 0) => {
+            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Compressing ' : ''}${percent.toFixed()}%`);
         };
 
         btnDownloadProgress();
@@ -316,26 +345,26 @@
 
         if (downloadStatus.skip) return {};
 
-        info.zipping = true;
-        btnZippingProgress();
-        console.log('Start zipping');
+        info.compressing = true;
+        btnCompressingProgress();
+        console.log('Start compressing');
         let lastZipFile = '';
-        const data = await zip.generateAsync({ type: 'blob' }, ({ percent, currentFile }) => {
+        const data = await zip.generateAsync({ type: 'blob', ...getCompressionOptions() }, ({ percent, currentFile }) => {
             if (lastZipFile !== currentFile && currentFile) {
                 lastZipFile = currentFile;
                 console.log(`${percent.toFixed(2)}%`, currentFile);
             }
-            btnZippingProgress(percent);
-            info.zippingPercent = percent;
+            btnCompressingProgress(percent);
+            info.compressingPercent = percent;
         });
         console.log('Finished');
 
-        if ($btnTxt) $btnTxt.html(`${headTxt ? 'Download ZIP ' : ''}√`);
+        if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${CF_EXT.toUpperCase()} ` : ''}√`);
         if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
 
         return {
-            name: `${title}.zip`,
+            name: `${title}.${CF_EXT}`,
             data,
         };
     };
@@ -369,21 +398,47 @@
 
         if (pageType.gallery) {
             // 本子详情页
-            $('#info > .buttons').append('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ZIP</span></button>');
+            $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${CF_EXT.toUpperCase()}</span></button>`);
 
             const $btn = $('.download-zip');
             const $btnTxt = $('.download-zip-txt');
 
-            let zip;
+            let zip, info;
 
             $btn.click(async () => {
-                try {
-                    if (!zip) {
-                        $btn.attr('disabled', true);
-                        zip = await downloadG(null, $btn, $btnTxt, true);
+                $btn.attr('disabled', true);
+                if (!info) info = await getGallery();
+
+                if (downloadHistory.includes(info.title)) {
+                    const abandon = new Promise(resolve => {
+                        const n = new Noty({
+                            ...notyOption,
+                            text: `"${info.title}" is already downloaded.<br>Do you want to download again?`,
+                            buttons: [
+                                Noty.button('YES', 'btn btn-noty', () => {
+                                    n.close();
+                                    resolve(false);
+                                }),
+                                Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
+                                    n.close();
+                                    resolve(true);
+                                }),
+                            ],
+                        });
+                        n.show();
+                    });
+                    if (await abandon) {
+                        $btn.attr('disabled', false);
+                        return;
                     }
+                }
+
+                try {
+                    if (!zip) zip = await downloadGallery(info, $btn, $btnTxt, true);
                     saveAs(zip.data, zip.name);
+                    if (!downloadHistory.includes(info.title)) downloadHistory.push(info.title);
                 } catch (error) {
+                    $btn.attr('disabled', false);
                     $btnTxt.html('Error');
                     console.error(error);
                 }
@@ -445,8 +500,8 @@
                         page: gallery.pages.length,
                         done: 0,
                         error: false,
-                        zipping: false,
-                        zippingPercent: 0,
+                        compressing: false,
+                        compressingPercent: 0,
                         cancel,
                     });
                     queue.push(async () => {
