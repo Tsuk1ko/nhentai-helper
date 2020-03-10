@@ -27,6 +27,12 @@ Also support NyaHentai.
    - `{{mid}}` - Media ID
    - `{{index}}` - Page index, starting from 1
    - `{{ext}}` - Image file extension
+4. **Compression File Extension**  
+   Default is `zip`. You can custom it, such as `cbz`.
+5. **Compression Level**  
+   Accept a numer in `0-9`, default is `0`.  
+   `0` means "no compression", `1` means "best speed", `9` means "best compression".  
+   Actually, for doujin, compression output size of `0` and `9` usually differ by less than **1%**.
 
 ## Other features
 
