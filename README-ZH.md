@@ -1,6 +1,6 @@
 # nHentai 助手
 
-也支持 NyaHentai
+也支持 NyaHentai（而且下载的是原图）
 
 ## 主要功能
 
