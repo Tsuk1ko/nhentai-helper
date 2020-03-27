@@ -2,6 +2,8 @@
 
 也支持 NyaHentai（而且下载的是原图）
 
+注：因一些特殊原因，nHentai 上目前无法运行 Violentmonkey，请使用 Tampermonkey
+
 ## 主要功能
 
 1. 为 nHentai 增加 ZIP (CBZ) 打包下载方式

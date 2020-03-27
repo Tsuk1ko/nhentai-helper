@@ -2,6 +2,8 @@
 
 Also support NyaHentai.
 
+Notice: For some special reasons, Violentmonkey cannot be run on nHentai at present, please use Tampermonkey instead.
+
 ## Main features
 
 1. You can download doujin as ZIP (CBZ).
