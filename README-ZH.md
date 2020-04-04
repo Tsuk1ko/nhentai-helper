@@ -2,7 +2,7 @@
 
 也支持 NyaHentai（而且下载的是原图）
 
-支持 Greasemonkey / Tampermonkey / Violentmonkey
+支持 Greasemonkey / Tampermonkey / Violentmonkey (by [@z2n](https://github.com/z2n))
 
 ## 主要功能
 
