@@ -4,5 +4,6 @@
     "trailingComma": "es5",
     "useTabs": false,
     "tabWidth": 4,
+    "arrowParens": "avoid",
     "semi": true
 }
