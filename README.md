@@ -2,7 +2,7 @@
 
 Also support NyaHentai.
 
-Notice: For some special reasons, Violentmonkey cannot be run on nHentai at present, please use Tampermonkey instead.
+Support Greasemonkey, Tampermonkey and Violentmonkey.
 
 ## Main features
 
@@ -51,6 +51,8 @@ Effective when reading online.
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
 
 ### Removing console shielding of nhentai
+
+\* Not work when using Violentmonkey.
 
 Too lazy to translate all of them :(
 

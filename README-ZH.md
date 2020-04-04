@@ -2,7 +2,7 @@
 
 也支持 NyaHentai（而且下载的是原图）
 
-注：因一些特殊原因，nHentai 上目前无法运行 Violentmonkey，请使用 Tampermonkey
+支持 Greasemonkey / Tampermonkey / Violentmonkey
 
 ## 主要功能
 
@@ -50,6 +50,8 @@
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
 
 ### 去除 nhentai 的 console 屏蔽
+
+\* 使用 Violentmonkey 时无效
 
 有尝试为 nhentai 开发脚本的朋友应该也会头疼这个问题，nhentai 会不停的执行`console.clear`，即使你`console.clear=()=>{}`，也仍然会每秒 log 出一个`<div></div>`，很是烦人
 
