@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.5.3
+// @version      2.5.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -39,7 +39,21 @@
 $(() => {
     'use strict';
 
-    Array.prototype.remove = function(index) {
+    // 防 nhentai console 屏蔽
+    if (typeof unsafeWindow.N !== 'undefined') {
+        const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
+        const c = unsafeWindow.console;
+        c._clear = c.clear;
+        c.clear = () => {};
+        c._log = c.log;
+        c.log = function () {
+            const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
+            if (args.length) return c._log(...args);
+        };
+        unsafeWindow.Date = Date;
+    }
+
+    Array.prototype.remove = function (index) {
         if (index > -1) return this.splice(index, 1)[0];
     };
 
@@ -160,7 +174,7 @@ $(() => {
             },
         },
         watch: {
-            'item.error': function(error) {
+            'item.error': function (error) {
                 if (error) {
                     const n = new Noty({
                         ...notyOption,
@@ -376,7 +390,7 @@ $(() => {
     // 功能初始化
     const init = (first = false) => {
         if (!first) {
-            $('.pagination a').each(function() {
+            $('.pagination a').each(function () {
                 const $this = $(this);
                 $this.attr('href', $this.attr('href').replace(/(&?)_pjax=[^&]*(&?)/, ''));
             });
@@ -384,8 +398,12 @@ $(() => {
             const N = unsafeWindow.N;
             if (typeof N !== 'undefined') {
                 N.init();
-            } else {
-                $('.gallery img').each((_, e) => $(e).attr('src', $(e).data('src')));
+            } else if (!isNyahentai) {
+                $('img.lazyload').each((_, e) => {
+                    const $e = $(e);
+                    $e.attr('src', $e.data('src'));
+                    $e.removeClass('lazyload');
+                });
             }
         }
 
@@ -438,7 +456,7 @@ $(() => {
             });
         } else if (pageType.list) {
             // 本子列表页
-            $('.gallery').each(function() {
+            $('.gallery').each(function () {
                 const $this = $(this);
                 $this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
 
@@ -514,12 +532,12 @@ $(() => {
             if (first) {
                 // 语言过滤
                 $('ul.menu.left').append('<li style="padding:0 10px">Filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
-                $('#lang-filter').change(function() {
+                $('#lang-filter').change(function () {
                     langFilter(this.value);
                     sessionStorage.setItem('lang-filter', this.value);
                 });
                 // 左右键翻页
-                $(document).keydown(function(event) {
+                $(document).keydown(function (event) {
                     switch (event.keyCode) {
                         case 37: // left
                             $('.pagination .previous').click();
