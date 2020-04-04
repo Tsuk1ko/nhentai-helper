@@ -29,27 +29,14 @@
 // @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
 // @require      https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
 // @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
-// @run-at       document-end
+// @run-at       document-start
+// @inject-into  content
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
 // ==/UserScript==
 
-// 防 nhentai console 屏蔽
-(function() {
-    const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
-    const c = unsafeWindow.console;
-    c._clear = c.clear;
-    c.clear = () => {};
-    c._log = c.log;
-    c.log = function() {
-        const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
-        if (args.length) return c._log(...args);
-    };
-    unsafeWindow.Date = Date;
-})();
-
-(function() {
+$(function() {
     'use strict';
 
     Array.prototype.remove = function(index) {
@@ -581,4 +568,4 @@
     $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content', timeout: 10000 });
     $(document).on('pjax:end', () => init());
     init(true);
-})();
+});
