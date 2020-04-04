@@ -36,7 +36,7 @@
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
 // ==/UserScript==
 
-$(function() {
+$(() => {
     'use strict';
 
     Array.prototype.remove = function(index) {
@@ -382,7 +382,11 @@ $(function() {
             });
             // pjax 后需要初始化页面以加载 lazyload 图片
             const N = unsafeWindow.N;
-            if (typeof N !== 'undefined') N.init();
+            if (typeof N !== 'undefined') {
+                N.init();
+            } else {
+                $('.gallery img').each((_, e) => $(e).attr('src', $(e).data('src')));
+            }
         }
 
         if (pageType.gallery) {
