@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.5.4
+// @version      2.5.5
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -137,6 +137,8 @@ $(() => {
         return EXT[_t];
     };
 
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     // 页面类型
     const pageType = {
         gallery: /^\/g\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
@@ -249,7 +251,15 @@ $(() => {
                             }, 1000);
                         }
                     },
-                    onload: r => resolve(r.response),
+                    onload: ({ status, response }) => {
+                        if (status === 200) resolve(response);
+                        else {
+                            console.warn(status, url);
+                            setTimeout(() => {
+                                resolve(get(url, responseType, retry--));
+                            }, 500);
+                        }
+                    },
                 });
             } catch (error) {
                 reject(error);
@@ -263,7 +273,7 @@ $(() => {
     const getDownloadURL = (mid, filename) => (isNyahentai ? `https://search.pstatic.net/common?type=origin&src=https://i.nyahentai.net/galleries/${mid}/${filename}` : `https://i.nhentai.net/galleries/${mid}/${filename}`);
 
     // 伪多线程
-    const multiThread = (tasks, promiseFunc) => {
+    const multiThread = async (tasks, promiseFunc) => {
         const threads = [];
         let taskIndex = 0;
 
@@ -279,6 +289,7 @@ $(() => {
 
         // 创建线程
         for (let threadID = 0; threadID < THREAD; threadID++) {
+            await sleep(Math.min(2000 / THREAD, 300));
             threads.push(run(threadID));
         }
         return Promise.all(threads);
