@@ -6,7 +6,7 @@ Support Greasemonkey, Tampermonkey and Violentmonkey (by [@z2n](https://github.c
 
 ## Main features
 
-1. You can download doujin as ZIP (CBZ).
+1. You can download doujin as ZIP (CBZ). **You must keep the page in the foreground when downloading.**
 2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
 3. Download queue support on dojin list page. It will warn you when you download a doujin which was already downloaded, even they were uploaded by different people but are the same doujin. Up to 500 history records.
 
