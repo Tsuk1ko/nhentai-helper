@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.5.6
+// @version      2.6.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -29,6 +29,7 @@
 // @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
 // @require      https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
 // @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
+// @require      https://cdn.jsdelivr.net/gh/pvorb/node-md5@master/dist/md5.min.js
 // @run-at       document-start
 // @inject-into  content
 // @noframes
@@ -57,7 +58,7 @@ $(() => {
         if (index > -1) return this.splice(index, 1)[0];
     };
 
-    const HISTORY_MAX = 500;
+    const HISTORY_MAX = 1000;
 
     // 下载线程数
     let THREAD = GM_getValue('thread_num', 8);
@@ -151,6 +152,8 @@ $(() => {
     const queue = [];
     const queueInfo = JSON.parse(sessionStorage.getItem('queueInfo')) || [];
     const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
+    const downloadHistorySet = new Set(downloadHistory);
+    const isDownloaded = title => downloadHistorySet.has(MD5(title)) || downloadHistorySet.has(title);
     const downloadStatus = {
         running: false,
         skip: false,
@@ -432,7 +435,9 @@ $(() => {
                 $btn.attr('disabled', true);
                 if (!info) info = await getGallery();
 
-                if (downloadHistory.includes(info.title)) {
+                const downloaded = isDownloaded(info.title);
+
+                if (downloaded) {
                     const abandon = new Promise(resolve => {
                         const n = new Noty({
                             ...notyOption,
@@ -459,7 +464,11 @@ $(() => {
                 try {
                     if (!zip) zip = await downloadGallery(info, $btn, $btnTxt, true);
                     saveAs(zip.data, zip.name);
-                    if (!downloadHistory.includes(info.title)) downloadHistory.push(info.title);
+                    if (!downloaded) {
+                        const md5 = MD5(info.title);
+                        downloadHistory.push(md5);
+                        downloadHistorySet.add(md5);
+                    }
                 } catch (error) {
                     $btn.attr('disabled', false);
                     $btnTxt.html('Error');
@@ -495,7 +504,8 @@ $(() => {
                     $btn.attr('disabled', true);
                     $btnTxt.html('Wait');
                     const gallery = await getGallery(gid);
-                    if (downloadHistory.includes(gallery.title) || queueInfo.some(({ title }) => title == gallery.title)) {
+                    const downloaded = isDownloaded(gallery.title);
+                    if (downloaded || queueInfo.some(({ title }) => title == gallery.title)) {
                         const abandon = new Promise(resolve => {
                             const n = new Noty({
                                 ...notyOption,
@@ -535,7 +545,11 @@ $(() => {
                             return;
                         }
                         saveAs(data, name);
-                        if (!downloadHistory.includes(gallery.title)) downloadHistory.push(gallery.title);
+                        if (!downloaded) {
+                            const md5 = MD5(gallery.title);
+                            downloadHistory.push(md5);
+                            downloadHistorySet.add(md5);
+                        }
                     });
                     startQueue();
                 });
@@ -578,7 +592,11 @@ $(() => {
                             return;
                         }
                         saveAs(data, name);
-                        if (!downloadHistory.includes(title)) downloadHistory.push(title);
+                        if (!isDownloaded(title)) {
+                            const md5 = MD5(title);
+                            downloadHistory.push(md5);
+                            downloadHistorySet.add(md5);
+                        }
                     });
                 }
             }
