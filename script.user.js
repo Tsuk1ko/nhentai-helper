@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.6.0
+// @version      2.6.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -19,6 +19,7 @@
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
@@ -65,7 +66,11 @@ $(() => {
     GM_registerMenuCommand('Download Thread', () => {
         let num;
         do {
-            num = prompt(`Please input the number of threads you want (1~32)\nCurrnet: ${THREAD}`, THREAD);
+            num = prompt(
+                `Please input the number of threads you want (1~32)
+Currnet: ${THREAD}`,
+                THREAD
+            );
             if (num === null) return;
             num = parseInt(num);
         } while (num.toString() == 'NaN' || num < 1 || num > 32);
@@ -76,27 +81,54 @@ $(() => {
     // 在新窗口打开本子
     let OPEN_ON_NEW_TAB = GM_getValue('open_on_new_tab', true);
     GM_registerMenuCommand('Open On New Tab', () => {
-        OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?\nCurrent: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}\n\nPlease refresh to take effect after modification.`);
+        OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?
+Current: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}
+
+Please refresh to take effect after modification.`);
         GM_setValue('open_on_new_tab', OPEN_ON_NEW_TAB);
     });
 
     // 自定义下载地址
     let CUSTOM_DOWNLOAD_URL = GM_getValue('custom_download_url', '');
     GM_registerMenuCommand('Custom Download URL', () => {
-        const input = prompt("WARNING: Please don't set it if you don't know what this does. Set it empty will restore it to default.", CUSTOM_DOWNLOAD_URL);
+        const input = prompt(
+            `WARNING: Please don't set it if you don't know what this does.
+Set it empty will restore it to default.
+
+Available placeholders:
+{{mid}} - Media ID
+{{index}} - Page index, starting from 1
+{{ext}} - Image file extension`,
+            CUSTOM_DOWNLOAD_URL
+        );
         if (input === null) return;
         CUSTOM_DOWNLOAD_URL = input.trim();
         GM_setValue('custom_download_url', CUSTOM_DOWNLOAD_URL);
     });
-    const getTextFromTemplate = (template, values) => Object.keys(values).reduce((pre, key) => pre.replace(new RegExp(`{{${key}}}`, 'g'), values[key]), template);
 
-    // 自定义压缩文件扩展名
-    let CF_EXT = GM_getValue('cf_ext', 'zip');
-    GM_registerMenuCommand('Compression File Extension', () => {
-        const input = prompt('You can custom the extension of compression file, such as "cbz". Set it empty will restore it to default (zip).', CF_EXT);
+    // 自定义压缩文件名
+    const CF_EXT_OLD = GM_getValue('cf_ext');
+    if (CF_EXT_OLD) {
+        GM_setValue('cf_name', `{{japanese}}.${CF_EXT_OLD}`);
+        GM_deleteValue('cf_ext');
+    }
+    let CF_NAME = GM_getValue('cf_name', '{{japanese}}.zip');
+    GM_registerMenuCommand('Compression Filename', () => {
+        const input = prompt(
+            `You can custom the naming of downloaded compression file, including the file extension.
+Set it empty will restore it to default.
+
+Available placeholders:
+{{english}} - English name of doujin
+{{japanese}} - Japanese name of doujin
+{{pretty}} - English simple title of doujin
+{{id}} - Gallery ID
+{{pages}} - Number of pages`,
+            CF_NAME
+        );
         if (input === null) return;
-        CF_EXT = input.trim() || 'zip';
-        GM_setValue('cf_ext', CF_EXT);
+        CF_NAME = input.trim() || '{{japanese}}.zip';
+        GM_setValue('cf_name', CF_NAME);
     });
 
     // 自定义压缩级别
@@ -104,7 +136,14 @@ $(() => {
     GM_registerMenuCommand('Compression Level', () => {
         let num;
         do {
-            num = prompt('Please input a number (0-9) as compression level.\n0: store (no compression)\n1: lowest (best speed)\n...\n9: highest (best compression)', C_LEVEL);
+            num = prompt(
+                `Please input a number (0-9) as compression level.
+0: store (no compression)
+1: lowest (best speed)
+...
+9: highest (best compression)`,
+                C_LEVEL
+            );
             if (num === null) return;
             num = parseInt(num.trim());
         } while (isNaN(num) || num < 0 || num > 9);
@@ -123,6 +162,14 @@ $(() => {
     GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
 
     $('body').append('<div id="download-panel"></div>');
+
+    const getTextFromTemplate = (template, values) => Object.keys(values).reduce((pre, key) => pre.replace(new RegExp(`{{${key}}}`, 'g'), values[key]), template);
+    const getDpDlExt = () => {
+        const paths = CF_NAME.split('.');
+        const ext = paths[paths.length - 1];
+        if (typeof ext === 'string') return ext.toUpperCase();
+        return 'ZIP';
+    };
 
     const notyOption = {
         type: 'error',
@@ -303,9 +350,11 @@ $(() => {
     const getGallery = async gid => {
         const gallery = unsafeWindow.gallery;
         const {
+            id,
             media_id,
-            title: { english, japanese },
+            title: { english, japanese, pretty },
             images: { pages },
+            num_pages,
         } = gid ? await nhentaiGalleryApi(gid) : typeof gallery === 'undefined' ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1])) : (gid = gallery.id) && gallery;
 
         const p = [];
@@ -320,6 +369,13 @@ $(() => {
             mid: media_id,
             title: japanese || english,
             pages: p,
+            cfName: getTextFromTemplate(CF_NAME, {
+                english,
+                japanese: japanese || english,
+                pretty,
+                id,
+                pages: num_pages,
+            }),
         };
         console.log({ gid, ...info });
 
@@ -327,13 +383,13 @@ $(() => {
     };
 
     // 下载本子
-    const downloadGallery = async ({ mid, title, pages }, $btn = null, $btnTxt = null, headTxt = false) => {
+    const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false) => {
         const info = queueInfo[0] || {};
         info.done = 0;
         const zip = new JSZip();
 
         const btnDownloadProgress = () => {
-            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${CF_EXT.toUpperCase()} ` : ''}${info.done}/${pages.length}`);
+            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}${info.done}/${pages.length}`);
         };
         const btnCompressingProgress = (percent = 0) => {
             if ($btnTxt) $btnTxt.html(`${headTxt ? 'Compressing ' : ''}${percent.toFixed()}%`);
@@ -364,7 +420,7 @@ $(() => {
 
         info.compressing = true;
         btnCompressingProgress();
-        console.log('Start compressing');
+        console.log('Compressing', cfName);
         let lastZipFile = '';
         const data = await zip.generateAsync({ type: 'blob', ...getCompressionOptions() }, ({ percent, currentFile }) => {
             if (lastZipFile !== currentFile && currentFile) {
@@ -374,14 +430,14 @@ $(() => {
             btnCompressingProgress(percent);
             info.compressingPercent = percent;
         });
-        console.log('Finished');
+        console.log('Done');
 
-        if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${CF_EXT.toUpperCase()} ` : ''}√`);
+        if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
         if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
 
         return {
-            name: `${title}.${CF_EXT}`,
+            name: cfName,
             data,
         };
     };
@@ -424,7 +480,7 @@ $(() => {
 
         if (pageType.gallery) {
             // 本子详情页
-            $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${CF_EXT.toUpperCase()}</span></button>`);
+            $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${getDpDlExt()}</span></button>`);
 
             const $btn = $('.download-zip');
             const $btnTxt = $('.download-zip-txt');

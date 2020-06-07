@@ -25,12 +25,18 @@ Support Greasemonkey, Tampermonkey and Violentmonkey (by [@z2n](https://github.c
 3. **Custom Download URL**  
    **WARNING: Please don't set this if you don't know what it does.**  
    Tip: You may need to add your domain into *XHR security* for this script.  
-   Provide a string containing the following placeholder:
+   Provide a URL containing the following placeholder:
    - `{{mid}}` - Media ID
    - `{{index}}` - Page index, starting from 1
    - `{{ext}}` - Image file extension
-4. **Compression File Extension**  
-   Default is `zip`. You can custom it, such as `cbz`.
+4. **Compression Filename**  
+   Default is `{{japanese}}.zip`. You can custom the naming of downloaded compression file, including the file extension, such as `{{english}}.cbz`.  
+   Available placeholders:  
+   - `{{english}}` - English name of doujin
+   - `{{japanese}}` - Japanese name of doujin
+   - `{{pretty}}` - English simple title of doujin
+   - `{{id}}` - Gallery ID
+   - `{{pages}}` - Number of pages
 5. **Compression Level**  
    Accept a numer in `0-9`, default is `0`.  
    `0` means "no compression", `1` means "best speed", `9` means "best compression".  
