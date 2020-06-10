@@ -2,7 +2,9 @@
 
 Also support NyaHentai.
 
-Support Greasemonkey, Tampermonkey and Violentmonkey (by [@z2n](https://github.com/z2n)).
+Support Tampermonkey and Violentmonkey.
+
+Not and will not support Greasemonkey.
 
 ## Main features
 
@@ -55,22 +57,3 @@ You can select a language in the navigation bar to filter doujins.
 Effective when reading online.
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
-
-### Removing console shielding of nhentai
-
-\* Not work when using Violentmonkey.
-
-Too lazy to translate all of them :(
-
-有尝试为 nhentai 开发脚本的朋友应该也会头疼这个问题，nhentai 会不停的执行`console.clear`，即使你`console.clear=()=>{}`，也仍然会每秒 log 出一个`<div></div>`，很是烦人
-
-在我刚开始开发这个脚本的时候我的解决方法非常暴力，将那个罪魁祸首 js 下载一份传到我自己的服务器上，删掉里面调用了`console`的代码，然后用重定向插件进行重定向，这样可以保证不会破坏`console`
-
-但该 js 也会时不时更新，我也得重新更新，虽然更新频率很低，总归是很麻烦的
-
-于是我还是决定使用一劳永逸的方法，这一方法你可以在脚本源码开头看到，因为其会对`console`进行一些破坏性的改动，因此我在这里进行专门说明
-
-**You just need to pay attention to these:**
-
-1. If you want to use `console.clear`, please use `console._clear` instead.
-2. If you want to `console.log` a `Node` or `HTMLElement`, please use `console._log` or `console.info` instead.

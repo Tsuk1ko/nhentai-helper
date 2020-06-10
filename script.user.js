@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.6.1
+// @version      2.6.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -31,29 +31,14 @@
 // @require      https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
 // @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require      https://cdn.jsdelivr.net/gh/pvorb/node-md5@master/dist/md5.min.js
-// @run-at       document-start
-// @inject-into  content
+// @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
 // ==/UserScript==
 
-$(() => {
+(() => {
     'use strict';
-
-    // 防 nhentai console 屏蔽
-    if (typeof unsafeWindow.N !== 'undefined') {
-        const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
-        const c = unsafeWindow.console;
-        c._clear = c.clear;
-        c.clear = () => {};
-        c._log = c.log;
-        c.log = function () {
-            const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
-            if (args.length) return c._log(...args);
-        };
-        unsafeWindow.Date = Date;
-    }
 
     Array.prototype.remove = function (index) {
         if (index > -1) return this.splice(index, 1)[0];
@@ -180,9 +165,10 @@ Available placeholders:
     };
 
     const EXT = { p: 'png', j: 'jpg', g: 'gif' };
-    const getExtension = _t => {
-        if (!EXT[_t]) throw new Error(`Unknown type "${_t}"`);
-        return EXT[_t];
+    const getExtension = ({ t, extension }) => {
+        const ext = (t && EXT[t]) || extension;
+        if (!ext) throw new Error(`Unknown type "${_t}"`);
+        return ext;
     };
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -297,17 +283,17 @@ Available placeholders:
                         else {
                             console.warn('Network error, retry.');
                             setTimeout(() => {
-                                resolve(get(url, responseType, retry--));
+                                resolve(get(url, responseType, retry - 1));
                             }, 1000);
                         }
                     },
                     onload: ({ status, response }) => {
                         if (status === 200) resolve(response);
-                        else if (retry === 0) reject(e);
+                        else if (retry === 0) reject(`${status} ${url}`);
                         else {
                             console.warn(status, url);
                             setTimeout(() => {
-                                resolve(get(url, responseType, retry--));
+                                resolve(get(url, responseType, retry - 1));
                             }, 500);
                         }
                     },
@@ -361,7 +347,7 @@ Available placeholders:
         pages.forEach((page, i) => {
             p.push({
                 i: i + 1,
-                t: getExtension(page.t),
+                t: getExtension(page),
             });
         });
 
@@ -466,15 +452,9 @@ Available placeholders:
                 $this.attr('href', $this.attr('href').replace(/(&?)_pjax=[^&]*(&?)/, ''));
             });
             // pjax 后需要初始化页面以加载 lazyload 图片
-            const N = unsafeWindow.N;
-            if (typeof N !== 'undefined') {
-                N.init();
-            } else if (!isNyahentai) {
-                $('img.lazyload').each((_, e) => {
-                    const $e = $(e);
-                    $e.attr('src', $e.data('src'));
-                    $e.removeClass('lazyload');
-                });
+            const n = unsafeWindow.n;
+            if (typeof n !== 'undefined') {
+                n.install_lazy_loader();
             }
         }
 
@@ -619,7 +599,7 @@ Available placeholders:
                     sessionStorage.setItem('lang-filter', this.value);
                 });
                 // 左右键翻页
-                $(document).keydown(function (event) {
+                $(document).keydown(event => {
                     switch (event.keyCode) {
                         case 37: // left
                             $('.pagination .previous').click();
@@ -676,4 +656,4 @@ Available placeholders:
     $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content', timeout: 10000 });
     $(document).on('pjax:end', () => init());
     init(true);
-});
+})();
