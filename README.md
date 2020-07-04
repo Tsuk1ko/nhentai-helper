@@ -54,6 +54,6 @@ You can select a language in the navigation bar to filter doujins.
 
 ### 100% view height
 
-Effective when reading online.
+Effective when reading online, only for NyaHentai (now nHentai already has this feature).
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)

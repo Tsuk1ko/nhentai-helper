@@ -53,6 +53,6 @@
 
 ### 100% 视图高度
 
-在线阅读时可开启或关闭
+在线阅读时可开启或关闭，只在 NyaHentai 生效，nHentai 官方已经有这个功能了
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
