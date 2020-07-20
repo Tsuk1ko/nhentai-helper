@@ -3,14 +3,14 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.6.3
+// @version      2.6.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
 // @description:zh-TW  爲 nHentai 增加壓縮打包下載方式以及一些輔助功能，同時支持 NyaHentai
 // @author       Jindai Kirin
 // @match        https://nhentai.net/*
-// @include      /^https:\/\/[^\/]*nyahentai/
+// @include      /^https:\/\/([^\/]*\.)?(nya|dog|cat|bug)hentai\./
 // @connect      nhentai.net
 // @connect      i.nhentai.net
 // @connect      json2jsonp.com
@@ -39,6 +39,20 @@
 
 (() => {
     'use strict';
+
+    // 防 nhentai console 屏蔽
+    if (localStorage.getItem('NHENTAI_HELPER_DEBUG') && typeof unsafeWindow.N !== 'undefined') {
+        const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
+        const c = unsafeWindow.console;
+        c._clear = c.clear;
+        c.clear = () => {};
+        c._log = c.log;
+        c.log = function () {
+            const args = Array.from(arguments).filter(value => !isNodeOrElement(value));
+            if (args.length) return c._log(...args);
+        };
+        unsafeWindow.Date = Date;
+    }
 
     Array.prototype.remove = function (index) {
         if (index > -1) return this.splice(index, 1)[0];
@@ -179,7 +193,7 @@ Available placeholders:
         galleryPage: /^\/g\/[0-9]+(\/list)?\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
         list: $('.gallery').length > 0,
     };
-    const isNyahentai = /nyahentai/.test(window.location.host);
+    const isNyahentai = window.location.host !== 'nhentai.net';
 
     // 下载队列
     const queue = [];
