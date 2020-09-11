@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.6.6
+// @version      2.7.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -26,12 +26,12 @@
 // @grant        GM_getResourceText
 // @resource     notycss https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
 // @require      https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js
-// @require      https://cdn.jsdelivr.net/npm/jszip@3.2.2/dist/jszip.min.js
 // @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
 // @require      https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
 // @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require      https://cdn.jsdelivr.net/npm/md5@2.3.0/dist/md5.min.js
+// @require      https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
@@ -59,6 +59,13 @@
         if (index > -1) return this.splice(index, 1)[0];
     };
 
+    const JSZip = (() => {
+        const blob = new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,data){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer(data))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' });
+        const worker = new Worker(URL.createObjectURL(blob));
+        return Comlink.wrap(worker);
+    })();
+
+    // 历史记录上限
     const HISTORY_MAX = 1000;
 
     // 下载线程数
@@ -159,7 +166,7 @@ Available placeholders:
     };
 
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -199,23 +206,40 @@ Available placeholders:
     // 下载队列
     const queue = [];
     const queueInfo = JSON.parse(sessionStorage.getItem('queueInfo')) || [];
-    const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
-    const downloadHistorySet = new Set(downloadHistory);
-    const isDownloaded = title => downloadHistorySet.has(MD5(title)) || downloadHistorySet.has(title);
-    const downloadStatus = {
+    const queueStatus = {
         running: false,
         skip: false,
     };
     const startQueue = async () => {
-        if (!downloadStatus.running && queue.length > 0) {
-            downloadStatus.running = true;
+        if (!queueStatus.running && queue.length > 0) {
+            queueStatus.running = true;
             do {
                 await queue[0]();
                 queue.shift();
             } while (queue.length > 0);
-            downloadStatus.running = false;
+            queueStatus.running = false;
         }
     };
+
+    // 压缩队列
+    const zipQueue = [];
+    const zipQueueInfo = [];
+    let zipQueueRunning = false;
+    const startZipQueue = async () => {
+        if (!zipQueueRunning && zipQueue.length > 0) {
+            zipQueueRunning = true;
+            do {
+                await zipQueue[0]();
+                zipQueue.shift();
+            } while (zipQueue.length > 0);
+            zipQueueRunning = false;
+        }
+    };
+
+    // 下载历史
+    const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
+    const downloadHistorySet = new Set(downloadHistory);
+    const isDownloaded = title => downloadHistorySet.has(MD5(title)) || downloadHistorySet.has(title);
 
     // 下载面板
     Vue.component('download-item', {
@@ -225,10 +249,13 @@ Available placeholders:
                 const { page, done, compressing, compressingPercent } = this.item;
                 return compressing ? compressingPercent.toFixed(2) : page && done ? ((100 * done) / page).toFixed(2) : 0;
             },
+            canCancel() {
+                return !this.item.compressing;
+            },
         },
         watch: {
             'item.error': function (error) {
-                if (error) {
+                if (error && !this.item.compressing) {
                     const n = new Noty({
                         ...notyOption,
                         text: `Error occurred, retry?`,
@@ -237,13 +264,13 @@ Available placeholders:
                                 n.close();
                                 queue.shift();
                                 queueInfo.shift();
-                                downloadStatus.running = false;
+                                queueStatus.running = false;
                                 startQueue();
                             }),
                             Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
                                 n.close();
                                 this.item.error = false;
-                                downloadStatus.running = false;
+                                queueStatus.running = false;
                                 startQueue();
                             }),
                         ],
@@ -255,7 +282,7 @@ Available placeholders:
         methods: {
             cancel() {
                 if (this.index === 0) {
-                    downloadStatus.skip = true;
+                    queueStatus.skip = true;
                     queueInfo.shift();
                 } else {
                     queue.remove(this.index);
@@ -264,7 +291,7 @@ Available placeholders:
                 }
             },
         },
-        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-compressing\': item.compressing && !item.error }" :title="item.title"><div class="download-item-cancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
+        template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-compressing\': item.compressing && !item.error, \'can-cancel\': canCancel }" :title="item.title"><div class="download-item-cancel" v-if="canCancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
     });
     Vue.component('download-list', {
         props: ['list'],
@@ -272,9 +299,14 @@ Available placeholders:
     });
     new Vue({
         el: '#download-panel',
-        data: { queueInfo, downloadHistory, downloadStatus },
+        data: { queueInfo, zipQueueInfo, downloadHistory, downloadStatus: queueStatus },
+        computed: {
+            infoList() {
+                return [...this.zipQueueInfo, ...this.queueInfo];
+            },
+        },
         watch: {
-            queueInfo(val) {
+            infoList(val) {
                 sessionStorage.setItem('queueInfo', JSON.stringify(val));
             },
             downloadHistory(val) {
@@ -282,7 +314,7 @@ Available placeholders:
                 localStorage.setItem('downloadHistory', JSON.stringify(val));
             },
         },
-        template: '<download-list :list="queueInfo" />',
+        template: '<download-list :list="infoList" />',
     });
 
     // 网络请求
@@ -387,7 +419,7 @@ Available placeholders:
     const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false) => {
         const info = queueInfo[0] || {};
         info.done = 0;
-        const zip = new JSZip();
+        const zip = await new JSZip();
 
         const btnDownloadProgress = () => {
             if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}${info.done}/${pages.length}`);
@@ -399,13 +431,13 @@ Available placeholders:
         btnDownloadProgress();
 
         const dlPromise = (page, threadID) => {
-            if (info.error || downloadStatus.skip) return;
+            if (info.error || queueStatus.skip) return;
             const filename = `${page.i}.${page.t}`;
             const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, filename);
             console.log(`[${threadID}] ${url}`);
-            return get(url, 'blob')
-                .then(r => {
-                    zip.file(filename, r);
+            return get(url, 'arraybuffer')
+                .then(async r => {
+                    await zip.file(filename, Comlink.transfer(r));
                     info.done++;
                     btnDownloadProgress();
                 })
@@ -416,30 +448,40 @@ Available placeholders:
         };
 
         await multiThread(pages, dlPromise);
-
-        if (downloadStatus.skip) return {};
-
-        info.compressing = true;
-        btnCompressingProgress();
-        console.log('Compressing', cfName);
-        let lastZipFile = '';
-        const data = await zip.generateAsync({ type: 'blob', ...getCompressionOptions() }, ({ percent, currentFile }) => {
-            if (lastZipFile !== currentFile && currentFile) {
-                lastZipFile = currentFile;
-                console.log(`${percent.toFixed(2)}%`, currentFile);
-            }
-            btnCompressingProgress(percent);
-            info.compressingPercent = percent;
-        });
-        console.log('Done');
-
-        if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
-        if ($btn) $btn.attr('disabled', false);
         queueInfo.shift();
 
-        return {
-            name: cfName,
-            data,
+        if (queueStatus.skip) {
+            queueStatus.skip = false;
+            return async () => ({});
+        }
+
+        zipQueueInfo.push(info);
+        return async () => {
+            info.compressing = true;
+            btnCompressingProgress();
+            console.log('Compressing', cfName);
+            let lastZipFile = '';
+            const data = await zip.generateAsync(
+                { type: 'arraybuffer', ...getCompressionOptions() },
+                Comlink.proxy(({ percent, currentFile }) => {
+                    if (lastZipFile !== currentFile && currentFile) {
+                        lastZipFile = currentFile;
+                        console.log(`Compressing ${percent.toFixed(2)}%`, currentFile);
+                    }
+                    btnCompressingProgress(percent);
+                    info.compressingPercent = percent;
+                })
+            );
+            console.log('Done');
+
+            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
+            if ($btn) $btn.attr('disabled', false);
+            zipQueueInfo.shift();
+
+            return {
+                name: cfName,
+                data: new Blob([data]),
+            };
         };
     };
     const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => downloadGallery(await getGallery(gid), $btn, $btnTxt, headTxt);
@@ -513,7 +555,8 @@ Available placeholders:
                 }
 
                 try {
-                    if (!zip) zip = await downloadGallery(info, $btn, $btnTxt, true);
+                    if (!zip) zip = await (await downloadGallery(info, $btn, $btnTxt, true))();
+                    if (!(zip.data && zip.name)) return;
                     saveAs(zip.data, zip.name);
                     if (!downloaded) {
                         const md5 = MD5(info.title);
@@ -589,18 +632,21 @@ Available placeholders:
                         cancel,
                     });
                     queue.push(async () => {
-                        const { data, name } = await downloadGallery(gallery, $btn, $btnTxt);
-                        if (downloadStatus.skip) {
-                            downloadStatus.skip = false;
-                            cancel();
-                            return;
-                        }
-                        saveAs(data, name);
-                        if (!downloaded) {
-                            const md5 = MD5(gallery.title);
-                            downloadHistory.push(md5);
-                            downloadHistorySet.add(md5);
-                        }
+                        const zipFn = await downloadGallery(gallery, $btn, $btnTxt);
+                        zipQueue.push(async () => {
+                            const { data, name } = await zipFn();
+                            if (!(data && name)) {
+                                cancel();
+                                return;
+                            }
+                            saveAs(data, name);
+                            if (!downloaded) {
+                                const md5 = MD5(gallery.title);
+                                downloadHistory.push(md5);
+                                downloadHistorySet.add(md5);
+                            }
+                        });
+                        startZipQueue();
                     });
                     startQueue();
                 });
@@ -637,17 +683,18 @@ Available placeholders:
             if (first) {
                 for (const { gid, title } of queueInfo) {
                     queue.push(async () => {
-                        const { data, name } = await downloadG(gid);
-                        if (downloadStatus.skip) {
-                            downloadStatus.skip = false;
-                            return;
-                        }
-                        saveAs(data, name);
-                        if (!isDownloaded(title)) {
-                            const md5 = MD5(title);
-                            downloadHistory.push(md5);
-                            downloadHistorySet.add(md5);
-                        }
+                        const zipFn = await downloadG(gid);
+                        zipQueue.push(async () => {
+                            const { data, name } = await zipFn();
+                            if (!(data && name)) return;
+                            saveAs(data, name);
+                            if (!isDownloaded(title)) {
+                                const md5 = MD5(title);
+                                downloadHistory.push(md5);
+                                downloadHistorySet.add(md5);
+                            }
+                        });
+                        startZipQueue();
                     });
                 }
             }
