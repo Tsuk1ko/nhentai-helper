@@ -1,10 +1,8 @@
 # nHentai 助手
 
-也支持 NyaHentai
+同时支持 NyaHentai，因其域名比较多变，如脚本没有在某些域名上运行，可自行将网址加入用户匹配列表
 
-支持 Tampermonkey 和 Violentmonkey
-
-不支持也不会支持 Greasemonkey
+支持 Tampermonkey 和 Violentmonkey，不支持也不会支持 Greasemonkey
 
 ## 主要功能
 

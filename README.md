@@ -1,10 +1,8 @@
 # nHentai Helper
 
-Also support NyaHentai.
+Also support NyaHentai. Because its domain is constantly changing, if the script does not run on some domains, you can add the URL to the user matching list.
 
-Support Tampermonkey and Violentmonkey.
-
-Not and will not support Greasemonkey.
+Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Main features
 
