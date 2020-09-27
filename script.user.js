@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.7.2
+// @version      2.8.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -14,7 +14,6 @@
 // @connect      nhentai.net
 // @connect      i.nhentai.net
 // @connect      json2jsonp.com
-// @connect      search.pstatic.net
 // @connect      i0.nyacdn.com
 // @license      GPL-3.0
 // @grant        GM_addStyle
@@ -73,11 +72,7 @@
     GM_registerMenuCommand('Download Thread', () => {
         let num;
         do {
-            num = prompt(
-                `Please input the number of threads you want (1~32)
-Currnet: ${THREAD}`,
-                THREAD
-            );
+            num = prompt('Please input the number of threads you want (1~32):', THREAD);
             if (num === null) return;
             num = parseInt(num);
         } while (num.toString() == 'NaN' || num < 1 || num > 32);
@@ -144,7 +139,7 @@ Available placeholders:
         let num;
         do {
             num = prompt(
-                `Please input a number (0-9) as compression level.
+                `Please input a number (0-9) as compression level:
 0: store (no compression)
 1: lowest (best speed)
 ...
@@ -165,8 +160,21 @@ Available placeholders:
         };
     };
 
+    // 文件名补零
+    let FILENAME_LENGTH = parseInt(GM_getValue('filename_length', '0')) || 0;
+    GM_registerMenuCommand('Filename Length', () => {
+        let num;
+        do {
+            num = prompt(`Please input the minimum image filename length you want (≥0), zeros will be padded to the start of filename when its length lower than this value:`, FILENAME_LENGTH);
+            if (num === null) return;
+            num = parseInt(num);
+        } while (num.toString() == 'NaN' || num < 0);
+        FILENAME_LENGTH = num;
+        GM_setValue('filename_length', num);
+    });
+
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{    overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -432,12 +440,11 @@ Available placeholders:
 
         const dlPromise = (page, threadID) => {
             if (info.error || queueStatus.skip) return;
-            const filename = `${page.i}.${page.t}`;
-            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, filename);
+            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
             console.log(`[${threadID}] ${url}`);
             return get(url, 'arraybuffer')
                 .then(async r => {
-                    await zip.file(filename, Comlink.transfer(r));
+                    await zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, Comlink.transfer(r));
                     info.done++;
                     btnDownloadProgress();
                 })
