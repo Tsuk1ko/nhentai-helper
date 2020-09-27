@@ -41,6 +41,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
    Accept a numer in `0-9`, default is `0`.  
    `0` means "no compression", `1` means "best speed", `9` means "best compression".  
    Actually, for doujin, compression output size of `0` and `9` usually differ by less than **1%**.
+6. **Filename Length**
+   Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.
 
 ## Other features
 
