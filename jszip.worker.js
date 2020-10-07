@@ -4,11 +4,11 @@ class JSZipWorker {
     constructor() {
         this.zip = new JSZip();
     }
-    file(name, data) {
+    file(name, { data }) {
         this.zip.file(name, data);
     }
     generateAsync(options, onUpdate) {
-        return this.zip.generateAsync(options, onUpdate).then(data => Comlink.transfer(data));
+        return this.zip.generateAsync(options, onUpdate).then(data => Comlink.transfer({ data }, [data]));
     }
 }
 

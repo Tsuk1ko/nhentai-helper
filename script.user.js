@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.8.0
+// @version      2.8.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -59,7 +59,7 @@
     };
 
     const JSZip = (() => {
-        const blob = new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,data){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer(data))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' });
+        const blob = new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' });
         const worker = new Worker(URL.createObjectURL(blob));
         return Comlink.wrap(worker);
     })();
@@ -443,8 +443,8 @@ Available placeholders:
             const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
             console.log(`[${threadID}] ${url}`);
             return get(url, 'arraybuffer')
-                .then(async r => {
-                    await zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, Comlink.transfer(r));
+                .then(async data => {
+                    await zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, Comlink.transfer({ data }, [data]));
                     info.done++;
                     btnDownloadProgress();
                 })
@@ -462,13 +462,13 @@ Available placeholders:
             return async () => ({});
         }
 
-        if (pageType.list) zipQueueInfo.push(info);
+        if (!pageType.gallery && pageType.list) zipQueueInfo.push(info);
         return async () => {
             info.compressing = true;
             btnCompressingProgress();
             console.log('Compressing', cfName);
             let lastZipFile = '';
-            const data = await zip.generateAsync(
+            const { data } = await zip.generateAsync(
                 { type: 'arraybuffer', ...getCompressionOptions() },
                 Comlink.proxy(({ percent, currentFile }) => {
                     if (lastZipFile !== currentFile && currentFile) {
