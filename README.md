@@ -6,9 +6,9 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Main features
 
-1. You can download doujin as ZIP (CBZ). **You must keep the page in the foreground when downloading.**
-2. Add pjax support on dojin list page. Turning pages will not interrupt downloads.
-3. Download queue support on dojin list page. It will warn you when you download a doujin which was already downloaded, even they were uploaded by different people but are the same doujin. Up to 1000 history records.
+1. You can download doujin as zip (or cbz). **You must keep the page in the foreground when downloading.**
+2. Add pjax support for list page. Changing pages will not interrupt downloads.
+3. Download queue support on dojin list page. It will warn you when you download an already downloaded doujin, even they were uploaded by different people but have the same name. Up to 1000 history records.
 
 ![](https://i.loli.net/2019/01/26/5c4c5d5914197.png)
 
