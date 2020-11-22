@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.8.1
+// @version      2.9.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -58,11 +58,53 @@
         if (index > -1) return this.splice(index, 1)[0];
     };
 
-    const JSZip = (() => {
-        const blob = new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' });
-        const worker = new Worker(URL.createObjectURL(blob));
-        return Comlink.wrap(worker);
-    })();
+    const SYSTEM_THREAD_NUM = (navigator && navigator.hardwareConcurrency) || 1;
+
+    class JSZipWorkerPool {
+        constructor() {
+            this.pool = [];
+            const WORKER_URL = URL.createObjectURL(new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' }));
+            const createWorker = () => {
+                const worker = new Worker(WORKER_URL);
+                return Comlink.wrap(worker);
+            };
+            for (let id = 0; id < SYSTEM_THREAD_NUM; id++) {
+                this.pool.push({
+                    id,
+                    JSZip: createWorker(),
+                    idle: true,
+                });
+            }
+        }
+        async generateAsync(files, options, onUpdate) {
+            const worker = this.pool.find(({ idle }) => idle);
+            if (!worker) throw new Error('No avaliable worker.');
+            worker.idle = false;
+            console.log(`JSZipWorkerPool use ${worker.id}`);
+            const zip = await new worker.JSZip();
+            for (const { name, data } of files) {
+                await zip.file(name, Comlink.transfer({ data }, [data]));
+            }
+            return zip.generateAsync(options, onUpdate).then(({ data }) => {
+                worker.idle = true;
+                return data;
+            });
+        }
+    }
+
+    const jsZipPool = new JSZipWorkerPool();
+
+    class JSZip {
+        constructor() {
+            this.files = [];
+        }
+        file(name, data) {
+            this.files.push({ name, data });
+        }
+        generateAsync(options, onUpdate) {
+            return jsZipPool.generateAsync(this.files, options, onUpdate);
+        }
+    }
 
     // 历史记录上限
     const HISTORY_MAX = 1000;
@@ -211,38 +253,63 @@ Available placeholders:
     };
     const isNyahentai = window.location.host !== 'nhentai.net';
 
-    // 下载队列
-    const queue = [];
-    const queueInfo = JSON.parse(sessionStorage.getItem('queueInfo')) || [];
-    const queueStatus = {
-        running: false,
-        skip: false,
-    };
-    const startQueue = async () => {
-        if (!queueStatus.running && queue.length > 0) {
-            queueStatus.running = true;
-            do {
-                await queue[0]();
-                queue.shift();
-            } while (queue.length > 0);
-            queueStatus.running = false;
+    // 队列
+    class AsyncQueue {
+        constructor(thread = 1) {
+            this.queue = [];
+            this.running = false;
+            this.thread = thread;
         }
-    };
+        get runningThreadNum() {
+            return this.queue.filter(({ running }) => running).length;
+        }
+        push(fn, info) {
+            this.queue.push({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                running: false,
+                fn,
+                info,
+            });
+        }
+        async start() {
+            if (this.thread <= 1) {
+                if (this.running || this.queue.length === 0) return;
+                this.running = true;
+                do {
+                    await this.queue[0].fn();
+                    this.queue.shift();
+                } while (this.queue.length > 0);
+                this.running = false;
+            } else {
+                const running = this.runningThreadNum;
+                if (running >= this.thread || this.queue.length === running) return;
+                const idleItems = this.queue.filter(({ running }) => !running);
+                for (let i = 0; i < Math.min(idleItems.length, this.thread - running); i++) {
+                    const item = idleItems[i];
+                    item.running = true;
+                    item.fn().then(() => {
+                        this.queue.remove(this.queue.findIndex(({ id }) => id === item.id));
+                        this.start();
+                    });
+                }
+            }
+        }
+        skipFromError() {
+            this.queue.shift();
+            return this.restartFromError();
+        }
+        restartFromError() {
+            this.running = false;
+            return this.start();
+        }
+    }
+
+    // 下载队列
+    const dlQueue = new AsyncQueue();
+    dlQueue.skip = false;
 
     // 压缩队列
-    const zipQueue = [];
-    const zipQueueInfo = [];
-    let zipQueueRunning = false;
-    const startZipQueue = async () => {
-        if (!zipQueueRunning && zipQueue.length > 0) {
-            zipQueueRunning = true;
-            do {
-                await zipQueue[0]();
-                zipQueue.shift();
-            } while (zipQueue.length > 0);
-            zipQueueRunning = false;
-        }
-    };
+    const zipQueue = new AsyncQueue(SYSTEM_THREAD_NUM);
 
     // 下载历史
     const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
@@ -270,16 +337,12 @@ Available placeholders:
                         buttons: [
                             Noty.button('SKIP', 'btn btn-noty', () => {
                                 n.close();
-                                queue.shift();
-                                queueInfo.shift();
-                                queueStatus.running = false;
-                                startQueue();
+                                dlQueue.skipFromError();
                             }),
                             Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
                                 n.close();
                                 this.item.error = false;
-                                queueStatus.running = false;
-                                startQueue();
+                                dlQueue.restartFromError();
                             }),
                         ],
                     });
@@ -290,12 +353,10 @@ Available placeholders:
         methods: {
             cancel() {
                 if (this.index === 0) {
-                    queueStatus.skip = true;
-                    queueInfo.shift();
+                    dlQueue.skip = true;
                 } else {
-                    queue.remove(this.index);
-                    const q = queueInfo.remove(this.index);
-                    if (q && typeof q.cancel === 'function') q.cancel();
+                    const { info } = dlQueue.queue.remove(this.index);
+                    if (info && typeof info.cancel === 'function') info.cancel();
                 }
             },
         },
@@ -307,15 +368,20 @@ Available placeholders:
     });
     new Vue({
         el: '#download-panel',
-        data: { queueInfo, zipQueueInfo, downloadHistory, downloadStatus: queueStatus },
+        // TODO: 两个都改造
+        data: {
+            dlQueue: dlQueue.queue,
+            zipQueue: zipQueue.queue,
+            downloadHistory,
+        },
         computed: {
             infoList() {
-                return [...this.zipQueueInfo, ...this.queueInfo];
+                return [...this.zipQueue, ...this.dlQueue].map(({ info }) => info);
             },
         },
         watch: {
             infoList(val) {
-                sessionStorage.setItem('queueInfo', JSON.stringify(val));
+                sessionStorage.setItem('queueInfos', JSON.stringify(val));
             },
             downloadHistory(val) {
                 while (val.length > HISTORY_MAX) val.shift();
@@ -425,7 +491,7 @@ Available placeholders:
 
     // 下载本子
     const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false) => {
-        const info = queueInfo[0] || {};
+        const info = (dlQueue.queue[0] && dlQueue.queue[0].info) || {};
         info.done = 0;
         const zip = await new JSZip();
 
@@ -439,12 +505,12 @@ Available placeholders:
         btnDownloadProgress();
 
         const dlPromise = (page, threadID) => {
-            if (info.error || queueStatus.skip) return;
+            if (info.error || dlQueue.skip) return;
             const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
             console.log(`[${threadID}] ${url}`);
             return get(url, 'arraybuffer')
                 .then(async data => {
-                    await zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, Comlink.transfer({ data }, [data]));
+                    zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, data);
                     info.done++;
                     btnDownloadProgress();
                 })
@@ -455,40 +521,45 @@ Available placeholders:
         };
 
         await multiThread(pages, dlPromise);
-        queueInfo.shift();
 
-        if (queueStatus.skip) {
-            queueStatus.skip = false;
-            return async () => ({});
+        if (dlQueue.skip) {
+            dlQueue.skip = false;
+            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}`);
+            if ($btn) $btn.attr('disabled', false);
+            return {
+                zipFn: async () => ({}),
+                zipInfo: null,
+            };
         }
 
-        if (!pageType.gallery && pageType.list) zipQueueInfo.push(info);
-        return async () => {
-            info.compressing = true;
-            btnCompressingProgress();
-            console.log('Compressing', cfName);
-            let lastZipFile = '';
-            const { data } = await zip.generateAsync(
-                { type: 'arraybuffer', ...getCompressionOptions() },
-                Comlink.proxy(({ percent, currentFile }) => {
-                    if (lastZipFile !== currentFile && currentFile) {
-                        lastZipFile = currentFile;
-                        console.log(`Compressing ${percent.toFixed(2)}%`, currentFile);
-                    }
-                    btnCompressingProgress(percent);
-                    info.compressingPercent = percent;
-                })
-            );
-            console.log('Done');
+        return {
+            zipFn: async () => {
+                info.compressing = true;
+                btnCompressingProgress();
+                console.log('Compressing', cfName);
+                let lastZipFile = '';
+                const data = await zip.generateAsync(
+                    { type: 'arraybuffer', ...getCompressionOptions() },
+                    Comlink.proxy(({ percent, currentFile }) => {
+                        if (lastZipFile !== currentFile && currentFile) {
+                            lastZipFile = currentFile;
+                            console.log(`Compressing ${percent.toFixed(2)}%`, currentFile);
+                        }
+                        btnCompressingProgress(percent);
+                        info.compressingPercent = percent;
+                    })
+                );
+                console.log('Done');
 
-            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
-            if ($btn) $btn.attr('disabled', false);
-            zipQueueInfo.shift();
+                if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
+                if ($btn) $btn.attr('disabled', false);
 
-            return {
-                name: cfName,
-                data: new Blob([data]),
-            };
+                return {
+                    name: cfName,
+                    data: new Blob([data]),
+                };
+            },
+            zipInfo: info,
         };
     };
     const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => downloadGallery(await getGallery(gid), $btn, $btnTxt, headTxt);
@@ -562,7 +633,7 @@ Available placeholders:
                 }
 
                 try {
-                    if (!zip) zip = await (await downloadGallery(info, $btn, $btnTxt, true))();
+                    if (!zip) zip = await (await downloadGallery(info, $btn, $btnTxt, true)).zipFn();
                     if (!(zip.data && zip.name)) return;
                     saveAs(zip.data, zip.name);
                     if (!downloaded) {
@@ -606,7 +677,7 @@ Available placeholders:
                     $btnTxt.html('Wait');
                     const gallery = await getGallery(gid);
                     const downloaded = isDownloaded(gallery.title);
-                    if (downloaded || queueInfo.some(({ title }) => title == gallery.title)) {
+                    if (downloaded || dlQueue.queue.some(({ info: { title } }) => title === gallery.title)) {
                         const abandon = new Promise(resolve => {
                             const n = new Noty({
                                 ...notyOption,
@@ -628,34 +699,38 @@ Available placeholders:
                         });
                         if (await abandon) return;
                     }
-                    queueInfo.push({
-                        gid,
-                        title: gallery.title,
-                        page: gallery.pages.length,
-                        done: 0,
-                        error: false,
-                        compressing: false,
-                        compressingPercent: 0,
-                        cancel,
-                    });
-                    queue.push(async () => {
-                        const zipFn = await downloadGallery(gallery, $btn, $btnTxt);
-                        zipQueue.push(async () => {
-                            const { data, name } = await zipFn();
-                            if (!(data && name)) {
-                                cancel();
-                                return;
+                    dlQueue.push(
+                        async () => {
+                            const { zipFn, zipInfo } = await downloadGallery(gallery, $btn, $btnTxt);
+                            if (zipInfo) {
+                                zipQueue.push(async () => {
+                                    const { data, name } = await zipFn();
+                                    if (!(data && name)) {
+                                        cancel();
+                                        return;
+                                    }
+                                    saveAs(data, name);
+                                    if (!downloaded) {
+                                        const md5 = MD5(gallery.title);
+                                        downloadHistory.push(md5);
+                                        downloadHistorySet.add(md5);
+                                    }
+                                }, zipInfo);
+                                zipQueue.start();
                             }
-                            saveAs(data, name);
-                            if (!downloaded) {
-                                const md5 = MD5(gallery.title);
-                                downloadHistory.push(md5);
-                                downloadHistorySet.add(md5);
-                            }
-                        });
-                        startZipQueue();
-                    });
-                    startQueue();
+                        },
+                        {
+                            gid,
+                            title: gallery.title,
+                            page: gallery.pages.length,
+                            done: 0,
+                            error: false,
+                            compressing: false,
+                            compressingPercent: 0,
+                            cancel,
+                        }
+                    );
+                    dlQueue.start();
                 });
             });
 
@@ -687,25 +762,29 @@ Available placeholders:
             }
 
             // 还原下载队列
-            if (first) {
-                for (const { gid, title } of queueInfo) {
-                    queue.push(async () => {
-                        const zipFn = await downloadG(gid);
-                        zipQueue.push(async () => {
-                            const { data, name } = await zipFn();
-                            if (!(data && name)) return;
-                            saveAs(data, name);
-                            if (!isDownloaded(title)) {
-                                const md5 = MD5(title);
-                                downloadHistory.push(md5);
-                                downloadHistorySet.add(md5);
-                            }
-                        });
-                        startZipQueue();
-                    });
+            const dlQueueInfos = JSON.parse(sessionStorage.getItem('queueInfos'));
+            if (first && dlQueueInfos) {
+                for (const info of dlQueueInfos) {
+                    const { gid, title } = info;
+                    dlQueue.push(async () => {
+                        const { zipFn, zipInfo } = await downloadG(gid);
+                        if (zipInfo) {
+                            zipQueue.push(async () => {
+                                const { data, name } = await zipFn();
+                                if (!(data && name)) return;
+                                saveAs(data, name);
+                                if (!isDownloaded(title)) {
+                                    const md5 = MD5(title);
+                                    downloadHistory.push(md5);
+                                    downloadHistorySet.add(md5);
+                                }
+                            }, zipInfo);
+                            zipQueue.start();
+                        }
+                    }, info);
                 }
             }
-            startQueue();
+            dlQueue.start();
         } else if (pageType.galleryPage && isNyahentai) {
             // 本子在线阅读
             const gpViewModeText = ['[off]', '[on]'];
