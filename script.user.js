@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.9.0
+// @version      2.9.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -58,29 +58,34 @@
         if (index > -1) return this.splice(index, 1)[0];
     };
 
-    const SYSTEM_THREAD_NUM = (navigator && navigator.hardwareConcurrency) || 1;
+    const WORKER_THREAD_NUM = ((navigator && navigator.hardwareConcurrency) || 2) - 1;
+
+    const _log = (...args) => console.log('[nhentai-helper]', ...args);
+    const _warn = (...args) => console.warn('[nhentai-helper]', ...args);
+    const _error = (...args) => console.error('[nhentai-helper]', ...args);
 
     class JSZipWorkerPool {
         constructor() {
             this.pool = [];
-            const WORKER_URL = URL.createObjectURL(new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' }));
-            const createWorker = () => {
-                const worker = new Worker(WORKER_URL);
-                return Comlink.wrap(worker);
-            };
-            for (let id = 0; id < SYSTEM_THREAD_NUM; id++) {
+            this.WORKER_URL = URL.createObjectURL(new Blob(['importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);'], { type: 'text/javascript' }));
+            for (let id = 0; id < WORKER_THREAD_NUM; id++) {
                 this.pool.push({
                     id,
-                    JSZip: createWorker(),
+                    JSZip: null,
                     idle: true,
                 });
             }
+        }
+        createWorker() {
+            const worker = new Worker(this.WORKER_URL);
+            return Comlink.wrap(worker);
         }
         async generateAsync(files, options, onUpdate) {
             const worker = this.pool.find(({ idle }) => idle);
             if (!worker) throw new Error('No avaliable worker.');
             worker.idle = false;
-            console.log(`JSZipWorkerPool use ${worker.id}`);
+            _log(`JSZipWorkerPool use ${worker.id}`);
+            if (!worker.JSZip) worker.JSZip = this.createWorker();
             const zip = await new worker.JSZip();
             for (const { name, data } of files) {
                 await zip.file(name, Comlink.transfer({ data }, [data]));
@@ -309,7 +314,7 @@ Available placeholders:
     dlQueue.skip = false;
 
     // 压缩队列
-    const zipQueue = new AsyncQueue(SYSTEM_THREAD_NUM);
+    const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
 
     // 下载历史
     const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
@@ -402,7 +407,7 @@ Available placeholders:
                     onerror: e => {
                         if (retry === 0) reject(e);
                         else {
-                            console.warn('Network error, retry.');
+                            _warn('Network error, retry.');
                             setTimeout(() => {
                                 resolve(get(url, responseType, retry - 1));
                             }, 1000);
@@ -412,7 +417,7 @@ Available placeholders:
                         if (status === 200) resolve(response);
                         else if (retry === 0) reject(`${status} ${url}`);
                         else {
-                            console.warn(status, url);
+                            _warn(status, url);
                             setTimeout(() => {
                                 resolve(get(url, responseType, retry - 1));
                             }, 500);
@@ -484,7 +489,7 @@ Available placeholders:
                 pages: num_pages,
             }),
         };
-        console.log({ gid, ...info });
+        _log({ gid, ...info });
 
         return info;
     };
@@ -507,7 +512,7 @@ Available placeholders:
         const dlPromise = (page, threadID) => {
             if (info.error || dlQueue.skip) return;
             const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
-            console.log(`[${threadID}] ${url}`);
+            _log(`[${threadID}] ${url}`);
             return get(url, 'arraybuffer')
                 .then(async data => {
                     zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, data);
@@ -536,20 +541,20 @@ Available placeholders:
             zipFn: async () => {
                 info.compressing = true;
                 btnCompressingProgress();
-                console.log('Compressing', cfName);
+                _log('Compressing', cfName);
                 let lastZipFile = '';
                 const data = await zip.generateAsync(
                     { type: 'arraybuffer', ...getCompressionOptions() },
                     Comlink.proxy(({ percent, currentFile }) => {
                         if (lastZipFile !== currentFile && currentFile) {
                             lastZipFile = currentFile;
-                            console.log(`Compressing ${percent.toFixed(2)}%`, currentFile);
+                            _log(`Compressing ${percent.toFixed(2)}%`, currentFile);
                         }
                         btnCompressingProgress(percent);
                         info.compressingPercent = percent;
                     })
                 );
-                console.log('Done');
+                _log('Done');
 
                 if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
                 if ($btn) $btn.attr('disabled', false);
@@ -644,7 +649,7 @@ Available placeholders:
                 } catch (error) {
                     $btn.attr('disabled', false);
                     $btnTxt.html('Error');
-                    console.error(error);
+                    _error(error);
                 }
             });
         } else if (pageType.list) {
