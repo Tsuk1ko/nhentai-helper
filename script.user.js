@@ -600,6 +600,78 @@ Available placeholders:
 
         if (pageType.gallery) {
             // 本子详情页
+            $('#thumbnail-container .thumb-container')
+                .prepend('<div style="max-width:100%;float:right"><input type="radio" name="showpages" class="btn btn-secondary pagelist" style="position: absolute;z-index:2;margin-inline: -20px;"></input>'
+                         +'<span style="position: absolute;margin-left: -20px;padding-top: 40px;width: min-content;display:none">'
+                         +'<button class="btn btn-secondary b5" id="b5">5</button>'
+                         +'<button class="btn btn-secondary b10" id="b10">10</button>'
+                         +'</span>'
+                         +'</div>');
+
+            $(':radio[name=showpages]').focus(function(){
+                $(this).next().fadeIn();
+            })
+            $(':radio[name=showpages]').blur(function(){
+                $(this).next().delay(500).fadeOut();
+            })
+            $('.b5').click(()=>{
+                openNextPages(5);
+            });
+            $('.b10').click(()=>{
+                openNextPages(10);
+            });
+
+/*             function promFun(delay, callBack) {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        callBack();
+                        resolve();
+                    }, delay);
+                });
+            } */
+            function openNextPages(maxPages)
+            {
+                var strNum=0;
+                var pages=[];
+                var pList;
+                var radioChk;
+                if(pages.length>0)
+                {
+                    pages=pages.slice(0,0);
+                }
+                let tmp=$(":radio[name=showpages]").filter(':checked');
+                if(!!tmp)
+                    radioChk=tmp.parent().parent().find('a').attr('href');
+                else
+                    radioChk=null;
+
+                pList=$(".thumb-container a");
+                pList.each(function(index)
+                           {
+                    pages.push($(this).attr("href"));
+                });
+
+
+                if(!!radioChk)
+                {
+                    strNum=pages.indexOf(radioChk);
+                }
+                else
+                {
+                    strNum=0;
+                }
+
+                let subPages=pages.slice(strNum,strNum+maxPages);
+                strNum+=maxPages;
+                for(let i=0;i<subPages.length;i++)
+                {
+                    //await promFun(0,()=>{
+                        window.open(subPages[i])
+                    //});
+                }
+                maxPages=0;
+            }
+
             $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${getDpDlExt()}</span></button>`);
 
             const $btn = $('.download-zip');
