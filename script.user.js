@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.9.1
+// @version      2.9.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -14,7 +14,7 @@
 // @connect      nhentai.net
 // @connect      i.nhentai.net
 // @connect      json2jsonp.com
-// @connect      i0.nyacdn.com
+// @connect      i0.aspcdn.xyz
 // @license      GPL-3.0
 // @grant        GM_addStyle
 // @grant        GM_getValue
@@ -82,18 +82,22 @@
         }
         async generateAsync(files, options, onUpdate) {
             const worker = this.pool.find(({ idle }) => idle);
-            if (!worker) throw new Error('No avaliable worker.');
+            if (!worker) throw new Error('No avaliable JSZip worker.');
             worker.idle = false;
-            _log(`JSZipWorkerPool use ${worker.id}`);
             if (!worker.JSZip) worker.JSZip = this.createWorker();
             const zip = await new worker.JSZip();
             for (const { name, data } of files) {
                 await zip.file(name, Comlink.transfer({ data }, [data]));
             }
-            return zip.generateAsync(options, onUpdate).then(({ data }) => {
-                worker.idle = true;
-                return data;
-            });
+            return zip
+                .generateAsync(
+                    options,
+                    Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
+                )
+                .then(({ data }) => {
+                    worker.idle = true;
+                    return data;
+                });
         }
     }
 
@@ -121,8 +125,8 @@
         do {
             num = prompt('Please input the number of threads you want (1~32):', THREAD);
             if (num === null) return;
-            num = parseInt(num);
-        } while (num.toString() == 'NaN' || num < 1 || num > 32);
+            num = Number(num);
+        } while (isNaN(num) || num < 1 || num > 32);
         THREAD = num;
         GM_setValue('thread_num', num);
     });
@@ -181,7 +185,7 @@ Available placeholders:
     });
 
     // 自定义压缩级别
-    let C_LEVEL = parseInt(GM_getValue('c_lv', '0')) || 0;
+    let C_LEVEL = GM_getValue('c_lv', 0);
     GM_registerMenuCommand('Compression Level', () => {
         let num;
         do {
@@ -194,7 +198,7 @@ Available placeholders:
                 C_LEVEL
             );
             if (num === null) return;
-            num = parseInt(num.trim());
+            num = Number(num.trim());
         } while (isNaN(num) || num < 0 || num > 9);
         C_LEVEL = num;
         GM_setValue('c_lv', C_LEVEL);
@@ -208,14 +212,14 @@ Available placeholders:
     };
 
     // 文件名补零
-    let FILENAME_LENGTH = parseInt(GM_getValue('filename_length', '0')) || 0;
+    let FILENAME_LENGTH = GM_getValue('filename_length', 0);
     GM_registerMenuCommand('Filename Length', () => {
         let num;
         do {
             num = prompt(`Please input the minimum image filename length you want (≥0), zeros will be padded to the start of filename when its length lower than this value:`, FILENAME_LENGTH);
             if (num === null) return;
-            num = parseInt(num);
-        } while (num.toString() == 'NaN' || num < 0);
+            num = Number(num);
+        } while (isNaN(num) || num < 0);
         FILENAME_LENGTH = num;
         GM_setValue('filename_length', num);
     });
@@ -256,7 +260,7 @@ Available placeholders:
         galleryPage: /^\/g\/[0-9]+(\/list)?\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
         list: $('.gallery').length > 0,
     };
-    const isNyahentai = window.location.host !== 'nhentai.net';
+    const isNyaHentai = window.location.host !== 'nhentai.net';
 
     // 队列
     class AsyncQueue {
@@ -431,9 +435,9 @@ Available placeholders:
     const proxyGetJSON = url => get(`https://json2jsonp.com/?url=${encodeURIComponent(url)}&callback=cbfunc`, '').then(jsonp => JSON.parse(jsonp.replace(/^cbfunc\((.*)\)$/, '$1')));
     const nhentaiGalleryApi = gid => {
         const url = `https://nhentai.net/api/gallery/${gid}`;
-        return isNyahentai ? proxyGetJSON(url) : get(url);
+        return isNyaHentai ? proxyGetJSON(url) : get(url);
     };
-    const getDownloadURL = (mid, filename) => `https://${isNyahentai ? 'i0.nyacdn.com' : 'i.nhentai.net'}/galleries/${mid}/${filename}`;
+    const getDownloadURL = (mid, filename) => `https://${isNyaHentai ? 'i0.aspcdn.xyz' : 'i.nhentai.net'}/galleries/${mid}/${filename}`;
 
     // 伪多线程
     const multiThread = async (tasks, promiseFunc) => {
@@ -544,15 +548,18 @@ Available placeholders:
                 _log('Compressing', cfName);
                 let lastZipFile = '';
                 const data = await zip.generateAsync(
-                    { type: 'arraybuffer', ...getCompressionOptions() },
-                    Comlink.proxy(({ percent, currentFile }) => {
+                    {
+                        type: 'arraybuffer',
+                        ...getCompressionOptions(),
+                    },
+                    ({ workerId, percent, currentFile }) => {
                         if (lastZipFile !== currentFile && currentFile) {
                             lastZipFile = currentFile;
-                            _log(`Compressing ${percent.toFixed(2)}%`, currentFile);
+                            _log(`[${workerId}] Compressing ${percent.toFixed(2)}%`, currentFile);
                         }
                         btnCompressingProgress(percent);
                         info.compressingPercent = percent;
-                    })
+                    }
                 );
                 _log('Done');
 
@@ -580,7 +587,7 @@ Available placeholders:
 
     // 本子浏览模式
     const applyGPViewStyle = gpViewMode => {
-        if (gpViewMode) $('body').append(`<style id="gp-view-mode-style">#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:${isNyahentai ? 'calc(100vh - 65px)' : '100vh'}}</style>`);
+        if (gpViewMode) $('body').append(`<style id="gp-view-mode-style">#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:${isNyaHentai ? 'calc(100vh - 65px)' : '100vh'}}</style>`);
         else $('#gp-view-mode-style').remove();
     };
 
@@ -790,7 +797,7 @@ Available placeholders:
                 }
             }
             dlQueue.start();
-        } else if (pageType.galleryPage && isNyahentai) {
+        } else if (pageType.galleryPage && isNyaHentai) {
             // 本子在线阅读
             const gpViewModeText = ['[off]', '[on]'];
             let gpViewMode = GM_getValue('gp_view_mode', 0);
