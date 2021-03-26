@@ -1,7 +1,5 @@
 # nHentai Helper
 
-Also support NyaHentai. Because its domain is constantly changing, if the script does not run on some domains, you can add the URL to the user matching list.
-
 Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Main features
@@ -45,6 +43,13 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
    Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.
 
 ## Other features
+
+### NyaHentai support
+
+This script also support NyaHentai. You need to know two things:
+
+1. Its domains change frequently. If the script does not run on some domains, you can add them to *User matches* .
+2. If doujins cannot be downloaded, find the correct picture URL and modify *Custom Download URL* .
 
 ### Language filter
 
