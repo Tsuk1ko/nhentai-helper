@@ -48,8 +48,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 This script also support NyaHentai. You need to know two things:
 
-1. Its domains change frequently. If the script does not run on some domains, you can add them to *User matches* .
-2. If doujins cannot be downloaded, find the correct picture URL and modify *Custom Download URL* .
+1. Its domains change frequently. If the script does not run on some domains, you can add them to *User matches*.
+2. If doujins cannot be downloaded, find the correct image URL and modify *Custom Download URL*.
 
 ### Language filter
 
