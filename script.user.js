@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.9.3
+// @version      2.9.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -364,6 +364,7 @@ Available placeholders:
                 if (this.index === 0) {
                     dlQueue.skip = true;
                 } else {
+                    console.warn(dlQueue.queue, this.index, dlQueue.queue[this.index]);
                     const { info } = dlQueue.queue.remove(this.index);
                     if (info && typeof info.cancel === 'function') info.cancel();
                 }
@@ -372,8 +373,8 @@ Available placeholders:
         template: '<div class="download-item" :class="{ \'download-error\': item.error, \'download-compressing\': item.compressing && !item.error, \'can-cancel\': canCancel }" :title="item.title"><div class="download-item-cancel" v-if="canCancel" @click="cancel"><i class="fa fa-times"></i></div><div class="download-item-title">{{item.title}}</div><div class="download-item-progress" :style="{ width: `${width}%` }"><div class="download-item-progress-text">{{ width }}%</div></div></div>',
     });
     Vue.component('download-list', {
-        props: ['list'],
-        template: '<div v-if="list && list.length" id="download-panel"><download-item v-for="(item, index) in list" :item="item" :index="index" :key="index" /></div>',
+        props: ['zipList', 'dlList'],
+        template: '<div id="download-panel"><download-item v-for="(item, index) in zipList" :item="item" :index="index" :key="index" /><download-item v-for="(item, index) in dlList" :item="item" :index="index" :key="index" /></div>',
     });
     new Vue({
         el: '#download-panel',
@@ -384,8 +385,14 @@ Available placeholders:
             downloadHistory,
         },
         computed: {
+            zipList() {
+                return this.zipQueue.map(({ info }) => info);
+            },
+            dlList() {
+                return this.dlQueue.map(({ info }) => info);
+            },
             infoList() {
-                return [...this.zipQueue, ...this.dlQueue].map(({ info }) => info);
+                return [...this.zipList, ...this.dlList];
             },
         },
         watch: {
@@ -397,7 +404,7 @@ Available placeholders:
                 localStorage.setItem('downloadHistory', JSON.stringify(val));
             },
         },
-        template: '<download-list :list="infoList" />',
+        template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
     });
 
     // 网络请求
