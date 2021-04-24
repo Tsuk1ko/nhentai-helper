@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.9.4
+// @version      2.10.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -584,11 +584,12 @@ Available placeholders:
     const downloadG = async (gid, $btn = null, $btnTxt = null, headTxt = '') => downloadGallery(await getGallery(gid), $btn, $btnTxt, headTxt);
 
     // 语言过滤
-    const langFilter = lang => {
-        if (lang == 'none') $('.gallery').removeClass('hidden');
+    const langFilter = (lang, $node) => {
+        const getNode = $node ? selector => $node.find(selector) : selector => $(selector);
+        if (lang == 'none') getNode('.gallery').removeClass('hidden');
         else {
-            $(`.gallery[lang=${lang}]`).removeClass('hidden');
-            $(`.gallery:not([lang=${lang}])`).addClass('hidden');
+            getNode(`.gallery[lang=${lang}]`).removeClass('hidden');
+            getNode(`.gallery:not([lang=${lang}])`).addClass('hidden');
         }
     };
 
@@ -599,19 +600,7 @@ Available placeholders:
     };
 
     // 功能初始化
-    const init = (first = false) => {
-        if (!first) {
-            $('.pagination a').each(function () {
-                const $this = $(this);
-                $this.attr('href', $this.attr('href').replace(/(&?)_pjax=[^&]*(&?)/, ''));
-            });
-            // pjax 后需要初始化页面以加载 lazyload 图片
-            const n = unsafeWindow.n;
-            if (typeof n !== 'undefined') {
-                n.install_lazy_loader();
-            }
-        }
-
+    const init = () => {
         if (pageType.gallery) {
             // 本子详情页
             $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${getDpDlExt()}</span></button>`);
@@ -668,7 +657,19 @@ Available placeholders:
             });
         } else if (pageType.list) {
             // 本子列表页
-            $('.gallery').each(function () {
+            $('.gallery').each(handleGallery);
+            new MutationObserver(mutations => {
+                mutations.forEach(({ addedNodes }) => {
+                    console.log('addedNodes: ', addedNodes);
+                    addedNodes.forEach(node => {
+                        const $node = $(node);
+                        $node.find('.gallery').each(handleGallery);
+                        (val => val && langFilter(val, $node))($('#lang-filter').val());
+                    });
+                });
+            }).observe($('#content')[0], { childList: true });
+
+            function handleGallery() {
                 const $this = $(this);
                 $this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
 
@@ -751,38 +752,36 @@ Available placeholders:
                     );
                     dlQueue.start();
                 });
-            });
-
-            if (first) {
-                // 语言过滤
-                $('ul.menu.left').append('<li style="padding:0 10px">Filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
-                $('#lang-filter').change(function () {
-                    langFilter(this.value);
-                    sessionStorage.setItem('lang-filter', this.value);
-                });
-                // 左右键翻页
-                $(document).keydown(event => {
-                    switch (event.keyCode) {
-                        case 37: // left
-                            $('.pagination .previous').click();
-                            break;
-                        case 39: // right
-                            $('.pagination .next').click();
-                            break;
-                    }
-                });
             }
+
+            // 语言过滤
+            $('ul.menu.left').append('<li style="padding:0 10px">Filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
+            $('#lang-filter').change(function () {
+                langFilter(this.value);
+                sessionStorage.setItem('lang-filter', this.value);
+            });
+            // 左右键翻页
+            $(document).keydown(event => {
+                switch (event.keyCode) {
+                    case 37: // left
+                        $('.pagination .previous').click();
+                        break;
+                    case 39: // right
+                        $('.pagination .next').click();
+                        break;
+                }
+            });
 
             // 还原记住的语言过滤
             const rememberedLANG = sessionStorage.getItem('lang-filter');
             if (rememberedLANG) {
-                $('#lang-filter')[0].value = rememberedLANG;
+                $('#lang-filter').val(rememberedLANG);
                 langFilter(rememberedLANG);
             }
 
             // 还原下载队列
             const dlQueueInfos = JSON.parse(sessionStorage.getItem('queueInfos'));
-            if (first && dlQueueInfos) {
+            if (dlQueueInfos) {
                 for (const info of dlQueueInfos) {
                     const { gid, title } = info;
                     dlQueue.push(async () => {
@@ -821,6 +820,15 @@ Available placeholders:
     };
 
     $(document).pjax('.pagination a, .sort a', { container: '#content', fragment: '#content', timeout: 10000 });
-    $(document).on('pjax:end', () => init());
-    init(true);
+    $(document).on('pjax:end', () => {
+        // 防止翻页出现 pjax 参数
+        $('.pagination a').each(function () {
+            const $this = $(this);
+            $this.attr('href', $this.attr('href').replace(/&?_pjax=[^&]*&?/, ''));
+        });
+        // 加载 lazyload 图片
+        const n = unsafeWindow.n;
+        if (typeof n !== 'undefined') n.install_lazy_loader();
+    });
+    init();
 })();
