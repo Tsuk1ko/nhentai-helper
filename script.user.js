@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.10.2
+// @version      2.11.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -225,7 +225,7 @@ Available placeholders:
     });
 
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 0.1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -506,7 +506,11 @@ Available placeholders:
     };
 
     // 下载本子
-    const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false) => {
+    const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false, rangeChecks) => {
+        if (rangeChecks && rangeChecks.length) {
+            pages = pages.filter(({ i }) => rangeChecks.some(check => check(i)));
+        }
+
         const info = (dlQueue.queue[0] && dlQueue.queue[0].info) || {};
         info.done = 0;
         const zip = await new JSZip();
@@ -586,10 +590,10 @@ Available placeholders:
     // 语言过滤
     const langFilter = (lang, $node) => {
         const getNode = $node ? selector => $node.find(selector) : selector => $(selector);
-        if (lang == 'none') getNode('.gallery').removeClass('hidden');
+        if (lang == 0) getNode('.gallery').removeClass('hidden');
         else {
-            getNode(`.gallery[lang=${lang}]`).removeClass('hidden');
-            getNode(`.gallery:not([lang=${lang}])`).addClass('hidden');
+            getNode(`.gallery[data-tags~=${lang}]`).removeClass('hidden');
+            getNode(`.gallery:not([data-tags~=${lang}])`).addClass('hidden');
         }
     };
 
@@ -603,14 +607,25 @@ Available placeholders:
     const init = () => {
         if (pageType.gallery) {
             // 本子详情页
-            $('#info > .buttons').append(`<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt">Download ${getDpDlExt()}</span></button>`);
+            const $btnTxt = $(`<span class="download-zip-txt">Download ${getDpDlExt()}</span>`);
+            const $btn = $('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> </button>').append($btnTxt);
+            const $pagesInput = $('<input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)">');
+            $('#info > .buttons').append($btn).after($pagesInput);
 
-            const $btn = $('.download-zip');
-            const $btnTxt = $('.download-zip-txt');
+            let zip, pagesInput, info;
 
-            let zip, info;
+            $btn.on('click', async () => {
+                const rangeChecks = $pagesInput
+                    .val()
+                    .split(',')
+                    .filter(range => parseInt(range))
+                    .map(range => {
+                        const [start, end] = range.split('-').map(num => parseInt(num));
+                        if (typeof end === 'undefined') return page => page === start;
+                        else if (Number.isNaN(end)) return page => page >= start;
+                        else return page => start <= page && page <= end;
+                    });
 
-            $btn.click(async () => {
                 $btn.attr('disabled', true);
                 if (!info) info = await getGallery();
 
@@ -641,7 +656,10 @@ Available placeholders:
                 }
 
                 try {
-                    if (!zip) zip = await (await downloadGallery(info, $btn, $btnTxt, true)).zipFn();
+                    if (!zip || pagesInput !== $pagesInput.val()) {
+                        zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
+                        pagesInput = $pagesInput.val();
+                    }
                     if (!(zip.data && zip.name)) return;
                     saveAs(zip.data, zip.name);
                     if (!downloaded) {
@@ -656,6 +674,14 @@ Available placeholders:
                 }
             });
         } else if (pageType.list) {
+            // 语言过滤
+            const $langFilter = $('<select id="lang-filter"><option value="0">None</option><option value="29963">Chinese</option><option value="6346">Japanese</option><option value="12227">English</option></select>');
+            $('ul.menu.left').append($('<li style="padding:0 10px">Filter: </li>').append($langFilter));
+            $langFilter.on('change', function () {
+                langFilter(this.value);
+                sessionStorage.setItem('lang-filter', this.value);
+            });
+
             // 本子列表页
             $('.gallery').each(handleGallery);
             new MutationObserver(mutations => {
@@ -663,35 +689,28 @@ Available placeholders:
                     addedNodes.forEach(node => {
                         const $node = $(node);
                         $node.find('.gallery').each(handleGallery);
-                        (val => val && langFilter(val, $node))($('#lang-filter').val());
+                        (val => val && langFilter(val, $node))($langFilter.val());
                     });
                 });
             }).observe($('#content')[0], { childList: true });
 
             function handleGallery() {
                 const $this = $(this);
-                $this.prepend('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> <span class="download-zip-txt"></span></button>');
 
                 const $a = $this.find('a.cover');
                 if (OPEN_ON_NEW_TAB) $a.attr('target', '_blank');
                 const gid = /[0-9]+/.exec($a.attr('href'))[0];
 
-                // 用于语言过滤
-                let language = '';
-                const dataTags = $this.attr('data-tags').split(' ');
-                if (dataTags.includes('6346')) language = 'jp';
-                else if (dataTags.includes('12227')) language = 'en';
-                else if (dataTags.includes('29963')) language = 'zh';
-                $this.attr('lang', language);
+                const $btnTxt = $('<span class="download-zip-txt"></span>');
+                const $btn = $('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> </button>').append($btnTxt);
+                $this.prepend($btn);
 
-                const $btn = $this.find('.download-zip');
-                const $btnTxt = $this.find('.download-zip-txt');
                 const cancel = () => {
                     $btn.attr('disabled', false);
                     $btnTxt.html('');
                 };
 
-                $btn.click(async () => {
+                $btn.on('click', async () => {
                     $btn.attr('disabled', true);
                     $btnTxt.html('Wait');
                     const gallery = await getGallery(gid);
@@ -753,20 +772,14 @@ Available placeholders:
                 });
             }
 
-            // 语言过滤
-            $('ul.menu.left').append('<li style="padding:0 10px">Filter: <select id="lang-filter"><option value="none">None</option><option value="zh">Chinese</option><option value="jp">Japanese</option><option value="en">English</option></select></li>');
-            $('#lang-filter').change(function () {
-                langFilter(this.value);
-                sessionStorage.setItem('lang-filter', this.value);
-            });
             // 左右键翻页
-            $(document).keydown(event => {
-                switch (event.keyCode) {
-                    case 37: // left
-                        $('.pagination .previous').click();
+            $(document).on('keydown', event => {
+                switch (event.key) {
+                    case 'ArrowLeft':
+                        $('.pagination .previous').trigger('click');
                         break;
-                    case 39: // right
-                        $('.pagination .next').click();
+                    case 'ArrowRight':
+                        $('.pagination .next').trigger('click');
                         break;
                 }
             });
@@ -774,7 +787,7 @@ Available placeholders:
             // 还原记住的语言过滤
             const rememberedLANG = sessionStorage.getItem('lang-filter');
             if (rememberedLANG) {
-                $('#lang-filter').val(rememberedLANG);
+                $langFilter.val(rememberedLANG);
                 langFilter(rememberedLANG);
             }
 
@@ -809,7 +822,7 @@ Available placeholders:
             applyGPViewStyle(gpViewMode);
             $('#page-container').prepend(`<button id="gp-view-mode-btn" class="btn btn-secondary"><i class="fa fa-arrows-v"></i> <span>100% view height</span> <span id="gp-view-mode-switch-text">${gpViewModeText[gpViewMode]}</span></button>`);
             const $gpvmst = $('#gp-view-mode-switch-text');
-            $('#gp-view-mode-btn').click(() => {
+            $('#gp-view-mode-btn').on('click', () => {
                 gpViewMode = 1 - gpViewMode;
                 GM_setValue('gp_view_mode', gpViewMode);
                 $gpvmst.html(gpViewModeText[gpViewMode]);
