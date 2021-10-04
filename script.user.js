@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.12.0
+// @version      2.12.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -387,7 +387,6 @@ Available placeholders:
                 if (this.index === 0) {
                     dlQueue.skip = true;
                 } else {
-                    console.warn(dlQueue.queue, this.index, dlQueue.queue[this.index]);
                     const { info } = dlQueue.queue.remove(this.index);
                     if (info && typeof info.cancel === 'function') info.cancel();
                 }
@@ -593,10 +592,7 @@ Available placeholders:
                 if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
                 if ($btn) $btn.attr('disabled', false);
 
-                return {
-                    name: cfName,
-                    data: new Blob([data]),
-                };
+                return new File([data], cfName, { type: 'application/zip' });
             },
             zipInfo: info,
         };
@@ -677,8 +673,8 @@ Available placeholders:
                         zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
                         pagesInput = $pagesInput.val();
                     }
-                    if (!(zip.data && zip.name)) return;
-                    saveAs(zip.data, zip.name);
+                    if (!zip) return;
+                    saveAs(zip);
                     if (!downloaded) markAsDownloaded(info.title);
                 } catch (error) {
                     $btn.attr('disabled', false);
@@ -776,12 +772,12 @@ Available placeholders:
                             const { zipFn, zipInfo } = await downloadGallery(gallery, $btn, $btnTxt);
                             if (zipInfo) {
                                 zipQueue.push(async () => {
-                                    const { data, name } = await zipFn();
-                                    if (!(data && name)) {
+                                    const zip = await zipFn();
+                                    if (!zip) {
                                         cancel();
                                         return;
                                     }
-                                    saveAs(data, name);
+                                    saveAs(zip);
                                     if (!downloaded) markAsDownloaded(gallery.title);
                                 }, zipInfo);
                                 zipQueue.start();
@@ -830,9 +826,9 @@ Available placeholders:
                         const { zipFn, zipInfo } = await downloadG(gid);
                         if (zipInfo) {
                             zipQueue.push(async () => {
-                                const { data, name } = await zipFn();
-                                if (!(data && name)) return;
-                                saveAs(data, name);
+                                const zip = await zipFn();
+                                if (!zip) return;
+                                saveAs(zip);
                                 markAsDownloaded(title);
                             }, zipInfo);
                             zipQueue.start();
