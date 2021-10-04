@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.11.0
+// @version      2.12.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -31,13 +31,14 @@
 // @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require      https://cdn.jsdelivr.net/npm/md5@2.3.0/dist/md5.min.js
 // @require      https://cdn.jsdelivr.net/npm/comlink@4.3.0/dist/umd/comlink.min.js
+// @require      https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL   https://github.com/Tsuk1ko/nhentai-helper/issues
 // ==/UserScript==
 
-(() => {
+(async () => {
     'use strict';
 
     // 防 nhentai console 屏蔽
@@ -114,9 +115,6 @@
             return jsZipPool.generateAsync(this.files, options, onUpdate);
         }
     }
-
-    // 历史记录上限
-    const HISTORY_MAX = 1000;
 
     // 下载线程数
     let THREAD = GM_getValue('thread_num', 8);
@@ -248,7 +246,7 @@ Available placeholders:
     const EXT = { p: 'png', j: 'jpg', g: 'gif' };
     const getExtension = ({ t, extension }) => {
         const ext = (t && EXT[t]) || extension;
-        if (!ext) throw new Error(`Unknown type "${_t}"`);
+        if (!ext) throw new Error(`Unknown type "${t}"`);
         return ext;
     };
 
@@ -321,9 +319,34 @@ Available placeholders:
     const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
 
     // 下载历史
-    const downloadHistory = JSON.parse(localStorage.getItem('downloadHistory')) || [];
-    const downloadHistorySet = new Set(downloadHistory);
-    const isDownloaded = title => downloadHistorySet.has(MD5(title)) || downloadHistorySet.has(title);
+    localforage.config({
+        name: 'nhentai_helper',
+        storeName: 'dl_history',
+    });
+    (async () => {
+        await localforage.ready();
+        let historyNeedToBeMigration;
+        try {
+            historyNeedToBeMigration = JSON.parse(localStorage.getItem('downloadHistory'));
+        } catch (e) {
+            _error(e);
+        }
+        if (!Array.isArray(historyNeedToBeMigration)) return;
+        localStorage.removeItem('downloadHistory');
+        historyNeedToBeMigration.forEach(key => {
+            if (typeof key !== 'string' || !/[0-9a-z]{32}/.test(key)) return;
+            localforage.setItem(key, true);
+        });
+    })().catch(_error);
+    const markAsDownloaded = title => localforage.setItem(MD5(title), true).catch(_error);
+    const isDownloaded = async title => {
+        try {
+            return (await localforage.getItem(MD5(title))) === true;
+        } catch (e) {
+            _error(e);
+        }
+        return false;
+    };
 
     // 下载面板
     Vue.component('download-item', {
@@ -342,7 +365,7 @@ Available placeholders:
                 if (error && !this.item.compressing) {
                     const n = new Noty({
                         ...notyOption,
-                        text: `Error occurred, retry?`,
+                        text: 'Error occurred while downloading, retry?',
                         buttons: [
                             Noty.button('SKIP', 'btn btn-noty', () => {
                                 n.close();
@@ -382,7 +405,6 @@ Available placeholders:
         data: {
             dlQueue: dlQueue.queue,
             zipQueue: zipQueue.queue,
-            downloadHistory,
         },
         computed: {
             zipList() {
@@ -398,10 +420,6 @@ Available placeholders:
         watch: {
             infoList(val) {
                 sessionStorage.setItem('queueInfos', JSON.stringify(val));
-            },
-            downloadHistory(val) {
-                while (val.length > HISTORY_MAX) val.shift();
-                localStorage.setItem('downloadHistory', JSON.stringify(val));
             },
         },
         template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
@@ -426,7 +444,7 @@ Available placeholders:
                     },
                     onload: ({ status, response }) => {
                         if (status === 200) resolve(response);
-                        else if (retry === 0) reject(`${status} ${url}`);
+                        else if (retry === 0) reject(new Error(`${status} ${url}`));
                         else {
                             _warn(status, url);
                             setTimeout(() => {
@@ -451,15 +469,13 @@ Available placeholders:
         const threads = [];
         let taskIndex = 0;
 
-        const run = threadID =>
-            new Promise(async resolve => {
-                while (true) {
-                    let i = taskIndex++;
-                    if (i >= tasks.length) break;
-                    await promiseFunc(tasks[i], threadID);
-                }
-                resolve();
-            });
+        const run = async threadID => {
+            while (true) {
+                const i = taskIndex++;
+                if (i >= tasks.length) break;
+                await promiseFunc(tasks[i], threadID);
+            }
+        };
 
         // 创建线程
         for (let threadID = 0; threadID < THREAD; threadID++) {
@@ -590,7 +606,7 @@ Available placeholders:
     // 语言过滤
     const langFilter = (lang, $node) => {
         const getNode = $node ? selector => $node.find(selector) : selector => $(selector);
-        if (lang == 0) getNode('.gallery').removeClass('hidden');
+        if (Number(lang) === 0) getNode('.gallery').removeClass('hidden');
         else {
             getNode(`.gallery[data-tags~=${lang}]`).removeClass('hidden');
             getNode(`.gallery:not([data-tags~=${lang}])`).addClass('hidden');
@@ -627,46 +643,43 @@ Available placeholders:
                     });
 
                 $btn.attr('disabled', true);
-                if (!info) info = await getGallery();
-
-                const downloaded = isDownloaded(info.title);
-
-                if (downloaded) {
-                    const abandon = new Promise(resolve => {
-                        const n = new Noty({
-                            ...notyOption,
-                            text: `"${info.title}" is already downloaded.<br>Do you want to download again?`,
-                            buttons: [
-                                Noty.button('YES', 'btn btn-noty', () => {
-                                    n.close();
-                                    resolve(false);
-                                }),
-                                Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
-                                    n.close();
-                                    resolve(true);
-                                }),
-                            ],
-                        });
-                        n.show();
-                    });
-                    if (await abandon) {
-                        $btn.attr('disabled', false);
-                        return;
-                    }
-                }
 
                 try {
+                    if (!info) info = await getGallery();
+
+                    const downloaded = await isDownloaded(info.title);
+
+                    if (downloaded) {
+                        const abandon = new Promise(resolve => {
+                            const n = new Noty({
+                                ...notyOption,
+                                text: `"${info.title}" is already downloaded.<br>Do you want to download again?`,
+                                buttons: [
+                                    Noty.button('YES', 'btn btn-noty', () => {
+                                        n.close();
+                                        resolve(false);
+                                    }),
+                                    Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
+                                        n.close();
+                                        resolve(true);
+                                    }),
+                                ],
+                            });
+                            n.show();
+                        });
+                        if (await abandon) {
+                            $btn.attr('disabled', false);
+                            return;
+                        }
+                    }
+
                     if (!zip || pagesInput !== $pagesInput.val()) {
                         zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
                         pagesInput = $pagesInput.val();
                     }
                     if (!(zip.data && zip.name)) return;
                     saveAs(zip.data, zip.name);
-                    if (!downloaded) {
-                        const md5 = MD5(info.title);
-                        downloadHistory.push(md5);
-                        downloadHistorySet.add(md5);
-                    }
+                    if (!downloaded) markAsDownloaded(info.title);
                 } catch (error) {
                     $btn.attr('disabled', false);
                     $btnTxt.html('Error');
@@ -710,11 +723,32 @@ Available placeholders:
                     $btnTxt.html('');
                 };
 
-                $btn.on('click', async () => {
+                $btn.on('click', async function startDownload() {
                     $btn.attr('disabled', true);
                     $btnTxt.html('Wait');
-                    const gallery = await getGallery(gid);
-                    const downloaded = isDownloaded(gallery.title);
+                    let gallery;
+                    try {
+                        gallery = await getGallery(gid);
+                    } catch (e) {
+                        _error(e);
+                        $btn.attr('disabled', false);
+                        $btnTxt.html('Error');
+                        const n = new Noty({
+                            ...notyOption,
+                            text: 'Error occurred while getting information, retry?',
+                            buttons: [
+                                Noty.button('No', 'btn btn-noty', () => {
+                                    n.close();
+                                }),
+                                Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
+                                    n.close();
+                                    startDownload();
+                                }),
+                            ],
+                        });
+                        n.show();
+                    }
+                    const downloaded = await isDownloaded(gallery.title);
                     if (downloaded || dlQueue.queue.some(({ info: { title } }) => title === gallery.title)) {
                         const abandon = new Promise(resolve => {
                             const n = new Noty({
@@ -748,11 +782,7 @@ Available placeholders:
                                         return;
                                     }
                                     saveAs(data, name);
-                                    if (!downloaded) {
-                                        const md5 = MD5(gallery.title);
-                                        downloadHistory.push(md5);
-                                        downloadHistorySet.add(md5);
-                                    }
+                                    if (!downloaded) markAsDownloaded(gallery.title);
                                 }, zipInfo);
                                 zipQueue.start();
                             }
@@ -803,11 +833,7 @@ Available placeholders:
                                 const { data, name } = await zipFn();
                                 if (!(data && name)) return;
                                 saveAs(data, name);
-                                if (!isDownloaded(title)) {
-                                    const md5 = MD5(title);
-                                    downloadHistory.push(md5);
-                                    downloadHistorySet.add(md5);
-                                }
+                                markAsDownloaded(title);
                             }, zipInfo);
                             zipQueue.start();
                         }
