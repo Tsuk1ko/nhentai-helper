@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.12.1
+// @version      2.13.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -223,7 +223,7 @@ Available placeholders:
     });
 
     GM_addStyle(GM_getResourceText('notycss'));
-    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 0.1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}');
+    GM_addStyle('.download-zip:disabled{cursor:wait}.gallery>.download-zip{position:absolute;z-index:1;left:0;top:0;opacity:.8}.gallery:hover>.download-zip{opacity:1}#download-panel::-webkit-scrollbar{width:6px;background-color:rgba(0,0,0,.7)}#download-panel::-webkit-scrollbar-thumb{background-color:rgba(255,255,255,.6)}#download-panel{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:rgba(0,0,0,.7);z-index:100;font-size:12px;overflow-y:scroll}.download-item{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item-cancel{cursor:pointer;position:absolute;top:0;right:-30px;color:#F44336;font-size:20px;line-height:30px;width:30px}.download-item.can-cancel:hover{width:calc(100% - 30px)}.download-item-title{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item-progress{background-color:rgba(0,0,255,.5);line-height:10px}.download-error .download-item-progress{background-color:rgba(255,0,0,.5)}.download-compressing .download-item-progress{background-color:rgba(0,255,0,.5)}.download-item-progress-text{transform:scale(.8)}#page-container{position:relative}#gp-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66BB6A!important}.btn-noty-blue{background-color:#42A5F5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}@media screen and (max-width:768px){#page-container{padding-top:40px}}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 0.1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}');
 
     $('body').append('<div id="download-panel"></div>');
 
@@ -319,34 +319,75 @@ Available placeholders:
     const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
 
     // 下载历史
-    localforage.config({
-        name: 'nhentai_helper',
-        storeName: 'dl_history',
-    });
-    (async () => {
-        await localforage.ready();
+    const dlGidStore = await (async () => {
+        const store = localforage.createInstance({
+            name: 'nhentai_helper',
+            storeName: 'dl_history_gid',
+        });
+        await store.ready();
+        return store;
+    })().catch(_error);
+    const dlTitleStore = await (async () => {
+        const store = localforage.createInstance({
+            name: 'nhentai_helper',
+            storeName: 'dl_history',
+        });
+        await store.ready();
         let historyNeedToBeMigration;
         try {
             historyNeedToBeMigration = JSON.parse(localStorage.getItem('downloadHistory'));
         } catch (e) {
             _error(e);
         }
-        if (!Array.isArray(historyNeedToBeMigration)) return;
-        localStorage.removeItem('downloadHistory');
-        historyNeedToBeMigration.forEach(key => {
-            if (typeof key !== 'string' || !/[0-9a-z]{32}/.test(key)) return;
-            localforage.setItem(key, true);
-        });
+        if (Array.isArray(historyNeedToBeMigration)) {
+            localStorage.removeItem('downloadHistory');
+            historyNeedToBeMigration.forEach(key => {
+                if (typeof key !== 'string' || !/[0-9a-z]{32}/.test(key)) return;
+                store.setItem(key, true);
+            });
+        }
+        return store;
     })().catch(_error);
-    const markAsDownloaded = title => localforage.setItem(MD5(title), true).catch(_error);
-    const isDownloaded = async title => {
+    const markAsDownloaded = (gid, title) => {
+        dlGidStore && dlGidStore.setItem(String(gid), true);
+        dlTitleStore && dlTitleStore.setItem(MD5(title), true).catch(_error);
+    };
+    const isDownloadedByGid = async gid => {
         try {
-            return (await localforage.getItem(MD5(title))) === true;
+            return dlGidStore && (await dlGidStore.getItem(String(gid))) === true;
         } catch (e) {
             _error(e);
         }
         return false;
     };
+    const isDownloadedByTitle = async title => {
+        try {
+            return dlTitleStore && (await dlTitleStore.getItem(MD5(title))) === true;
+        } catch (e) {
+            _error(e);
+        }
+        return false;
+    };
+
+    // 对话框
+    const downloadAgainConfirm = (title, hasQueue = false) =>
+        new Promise(resolve => {
+            const n = new Noty({
+                ...notyOption,
+                text: `"${title}" is already downloaded${hasQueue ? ' or in queue' : ''}.<br>Do you want to download again?`,
+                buttons: [
+                    Noty.button('YES', 'btn btn-noty', () => {
+                        n.close();
+                        resolve(true);
+                    }),
+                    Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
+                        n.close();
+                        resolve(false);
+                    }),
+                ],
+            });
+            n.show();
+        });
 
     // 下载面板
     Vue.component('download-item', {
@@ -415,6 +456,13 @@ Available placeholders:
             infoList() {
                 return [...this.zipList, ...this.dlList];
             },
+        },
+        created() {
+            window.addEventListener('beforeunload', event => {
+                if (!this.infoList.length) return;
+                event.preventDefault();
+                event.returnValue = '';
+            });
         },
         watch: {
             infoList(val) {
@@ -504,6 +552,7 @@ Available placeholders:
         });
 
         const info = {
+            gid,
             mid: media_id,
             title: japanese || english,
             pages: p,
@@ -515,7 +564,7 @@ Available placeholders:
                 pages: num_pages,
             }),
         };
-        _log({ gid, ...info });
+        _log(info);
 
         return info;
     };
@@ -531,17 +580,17 @@ Available placeholders:
         const zip = await new JSZip();
 
         const btnDownloadProgress = () => {
-            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}${info.done}/${pages.length}`);
+            if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}${info.done}/${pages.length}`);
         };
         const btnCompressingProgress = (percent = 0) => {
-            if ($btnTxt) $btnTxt.html(`${headTxt ? 'Compressing ' : ''}${percent.toFixed()}%`);
+            if ($btnTxt) $btnTxt.text(`${headTxt ? 'Compressing ' : ''}${percent.toFixed()}%`);
         };
 
         btnDownloadProgress();
 
         const dlPromise = (page, threadID) => {
             if (info.error || dlQueue.skip) return;
-            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid: mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
+            const url = CUSTOM_DOWNLOAD_URL ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, { mid, index: page.i, ext: page.t }) : getDownloadURL(mid, `${page.i}.${page.t}`);
             _log(`[${threadID}] ${url}`);
             return get(url, 'arraybuffer')
                 .then(async data => {
@@ -559,7 +608,7 @@ Available placeholders:
 
         if (dlQueue.skip) {
             dlQueue.skip = false;
-            if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}`);
+            if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}`);
             if ($btn) $btn.attr('disabled', false);
             return {
                 zipFn: async () => ({}),
@@ -589,7 +638,7 @@ Available placeholders:
                 );
                 _log('Done');
 
-                if ($btnTxt) $btnTxt.html(`${headTxt ? `Download ${getDpDlExt()} ` : ''}√`);
+                if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}✓`);
                 if ($btn) $btn.attr('disabled', false);
 
                 return new File([data], cfName, { type: 'application/zip' });
@@ -643,30 +692,11 @@ Available placeholders:
                 try {
                     if (!info) info = await getGallery();
 
-                    const downloaded = await isDownloaded(info.title);
+                    const downloaded = (await isDownloadedByGid(info.gid)) || (await isDownloadedByTitle(info.title));
 
-                    if (downloaded) {
-                        const abandon = new Promise(resolve => {
-                            const n = new Noty({
-                                ...notyOption,
-                                text: `"${info.title}" is already downloaded.<br>Do you want to download again?`,
-                                buttons: [
-                                    Noty.button('YES', 'btn btn-noty', () => {
-                                        n.close();
-                                        resolve(false);
-                                    }),
-                                    Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
-                                        n.close();
-                                        resolve(true);
-                                    }),
-                                ],
-                            });
-                            n.show();
-                        });
-                        if (await abandon) {
-                            $btn.attr('disabled', false);
-                            return;
-                        }
+                    if (downloaded && !(await downloadAgainConfirm(info.title))) {
+                        $btn.attr('disabled', false);
+                        return;
                     }
 
                     if (!zip || pagesInput !== $pagesInput.val()) {
@@ -675,17 +705,17 @@ Available placeholders:
                     }
                     if (!zip) return;
                     saveAs(zip);
-                    if (!downloaded) markAsDownloaded(info.title);
+                    markAsDownloaded(info.gid, info.title);
                 } catch (error) {
                     $btn.attr('disabled', false);
-                    $btnTxt.html('Error');
+                    $btnTxt.text('Error');
                     _error(error);
                 }
             });
         } else if (pageType.list) {
             // 语言过滤
             const $langFilter = $('<select id="lang-filter"><option value="0">None</option><option value="29963">Chinese</option><option value="6346">Japanese</option><option value="12227">English</option></select>');
-            $('ul.menu.left').append($('<li style="padding:0 10px">Filter: </li>').append($langFilter));
+            $('ul.menu.left').append($('<li style="padding:0 10px;user-select:none">Filter: </li>').append($langFilter));
             $langFilter.on('change', function () {
                 langFilter(this.value);
                 sessionStorage.setItem('lang-filter', this.value);
@@ -704,97 +734,98 @@ Available placeholders:
             }).observe($('#content')[0], { childList: true });
 
             function handleGallery() {
-                const $this = $(this);
+                const $gallery = $(this);
 
-                const $a = $this.find('a.cover');
+                const $a = $gallery.find('a.cover');
                 if (OPEN_ON_NEW_TAB) $a.attr('target', '_blank');
                 const gid = /[0-9]+/.exec($a.attr('href'))[0];
 
                 const $btnTxt = $('<span class="download-zip-txt"></span>');
                 const $btn = $('<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> </button>').append($btnTxt);
-                $this.prepend($btn);
+                $gallery.prepend($btn);
 
                 const cancel = () => {
                     $btn.attr('disabled', false);
-                    $btnTxt.html('');
+                    $btnTxt.text('');
+                };
+                const markGalleryDownloaded = () => {
+                    $gallery.addClass('downloaded');
                 };
 
-                $btn.on('click', async function startDownload() {
-                    $btn.attr('disabled', true);
-                    $btnTxt.html('Wait');
-                    let gallery;
-                    try {
-                        gallery = await getGallery(gid);
-                    } catch (e) {
-                        _error(e);
-                        $btn.attr('disabled', false);
-                        $btnTxt.html('Error');
-                        const n = new Noty({
-                            ...notyOption,
-                            text: 'Error occurred while getting information, retry?',
-                            buttons: [
-                                Noty.button('No', 'btn btn-noty', () => {
-                                    n.close();
-                                }),
-                                Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
-                                    n.close();
-                                    startDownload();
-                                }),
-                            ],
-                        });
-                        n.show();
-                    }
-                    const downloaded = await isDownloaded(gallery.title);
-                    if (downloaded || dlQueue.queue.some(({ info: { title } }) => title === gallery.title)) {
-                        const abandon = new Promise(resolve => {
+                isDownloadedByGid(gid).then(downloaded => downloaded && markGalleryDownloaded());
+
+                $btn.on('click', () => {
+                    let skipDownloadedCheck = false;
+                    (async function startDownload() {
+                        $btn.attr('disabled', true);
+                        $btnTxt.text('Wait');
+                        if (!skipDownloadedCheck && (await isDownloadedByGid(gid))) {
+                            const continueDownload = await downloadAgainConfirm($gallery.find('.caption').text());
+                            if (!continueDownload) {
+                                cancel();
+                                return;
+                            }
+                            skipDownloadedCheck = true;
+                        }
+                        let gallery;
+                        try {
+                            gallery = await getGallery(gid);
+                        } catch (e) {
+                            _error(e);
+                            $btn.attr('disabled', false);
+                            $btnTxt.text('Error');
                             const n = new Noty({
                                 ...notyOption,
-                                text: `"${gallery.title}" is already downloaded or in queue.<br>Do you want to download again?`,
+                                text: 'Error occurred while getting information, retry?',
                                 buttons: [
-                                    Noty.button('YES', 'btn btn-noty', () => {
+                                    Noty.button('No', 'btn btn-noty', () => {
                                         n.close();
-                                        resolve(false);
                                     }),
-                                    Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
+                                    Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
                                         n.close();
-                                        resolve(true);
-                                        $btn.attr('disabled', false);
-                                        $btnTxt.html('');
+                                        startDownload();
                                     }),
                                 ],
                             });
                             n.show();
-                        });
-                        if (await abandon) return;
-                    }
-                    dlQueue.push(
-                        async () => {
-                            const { zipFn, zipInfo } = await downloadGallery(gallery, $btn, $btnTxt);
-                            if (zipInfo) {
-                                zipQueue.push(async () => {
-                                    const zip = await zipFn();
-                                    if (!zip) {
-                                        cancel();
-                                        return;
-                                    }
-                                    saveAs(zip);
-                                    if (!downloaded) markAsDownloaded(gallery.title);
-                                }, zipInfo);
-                                zipQueue.start();
-                            }
-                        },
-                        {
-                            gid,
-                            title: gallery.title,
-                            page: gallery.pages.length,
-                            done: 0,
-                            error: false,
-                            compressing: false,
-                            compressingPercent: 0,
-                            cancel,
                         }
-                    );
-                    dlQueue.start();
+                        if (!skipDownloadedCheck && ((await isDownloadedByTitle(gallery.title)) || dlQueue.queue.some(({ info: { title } }) => title === gallery.title))) {
+                            const continueDownload = await downloadAgainConfirm(gallery.title);
+                            if (!continueDownload) {
+                                cancel();
+                                return;
+                            }
+                        }
+                        dlQueue.push(
+                            async () => {
+                                const { zipFn, zipInfo } = await downloadGallery(gallery, $btn, $btnTxt);
+                                if (zipInfo) {
+                                    zipQueue.push(async () => {
+                                        const zip = await zipFn();
+                                        if (!zip) {
+                                            cancel();
+                                            return;
+                                        }
+                                        saveAs(zip);
+                                        markAsDownloaded(gid, gallery.title);
+                                        markGalleryDownloaded();
+                                    }, zipInfo);
+                                    zipQueue.start();
+                                }
+                            },
+                            {
+                                gid,
+                                title: gallery.title,
+                                page: gallery.pages.length,
+                                done: 0,
+                                error: false,
+                                compressing: false,
+                                compressingPercent: 0,
+                                cancel,
+                            }
+                        );
+                        dlQueue.start();
+                    })();
                 });
             }
 
@@ -829,7 +860,7 @@ Available placeholders:
                                 const zip = await zipFn();
                                 if (!zip) return;
                                 saveAs(zip);
-                                markAsDownloaded(title);
+                                markAsDownloaded(gid, title);
                             }, zipInfo);
                             zipQueue.start();
                         }
@@ -847,7 +878,7 @@ Available placeholders:
             $('#gp-view-mode-btn').on('click', () => {
                 gpViewMode = 1 - gpViewMode;
                 GM_setValue('gp_view_mode', gpViewMode);
-                $gpvmst.html(gpViewModeText[gpViewMode]);
+                $gpvmst.text(gpViewModeText[gpViewMode]);
                 applyGPViewStyle(gpViewMode);
             });
         }
