@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.13.0
+// @version      2.13.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -42,7 +42,7 @@
     'use strict';
 
     // 防 nhentai console 屏蔽
-    if (localStorage.getItem('NHENTAI_HELPER_DEBUG') && typeof unsafeWindow.N !== 'undefined') {
+    if (localStorage.getItem('NHENTAI_HELPER_DEBUG') && typeof unsafeWindow.App !== 'undefined') {
         const isNodeOrElement = typeof Node === 'object' && typeof HTMLElement === 'object' ? o => o instanceof Node || o instanceof HTMLElement : o => o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
         const c = unsafeWindow.console;
         c._clear = c.clear;
@@ -896,8 +896,8 @@ Available placeholders:
             $this.attr('href', isRelative ? `${url.pathname}${url.search}` : url.href);
         });
         // 加载 lazyload 图片
-        const n = unsafeWindow.n;
-        if (typeof n !== 'undefined') n.install_lazy_loader();
+        const { App } = unsafeWindow;
+        if (typeof App !== 'undefined') App.prototype.install_lazy_loader();
     });
     init();
 })();
