@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.13.2
+// @version      2.13.3
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -361,8 +361,16 @@ Available placeholders:
         return false;
     };
     const isDownloadedByTitle = async title => {
+        if (!dlTitleStore) return false;
         try {
-            return dlTitleStore && ((await dlTitleStore.getItem(MD5(title.replace(/\s/g, '')))) || (await dlTitleStore.getItem(MD5(title)))) === true;
+            const md5v2 = MD5(title.replace(/\s/g, ''));
+            if ((await dlTitleStore.getItem(md5v2)) === true) return true;
+            const md5v1 = MD5(title);
+            if ((await dlTitleStore.getItem(md5v1)) === true) {
+                dlTitleStore.setItem(md5v2, true);
+                dlTitleStore.removeItem(md5v1);
+                return true;
+            }
         } catch (e) {
             _error(e);
         }
