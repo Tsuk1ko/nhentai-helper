@@ -65,3 +65,8 @@ You can select a language in the navigation bar to filter doujins.
 Effective when reading online, only for NyaHentai (now nHentai already has this feature).
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
+
+## Recommended scripts
+
+- [Super-preloader](https://github.com/machsix/Super-preloader)  
+  Let you have unlimited drop-down page turning experience in the doujin list page.

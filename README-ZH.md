@@ -64,3 +64,8 @@
 在线阅读时可开启或关闭，只在 NyaHentai 生效，nHentai 官方已经有这个功能了
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
+
+## 推荐脚本
+
+- [Super-preloader](https://github.com/machsix/Super-preloader)  
+  支持在本子列表页无限下拉翻页
