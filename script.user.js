@@ -3,18 +3,20 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.13.3
+// @version      2.13.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
 // @description:zh-TW  爲 nHentai 增加壓縮打包下載方式以及一些輔助功能，同時支持 NyaHentai
 // @author       Jindai Kirin
 // @match        https://nhentai.net/*
+// @match        https://nhentai.xxx/*
 // @include      /^https:\/\/([^\/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./
 // @connect      nhentai.net
 // @connect      i.nhentai.net
 // @connect      json2jsonp.com
 // @connect      i0.mspcdn9.xyz
+// @connect      cdn.nhentai.xxx
 // @license      GPL-3.0
 // @grant        GM_addStyle
 // @grant        GM_getValue
@@ -258,7 +260,8 @@ Available placeholders:
         galleryPage: /^\/g\/[0-9]+(\/list)?\/[0-9]+\/(\?.*)?$/.test(window.location.pathname),
         list: $('.gallery').length > 0,
     };
-    const isNyaHentai = window.location.host !== 'nhentai.net';
+    const isNHentai = window.location.host === 'nhentai.net';
+    const isNHentaiX = window.location.host === 'nhentai.xxx';
 
     // 队列
     class AsyncQueue {
@@ -515,9 +518,13 @@ Available placeholders:
     const proxyGetJSON = url => get(`https://json2jsonp.com/?url=${encodeURIComponent(url)}&callback=cbfunc`, '').then(jsonp => JSON.parse(jsonp.replace(/^cbfunc\((.*)\)$/, '$1')));
     const nhentaiGalleryApi = gid => {
         const url = `https://nhentai.net/api/gallery/${gid}`;
-        return isNyaHentai ? proxyGetJSON(url) : get(url);
+        return isNHentai ? get(url) : proxyGetJSON(url);
     };
-    const getDownloadURL = (mid, filename) => `https://${isNyaHentai ? 'i0.mspcdn9.xyz' : 'i.nhentai.net'}/galleries/${mid}/${filename}`;
+    const getDownloadURL = isNHentai //
+        ? (mid, filename) => `https://i.nhentai.net/galleries/${mid}/${filename}`
+        : isNHentaiX
+        ? (mid, filename) => `https://cdn.nhentai.xxx/g/${mid}/${filename}`
+        : (mid, filename) => `https://i0.mspcdn9.xyz/galleries/${mid}/${filename}`;
 
     // 伪多线程
     const multiThread = async (tasks, promiseFunc) => {
@@ -628,7 +635,7 @@ Available placeholders:
             zipFn: async () => {
                 info.compressing = true;
                 btnCompressingProgress();
-                _log('Compressing', cfName);
+                _log('Start compressing', cfName);
                 let lastZipFile = '';
                 const data = await zip.generateAsync(
                     {
@@ -668,7 +675,7 @@ Available placeholders:
 
     // 本子浏览模式
     const applyGPViewStyle = gpViewMode => {
-        if (gpViewMode) $('body').append(`<style id="gp-view-mode-style">#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:${isNyaHentai ? 'calc(100vh - 65px)' : '100vh'}}</style>`);
+        if (gpViewMode) $('body').append(`<style id="gp-view-mode-style">#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:${isNHentaiX ? '100vh' : 'calc(100vh - 65px)'}}</style>`);
         else $('#gp-view-mode-style').remove();
     };
 
@@ -876,7 +883,7 @@ Available placeholders:
                 }
             }
             dlQueue.start();
-        } else if (pageType.galleryPage && isNyaHentai) {
+        } else if (pageType.galleryPage && !isNHentai) {
             // 本子在线阅读
             const gpViewModeText = ['[off]', '[on]'];
             let gpViewMode = GM_getValue('gp_view_mode', 0);
