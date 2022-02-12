@@ -1,17 +1,9 @@
 {
+  "printWidth": 120,
   "singleQuote": true,
   "trailingComma": "es5",
   "useTabs": false,
   "tabWidth": 2,
   "arrowParens": "avoid",
-  "semi": true,
-  "overrides": [
-    {
-      "files": "script.user.js",
-      "options": {
-        "printWidth": 9999,
-        "tabWidth": 4
-      }
-    }
-  ]
+  "semi": true
 }
