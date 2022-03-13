@@ -26,7 +26,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
 // @resource     notycss https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @require      https://cdn.jsdelivr.net/npm/jquery@v3.6.0/dist/jquery.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
 // @require      https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js
