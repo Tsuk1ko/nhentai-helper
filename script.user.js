@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.13.4
+// @version      2.14.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -130,7 +130,7 @@
 
   // 下载线程数
   let THREAD = GM_getValue('thread_num', 8);
-  GM_registerMenuCommand('Download Thread', () => {
+  GM_registerMenuCommand('Download thread', () => {
     let num;
     do {
       num = prompt('Please input the number of threads you want (1~32):', THREAD);
@@ -143,7 +143,7 @@
 
   // 在新窗口打开本子
   let OPEN_ON_NEW_TAB = GM_getValue('open_on_new_tab', true);
-  GM_registerMenuCommand('Open On New Tab', () => {
+  GM_registerMenuCommand('Open on new tab', () => {
     OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?
 Current: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}
 
@@ -153,7 +153,7 @@ Please refresh to take effect after modification.`);
 
   // 自定义下载地址
   let CUSTOM_DOWNLOAD_URL = GM_getValue('custom_download_url', '');
-  GM_registerMenuCommand('Custom Download URL', () => {
+  GM_registerMenuCommand('Custom download URL', () => {
     const input = prompt(
       `WARNING: Please don't set it if you don't know what this does.
 Set it empty will restore it to default.
@@ -176,7 +176,7 @@ Available placeholders:
     GM_deleteValue('cf_ext');
   }
   let CF_NAME = GM_getValue('cf_name', '{{japanese}}.zip');
-  GM_registerMenuCommand('Compression Filename', () => {
+  GM_registerMenuCommand('Compression filename', () => {
     const input = prompt(
       `You can custom the naming of downloaded compression file, including the file extension.
 Set it empty will restore it to default.
@@ -196,7 +196,7 @@ Available placeholders:
 
   // 自定义压缩级别
   let C_LEVEL = GM_getValue('c_lv', 0);
-  GM_registerMenuCommand('Compression Level', () => {
+  GM_registerMenuCommand('Compression level', () => {
     let num;
     do {
       num = prompt(
@@ -223,7 +223,7 @@ Available placeholders:
 
   // 文件名补零
   let FILENAME_LENGTH = GM_getValue('filename_length', 0);
-  GM_registerMenuCommand('Filename Length', () => {
+  GM_registerMenuCommand('Filename length', () => {
     let num;
     do {
       num = prompt(
@@ -235,6 +235,22 @@ Available placeholders:
     } while (isNaN(num) || num < 0);
     FILENAME_LENGTH = num;
     GM_setValue('filename_length', num);
+  });
+
+  // 自动取消下载过的本子
+  let AUTO_CANCEL_DOWNLOADED_DOUJIN = GM_getValue('auto_cancel_downloaded_doujin', false);
+  GM_registerMenuCommand('Auto cancel downloaded doujin', () => {
+    AUTO_CANCEL_DOWNLOADED_DOUJIN = confirm(`Do you want to automatically cancel downloaded doujin?
+Current: ${AUTO_CANCEL_DOWNLOADED_DOUJIN ? 'Yes' : 'No'}`);
+    GM_setValue('auto_cancel_downloaded_doujin', AUTO_CANCEL_DOWNLOADED_DOUJIN);
+  });
+
+  // 自动重试
+  let AUTO_RETRY_WHEN_ERROR_OCCURS = GM_getValue('auto_retry_when_error_occurs', false);
+  GM_registerMenuCommand('Auto retry when error occurs', () => {
+    AUTO_RETRY_WHEN_ERROR_OCCURS = confirm(`Do you want to automatically retry when error occurs?
+Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
+    GM_setValue('auto_retry_when_error_occurs', AUTO_RETRY_WHEN_ERROR_OCCURS);
   });
 
   GM_addStyle(GM_getResourceText('notycss'));
@@ -251,14 +267,6 @@ Available placeholders:
     const ext = paths[paths.length - 1];
     if (typeof ext === 'string') return ext.toUpperCase();
     return 'ZIP';
-  };
-
-  const notyOption = {
-    type: 'error',
-    layout: 'bottomRight',
-    theme: 'nest',
-    timeout: false,
-    closeWith: [],
   };
 
   const EXT = { p: 'png', j: 'jpg', g: 'gif' };
@@ -397,13 +405,24 @@ Available placeholders:
   };
 
   // 对话框
-  const downloadAgainConfirm = (title, hasQueue = false) =>
-    new Promise(resolve => {
+  const notyConfirmOption = {
+    type: 'error',
+    layout: 'bottomRight',
+    theme: 'nest',
+    timeout: false,
+    closeWith: [],
+  };
+  const downloadAgainConfirm = async (title, hasQueue = false) => {
+    if (AUTO_CANCEL_DOWNLOADED_DOUJIN) {
+      downloadedTip(title, hasQueue);
+      return false;
+    }
+    return new Promise(resolve => {
       const n = new Noty({
-        ...notyOption,
+        ...notyConfirmOption,
         text: `"${title}" is already downloaded${hasQueue ? ' or in queue' : ''}.<br>Do you want to download again?`,
         buttons: [
-          Noty.button('YES', 'btn btn-noty', () => {
+          Noty.button('YES', 'btn btn-noty-blue btn-noty', () => {
             n.close();
             resolve(true);
           }),
@@ -415,6 +434,49 @@ Available placeholders:
       });
       n.show();
     });
+  };
+  const errorRetryConfirm = (action, noCb, yesCb) => {
+    if (AUTO_RETRY_WHEN_ERROR_OCCURS) {
+      errorRetryTip(action);
+      yesCb && yesCb();
+      return;
+    }
+    const n = new Noty({
+      ...notyConfirmOption,
+      text: `Error occurred while ${action}, retry?`,
+      buttons: [
+        Noty.button('NO', 'btn btn-noty-blue btn-noty', () => {
+          n.close();
+          noCb && noCb();
+        }),
+        Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
+          n.close();
+          yesCb && yesCb();
+        }),
+      ],
+    });
+    n.show();
+  };
+  const downloadedTip = (title, hasQueue = false) => {
+    new Noty({
+      type: 'info',
+      layout: 'bottomRight',
+      theme: 'nest',
+      closeWith: [],
+      timeout: 4000,
+      text: `"${title}" is already downloaded${hasQueue ? ' or in queue' : ''}.`,
+    }).show();
+  };
+  const errorRetryTip = action => {
+    new Noty({
+      type: 'warning',
+      layout: 'bottomRight',
+      theme: 'nest',
+      closeWith: [],
+      timeout: 3000,
+      text: `Error occurred while ${action}, retrying...`,
+    }).show();
+  };
 
   // 下载面板
   Vue.component('download-item', {
@@ -429,25 +491,18 @@ Available placeholders:
       },
     },
     watch: {
-      'item.error': function (error) {
-        if (error && !this.item.compressing) {
-          const n = new Noty({
-            ...notyOption,
-            text: 'Error occurred while downloading, retry?',
-            buttons: [
-              Noty.button('SKIP', 'btn btn-noty', () => {
-                n.close();
-                dlQueue.skipFromError();
-              }),
-              Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
-                n.close();
-                this.item.error = false;
-                dlQueue.restartFromError();
-              }),
-            ],
-          });
-          n.show();
-        }
+      'item.error': error => {
+        if (!error || this.item.compressing) return;
+        errorRetryConfirm(
+          'downloading',
+          () => {
+            dlQueue.skipFromError();
+          },
+          () => {
+            this.item.error = false;
+            dlQueue.restartFromError();
+          }
+        );
       },
     },
     methods: {
@@ -747,7 +802,6 @@ Available placeholders:
           if (!info) info = await getGallery();
 
           const downloaded = (await isDownloadedByGid(info.gid)) || (await isDownloadedByTitle(info.title));
-
           if (downloaded && !(await downloadAgainConfirm(info.title))) {
             $btn.attr('disabled', false);
             return;
@@ -818,8 +872,8 @@ Available placeholders:
             $btn.attr('disabled', true);
             $btnTxt.text('Wait');
             if (!skipDownloadedCheck && (await isDownloadedByGid(gid))) {
-              const continueDownload = await downloadAgainConfirm($gallery.find('.caption').text());
-              if (!continueDownload) {
+              const title = $gallery.find('.caption').text();
+              if (!(await downloadAgainConfirm(title))) {
                 cancel();
                 return;
               }
@@ -832,28 +886,14 @@ Available placeholders:
               _error(e);
               $btn.attr('disabled', false);
               $btnTxt.text('Error');
-              const n = new Noty({
-                ...notyOption,
-                text: 'Error occurred while getting information, retry?',
-                buttons: [
-                  Noty.button('No', 'btn btn-noty', () => {
-                    n.close();
-                  }),
-                  Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
-                    n.close();
-                    startDownload();
-                  }),
-                ],
-              });
-              n.show();
+              errorRetryConfirm('getting information', null, startDownload);
             }
             if (
               !skipDownloadedCheck &&
               ((await isDownloadedByTitle(gallery.title)) ||
                 dlQueue.queue.some(({ info: { title } }) => title === gallery.title))
             ) {
-              const continueDownload = await downloadAgainConfirm(gallery.title);
-              if (!continueDownload) {
+              if (!(await downloadAgainConfirm(gallery.title, true))) {
                 cancel();
                 return;
               }

@@ -19,18 +19,18 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ![](https://i.loli.net/2020/02/18/iZKI9hfcLymdrBj.png)
 
-1. **Download Thread**  
+1. **Download thread**  
    If you think the download speed is too slow, you can try to increase the number of download threads from this setting.
-2. **Open On New Tab**  
+2. **Open on new tab**  
    Gallery page will be open on a new window by default, turn off it if you don't like it.
-3. **Custom Download URL**  
+3. **Custom download URL**  
    **WARNING: Please don't set this if you don't know what it does.**  
    Tip: You may need to add your domain into *XHR security* for this script.  
    Provide a URL containing the following placeholder:
    - `{{mid}}` - Media ID
    - `{{index}}` - Page index, starting from 1
    - `{{ext}}` - Image file extension
-4. **Compression Filename**  
+4. **Compression filename**  
    Default is `{{japanese}}.zip`. You can custom the naming of downloaded compression file, including the file extension, such as `{{english}}.cbz`.  
    Available placeholders:  
    - `{{english}}` - English name of doujin
@@ -38,12 +38,16 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
    - `{{pretty}}` - English simple title of doujin
    - `{{id}}` - Gallery ID
    - `{{pages}}` - Number of pages
-5. **Compression Level**  
+5. **Compression level**  
    Accept a numer in `0-9`, default is `0`.  
    `0` means "no compression", `1` means "best speed", `9` means "best compression".  
    Actually, for doujin, compression output size of `0` and `9` usually differ by less than **1%**.
-6. **Filename Length**  
+6. **Filename length**  
    Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.
+7. **Auto cancel downloaded doujin**  
+   When you are going to download an already downloaded doujin, it will be canceled automatically instead of pop-up a confirmation box.
+8. **Auto retry when error occurs**  
+   Automatically retry when an error occurs, instead of pop-up a confirmation box.
 
 ## Other features
 
