@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.14.3
+// @version      2.15.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -11,12 +11,14 @@
 // @author       Jindai Kirin
 // @match        https://nhentai.net/*
 // @match        https://nhentai.xxx/*
+// @match        https://nhentai.to/*
 // @include      /^https:\/\/([^\/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./
 // @connect      nhentai.net
 // @connect      i.nhentai.net
 // @connect      json2jsonp.com
 // @connect      i0.mspcdn9.xyz
 // @connect      cdn.nhentai.xxx
+// @connect      t.dogehls.xyz
 // @license      GPL-3.0
 // @grant        GM_addStyle
 // @grant        GM_getValue
@@ -286,6 +288,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   };
   const isNHentai = window.location.host === 'nhentai.net';
   const isNHentaiX = window.location.host === 'nhentai.xxx';
+  const isNHentaiTo = window.location.host === 'nhentai.to';
 
   // 队列
   class AsyncQueue {
@@ -596,10 +599,12 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     const url = `https://nhentai.net/api/gallery/${gid}`;
     return isNHentai ? get(url) : proxyGetJSON(url);
   };
-  const getDownloadURL = isNHentai //
+  const getDownloadURL = isNHentai
     ? (mid, filename) => `https://i.nhentai.net/galleries/${mid}/${filename}`
     : isNHentaiX
     ? (mid, filename) => `https://cdn.nhentai.xxx/g/${mid}/${filename}`
+    : isNHentaiTo
+    ? (mid, filename) => `https://t.dogehls.xyz/galleries/${mid}/${filename}`
     : (mid, filename) => `https://i0.mspcdn9.xyz/galleries/${mid}/${filename}`;
 
   // 伪多线程
