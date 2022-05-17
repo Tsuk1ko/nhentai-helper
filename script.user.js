@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.15.1
+// @version      2.15.2
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -27,15 +27,15 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
-// @resource     notycss https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @require      https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js
-// @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js
-// @require      https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
-// @require      https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js
-// @require      https://cdn.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
-// @require      https://cdn.jsdelivr.net/npm/md5@2.3.0/dist/md5.min.js
-// @require      https://cdn.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js
-// @require      https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js
+// @resource     notycss https://code.bdstatic.com/npm/noty@3.1.4/lib/noty.css
+// @require      https://code.bdstatic.com/npm/jquery@3.6.0/dist/jquery.min.js
+// @require      https://code.bdstatic.com/npm/file-saver@2.0.5/dist/FileSaver.min.js
+// @require      https://code.bdstatic.com/npm/jquery-pjax@2.0.1/jquery.pjax.js
+// @require      https://code.bdstatic.com/npm/vue@2.6.14/dist/vue.min.js
+// @require      https://code.bdstatic.com/npm/noty@3.1.4/lib/noty.min.js
+// @require      https://code.bdstatic.com/npm/md5@2.3.0/dist/md5.min.js
+// @require      https://code.bdstatic.com/npm/comlink@4.3.1/dist/umd/comlink.min.js
+// @require      https://code.bdstatic.com/npm/localforage@1.10.0/dist/localforage.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
@@ -78,7 +78,7 @@
       this.WORKER_URL = URL.createObjectURL(
         new Blob(
           [
-            'importScripts("https://cdn.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);',
+            'importScripts("https://code.bdstatic.com/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://code.bdstatic.com/npm/jszip@3.7.1/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);',
           ],
           { type: 'text/javascript' }
         )
