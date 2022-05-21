@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.15.2
+// @version      2.15.3
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -12,6 +12,7 @@
 // @match        https://nhentai.net/*
 // @match        https://nhentai.xxx/*
 // @match        https://nhentai.to/*
+// @match        https://nhentai.website/*
 // @include      /^https:\/\/([^\/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./
 // @connect      nhentai.net
 // @connect      i.nhentai.net
@@ -288,7 +289,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   };
   const isNHentai = window.location.host === 'nhentai.net';
   const isNHentaiX = window.location.host === 'nhentai.xxx';
-  const isNHentaiTo = window.location.host === 'nhentai.to';
+  const isNHentaiTo = window.location.host === 'nhentai.to' || window.location.host === 'nhentai.website';
 
   // 队列
   class AsyncQueue {
@@ -644,7 +645,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       : (gid = gallery.id) && gallery;
 
     const p = [];
-    pages.forEach((page, i) => {
+    (Array.isArray(pages) ? pages : Object.values(pages)).forEach((page, i) => {
       p.push({
         i: i + 1,
         t: getExtension(page),

@@ -51,12 +51,11 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Other features
 
-### NyaHentai support
+### nHentai mirror sites support
 
-This script also support NyaHentai. You need to know two things:
+This script also support some nHentai mirror sites such as NyaHentai. If the script does not run on some domains, you can add them to *User matches*, find the correct image URL and set *Custom Download URL*.
 
-1. Its domains change frequently. If the script does not run on some domains, you can add them to *User matches*.
-2. If doujins cannot be downloaded, find the correct image URL and modify *Custom Download URL*.
+> A bad news: This script will not be available on **the doujin list page of all mirror sites** and **the doujin details page of some mirror sites** in the near future. I'm too lazy to explain the full reason in English. In simple terms it's because of CloudFlare and there's nothing I can do about it.
 
 ### Language filter
 
@@ -66,7 +65,7 @@ You can select a language in the navigation bar to filter doujins.
 
 ### 100% view height
 
-Effective when reading online, only for NyaHentai (now nHentai already has this feature).
+Effective when reading online, only for mirror sites (now nHentai already has this feature).
 
 ![](https://i.loli.net/2019/09/04/EYu5iP9L46b8XUf.png)
 
