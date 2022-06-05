@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.15.3
+// @version      2.15.4
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -230,10 +230,11 @@ Available placeholders:
     let num;
     do {
       num = prompt(
-        `Please input the minimum image filename length you want (≥0), zeros will be padded to the start of filename when its length lower than this value:`,
+        `Please input the minimum image filename length you want (≥0 or "auto"), zeros will be padded to the start of filename when its length lower than this value:`,
         FILENAME_LENGTH
       );
       if (num === null) return;
+      if (num === 'auto') break;
       num = Number(num);
     } while (isNaN(num) || num < 0);
     FILENAME_LENGTH = num;
@@ -609,7 +610,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     : (mid, filename) => `https://i0.mspcdn9.xyz/galleries/${mid}/${filename}`;
 
   // 伪多线程
-  const multiThread = async (tasks, promiseFunc) => {
+  const multiThread = async (tasks, promiseFunc, params) => {
     const threads = [];
     let taskIndex = 0;
 
@@ -617,7 +618,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       while (true) {
         const i = taskIndex++;
         if (i >= tasks.length) break;
-        await promiseFunc(tasks[i], threadID);
+        await promiseFunc(tasks[i], threadID, params);
       }
     };
 
@@ -689,7 +690,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
 
     btnDownloadProgress();
 
-    const dlPromise = (page, threadID) => {
+    const dlPromise = (page, threadID, { filenameLength }) => {
       if (info.error || dlQueue.skip) return;
       const url = CUSTOM_DOWNLOAD_URL
         ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, {
@@ -701,7 +702,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       _log(`[${threadID}] ${url}`);
       return get(url, 'arraybuffer')
         .then(async data => {
-          zip.file(`${String(page.i).padStart(FILENAME_LENGTH, 0)}.${page.t}`, data);
+          zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
           info.done++;
           btnDownloadProgress();
         })
@@ -711,7 +712,12 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
         });
     };
 
-    await multiThread(pages, dlPromise);
+    await multiThread(pages, dlPromise, {
+      filenameLength:
+        FILENAME_LENGTH === 'auto'
+          ? Math.ceil(Math.log10(Math.max(...pages.map(({ i }) => Number(i)))))
+          : FILENAME_LENGTH,
+    });
 
     if (dlQueue.skip) {
       dlQueue.skip = false;
