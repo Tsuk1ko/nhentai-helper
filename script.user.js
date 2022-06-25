@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.15.5
+// @version      2.15.6
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -28,15 +28,15 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
-// @resource     notycss https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/noty/3.1.4/noty.css
-// @require      https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-y/jquery/3.6.0/jquery.min.js
-// @require      https://lib.baomitu.com/FileSaver.js/2.0.5/FileSaver.min.js
-// @require      https://lib.baomitu.com/jquery.pjax/2.0.1/jquery.pjax.min.js
-// @require      https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/vue/2.6.14/vue.min.js
-// @require      https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-y/noty/3.1.4/noty.min.js
+// @resource     notycss https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
+// @require      https://fastly.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js
+// @require      https://fastly.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js
+// @require      https://fastly.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js
+// @require      https://fastly.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js
+// @require      https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require      https://fastly.jsdelivr.net/npm/md5@2.3.0/dist/md5.min.js
 // @require      https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js
-// @require      https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/localforage/1.10.0/localforage.min.js
+// @require      https://fastly.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js
 // @run-at       document-end
 // @noframes
 // @homepageURL  https://github.com/Tsuk1ko/nhentai-helper
@@ -79,7 +79,7 @@
       this.WORKER_URL = URL.createObjectURL(
         new Blob(
           [
-            'importScripts("https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/jszip/3.7.1/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);',
+            'importScripts("https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://fastly.jsdelivr.net/npm/jszip@3.10.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);',
           ],
           { type: 'text/javascript' }
         )
