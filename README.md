@@ -49,6 +49,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
    When you are going to download an already downloaded manga, it will be canceled automatically instead of pop-up a confirmation box.
 8. **Auto retry when error occurs**  
    Automatically retry when an error occurs, instead of pop-up a confirmation box.
+9. **Auto show all**  
+   Help you to click the "Show all" button on manga detail page automatically.
 
 ## Other features
 

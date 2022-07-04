@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.15.6
+// @version      2.16.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -255,6 +255,14 @@ Current: ${AUTO_CANCEL_DOWNLOADED_DOUJIN ? 'Yes' : 'No'}`);
     AUTO_RETRY_WHEN_ERROR_OCCURS = confirm(`Do you want to automatically retry when error occurs?
 Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     GM_setValue('auto_retry_when_error_occurs', AUTO_RETRY_WHEN_ERROR_OCCURS);
+  });
+
+  // 自动显示全部
+  let AUTO_SHOW_ALL = GM_getValue('auto_show_all', false);
+  GM_registerMenuCommand('Auto show all', () => {
+    AUTO_SHOW_ALL = confirm(`Do you want to auto show all on manga detail page?
+  Current: ${AUTO_SHOW_ALL ? 'Yes' : 'No'}`);
+    GM_setValue('auto_show_all', AUTO_SHOW_ALL);
   });
 
   GM_addStyle(GM_getResourceText('notycss'));
@@ -783,6 +791,28 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     else $('#gp-view-mode-style').remove();
   };
 
+  /**
+   * Show all 按钮
+   * @returns {Promise<JQuery<HTMLElement>>}
+   */
+  const getShowAllBtn = () =>
+    new Promise(resolve => {
+      const $btn = $('#show-all-images-button');
+      if ($btn.length > 0) {
+        resolve($btn);
+        return;
+      }
+      new MutationObserver((mutations, self) => {
+        mutations.forEach(({ addedNodes }) => {
+          if (addedNodes.length && addedNodes[0].id === 'show-all-images-container') {
+            console.warn(addedNodes);
+            self.disconnect();
+            resolve($('#show-all-images-button'));
+          }
+        });
+      }).observe(document.getElementById('thumbnail-container'), { childList: true });
+    });
+
   // 功能初始化
   const init = () => {
     if (pageType.gallery) {
@@ -833,6 +863,10 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
           _error(error);
         }
       });
+
+      if (AUTO_SHOW_ALL) {
+        getShowAllBtn().then($btn => $btn.trigger('click'));
+      }
     } else if (pageType.list) {
       // 语言过滤
       const $langFilter = $(
