@@ -5,7 +5,7 @@
 // @namespace    https://github.com/Tsuk1ko
 // @version      2.15.6
 // @icon         https://nhentai.net/favicon.ico
-// @description        Download nHentai doujin as compression file easily, and add some useful features. Also support NyaHentai.
+// @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
 // @description:zh-TW  爲 nHentai 增加壓縮打包下載方式以及一些輔助功能，同時支持 NyaHentai
 // @author       Jindai Kirin
@@ -185,9 +185,9 @@ Available placeholders:
 Set it empty will restore it to default.
 
 Available placeholders:
-{{english}} - English name of doujin
-{{japanese}} - Japanese name of doujin
-{{pretty}} - English simple title of doujin
+{{english}} - English name of manga
+{{japanese}} - Japanese name of manga
+{{pretty}} - English simple title of manga
 {{id}} - Gallery ID
 {{pages}} - Number of pages`,
       CF_NAME
@@ -243,8 +243,8 @@ Available placeholders:
 
   // 自动取消下载过的本子
   let AUTO_CANCEL_DOWNLOADED_DOUJIN = GM_getValue('auto_cancel_downloaded_doujin', false);
-  GM_registerMenuCommand('Auto cancel downloaded doujin', () => {
-    AUTO_CANCEL_DOWNLOADED_DOUJIN = confirm(`Do you want to automatically cancel downloaded doujin?
+  GM_registerMenuCommand('Auto cancel downloaded manga', () => {
+    AUTO_CANCEL_DOWNLOADED_DOUJIN = confirm(`Do you want to automatically cancel downloaded manga?
 Current: ${AUTO_CANCEL_DOWNLOADED_DOUJIN ? 'Yes' : 'No'}`);
     GM_setValue('auto_cancel_downloaded_doujin', AUTO_CANCEL_DOWNLOADED_DOUJIN);
   });
