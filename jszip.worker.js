@@ -10,8 +10,10 @@ class JSZipWorker {
   file(name, { data }) {
     this.zip.file(name, data);
   }
-  generateAsync(options, onUpdate) {
-    return this.zip.generateAsync(options, onUpdate).then(data => Comlink.transfer({ data }, [data]));
+  async generateAsync(options, onUpdate) {
+    const data = await this.zip.generateAsync(options, onUpdate);
+    this.zip = null;
+    return Comlink.transfer({ data }, [data]);
   }
 }
 

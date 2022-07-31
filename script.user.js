@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.16.2
+// @version      2.16.3
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -79,7 +79,7 @@
       this.WORKER_URL = URL.createObjectURL(
         new Blob(
           [
-            'importScripts("https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://fastly.jsdelivr.net/npm/jszip@3.10.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}generateAsync(options,onUpdate){return this.zip.generateAsync(options,onUpdate).then(data=>Comlink.transfer({data:data},[data]))}}Comlink.expose(JSZipWorker);',
+            'importScripts("https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js","https://fastly.jsdelivr.net/npm/jszip@3.10.0/dist/jszip.min.js");class JSZipWorker{constructor(){this.zip=new JSZip}file(name,{data:data}){this.zip.file(name,data)}async generateAsync(options,onUpdate){const data=await this.zip.generateAsync(options,onUpdate);return this.zip=null,Comlink.transfer({data:data},[data])}}Comlink.expose(JSZipWorker);',
           ],
           { type: 'text/javascript' }
         )
@@ -105,15 +105,13 @@
       for (const { name, data } of files) {
         await zip.file(name, Comlink.transfer({ data }, [data]));
       }
-      return zip
-        .generateAsync(
-          options,
-          Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
-        )
-        .then(({ data }) => {
-          worker.idle = true;
-          return data;
-        });
+      const { data } = await zip.generateAsync(
+        options,
+        Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
+      );
+      zip[Comlink.releaseProxy]();
+      worker.idle = true;
+      return data;
     }
   }
 
