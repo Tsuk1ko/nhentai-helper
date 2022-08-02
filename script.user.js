@@ -245,15 +245,15 @@ See the introduction of the script for more information.`);
     GM_setValue('c_stream_files', C_STREAM_FILES);
   });
 
-  // 低内存模式
-  let LOW_MEM_MODE = GM_getValue('low_mem_mode', false);
-  GM_registerMenuCommand('Low memory mode', () => {
-    LOW_MEM_MODE = confirm(`Do you want to enable low memory mode?
-Current: ${LOW_MEM_MODE ? 'Yes' : 'No'}
+  // 串行模式
+  let SERIES_MODE = GM_getValue('series_mode', false);
+  GM_registerMenuCommand('Series mode', () => {
+    SERIES_MODE = confirm(`Do you want to enable series mode?
+Current: ${SERIES_MODE ? 'Yes' : 'No'}
 Default: No
 
 See the introduction of the script for more information.`);
-    GM_setValue('low_mem_mode', LOW_MEM_MODE);
+    GM_setValue('series_mode', SERIES_MODE);
   });
 
   // 文件名补零
@@ -411,14 +411,13 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
 
   // 下载队列
   const dlQueue = new AsyncQueue();
-  dlQueue.skip = false;
 
   // 压缩队列
   const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
 
-  dlQueue.canSingleStart = () => !(LOW_MEM_MODE && zipQueue.length);
+  dlQueue.canSingleStart = () => !(SERIES_MODE && zipQueue.length);
   zipQueue.onFinish = () => {
-    if (LOW_MEM_MODE) dlQueue.start();
+    if (SERIES_MODE) dlQueue.start();
   };
 
   // 下载历史
@@ -583,12 +582,8 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     },
     methods: {
       cancel() {
-        if (this.index === 0) {
-          dlQueue.skip = true;
-        } else {
-          const { info } = dlQueue.queue.remove(this.index);
-          if (info && typeof info.cancel === 'function') info.cancel();
-        }
+        const { info } = this.index === 0 ? dlQueue.queue[0] : dlQueue.queue.remove(this.index);
+        if (info && typeof info.cancel === 'function') info.cancel();
       },
     },
     template:
@@ -632,11 +627,13 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
   });
 
+  unsafeWindow.GM_xmlhttpRequest_test = GM_xmlhttpRequest;
   // 网络请求
-  const get = (url, responseType = 'json', retry = 3) =>
-    new Promise((resolve, reject) => {
+  const advGet = (url, responseType = 'json', retry = 3) => {
+    let abortFn;
+    const dataPromise = new Promise((resolve, reject) => {
       try {
-        GM_xmlhttpRequest({
+        const req = GM_xmlhttpRequest({
           method: 'GET',
           url,
           responseType,
@@ -645,7 +642,9 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             else {
               _warn('Network error, retry.');
               setTimeout(() => {
-                resolve(get(url, responseType, retry - 1));
+                const { abort, dataPromise } = advGet(url, responseType, retry - 1);
+                abortFn = abort;
+                resolve(dataPromise);
               }, 1000);
             }
           },
@@ -655,15 +654,27 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             else {
               _warn(status, url);
               setTimeout(() => {
-                resolve(get(url, responseType, retry - 1));
-              }, 500);
+                const { abort, dataPromise } = advGet(url, responseType, retry - 1);
+                abortFn = abort;
+                resolve(dataPromise);
+              }, 1000);
             }
           },
         });
+        abortFn = () => {
+          req.abort();
+          resolve();
+        };
       } catch (error) {
         reject(error);
       }
     });
+    return {
+      abort: () => abortFn && abortFn(),
+      dataPromise,
+    };
+  };
+  const get = (url, responseType = 'json', retry = 3) => advGet(url, responseType, retry).dataPromise;
   const proxyGetJSON = url =>
     get(`https://json2jsonp.com/?url=${encodeURIComponent(url)}&callback=cbfunc`, '').then(jsonp =>
       JSON.parse(jsonp.replace(/^cbfunc\((.*)\)$/, '$1'))
@@ -684,13 +695,24 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   const multiThread = async (tasks, promiseFunc, params) => {
     const threads = [];
     let taskIndex = 0;
+    let aborted = false;
 
-    const run = async threadID => {
-      while (true) {
-        const i = taskIndex++;
-        if (i >= tasks.length) break;
-        await promiseFunc(tasks[i], threadID, params);
-      }
+    const run = threadID => {
+      let abortFn;
+      const runPromise = (async () => {
+        while (true) {
+          if (aborted) break;
+          const i = taskIndex++;
+          if (i >= tasks.length) break;
+          const { abort, promise } = promiseFunc(tasks[i], threadID, params);
+          abortFn = abort;
+          await promise;
+        }
+      })();
+      return {
+        abort: () => abortFn && abortFn(),
+        promise: runPromise,
+      };
     };
 
     // 创建线程
@@ -698,7 +720,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       await sleep(Math.min(2000 / THREAD, 300));
       threads.push(run(threadID));
     }
-    return Promise.all(threads);
+
+    return {
+      abort: () => {
+        aborted = true;
+        threads.forEach(({ abort }) => abort());
+      },
+      promise: Promise.all(threads.map(({ promise }) => promise)),
+    };
   };
 
   // 获取本子信息
@@ -750,8 +779,16 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       pages = pages.filter(({ i }) => rangeChecks.some(check => check(i)));
     }
 
+    let aborted = false;
+
     const info = (dlQueue.queue[0] && dlQueue.queue[0].info) || {};
     info.done = 0;
+    if (info.cancel) info._cancel = info.cancel;
+    info.cancel = () => {
+      aborted = true;
+      info._cancel && info._cancel();
+    };
+
     const zip = await new JSZip();
 
     const btnDownloadProgress = () => {
@@ -764,7 +801,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     btnDownloadProgress();
 
     const dlPromise = (page, threadID, { filenameLength }) => {
-      if (info.error || dlQueue.skip) return;
+      if (info.error) return { abort: () => {}, promise: Promise.resolve() };
       const url = CUSTOM_DOWNLOAD_URL
         ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, {
             mid,
@@ -773,27 +810,41 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
           })
         : getDownloadURL(mid, `${page.i}.${page.t}`);
       _log(`[${threadID}] ${url}`);
-      return get(url, 'arraybuffer')
-        .then(async data => {
-          zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
-          info.done++;
-          btnDownloadProgress();
-        })
-        .catch(e => {
-          info.error = true;
-          throw e;
-        });
+      const { abort, dataPromise } = advGet(url, 'arraybuffer');
+      return {
+        abort: () => {
+          _log(`[${threadID}] abort`);
+          abort();
+        },
+        promise: dataPromise
+          .then(async data => {
+            if (data) zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
+            info.done++;
+            btnDownloadProgress();
+          })
+          .catch(e => {
+            info.error = true;
+            throw e;
+          }),
+      };
     };
 
-    await multiThread(pages, dlPromise, {
+    const { abort, promise } = await multiThread(pages, dlPromise, {
       filenameLength:
         FILENAME_LENGTH === 'auto'
           ? Math.ceil(Math.log10(Math.max(...pages.map(({ i }) => Number(i)))))
           : FILENAME_LENGTH,
     });
 
-    if (dlQueue.skip) {
-      dlQueue.skip = false;
+    info.cancel = () => {
+      aborted = true;
+      info._cancel && info._cancel();
+      abort();
+    };
+
+    if (!aborted) await promise;
+
+    if (aborted) {
       if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}`);
       if ($btn) $btn.attr('disabled', false);
       return {
