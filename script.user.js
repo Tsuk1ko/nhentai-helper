@@ -342,9 +342,20 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       this.queue = [];
       this.running = false;
       this.thread = thread;
+      this.canSingleStart = () => true;
+      this.finishHooks = [];
     }
     get runningThreadNum() {
       return this.queue.filter(({ running }) => running).length;
+    }
+    get length() {
+      return this.queue.length;
+    }
+    get onFinish() {
+      return undefined;
+    }
+    set onFinish(fn) {
+      this.finishHooks.push(fn);
     }
     push(fn, info) {
       this.queue.push({
@@ -359,10 +370,15 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
         if (this.running || this.queue.length === 0) return;
         this.running = true;
         do {
+          if (!this.canSingleStart()) {
+            this.running = false;
+            return;
+          }
           await this.queue[0].fn();
           this.queue.shift();
         } while (this.queue.length > 0);
         this.running = false;
+        this.runFinishHooks();
       } else {
         const running = this.runningThreadNum;
         if (running >= this.thread || this.queue.length === running) return;
@@ -372,7 +388,8 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
           item.running = true;
           item.fn().then(() => {
             this.queue.remove(this.queue.findIndex(({ id }) => id === item.id));
-            this.start();
+            if (this.queue.length) this.start();
+            else this.runFinishHooks();
           });
         }
       }
@@ -385,6 +402,11 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       this.running = false;
       return this.start();
     }
+    runFinishHooks() {
+      this.finishHooks.forEach(fn => {
+        fn();
+      });
+    }
   }
 
   // 下载队列
@@ -393,6 +415,11 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
 
   // 压缩队列
   const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
+
+  dlQueue.canSingleStart = () => !(LOW_MEM_MODE && zipQueue.length);
+  zipQueue.onFinish = () => {
+    if (LOW_MEM_MODE) dlQueue.start();
+  };
 
   // 下载历史
   const dlGidStore = await (async () => {
