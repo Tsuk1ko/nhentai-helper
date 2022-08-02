@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.16.3
+// @version      2.17.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -76,6 +76,7 @@
   class JSZipWorkerPool {
     constructor() {
       this.pool = [];
+      this.waitingQueue = [];
       this.WORKER_URL = URL.createObjectURL(
         new Blob(
           [
@@ -96,11 +97,26 @@
       const worker = new Worker(this.WORKER_URL);
       return Comlink.wrap(worker);
     }
-    async generateAsync(files, options, onUpdate) {
-      const worker = this.pool.find(({ idle }) => idle);
-      if (!worker) throw new Error('No avaliable JSZip worker.');
-      worker.idle = false;
+    waitIdleWorker() {
+      return new Promise(resolve => {
+        this.waitingQueue.push(resolve);
+      });
+    }
+    async acquireWorker() {
+      let worker = this.pool.find(({ idle }) => idle);
+      if (!worker) worker = await this.waitIdleWorker();
       if (!worker.JSZip) worker.JSZip = this.createWorker();
+      worker.idle = false;
+      return worker;
+    }
+    releaseWorker(worker) {
+      worker.idle = true;
+      if (!this.waitingQueue.length) return;
+      const [emit] = this.waitingQueue.splice(0, 1);
+      emit(worker);
+    }
+    async generateAsync(files, options, onUpdate) {
+      const worker = await this.acquireWorker();
       const zip = await new worker.JSZip();
       for (const { name, data } of files) {
         await zip.file(name, Comlink.transfer({ data }, [data]));
@@ -110,7 +126,7 @@
         Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
       );
       zip[Comlink.releaseProxy]();
-      worker.idle = true;
+      this.releaseWorker(worker);
       return data;
     }
   }
@@ -147,6 +163,7 @@
   GM_registerMenuCommand('Open on new tab', () => {
     OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?
 Current: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}
+Default: Yes
 
 Please refresh to take effect after modification.`);
     GM_setValue('open_on_new_tab', OPEN_ON_NEW_TAB);
@@ -205,7 +222,9 @@ Available placeholders:
 0: store (no compression)
 1: lowest (best speed)
 ...
-9: highest (best compression)`,
+9: highest (best compression)
+
+Default: 0`,
         C_LEVEL
       );
       if (num === null) return;
@@ -214,13 +233,28 @@ Available placeholders:
     C_LEVEL = num;
     GM_setValue('c_lv', C_LEVEL);
   });
-  const getCompressionOptions = () => {
-    if (C_LEVEL === 0) return {};
-    return {
-      compression: 'DEFLATE',
-      compressionOptions: { level: C_LEVEL },
-    };
-  };
+
+  // streamFiles 压缩选项
+  let C_STREAM_FILES = GM_getValue('c_stream_files', false);
+  GM_registerMenuCommand('Compression "streamFiles"', () => {
+    C_STREAM_FILES = confirm(`Do you want to enable "streamFiles" option when compressing?
+Current: ${C_STREAM_FILES ? 'Yes' : 'No'}
+Default: No
+
+See the introduction of the script for more information.`);
+    GM_setValue('c_stream_files', C_STREAM_FILES);
+  });
+
+  // 串行模式
+  let SERIES_MODE = GM_getValue('series_mode', false);
+  GM_registerMenuCommand('Series mode', () => {
+    SERIES_MODE = confirm(`Do you want to enable series mode?
+Current: ${SERIES_MODE ? 'Yes' : 'No'}
+Default: No
+
+See the introduction of the script for more information.`);
+    GM_setValue('series_mode', SERIES_MODE);
+  });
 
   // 文件名补零
   let FILENAME_LENGTH = GM_getValue('filename_length', 0);
@@ -280,10 +314,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   };
 
   const EXT = { p: 'png', j: 'jpg', g: 'gif' };
-  const getExtension = ({ t, extension }) => {
-    const ext = (t && EXT[t]) || extension;
-    if (!ext) throw new Error(`Unknown type "${t}"`);
-    return ext;
+  const getExtension = ({ t, extension }) => (t && EXT[t]) || extension;
+
+  const getCompressionOptions = () => {
+    return {
+      streamFiles: C_STREAM_FILES,
+      compression: C_LEVEL > 0 ? 'DEFLATE' : 'STORE',
+      compressionOptions: { level: C_LEVEL },
+    };
   };
 
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -304,9 +342,20 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       this.queue = [];
       this.running = false;
       this.thread = thread;
+      this.canSingleStart = () => true;
+      this.finishHooks = [];
     }
     get runningThreadNum() {
       return this.queue.filter(({ running }) => running).length;
+    }
+    get length() {
+      return this.queue.length;
+    }
+    get onFinish() {
+      return undefined;
+    }
+    set onFinish(fn) {
+      this.finishHooks.push(fn);
     }
     push(fn, info) {
       this.queue.push({
@@ -321,10 +370,15 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
         if (this.running || this.queue.length === 0) return;
         this.running = true;
         do {
+          if (!this.canSingleStart()) {
+            this.running = false;
+            return;
+          }
           await this.queue[0].fn();
           this.queue.shift();
         } while (this.queue.length > 0);
         this.running = false;
+        this.runFinishHooks();
       } else {
         const running = this.runningThreadNum;
         if (running >= this.thread || this.queue.length === running) return;
@@ -334,7 +388,8 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
           item.running = true;
           item.fn().then(() => {
             this.queue.remove(this.queue.findIndex(({ id }) => id === item.id));
-            this.start();
+            if (this.queue.length) this.start();
+            else this.runFinishHooks();
           });
         }
       }
@@ -347,14 +402,23 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       this.running = false;
       return this.start();
     }
+    runFinishHooks() {
+      this.finishHooks.forEach(fn => {
+        fn();
+      });
+    }
   }
 
   // 下载队列
   const dlQueue = new AsyncQueue();
-  dlQueue.skip = false;
 
   // 压缩队列
   const zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
+
+  dlQueue.canSingleStart = () => !(SERIES_MODE && zipQueue.length);
+  zipQueue.onFinish = () => {
+    if (SERIES_MODE) dlQueue.start();
+  };
 
   // 下载历史
   const dlGidStore = await (async () => {
@@ -518,12 +582,8 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     },
     methods: {
       cancel() {
-        if (this.index === 0) {
-          dlQueue.skip = true;
-        } else {
-          const { info } = dlQueue.queue.remove(this.index);
-          if (info && typeof info.cancel === 'function') info.cancel();
-        }
+        const { info } = this.index === 0 ? dlQueue.queue[0] : dlQueue.queue.remove(this.index);
+        if (info && typeof info.cancel === 'function') info.cancel();
       },
     },
     template:
@@ -567,11 +627,13 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
   });
 
+  unsafeWindow.GM_xmlhttpRequest_test = GM_xmlhttpRequest;
   // 网络请求
-  const get = (url, responseType = 'json', retry = 3) =>
-    new Promise((resolve, reject) => {
+  const advGet = (url, responseType = 'json', retry = 3) => {
+    let abortFn;
+    const dataPromise = new Promise((resolve, reject) => {
       try {
-        GM_xmlhttpRequest({
+        const req = GM_xmlhttpRequest({
           method: 'GET',
           url,
           responseType,
@@ -580,7 +642,9 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             else {
               _warn('Network error, retry.');
               setTimeout(() => {
-                resolve(get(url, responseType, retry - 1));
+                const { abort, dataPromise } = advGet(url, responseType, retry - 1);
+                abortFn = abort;
+                resolve(dataPromise);
               }, 1000);
             }
           },
@@ -590,15 +654,27 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             else {
               _warn(status, url);
               setTimeout(() => {
-                resolve(get(url, responseType, retry - 1));
-              }, 500);
+                const { abort, dataPromise } = advGet(url, responseType, retry - 1);
+                abortFn = abort;
+                resolve(dataPromise);
+              }, 1000);
             }
           },
         });
+        abortFn = () => {
+          req.abort();
+          resolve();
+        };
       } catch (error) {
         reject(error);
       }
     });
+    return {
+      abort: () => abortFn && abortFn(),
+      dataPromise,
+    };
+  };
+  const get = (url, responseType = 'json', retry = 3) => advGet(url, responseType, retry).dataPromise;
   const proxyGetJSON = url =>
     get(`https://json2jsonp.com/?url=${encodeURIComponent(url)}&callback=cbfunc`, '').then(jsonp =>
       JSON.parse(jsonp.replace(/^cbfunc\((.*)\)$/, '$1'))
@@ -619,13 +695,24 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   const multiThread = async (tasks, promiseFunc, params) => {
     const threads = [];
     let taskIndex = 0;
+    let aborted = false;
 
-    const run = async threadID => {
-      while (true) {
-        const i = taskIndex++;
-        if (i >= tasks.length) break;
-        await promiseFunc(tasks[i], threadID, params);
-      }
+    const run = threadID => {
+      let abortFn;
+      const runPromise = (async () => {
+        while (true) {
+          if (aborted) break;
+          const i = taskIndex++;
+          if (i >= tasks.length) break;
+          const { abort, promise } = promiseFunc(tasks[i], threadID, params);
+          abortFn = abort;
+          await promise;
+        }
+      })();
+      return {
+        abort: () => abortFn && abortFn(),
+        promise: runPromise,
+      };
     };
 
     // 创建线程
@@ -633,7 +720,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       await sleep(Math.min(2000 / THREAD, 300));
       threads.push(run(threadID));
     }
-    return Promise.all(threads);
+
+    return {
+      abort: () => {
+        aborted = true;
+        threads.forEach(({ abort }) => abort());
+      },
+      promise: Promise.all(threads.map(({ promise }) => promise)),
+    };
   };
 
   // 获取本子信息
@@ -651,13 +745,15 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1]))
       : (gid = gallery.id) && gallery;
 
-    const p = [];
+    let p = [];
     (Array.isArray(pages) ? pages : Object.values(pages)).forEach((page, i) => {
       p.push({
         i: i + 1,
         t: getExtension(page),
       });
     });
+    p = p.filter(({ t }) => t);
+    if (!p.length) throw new Error('All pages no extension');
 
     const info = {
       gid,
@@ -683,8 +779,16 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       pages = pages.filter(({ i }) => rangeChecks.some(check => check(i)));
     }
 
+    let aborted = false;
+
     const info = (dlQueue.queue[0] && dlQueue.queue[0].info) || {};
     info.done = 0;
+    if (info.cancel) info._cancel = info.cancel;
+    info.cancel = () => {
+      aborted = true;
+      info._cancel && info._cancel();
+    };
+
     const zip = await new JSZip();
 
     const btnDownloadProgress = () => {
@@ -697,7 +801,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     btnDownloadProgress();
 
     const dlPromise = (page, threadID, { filenameLength }) => {
-      if (info.error || dlQueue.skip) return;
+      if (info.error) return { abort: () => {}, promise: Promise.resolve() };
       const url = CUSTOM_DOWNLOAD_URL
         ? getTextFromTemplate(CUSTOM_DOWNLOAD_URL, {
             mid,
@@ -706,27 +810,41 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
           })
         : getDownloadURL(mid, `${page.i}.${page.t}`);
       _log(`[${threadID}] ${url}`);
-      return get(url, 'arraybuffer')
-        .then(async data => {
-          zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
-          info.done++;
-          btnDownloadProgress();
-        })
-        .catch(e => {
-          info.error = true;
-          throw e;
-        });
+      const { abort, dataPromise } = advGet(url, 'arraybuffer');
+      return {
+        abort: () => {
+          _log(`[${threadID}] abort`);
+          abort();
+        },
+        promise: dataPromise
+          .then(async data => {
+            if (data) zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
+            info.done++;
+            btnDownloadProgress();
+          })
+          .catch(e => {
+            info.error = true;
+            throw e;
+          }),
+      };
     };
 
-    await multiThread(pages, dlPromise, {
+    const { abort, promise } = await multiThread(pages, dlPromise, {
       filenameLength:
         FILENAME_LENGTH === 'auto'
           ? Math.ceil(Math.log10(Math.max(...pages.map(({ i }) => Number(i)))))
           : FILENAME_LENGTH,
     });
 
-    if (dlQueue.skip) {
-      dlQueue.skip = false;
+    info.cancel = () => {
+      aborted = true;
+      info._cancel && info._cancel();
+      abort();
+    };
+
+    if (!aborted) await promise;
+
+    if (aborted) {
       if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}`);
       if ($btn) $btn.attr('disabled', false);
       return {
@@ -822,7 +940,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       const $pagesInput = $('<input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)">');
       $('#info > .buttons').append($btn).after($pagesInput);
 
-      let zip, pagesInput, info;
+      let info;
 
       $btn.on('click', async () => {
         const rangeChecks = $pagesInput
@@ -848,10 +966,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             return;
           }
 
-          if (!zip || pagesInput !== $pagesInput.val()) {
-            zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
-            pagesInput = $pagesInput.val();
-          }
+          const zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
           if (!zip) return;
           saveAs(zip);
           markAsDownloaded(info.gid, info.title);

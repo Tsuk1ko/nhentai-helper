@@ -41,14 +41,19 @@
 5. **Compression level 压缩等级**  
    范围为`0-9`，`0`是无压缩，`1`是最快压缩，`9`是最好压缩，默认为`0`  
    其实对于本子，`0`和`9`压出来的文件大小差别通常不到 **1%**
-6. **Filename length 文件名长度**  
+6. **Compression "streamFiles" 压缩 "streamFiles" 选项**  
+   启用这个选项可以减少内存消耗，但可能导致某些压缩软件不支持生成的压缩文件，详见[说明](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option)
+7. **Series mode 串行模式**  
+   启用这个选项可以使下载和压缩变为串行任务以减少内存消耗  
+   如果经常出现 `RangeError: Array buffer allocation failed` 错误，可以尝试启用它
+8. **Filename length 文件名长度**  
    图片文件名小于这个长度时会自动补 0，可以避免某些场景下只按字符串排序所导致的排序混乱问题  
    可设置一个大于等于 0 的数或 `auto`，`auto` 时会根据本子最大页数智能补 0
-7. **Auto cancel downloaded doujin 自动取消下载过的本子**  
+9. **Auto cancel downloaded doujin 自动取消下载过的本子**  
    当你下载了一个之前下载过的**同名**本子时将会自动取消下载，而不是弹出选择对话框
-8. **Auto retry when error occurs 发生错误时自动重试**  
+10. **Auto retry when error occurs 发生错误时自动重试**  
    当错误发生时自动重试，而不是弹出选择对话框
-9. **Auto show all 自动显示全部**  
+11. **Auto show all 自动显示全部**  
    本子详情页自动帮你点击“Show all”按钮
 
 ## 其他功能

@@ -42,14 +42,20 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
    Accept a numer in `0-9`, default is `0`.  
    `0` means "no compression", `1` means "best speed", `9` means "best compression".  
    Actually, for manga, compression output size of `0` and `9` usually differ by less than **1%**.
-6. **Filename length**  
+6. **Compression "streamFiles"**  
+   Enable this option will use less memory but some program might not support the generated zip file.  
+   See [here](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option) for more information.
+7. **Series mode**  
+   Enable this option will make downloading and compression become series tasks but not parallel to reduce memory usage.  
+   If `RangeError: Array buffer allocation failed` occurs frequently, you can try to enable it.
+8. **Filename length**  
    Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.  
    Accept a nonnegative integer or `auto`.
-7. **Auto cancel downloaded manga**  
+9. **Auto cancel downloaded manga**  
    When you are going to download an already downloaded manga, it will be canceled automatically instead of pop-up a confirmation box.
-8. **Auto retry when error occurs**  
+10. **Auto retry when error occurs**  
    Automatically retry when an error occurs, instead of pop-up a confirmation box.
-9. **Auto show all**  
+11. **Auto show all**  
    Help you to click the "Show all" button on manga detail page automatically.
 
 ## Other features
