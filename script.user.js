@@ -126,7 +126,7 @@
         Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
       );
       zip[Comlink.releaseProxy]();
-      releaseWorker(worker);
+      this.releaseWorker(worker);
       return data;
     }
   }
@@ -163,6 +163,7 @@
   GM_registerMenuCommand('Open on new tab', () => {
     OPEN_ON_NEW_TAB = confirm(`Do you want to open gallery page on a new tab?
 Current: ${OPEN_ON_NEW_TAB ? 'Yes' : 'No'}
+Default: Yes
 
 Please refresh to take effect after modification.`);
     GM_setValue('open_on_new_tab', OPEN_ON_NEW_TAB);
@@ -221,7 +222,9 @@ Available placeholders:
 0: store (no compression)
 1: lowest (best speed)
 ...
-9: highest (best compression)`,
+9: highest (best compression)
+
+Default: 0`,
         C_LEVEL
       );
       if (num === null) return;
@@ -236,16 +239,18 @@ Available placeholders:
   GM_registerMenuCommand('Compression "streamFiles"', () => {
     C_STREAM_FILES = confirm(`Do you want to enable "streamFiles" option when compressing?
 Current: ${C_STREAM_FILES ? 'Yes' : 'No'}
+Default: No
 
 See the introduction of the script for more information.`);
     GM_setValue('c_stream_files', C_STREAM_FILES);
   });
 
-  // streamFiles 压缩选项
+  // 低内存模式
   let LOW_MEM_MODE = GM_getValue('low_mem_mode', false);
   GM_registerMenuCommand('Low memory mode', () => {
     LOW_MEM_MODE = confirm(`Do you want to enable low memory mode?
 Current: ${LOW_MEM_MODE ? 'Yes' : 'No'}
+Default: No
 
 See the introduction of the script for more information.`);
     GM_setValue('low_mem_mode', LOW_MEM_MODE);
@@ -309,11 +314,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   };
 
   const EXT = { p: 'png', j: 'jpg', g: 'gif' };
-  const getExtension = ({ t, extension }) => {
-    const ext = (t && EXT[t]) || extension;
-    if (!ext) throw new Error(`Unknown type "${t}"`);
-    return ext;
-  };
+  const getExtension = ({ t, extension }) => (t && EXT[t]) || extension;
 
   const getCompressionOptions = () => {
     return {
@@ -688,13 +689,15 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       ? await nhentaiGalleryApi((gid = /\/g\/([0-9]+)/.exec(window.location.pathname)[1]))
       : (gid = gallery.id) && gallery;
 
-    const p = [];
+    let p = [];
     (Array.isArray(pages) ? pages : Object.values(pages)).forEach((page, i) => {
       p.push({
         i: i + 1,
         t: getExtension(page),
       });
     });
+    p = p.filter(({ t }) => t);
+    if (!p.length) throw new Error('All pages no extension');
 
     const info = {
       gid,
@@ -859,7 +862,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       const $pagesInput = $('<input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)">');
       $('#info > .buttons').append($btn).after($pagesInput);
 
-      let zip, pagesInput, info;
+      let info;
 
       $btn.on('click', async () => {
         const rangeChecks = $pagesInput
@@ -885,10 +888,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             return;
           }
 
-          if (!zip || pagesInput !== $pagesInput.val()) {
-            zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
-            pagesInput = $pagesInput.val();
-          }
+          const zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
           if (!zip) return;
           saveAs(zip);
           markAsDownloaded(info.gid, info.title);
