@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.16.3
+// @version      2.17.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -76,6 +76,7 @@
   class JSZipWorkerPool {
     constructor() {
       this.pool = [];
+      this.waitingQueue = [];
       this.WORKER_URL = URL.createObjectURL(
         new Blob(
           [
@@ -96,11 +97,26 @@
       const worker = new Worker(this.WORKER_URL);
       return Comlink.wrap(worker);
     }
-    async generateAsync(files, options, onUpdate) {
-      const worker = this.pool.find(({ idle }) => idle);
-      if (!worker) throw new Error('No avaliable JSZip worker.');
-      worker.idle = false;
+    waitIdleWorker() {
+      return new Promise(resolve => {
+        this.waitingQueue.push(resolve);
+      });
+    }
+    async acquireWorker() {
+      let worker = this.pool.find(({ idle }) => idle);
+      if (!worker) worker = await this.waitIdleWorker();
       if (!worker.JSZip) worker.JSZip = this.createWorker();
+      worker.idle = false;
+      return worker;
+    }
+    releaseWorker(worker) {
+      worker.idle = true;
+      if (!this.waitingQueue.length) return;
+      const [emit] = this.waitingQueue.splice(0, 1);
+      emit(worker);
+    }
+    async generateAsync(files, options, onUpdate) {
+      const worker = await this.acquireWorker();
       const zip = await new worker.JSZip();
       for (const { name, data } of files) {
         await zip.file(name, Comlink.transfer({ data }, [data]));
@@ -110,7 +126,7 @@
         Comlink.proxy(data => onUpdate({ workerId: worker.id, ...data }))
       );
       zip[Comlink.releaseProxy]();
-      worker.idle = true;
+      releaseWorker(worker);
       return data;
     }
   }
@@ -214,13 +230,26 @@ Available placeholders:
     C_LEVEL = num;
     GM_setValue('c_lv', C_LEVEL);
   });
-  const getCompressionOptions = () => {
-    if (C_LEVEL === 0) return {};
-    return {
-      compression: 'DEFLATE',
-      compressionOptions: { level: C_LEVEL },
-    };
-  };
+
+  // streamFiles 压缩选项
+  let C_STREAM_FILES = GM_getValue('c_stream_files', false);
+  GM_registerMenuCommand('Compression "streamFiles"', () => {
+    C_STREAM_FILES = confirm(`Do you want to enable "streamFiles" option when compressing?
+Current: ${C_STREAM_FILES ? 'Yes' : 'No'}
+
+See the introduction of the script for more information.`);
+    GM_setValue('c_stream_files', C_STREAM_FILES);
+  });
+
+  // streamFiles 压缩选项
+  let LOW_MEM_MODE = GM_getValue('low_mem_mode', false);
+  GM_registerMenuCommand('Low memory mode', () => {
+    LOW_MEM_MODE = confirm(`Do you want to enable low memory mode?
+Current: ${LOW_MEM_MODE ? 'Yes' : 'No'}
+
+See the introduction of the script for more information.`);
+    GM_setValue('low_mem_mode', LOW_MEM_MODE);
+  });
 
   // 文件名补零
   let FILENAME_LENGTH = GM_getValue('filename_length', 0);
@@ -284,6 +313,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     const ext = (t && EXT[t]) || extension;
     if (!ext) throw new Error(`Unknown type "${t}"`);
     return ext;
+  };
+
+  const getCompressionOptions = () => {
+    return {
+      streamFiles: C_STREAM_FILES,
+      compression: C_LEVEL > 0 ? 'DEFLATE' : 'STORE',
+      compressionOptions: { level: C_LEVEL },
+    };
   };
 
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
