@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.17.0
+// @version      2.18.0
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -566,7 +566,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       },
     },
     watch: {
-      'item.error': error => {
+      'item.error'(error) {
         if (!error || this.item.compressing) return;
         errorRetryConfirm(
           'downloading',
@@ -600,6 +600,8 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     data: {
       dlQueue: dlQueue.queue,
       zipQueue: zipQueue.queue,
+      title: document.title,
+      error: false,
     },
     computed: {
       zipList() {
@@ -610,6 +612,11 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       },
       infoList() {
         return [...this.zipList, ...this.dlList];
+      },
+      titleWithStatus() {
+        if (this.error) return `[×] ${this.title}`;
+        const len = this.infoList.length;
+        return `[${len || '✓'}] ${this.title}`;
       },
     },
     created() {
@@ -622,6 +629,12 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     watch: {
       infoList(val) {
         sessionStorage.setItem('queueInfos', JSON.stringify(val));
+      },
+      titleWithStatus(val) {
+        document.title = val;
+      },
+      'dlList.0.error'(val) {
+        this.error = !!val;
       },
     },
     template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
@@ -774,7 +787,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
   };
 
   // 下载本子
-  const downloadGallery = async ({ mid, pages, cfName }, $btn = null, $btnTxt = null, headTxt = false, rangeChecks) => {
+  const downloadGallery = async (
+    { mid, pages, cfName },
+    $btn = null,
+    $btnTxt = null,
+    headTxt = false,
+    rangeChecks,
+    setDocTitle
+  ) => {
     if (rangeChecks && rangeChecks.length) {
       pages = pages.filter(({ i }) => rangeChecks.some(check => check(i)));
     }
@@ -783,7 +803,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
 
     const info = (dlQueue.queue[0] && dlQueue.queue[0].info) || {};
     info.done = 0;
-    if (info.cancel) info._cancel = info.cancel;
+    if (info.cancel && !info._cancel) info._cancel = info.cancel;
     info.cancel = () => {
       aborted = true;
       info._cancel && info._cancel();
@@ -793,9 +813,11 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
 
     const btnDownloadProgress = () => {
       if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}${info.done}/${pages.length}`);
+      if (setDocTitle) setDocTitle(`${info.done}/${pages.length}`);
     };
     const btnCompressingProgress = (percent = 0) => {
       if ($btnTxt) $btnTxt.text(`${headTxt ? 'Compressing ' : ''}${percent.toFixed()}%`);
+      if (setDocTitle) setDocTitle(`${percent.toFixed()}%`);
     };
 
     btnDownloadProgress();
@@ -876,6 +898,7 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
         _log('Done');
 
         if ($btnTxt) $btnTxt.text(`${headTxt ? `Download ${getDpDlExt()} ` : ''}✓`);
+        if (setDocTitle) setDocTitle('✓');
         if ($btn) $btn.attr('disabled', false);
 
         return new File([data], cfName, { type: 'application/zip' });
@@ -940,6 +963,11 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
       const $pagesInput = $('<input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)">');
       $('#info > .buttons').append($btn).after($pagesInput);
 
+      const docTitle = document.title;
+      const setDocTitle = str => {
+        document.title = str ? `[${str}] ${docTitle}` : docTitle;
+      };
+
       let info;
 
       $btn.on('click', async () => {
@@ -966,13 +994,14 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
             return;
           }
 
-          const zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks)).zipFn();
+          const zip = await (await downloadGallery(info, $btn, $btnTxt, true, rangeChecks, setDocTitle)).zipFn();
           if (!zip) return;
           saveAs(zip);
           markAsDownloaded(info.gid, info.title);
         } catch (error) {
           $btn.attr('disabled', false);
           $btnTxt.text('Error');
+          setDocTitle('×');
           _error(error);
         }
       });
