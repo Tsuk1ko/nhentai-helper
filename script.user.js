@@ -3,7 +3,7 @@
 // @name:zh-CN   nHentai 助手
 // @name:zh-TW   nHentai 助手
 // @namespace    https://github.com/Tsuk1ko
-// @version      2.18.0
+// @version      2.18.1
 // @icon         https://nhentai.net/favicon.ico
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support NyaHentai.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时支持 NyaHentai
@@ -640,7 +640,6 @@ Current: ${AUTO_RETRY_WHEN_ERROR_OCCURS ? 'Yes' : 'No'}`);
     template: '<download-list v-if="infoList.length" :zipList="zipList" :dlList="dlList" />',
   });
 
-  unsafeWindow.GM_xmlhttpRequest_test = GM_xmlhttpRequest;
   // 网络请求
   const advGet = (url, responseType = 'json', retry = 3) => {
     let abortFn;
