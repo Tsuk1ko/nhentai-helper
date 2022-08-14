@@ -1,0 +1,63 @@
+.download-zip {
+  &:disabled {
+    cursor: wait;
+  }
+  .gallery > & {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    opacity: 0.8;
+  }
+  .gallery:hover > & {
+    opacity: 1;
+  }
+}
+
+#page-container {
+  position: relative;
+  @media screen and (max-width: 768px) {
+    & {
+      padding-top: 40px;
+    }
+  }
+}
+
+#online-view-mode-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0;
+}
+
+.btn-noty {
+  &-green {
+    background-color: #66bb6a !important;
+  }
+  &-blue {
+    background-color: #42a5f5 !important;
+  }
+  &:hover {
+    filter: brightness(1.15);
+  }
+}
+.noty_buttons {
+  padding-top: 0 !important;
+}
+
+.pages-input {
+  -webkit-appearance: none;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 0.1em 0 1em;
+  font-size: 1em;
+  width: 100%;
+  height: 40px;
+  border: 0;
+  vertical-align: top;
+  margin-top: 5px;
+}
+
+.gallery.downloaded .caption {
+  color: #999;
+}
