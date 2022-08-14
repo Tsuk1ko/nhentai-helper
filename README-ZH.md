@@ -2,6 +2,12 @@
 
 支持 Tampermonkey 和 Violentmonkey，不支持也不会支持 Greasemonkey
 
+## 安装
+
+[从 Greasy Fork 安装](https://greasyfork.org/scripts/375992)（由于成人内容，需要登录才能安装）
+
+[从 Github Pages 安装](https://tsuk1ko.github.io/nhentai-helper/script.user.js)
+
 ## 主要功能
 
 - 为 nHentai 增加 zip (cbz) 打包下载方式，**下载时必须保持页面处于前台**
@@ -11,13 +17,13 @@
   - 下载队列功能
   - 下载过的本子标题会置灰
 
-![preview1](docs/preview1.png)
+![preview1](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview1.png)
 
-![preview2](docs/preview2.png)
+![preview2](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview2.png)
 
 ## 设置
 
-![settings](docs/settings.png)
+![settings](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/settings.png)
 
 - **Download thread 下载线程数**  
   如果你觉得下载太慢，可以适当提高线程数，不过你得清楚，挂（一个好一点的）代理才是拯救辣鸡网络的实在方法
@@ -70,13 +76,13 @@
 
 你可以在导航栏中选择一个语言来过滤本子
 
-![langFilter](docs/langFilter.png)
+![langFilter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/langFilter.png)
 
 ### 100% 视图高度
 
 在线阅读时可开启或关闭，只在第三方镜像站生效，nHentai 官方已经有这个功能了
 
-![viewMode](docs/viewMode.png)
+![viewMode](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/viewMode.png)
 
 ## 推荐脚本
 

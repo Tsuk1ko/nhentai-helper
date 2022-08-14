@@ -4,6 +4,12 @@
 
 Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
+## Installation
+
+[Via Greasy Fork](https://greasyfork.org/zh-CN/scripts/375992) (login required due to adult content)
+
+[Via Github Pages](https://tsuk1ko.github.io/nhentai-helper/script.user.js)
+
 ## Main features
 
 - You can download manga as zip (or cbz). **You must keep the page in the foreground when downloading.**
@@ -13,13 +19,13 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   - Download queue support.
   - The caption of downloaded manga will be marked with grey color.
 
-![preview1](docs/preview1.png)
+![preview1](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview1.png)
 
-![preview2](docs/preview2.png)
+![preview2](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview2.png)
 
 ## Settings
 
-![settings](docs/settings.png)
+![settings](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/settings.png)
 
 - **Download thread**  
   If you think the download speed is too slow, you can try to increase the number of download threads from this setting.
@@ -74,13 +80,13 @@ If the script does not run on some domains, you can add them to *User matches*, 
 
 You can select a language in the navigation bar to filter mangas.
 
-![langFilter](docs/langFilter.png)
+![langFilter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/langFilter.png)
 
 ### 100% view height
 
 Effective when reading online, only for mirror sites (now nHentai already has this feature).
 
-![viewMode](docs/viewMode.png)
+![viewMode](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/viewMode.png)
 
 ## Recommended scripts
 
