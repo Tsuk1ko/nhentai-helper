@@ -1,6 +1,6 @@
 # nHentai Helper
 
-[中文说明](README-ZH.md)
+[中文说明](https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#readme)
 
 Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
