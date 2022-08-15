@@ -1,4 +1,4 @@
-import { GM_xmlhttpRequest } from '$';
+import { GM_xmlhttpRequest, XhrRequest } from '$';
 import logger from './logger';
 
 class RequestAbortError extends Error {
@@ -11,7 +11,7 @@ export const isAbortError = (e: any): e is RequestAbortError => e instanceof Req
 
 export const request = <D = any>(
   url: string,
-  responseType?: Parameters<typeof GM_xmlhttpRequest>['0']['responseType'],
+  responseType?: XhrRequest['responseType'],
   retry = 3,
 ): { abort: () => void; dataPromise: Promise<D> } => {
   let abortFunc: (() => void) | undefined;

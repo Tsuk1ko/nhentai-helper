@@ -22,6 +22,7 @@ module.exports = {
   plugins: ['vue', '@typescript-eslint'],
   rules: {
     yoda: 'off',
+    'no-empty-pattern': 'off',
     'import/order': [
       'warn',
       {

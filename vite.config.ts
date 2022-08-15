@@ -6,12 +6,10 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import cleanCss from './plugins/cleanCss';
+import monkeyMetaJs from './plugins/monkeyMetaJs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    minify: 'esbuild',
-  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -47,7 +45,7 @@ export default defineConfig({
           'https://nhentai.to/*',
           'https://nhentai.website/*',
         ],
-        include: '/^https:\\/\\/([^/]*\\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\\./',
+        include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
         resource: {
           notycss: 'https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css',
@@ -72,5 +70,6 @@ export default defineConfig({
         },
       },
     }),
+    monkeyMetaJs(),
   ],
 });
