@@ -64,3 +64,5 @@ export const request = <D = any>(
 };
 
 export const getJSON = <D = any>(url: string): Promise<D> => request<D>(url, 'json').dataPromise;
+
+export const getText = (url: string): Promise<string> => request<string>(url).dataPromise;

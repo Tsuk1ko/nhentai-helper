@@ -74,7 +74,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
 
   const $a = $gallery.find('a.cover');
   if (settings.openOnNewTab) $a.attr('target', '_blank');
-  const gid = /[0-9]+/.exec($a.attr('href')!)?.[0];
+  const gid = /\/g\/([0-9]+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
 
   const progressDisplayController = new ProgressDisplayController();
