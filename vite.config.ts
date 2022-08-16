@@ -6,7 +6,6 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import cleanCss from './plugins/cleanCss';
-import monkeyMetaJs from './plugins/monkeyMetaJs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -57,6 +56,7 @@ export default defineConfig({
       },
       build: {
         fileName: 'script.user.js',
+        metaFileName: true,
         externalGlobals: {
           comlink: cdn.jsdelivrFastly('Comlink', 'dist/umd/comlink.min.js'),
           eventemitter3: cdn.jsdelivrFastly('EventEmitter3', 'umd/eventemitter3.min.js'),
@@ -70,6 +70,5 @@ export default defineConfig({
         },
       },
     }),
-    monkeyMetaJs(),
   ],
 });
