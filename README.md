@@ -68,9 +68,7 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Other features
 
-### nHentai mirror sites support (temporarily unavailable)
-
-> This feature doesn't work for some complicated reasons. Please wait for the next update.
+### nHentai mirror sites support
 
 This script also support some nHentai mirror sites such as NyaHentai. See the script's `@match` and `@include`.
 

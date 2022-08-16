@@ -81,10 +81,12 @@ const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
 };
 
 const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGallery> => {
-  let html = '';
+  let doc = document;
 
   if (!IS_PAGE_MANGA_DETAIL) {
-    html = await getText(`/g/${gid}`);
+    const html = await getText(`/g/${gid}`);
+
+    // 有些站点 script 里有 gallery 信息
     const match = /gallery(\(\{[\s\S]+\}\));/.exec(html)?.[1];
     if (match) {
       try {
@@ -94,19 +96,21 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
         logger.warn('get gallery by eval failed');
       }
     }
+
+    // 直接把 html 给 jq 解析的话会把里面的图片也给加载了，用 DOMParser 解析完再扔给 jq 就不会
+    const parser = new DOMParser();
+    doc = parser.parseFromString(html, 'text/html');
   }
 
-  const $$ = IS_PAGE_MANGA_DETAIL ? $(document.body) : $(html);
+  const $doc = $(doc);
 
-  const english = $$.find('#info h1').text();
-  const japanese = $$.find('#info h2').text();
+  const english = $doc.find('#info h1').text();
+  const japanese = $doc.find('#info h2').text();
 
   const pages: NHentaiImage[] = [];
   let mediaId = '';
 
-  (window as any).$$ = $$;
-
-  $$.find<HTMLImageElement>('#thumbnail-container img').each((i, img) => {
+  $doc.find<HTMLImageElement>('#thumbnail-container img').each((i, img) => {
     const src = img.dataset.src ?? img.src;
     const match = /\/(\d+)\/(\d+)t?\.(\w+)/.exec(src);
     if (!match) return;
@@ -116,6 +120,10 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     if (!t) return;
     pages[Number(index) - 1] = { t };
   });
+
+  if ((!english && !japanese) || !mediaId || !pages.length) {
+    throw new Error('Get gallery info error.');
+  }
 
   return {
     id: Number(gid),
