@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "plugins/*.ts"]
+  "include": ["vite.config.ts", ".*.cjs", "plugins/*.ts"]
 }
