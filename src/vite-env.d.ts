@@ -41,35 +41,6 @@ declare interface Console {
 type ValueOf<T> = T[keyof T];
 type CastArray<T> = T | T[];
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
-type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
-
-type JSXIE<T> = Partial<
-  Omit<NonFunctionProperties<T>, 'html' | 'class' | 'style'> & {
-    html: string;
-    class: string;
-    style: Partial<CSSStyleDeclaration> | string;
-    [name: string]: any;
-  }
->;
-
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 declare namespace JSX {
   type Element = HTMLElement;
-  // type ElementClass = {};
-  // type ElementAttributesProperty = {};
-  type IntrinsicElements = {
-    div: JSXIE<HTMLDivElement>;
-    span: JSXIE<HTMLSpanElement>;
-    ul: JSXIE<HTMLUListElement>;
-    li: JSXIE<HTMLLIElement>;
-    input: JSXIE<HTMLInputElement>;
-    select: JSXIE<HTMLSelectElement>;
-    option: JSXIE<HTMLOptionElement>;
-    button: JSXIE<HTMLButtonElement>;
-    style: JSXIE<HTMLStyleElement>;
-    [name: string]: JSXIE<HTMLElement>;
-  };
-  // type IntrinsicAttributes = {};
 }
-/* eslint-enable @typescript-eslint/consistent-type-definitions */

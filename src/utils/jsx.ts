@@ -1,6 +1,6 @@
 // Modify from https://github.com/kartiknair/dhow/blob/master/src/jsx-runtime.js
 // MIT License - Copyright (c) Kartik Nair
-import { camelCase } from 'lodash-es';
+import { camelCase, kebabCase } from 'lodash-es';
 
 export const createElement = (
   tag: string | Function,
@@ -20,7 +20,7 @@ export const createElement = (
 
       element.setAttribute('style', styleString);
     } else if (name.startsWith('on')) {
-      element.addEventListener(name.replace('on', ''), value);
+      element.addEventListener(kebabCase(name.replace('on', '')), value);
     } else element.setAttribute(name, String(value));
   });
 

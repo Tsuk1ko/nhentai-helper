@@ -5,7 +5,7 @@ export const createLangFilter = (): HTMLSelectElement => {
   const langFilter = (
     <select
       id="lang-filter"
-      onchange={() => {
+      onChange={() => {
         filterLang(langFilter.value);
         sessionStorage.setItem('lang-filter', langFilter.value);
       }}
