@@ -1,20 +1,21 @@
-import $ from 'jquery';
 import { getDownloadExt } from './common';
 import { MangaDownloadInfo } from '@/typings';
 
 export class ProgressDisplayController {
-  public readonly $btn: JQuery<HTMLElement>;
-  private readonly $btnTxt: JQuery<HTMLElement>;
+  public readonly btn: HTMLElement;
+  private readonly btnTxt: HTMLElement;
   private info?: MangaDownloadInfo;
 
   public constructor(
     private readonly enableHeadTxt: boolean = false,
     private readonly docTitle?: string,
   ) {
-    this.$btnTxt = $(`<span class="download-zip-txt">${this.defaultBtnText()}</span>`);
-    this.$btn = $(
-      '<button class="btn btn-secondary download-zip"><i class="fa fa-download"></i> </button>',
-    ).append(this.$btnTxt);
+    this.btnTxt = <span class="download-zip-txt">{this.defaultBtnText()}</span>;
+    this.btn = (
+      <button class="btn btn-secondary download-zip">
+        <i class="fa fa-download"></i> {this.btnTxt}
+      </button>
+    );
   }
 
   private get compressingHeadText(): string {
@@ -39,29 +40,29 @@ export class ProgressDisplayController {
   }
 
   public lockBtn(text?: string): void {
-    this.$btn.attr('disabled', 'disabled');
-    if (text) this.$btnTxt.text(text);
+    this.btn.setAttribute('disabled', 'disabled');
+    if (text) this.btnTxt.innerText = text;
   }
 
   public releaseBtn(): void {
-    this.$btn.removeAttr('disabled');
+    this.btn.removeAttribute('disabled');
   }
 
   public complete(): void {
     this.setDocTitle('✓');
-    this.$btnTxt.text(this.defaultBtnText('✓'));
+    this.btnTxt.innerText = this.defaultBtnText('✓');
     this.releaseBtn();
   }
 
   public reset(): void {
     this.setDocTitle();
-    this.$btnTxt.text(this.defaultBtnText());
+    this.btnTxt.innerText = this.defaultBtnText();
     this.releaseBtn();
   }
 
   public error(): void {
     this.releaseBtn();
-    this.$btnTxt.text('Error');
+    this.btnTxt.innerText = 'Error';
     this.setDocTitle('×');
   }
 
@@ -70,11 +71,11 @@ export class ProgressDisplayController {
     const { done, compressing, compressingPercent } = this.info;
     if (compressing) {
       this.setDocTitle(`${compressingPercent}%`);
-      this.$btnTxt.text(`${this.compressingHeadText}${compressingPercent}%`);
+      this.btnTxt.innerText = `${this.compressingHeadText}${compressingPercent}%`;
     } else {
       const total = this.info.gallery.pages.length;
       this.setDocTitle(`${done}/${total}`);
-      this.$btnTxt.text(`${this.downloadingHeadText}${done}/${total}`);
+      this.btnTxt.innerText = `${this.downloadingHeadText}${done}/${total}`;
     }
   }
 

@@ -12,16 +12,16 @@ import { settings } from '../settings';
 export const initDetailPage = (): void => {
   const progressDisplayController = new ProgressDisplayController(true, document.title);
 
-  const { $btn } = progressDisplayController;
-  const $pagesInput = $<HTMLInputElement>(
-    '<input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)">',
-  );
-  $('#info > .buttons').append($btn).after($pagesInput);
+  const { btn } = progressDisplayController;
+  const pagesInput = (
+    <input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)" />
+  ) as HTMLInputElement;
+  $('#info > .buttons').append(btn).after(pagesInput);
 
   let gallery: NHentaiGalleryInfo | undefined;
 
-  $btn.on('click', async () => {
-    const rangeCheckers: RangeChecker[] = ($pagesInput.val() as string)
+  btn.addEventListener('click', async () => {
+    const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
       .filter(range => !Number.isNaN(parseInt(range)))
       .map(range => {

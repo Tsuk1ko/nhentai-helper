@@ -1,8 +1,6 @@
 import { CSSProperties } from 'vue';
 import type { NHentaiGalleryInfo } from '@/utils/nhentai';
 
-export type ValueOf<T> = T[keyof T];
-
 export interface MangaDownloadInfo {
   gallery: NHentaiGalleryInfo;
   done: number;

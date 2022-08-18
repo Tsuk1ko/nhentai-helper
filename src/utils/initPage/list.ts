@@ -6,7 +6,7 @@ import logger from '../logger';
 import { getGalleryInfo, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
-import { createLangFilter, langFilter } from '../langFilter';
+import { createLangFilter, filterLang } from '../langFilter';
 import { dlQueue } from '@/common/queue';
 
 export const initListPage = (): void => {
@@ -18,7 +18,7 @@ export const initListPage = (): void => {
 
 /** 语言过滤 */
 const initLangFilter = (): void => {
-  const $langFilter = createLangFilter();
+  const langFilter = createLangFilter();
 
   const contentEl = $('#content')[0];
   if (contentEl) {
@@ -27,8 +27,8 @@ const initLangFilter = (): void => {
         addedNodes.forEach(node => {
           const $el = $(node as HTMLElement);
           $el.find('.gallery').each(initGallery);
-          const lang = $langFilter.val() as string;
-          if (lang) langFilter(lang, $el);
+          const lang = langFilter.value;
+          if (lang) filterLang(lang, $el);
         });
       });
     }).observe(contentEl, { childList: true });
@@ -36,8 +36,8 @@ const initLangFilter = (): void => {
 
   const storedLangFilterVal = sessionStorage.getItem('lang-filter');
   if (storedLangFilterVal) {
-    $langFilter.val(storedLangFilterVal);
-    langFilter(storedLangFilterVal);
+    langFilter.value = storedLangFilterVal;
+    filterLang(storedLangFilterVal);
   }
 };
 
@@ -78,8 +78,8 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   if (!gid) return;
 
   const progressDisplayController = new ProgressDisplayController();
-  const { $btn } = progressDisplayController;
-  $gallery.prepend($btn);
+  const { btn } = progressDisplayController;
+  $gallery.prepend(btn);
 
   const markGalleryDownloaded = (): void => {
     $gallery.addClass('downloaded');
@@ -142,5 +142,5 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded });
   };
 
-  $btn.on('click', startDownload);
+  btn.addEventListener('click', startDownload);
 };

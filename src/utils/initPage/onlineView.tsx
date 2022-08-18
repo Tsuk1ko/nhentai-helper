@@ -17,19 +17,21 @@ const initViewMode = (): void => {
 
   applyOnlineViewStyle(!!viewMode, style);
 
-  const $btnText = $(`<span>${viewModeText[viewMode]}</span>`);
-  const $btn = $(
-    '<button id="online-view-mode-btn" class="btn btn-secondary">100% view height </button>',
-  ).append($btnText);
+  const btnText = <span>{viewModeText[viewMode]}</span>;
+  const btn = (
+    <button id="online-view-mode-btn" class="btn btn-secondary">
+      100% view height {btnText}
+    </button>
+  );
 
-  $btn.on('click', () => {
+  btn.addEventListener('click', () => {
     viewMode = 1 - viewMode;
     GM_setValue('online_view_mode', viewMode);
-    $btnText.text(viewModeText[viewMode]);
+    btnText.innerText = viewModeText[viewMode];
     applyOnlineViewStyle(!!viewMode, style);
   });
 
-  $('#page-container').prepend($btn);
+  $('#page-container').prepend(btn);
 };
 
 const applyOnlineViewStyle = (enable: boolean, style: StyleInjector): void => {
