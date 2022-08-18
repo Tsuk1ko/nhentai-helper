@@ -3,7 +3,6 @@ import { last, template } from 'lodash-es';
 import type { JSZipGeneratorOptions } from 'jszip';
 import { settings } from './settings';
 import { NHentaiGalleryInfo } from './nhentai';
-import { IS_NHENTAI_X } from '@/const';
 import { MangaDownloadInfo } from '@/typings';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,19 +22,6 @@ export const getCompressionOptions = (): JSZipGeneratorOptions => {
     compression: settings.compressionLevel > 0 ? 'DEFLATE' : 'STORE',
     compressionOptions: { level: settings.compressionLevel },
   };
-};
-
-/** 本子浏览模式 */
-export const applyOnlineViewStyle = (enable: boolean): void => {
-  if (enable) {
-    $('body').append(
-      `<style id="online-view-mode-style">#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:${
-        IS_NHENTAI_X ? '100vh' : 'calc(100vh - 65px)'
-      }}</style>`,
-    );
-    return;
-  }
-  $('#online-view-mode-style').remove();
 };
 
 export const getShowAllBtn = (): Promise<JQuery<HTMLElement>> =>

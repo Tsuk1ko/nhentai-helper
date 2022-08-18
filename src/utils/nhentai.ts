@@ -102,7 +102,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     doc = parser.parseFromString(html, 'text/html');
   }
 
-  const $doc = $(doc);
+  const $doc = $(doc.body);
 
   const english = $doc.find('#info h1').text();
   const japanese = $doc.find('#info h2').text();

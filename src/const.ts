@@ -18,8 +18,5 @@ export const IS_PAGE_MANGA_LIST =
 /** nhentai.net */
 export const IS_NHENTAI = host === 'nhentai.net';
 
-/** nhentai.xxx */
-export const IS_NHENTAI_X = host === 'nhentai.xxx';
-
 /** nhentai.to | nhentai.website */
 export const IS_NHENTAI_TO = host === 'nhentai.to' || host === 'nhentai.website';
