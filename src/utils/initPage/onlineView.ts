@@ -10,7 +10,6 @@ export const initOnlineViewPage = (): void => {
 /** 本子浏览模式 */
 const initViewMode = (): void => {
   const style = new StyleInjector(
-    'online-view-mode-style',
     '#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:100vh}',
   );
   const viewModeText = ['[off]', '[on]'];

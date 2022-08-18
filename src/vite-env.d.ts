@@ -37,3 +37,24 @@ declare interface Console {
   _log?: typeof console.log;
   _clear?: typeof console.clear;
 }
+
+type JSXIE<T> = Partial<
+  Omit<T, 'html' | 'class' | 'style'> & {
+    html: string;
+    class: string;
+    style: Partial<CSSStyleDeclaration>;
+  }
+>;
+
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+declare namespace JSX {
+  type Element = HTMLElement;
+  type ElementClass = {};
+  type ElementAttributesProperty = {};
+  type IntrinsicElements = {
+    style: JSXIE<HTMLStyleElement>;
+    [name: string]: JSXIE<HTMLElement>;
+  };
+  type IntrinsicAttributes = {};
+}
+/* eslint-enable @typescript-eslint/consistent-type-definitions */

@@ -20,8 +20,8 @@ if (
   c.clear = () => {};
   c._log = c.log;
   c.log = (...args) => {
-    const newArgs = args.filter(value => !isNodeOrElement(value));
-    if (newArgs.length) return c._log!(...newArgs);
+    if (args.length === 1 && isNodeOrElement(args[0])) return;
+    return c._log!(...args);
   };
   unsafeWindow.Date = monkeyWindow.Date;
 }

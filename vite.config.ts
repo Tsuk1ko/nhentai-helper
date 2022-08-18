@@ -6,6 +6,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import cleanCss from './plugins/cleanCss';
+import tsx from './plugins/tsx';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,6 +17,7 @@ export default defineConfig({
   },
   plugins: [
     minifiedRawLoader(),
+    tsx(),
     vue(),
     components({
       dts: false,
