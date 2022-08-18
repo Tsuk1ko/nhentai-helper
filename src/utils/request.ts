@@ -24,7 +24,6 @@ export const request = <D = any>(
         onerror: e => {
           if (retry === 0) {
             logger.error('Network error', url);
-            logger.error(e);
             reject(e);
           } else {
             logger.warn('Network error, retry', url);

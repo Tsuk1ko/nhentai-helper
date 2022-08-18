@@ -27,6 +27,8 @@ export const downloadGalleryByInfo = async (
   info: MangaDownloadInfo, // 必须 reactive
   { progressDisplayController, rangeCheckers }: DownloadOptions = {},
 ): Promise<ZipFunction | undefined> => {
+  info.done = 0; // 发生错误重新下载需要进度置 0
+
   let { mid, pages, cfName } = info.gallery;
   if (rangeCheckers?.length) {
     pages = pages.filter(({ i }) => rangeCheckers.some(check => check(i)));
@@ -131,7 +133,6 @@ export const addDownloadGalleryTask = (
 
   dlQueue.push(async () => {
     const zipFunc = await downloadGalleryByInfo(info, { progressDisplayController }).catch(e => {
-      logger.error(e);
       progressDisplayController?.error();
       errorRetryConfirm(
         'downloading',
@@ -143,6 +144,7 @@ export const addDownloadGalleryTask = (
           dlQueue.restartFromError().catch(logger.error);
         },
       );
+      throw e;
     });
 
     if (zipFunc) {
