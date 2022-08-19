@@ -18,9 +18,9 @@ class DisposableJSZip {
   public async generateAsync(
     options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
-  ): Promise<{ data: ArrayBuffer }> {
-    const data = await this.zip.generateAsync({ ...options, type: 'arraybuffer' }, onUpdate);
-    return Comlink.transfer({ data }, [data]);
+  ): Promise<Uint8Array> {
+    const data = await this.zip.generateAsync({ ...options, type: 'uint8array' }, onUpdate);
+    return Comlink.transfer(data, [data.buffer]);
   }
 
   public generateStream(
@@ -34,7 +34,7 @@ class DisposableJSZip {
     return new Promise((resolve, reject) => {
       stream.on('end', () => setTimeout(resolve));
       stream.on('error', reject);
-      void stream.accumulate();
+      stream.resume();
     });
   }
 }

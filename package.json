@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "postversion": "git push && git push --tags"
+    "postversion": "node ./scripts/confirmVersion.cjs && git push && git push --tags"
   },
   "dependencies": {
     "comlink": "^4.3.1",
@@ -61,6 +61,7 @@
     "vite": "^3.0.7",
     "vite-plugin-monkey": "^2.1.1",
     "vue-tsc": "^0.40.1",
+    "yesno": "^0.4.0",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {

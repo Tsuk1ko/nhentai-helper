@@ -62,6 +62,10 @@
       <el-form-item label='Compression "streamFiles"'>
         <el-switch v-model="settings.compressionStreamFiles" />
       </el-form-item>
+      <!-- 流式压缩 -->
+      <el-form-item label="Stream compression">
+        <el-switch v-model="settings.streamCompression" />
+      </el-form-item>
       <!-- 串行模式 -->
       <el-form-item label="Series mode">
         <el-switch v-model="settings.seriesMode" />

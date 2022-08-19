@@ -66,15 +66,17 @@ class JSZipWorkerPool {
     files: JSZipFile[],
     options: JSZipGeneratorOptions | undefined,
     onUpdate: OnUpdateCallback,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     const worker = await this.acquireWorker();
     const zip = await new worker.JSZip!();
     for (const { name, data } of files) {
       await zip.file(name, transfer({ data }, [data]));
     }
-    const { data } = await zip.generateAsync(
+    const data = await zip.generateAsync(
       options,
-      proxy(data => onUpdate({ workerId: worker.id, ...data })),
+      proxy(metaData => {
+        if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
+      }),
     );
     zip[releaseProxy]();
     this.releaseWorker(worker);
@@ -98,16 +100,17 @@ class JSZipWorkerPool {
             options,
             proxy((data, metaData) => {
               controller.enqueue(data);
-              onUpdate({ workerId: worker.id, ...metaData });
+              if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
             }),
           );
           controller.close();
         } catch (error) {
           logger.error(error);
           controller.error(error);
+        } finally {
+          zip[releaseProxy]();
+          this.releaseWorker(worker);
         }
-        zip[releaseProxy]();
-        this.releaseWorker(worker);
       },
     });
   }
@@ -125,7 +128,7 @@ export class JSZip {
   public generateAsync(
     options: JSZipGeneratorOptions | undefined,
     onUpdate: OnUpdateCallback,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     const { files } = this;
     this.files = [];
     return jszipPool.generateAsync(files, options, onUpdate);

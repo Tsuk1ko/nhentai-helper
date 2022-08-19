@@ -118,6 +118,7 @@ export const downloadGalleryByInfo = async (
     };
 
     if (settings.streamCompression) {
+      logger.log('stream mode on');
       const fileStream = createWriteStream(cfName);
       const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
       await zipStream.pipeTo(fileStream);
@@ -161,6 +162,7 @@ export const addDownloadGalleryTask = (
           markAsDownloaded(gallery.gid, gallery.title);
           markGalleryDownloaded?.();
         } catch (error) {
+          if (!error) logger.warn('user abort stream download');
           logger.error(error);
           progressDisplayController?.error();
         }
