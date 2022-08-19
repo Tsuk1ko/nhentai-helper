@@ -104,20 +104,20 @@ export const downloadGalleryByInfo = async (
   return async () => {
     info.compressing = true;
     progressDisplayController?.updateProgress();
-    logger.log('Start compressing', cfName);
+    logger.log('start compressing', cfName);
 
     let lastZipFile = '';
 
     const onCompressionUpdate: OnUpdateCallback = ({ workerId, percent, currentFile }) => {
       if (lastZipFile !== currentFile && currentFile) {
         lastZipFile = currentFile;
-        logger.log(`[${workerId}] Compressing ${percent.toFixed(2)}%`, currentFile);
+        logger.log(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile);
       }
       info.compressingPercent = percent.toFixed(2);
       progressDisplayController?.updateProgress();
     };
 
-    if (settings.streamCompression) {
+    if (settings.streamDownload) {
       logger.log('stream mode on');
       const fileStream = createWriteStream(cfName);
       const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
@@ -127,7 +127,7 @@ export const downloadGalleryByInfo = async (
       saveAs(new File([data], cfName, { type: 'application/zip' }));
     }
 
-    logger.log('Completed', cfName);
+    logger.log('completed', cfName);
     progressDisplayController?.complete();
     progressDisplayController?.unbindInfo();
   };

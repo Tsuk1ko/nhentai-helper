@@ -1,4 +1,4 @@
-import type { JSZipGeneratorOptions, OnUpdateCallback, DataEventCallback } from 'jszip';
+import type { JSZipGeneratorOptions, OnUpdateCallback } from 'jszip';
 
 declare const JSZip: typeof import('jszip');
 declare const Comlink: typeof import('comlink');
@@ -25,17 +25,30 @@ class DisposableJSZip {
 
   public generateStream(
     options: JSZipGeneratorOptions | undefined,
-    onDataCallback: DataEventCallback<Uint8Array>,
-  ): Promise<void> {
+    onUpdate?: OnUpdateCallback,
+    onEnd?: () => void,
+  ): { zipStream: ReadableStream<Uint8Array> } {
     const stream = this.zip.generateInternalStream({ ...options, type: 'uint8array' });
-    stream.on('data', (data, metaData) => {
-      onDataCallback(data, metaData);
+    const zipStream = new ReadableStream<Uint8Array>({
+      start: controller => {
+        stream.on('error', e => {
+          controller.error(e);
+          onEnd?.();
+        });
+        stream.on('end', () => {
+          setTimeout(() => {
+            controller.close();
+            onEnd?.();
+          });
+        });
+        stream.on('data', (data, metaData) => {
+          controller.enqueue(data);
+          onUpdate?.(metaData);
+        });
+        stream.resume();
+      },
     });
-    return new Promise((resolve, reject) => {
-      stream.on('end', () => setTimeout(resolve));
-      stream.on('error', reject);
-      stream.resume();
-    });
+    return Comlink.transfer({ zipStream }, [zipStream as any]);
   }
 }
 

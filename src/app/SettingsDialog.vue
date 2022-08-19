@@ -8,7 +8,7 @@
       <span :id="titleId" :class="titleClass">Settings</span>
     </template>
     <el-form id="nhentai-helper-setting-form" label-width="auto" label-position="left">
-      <div class="asterisk-left" style="margin-bottom: 16px">
+      <div class="asterisk-left" style="margin-bottom: 18px">
         means refresh is required to take effect
       </div>
       <!-- 下载线程数 -->
@@ -58,21 +58,21 @@
       <el-form-item label="Auto show all">
         <el-switch v-model="settings.autoShowAll" />
       </el-form-item>
+      <!-- 显示忽略按钮 -->
+      <el-form-item class="refresh-required" label="Show ignore button">
+        <el-switch v-model="settings.showIgnoreButton" />
+      </el-form-item>
       <!-- streamFiles 压缩选项 -->
       <el-form-item label='Compression "streamFiles"'>
         <el-switch v-model="settings.compressionStreamFiles" />
-      </el-form-item>
-      <!-- 流式压缩 -->
-      <el-form-item label="Stream compression">
-        <el-switch v-model="settings.streamCompression" />
       </el-form-item>
       <!-- 串行模式 -->
       <el-form-item label="Series mode">
         <el-switch v-model="settings.seriesMode" />
       </el-form-item>
-      <!-- 显示忽略按钮 -->
-      <el-form-item class="refresh-required" label="Show ignore button">
-        <el-switch v-model="settings.showIgnoreButton" />
+      <!-- 流式下载 -->
+      <el-form-item label="Stream download">
+        <el-switch v-model="settings.streamDownload" :disabled="DISABLE_STREAM_DOWNLOAD" />
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -81,7 +81,7 @@
 <script setup lang="ts">
 import { monkeyWindow } from '$';
 import { computed, ref } from 'vue';
-import { settings, startWatchSettings } from '@/utils/settings';
+import { DISABLE_STREAM_DOWNLOAD, settings, startWatchSettings } from '@/utils/settings';
 import { ElMarks } from '@/typings';
 
 startWatchSettings();

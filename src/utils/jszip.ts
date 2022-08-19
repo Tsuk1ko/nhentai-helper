@@ -1,7 +1,6 @@
 import { wrap, Remote, transfer, proxy, releaseProxy } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipMetadata } from 'jszip';
 import { removeAt } from './array';
-import logger from './logger';
 import { WORKER_THREAD_NUM } from '@/const';
 import jszipWorkerCode from '@/workers/jszip?minraw';
 import type { DisposableJSZip } from '@/workers/jszip';
@@ -90,29 +89,26 @@ class JSZipWorkerPool {
   ): Promise<ReadableStream<Uint8Array>> {
     const worker = await this.acquireWorker();
     const zip = await new worker.JSZip!();
-    for (const { name, data } of files) {
-      await zip.file(name, transfer({ data }, [data]));
+    const clean = (): void => {
+      zip[releaseProxy]();
+      this.releaseWorker(worker);
+    };
+    try {
+      for (const { name, data } of files) {
+        await zip.file(name, transfer({ data }, [data]));
+      }
+      const { zipStream } = await zip.generateStream(
+        options,
+        proxy(metaData => {
+          if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
+        }),
+        proxy(clean),
+      );
+      return zipStream;
+    } catch (error) {
+      clean();
+      throw error;
     }
-    return new ReadableStream<Uint8Array>({
-      start: async controller => {
-        try {
-          await zip.generateStream(
-            options,
-            proxy((data, metaData) => {
-              controller.enqueue(data);
-              if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
-            }),
-          );
-          controller.close();
-        } catch (error) {
-          logger.error(error);
-          controller.error(error);
-        } finally {
-          zip[releaseProxy]();
-          this.releaseWorker(worker);
-        }
-      },
-    });
   }
 }
 

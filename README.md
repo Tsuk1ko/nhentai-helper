@@ -59,14 +59,17 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Automatically retry when an error occurs, instead of pop-up a confirmation box.
 - **Auto show all**  
   Help you to click the "Show all" button on manga detail page automatically.
+- **Show ignore button**
+  Show an button that allow you to mark or unmark the manga as downloaded.
 - **Compression "streamFiles"**  
   Enable this option will use less memory but some program might not support the generated zip file.  
   See [here](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option) for more information.
 - **Series mode**  
   Enable this option will make downloading and compression become series tasks but not parallel to reduce memory usage.  
   If `RangeError: Array buffer allocation failed` occurs frequently, you can try to enable it.
-- **Show ignore button**
-  Show an button that allow you to mark or unmark the manga as downloaded.
+- **Stream download**  
+  Use [StreamSaver.js](https://github.com/jimmywarting/StreamSaver.js) to download zip stream to reduce memory usage.  
+  But this not work on Safari and Firefox, and the download process is **extremely slow**. So not recommended unless you really have memory usage issues.
 
 ## Other features
 
