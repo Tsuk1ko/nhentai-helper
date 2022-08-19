@@ -26,15 +26,42 @@ const dlTitleStoreReady = dlTitleStore
     return false;
   });
 
-export const markAsDownloaded = (gid: string | number, title: string): void => {
-  void (async () => {
-    if (await dlGidStoreReady) {
-      dlGidStore.setItem(String(gid), true).catch(logger.error);
-    }
-    if (await dlTitleStoreReady) {
-      dlTitleStore.setItem(md5(title.replace(/\s/g, '')), true).catch(logger.error);
-    }
-  })();
+export const markAsDownloaded = (gid: string | number, title?: string): void => {
+  void dlGidStoreReady.then(ready => {
+    if (!ready) return;
+    dlGidStore
+      .setItem(String(gid), true)
+      .then(() => logger.log('mark', gid, 'as downloaded'))
+      .catch(logger.error);
+  });
+  if (title) {
+    void dlTitleStoreReady.then(ready => {
+      if (!ready) return;
+      dlTitleStore
+        .setItem(md5(title.replace(/\s/g, '')), true)
+        .then(() => logger.log('mark', title, 'as downloaded'))
+        .catch(logger.error);
+    });
+  }
+};
+
+export const unmarkAsDownloaded = (gid: string | number, title?: string): void => {
+  void dlGidStoreReady.then(ready => {
+    if (!ready) return;
+    dlGidStore
+      .removeItem(String(gid))
+      .then(() => logger.log('unmark', gid, 'as downloaded'))
+      .catch(logger.error);
+  });
+  if (title) {
+    void dlTitleStoreReady.then(ready => {
+      if (!ready) return;
+      dlTitleStore
+        .removeItem(md5(title.replace(/\s/g, '')))
+        .then(() => logger.log('unmark', title, 'as downloaded'))
+        .catch(logger.error);
+    });
+  }
 };
 
 export const isDownloadedByGid = async (gid: string | number): Promise<boolean> => {

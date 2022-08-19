@@ -1,16 +1,17 @@
 import { unsafeWindow } from '$';
 import $ from 'jquery';
+import logger from '../logger';
 import { initDetailPage } from './detail';
 import { initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
 import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
 
 export const initPage = (): void => {
-  if (IS_PAGE_MANGA_LIST) initListPage();
-  else if (IS_PAGE_MANGA_DETAIL) initDetailPage();
+  if (IS_PAGE_MANGA_LIST) {
+    initListPage();
+    applyPjax();
+  } else if (IS_PAGE_MANGA_DETAIL) initDetailPage().catch(logger.error);
   else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
-
-  applyPjax();
 };
 
 const applyPjax = (): void => {

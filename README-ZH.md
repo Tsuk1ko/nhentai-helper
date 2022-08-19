@@ -61,6 +61,8 @@
 - **Series mode 串行模式**  
   启用这个选项可以使下载和压缩变为串行任务以减少内存消耗  
   如果经常出现 `RangeError: Array buffer allocation failed` 错误，可以尝试启用它
+- **Show ignore button 显示忽略按钮**
+  会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
 
 ## 其他功能
 

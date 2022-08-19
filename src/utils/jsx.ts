@@ -32,6 +32,7 @@ export const createElement = (
 };
 
 const appendChild = (parent: HTMLElement, child: HTMLElement | string): void => {
+  if (!child) return;
   parent.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
 };
 

@@ -3,24 +3,45 @@ import { saveAs } from 'file-saver';
 import { createMangaDownloadInfo, getShowAllBtn } from '../common';
 import { downloadAgainConfirm } from '../dialog';
 import { downloadGalleryByInfo, RangeChecker } from '../download';
-import { isDownloadedByGid, isDownloadedByTitle, markAsDownloaded } from '../downloadHistory';
+import {
+  isDownloadedByGid,
+  isDownloadedByTitle,
+  markAsDownloaded,
+  unmarkAsDownloaded,
+} from '../downloadHistory';
 import logger from '../logger';
-import { getGalleryInfo, NHentaiGalleryInfo } from '../nhentai';
+import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
+import { IgnoreController } from '../ignoreController';
 
-export const initDetailPage = (): void => {
+export const initDetailPage = async (): Promise<void> => {
   const progressDisplayController = new ProgressDisplayController(true, document.title);
 
-  const { btn } = progressDisplayController;
+  const { downloadBtn } = progressDisplayController;
   const pagesInput = (
     <input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)" />
   ) as HTMLInputElement;
-  $('#info > .buttons').append(btn).after(pagesInput);
+  $('#info > .buttons').append(downloadBtn).after(pagesInput);
 
-  let gallery: NHentaiGalleryInfo | undefined;
+  const gallery = await getGalleryInfo();
 
-  btn.addEventListener('click', async () => {
+  let ignoreController: IgnoreController | undefined;
+
+  if (settings.showIgnoreButton) {
+    const isDownloaded = await isDownloadedByGid(gallery.gid);
+    ignoreController = new IgnoreController(true, isDownloaded);
+    const { ignoreBtn } = ignoreController;
+    ignoreBtn.addEventListener('click', () => {
+      const ignore = ignoreController!.getStatus();
+      if (ignore) unmarkAsDownloaded(gallery.gid, gallery.title);
+      else markAsDownloaded(gallery.gid, gallery.title);
+      ignoreController!.setStatus(!ignore);
+    });
+    $('#info > .buttons').append(ignoreBtn);
+  }
+
+  downloadBtn.addEventListener('click', async () => {
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
       .filter(range => !Number.isNaN(parseInt(range)))
@@ -34,13 +55,12 @@ export const initDetailPage = (): void => {
     progressDisplayController.lockBtn();
 
     try {
-      if (!gallery) gallery = await getGalleryInfo();
-
       const downloaded =
         (await isDownloadedByGid(gallery.gid)) || (await isDownloadedByTitle(gallery.title));
       if (downloaded && !(await downloadAgainConfirm(gallery.title))) {
         progressDisplayController.reset();
         markAsDownloaded(gallery.gid, gallery.title);
+        ignoreController?.setStatus(true);
         return;
       }
 
@@ -53,6 +73,7 @@ export const initDetailPage = (): void => {
       if (!zip) return;
       saveAs(zip);
       markAsDownloaded(gallery.gid, gallery.title);
+      ignoreController?.setStatus(true);
     } catch (error) {
       progressDisplayController.error();
       logger.error(error);

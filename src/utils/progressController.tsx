@@ -2,7 +2,7 @@ import { getDownloadExt } from './common';
 import { MangaDownloadInfo } from '@/typings';
 
 export class ProgressDisplayController {
-  public readonly btn: HTMLElement;
+  public readonly downloadBtn: HTMLElement;
   private readonly btnTxt: HTMLElement;
   private info?: MangaDownloadInfo;
 
@@ -11,8 +11,8 @@ export class ProgressDisplayController {
     private readonly docTitle?: string,
   ) {
     this.btnTxt = <span class="download-zip-txt">{this.defaultBtnText()}</span>;
-    this.btn = (
-      <button class="btn btn-secondary download-zip">
+    this.downloadBtn = (
+      <button class="btn btn-secondary nhentai-helper-btn download-zip-btn">
         <i class="fa fa-download"></i> {this.btnTxt}
       </button>
     );
@@ -40,12 +40,12 @@ export class ProgressDisplayController {
   }
 
   public lockBtn(text?: string): void {
-    this.btn.setAttribute('disabled', 'disabled');
+    this.downloadBtn.setAttribute('disabled', 'disabled');
     if (text) this.btnTxt.innerText = text;
   }
 
   public releaseBtn(): void {
-    this.btn.removeAttribute('disabled');
+    this.downloadBtn.removeAttribute('disabled');
   }
 
   public complete(): void {

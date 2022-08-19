@@ -91,7 +91,9 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     if (match) {
       try {
         // eslint-disable-next-line no-eval
-        return eval(match);
+        const gallery: NHentaiGallery = eval(match);
+        // 有些镜像站有™大病，gallery 信息里的 id 是错误的，以地址为准
+        gallery.id = Number(gid);
       } catch {
         logger.warn('get gallery by eval failed');
       }
@@ -155,10 +157,15 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
   }: NHentaiGallery = await (async () => {
     if (gid) return getGallery(gid);
 
-    const localGallery = unsafeWindow._gallery ?? unsafeWindow.gallery;
-    if (localGallery) return localGallery;
-
     const gidFromUrl = /^\/g\/(\d+)/.exec(location.pathname)?.[1];
+    const localGallery = unsafeWindow._gallery ?? unsafeWindow.gallery;
+
+    if (localGallery) {
+      // 有些镜像站有™大病，gallery 信息里的 id 是错误的，以地址为准
+      if (gidFromUrl) localGallery.id = Number(gidFromUrl);
+      return localGallery;
+    }
+
     if (gidFromUrl) return getGallery(gidFromUrl);
 
     throw new Error('Cannot get gallery info.');

@@ -8,12 +8,15 @@
       <span :id="titleId" :class="titleClass">Settings</span>
     </template>
     <el-form id="nhentai-helper-setting-form" label-width="auto" label-position="left">
+      <div class="asterisk-left" style="margin-bottom: 16px">
+        means refresh is required to take effect
+      </div>
       <!-- 下载线程数 -->
       <el-form-item class="m-b-32" label="Download thread">
         <el-slider v-model="settings.threadNum" :min="1" :max="32" :marks="threadNumMarks" />
       </el-form-item>
       <!-- 在新窗口打开本子 -->
-      <el-form-item label="Open on new tab">
+      <el-form-item class="refresh-required" label="Open on new tab">
         <el-switch v-model="settings.openOnNewTab" />
       </el-form-item>
       <!-- 自定义下载地址 -->
@@ -34,7 +37,7 @@
         />
       </el-form-item>
       <!-- 文件名补零 -->
-      <el-form-item label='Filename length'>
+      <el-form-item label="Filename length">
         <el-input-number
           v-model="filenameLengthNumber"
           :min="0"
@@ -62,6 +65,10 @@
       <!-- 串行模式 -->
       <el-form-item label="Series mode">
         <el-switch v-model="settings.seriesMode" />
+      </el-form-item>
+      <!-- 显示忽略按钮 -->
+      <el-form-item class="refresh-required" label="Show ignore button">
+        <el-switch v-model="settings.showIgnoreButton" />
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -134,6 +141,11 @@ defineExpose({ open });
 }
 
 #nhentai-helper-setting-form {
+  .asterisk-left::before {
+    content: '*';
+    color: var(--el-color-danger);
+    margin-right: 4px;
+  }
   label {
     font-weight: unset;
   }
@@ -147,8 +159,15 @@ defineExpose({ open });
   .el-slider__stop {
     border: solid 1px var(--el-slider-runway-bg-color);
   }
-  .el-form-item:last-of-type {
-    margin-bottom: 0;
+  .el-form-item {
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+    &.refresh-required > .el-form-item__label-wrap > .el-form-item__label::after {
+      content: '*';
+      color: var(--el-color-danger);
+      margin-left: 4px;
+    }
   }
   .m-l-16 {
     margin-left: 16px;

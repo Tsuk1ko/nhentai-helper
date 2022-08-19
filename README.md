@@ -65,6 +65,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 - **Series mode**  
   Enable this option will make downloading and compression become series tasks but not parallel to reduce memory usage.  
   If `RangeError: Array buffer allocation failed` occurs frequently, you can try to enable it.
+- **Show ignore button**
+  Show an button that allow you to mark or unmark the manga as downloaded.
 
 ## Other features
 

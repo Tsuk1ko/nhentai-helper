@@ -27,26 +27,36 @@ export interface Settings {
   autoRetryWhenErrorOccurs: boolean;
   /** 自动显示全部 */
   autoShowAll: boolean;
+  /** 显示忽略按钮 */
+  showIgnoreButton: boolean;
 }
+
+type SettingValidator = (val: any) => boolean;
+
+const booleanValidator: SettingValidator = val => typeof val === 'boolean';
+const createNumberValidator =
+  (start: number, end: number): SettingValidator =>
+  val =>
+    typeof val === 'number' && start <= val && val <= end;
 
 const settingsMap: {
   [key in keyof Settings]: {
     key: string;
     default: Settings[key];
-    validator: (val: any) => boolean;
+    validator: SettingValidator;
     formatter?: (val: Settings[key]) => Settings[key];
   };
 } = {
   threadNum: {
     key: 'thread_num',
     default: 8,
-    validator: val => typeof val === 'number' && 1 <= val && val <= 32,
+    validator: createNumberValidator(1, 32),
     formatter: val => Math.floor(val),
   },
   openOnNewTab: {
     key: 'open_on_new_tab',
     default: true,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
   },
   customDownloadUrl: {
     key: 'custom_download_url',
@@ -63,18 +73,18 @@ const settingsMap: {
   compressionLevel: {
     key: 'c_lv',
     default: 0,
-    validator: val => typeof val === 'number' && 0 <= val && val <= 9,
+    validator: createNumberValidator(0, 9),
     formatter: val => Math.floor(val),
   },
   compressionStreamFiles: {
     key: 'c_stream_files',
     default: false,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
   },
   seriesMode: {
     key: 'series_mode',
     default: false,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
   },
   filenameLength: {
     key: 'filename_length',
@@ -85,17 +95,22 @@ const settingsMap: {
   autoCancelDownloadedManga: {
     key: 'auto_cancel_downloaded_doujin',
     default: false,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
   },
   autoRetryWhenErrorOccurs: {
     key: 'auto_retry_when_error_occurs',
     default: false,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
   },
   autoShowAll: {
     key: 'auto_show_all',
     default: false,
-    validator: val => typeof val === 'boolean',
+    validator: booleanValidator,
+  },
+  showIgnoreButton: {
+    key: 'show_ignore_button',
+    default: false,
+    validator: booleanValidator,
   },
 };
 

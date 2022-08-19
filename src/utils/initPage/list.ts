@@ -1,24 +1,25 @@
 import $ from 'jquery';
 import { downloadAgainConfirm, errorRetryConfirm } from '../dialog';
 import { addDownloadGalleryTask } from '../download';
-import { isDownloadedByGid, isDownloadedByTitle, markAsDownloaded } from '../downloadHistory';
+import {
+  isDownloadedByGid,
+  isDownloadedByTitle,
+  markAsDownloaded,
+  unmarkAsDownloaded,
+} from '../downloadHistory';
 import logger from '../logger';
 import { getGalleryInfo, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { createLangFilter, filterLang } from '../langFilter';
+import { IgnoreController } from '../ignoreController';
 import { dlQueue } from '@/common/queue';
 
 export const initListPage = (): void => {
   $('.gallery').each(initGallery);
-  initLangFilter();
+  const langFilter = initLangFilter();
   initShortcut();
   restoreDownloadQueue();
-};
-
-/** 语言过滤 */
-const initLangFilter = (): void => {
-  const langFilter = createLangFilter();
 
   const contentEl = $('#content')[0];
   if (contentEl) {
@@ -33,12 +34,19 @@ const initLangFilter = (): void => {
       });
     }).observe(contentEl, { childList: true });
   }
+};
+
+/** 语言过滤 */
+const initLangFilter = (): HTMLSelectElement => {
+  const langFilter = createLangFilter();
 
   const storedLangFilterVal = sessionStorage.getItem('lang-filter');
   if (storedLangFilterVal) {
     langFilter.value = storedLangFilterVal;
     filterLang(storedLangFilterVal);
   }
+
+  return langFilter;
 };
 
 const initShortcut = (): void => {
@@ -72,21 +80,48 @@ const restoreDownloadQueue = (): void => {
 const initGallery: Parameters<JQuery['each']>['0'] = function () {
   const $gallery = $(this);
 
+  if ($gallery.attr('init')) return;
+  $gallery.attr('init', 'true');
+
   const $a = $gallery.find('a.cover');
   if (settings.openOnNewTab) $a.attr('target', '_blank');
   const gid = /\/g\/([0-9]+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
 
   const progressDisplayController = new ProgressDisplayController();
-  const { btn } = progressDisplayController;
-  $gallery.prepend(btn);
+  const { downloadBtn } = progressDisplayController;
+  $gallery.append(downloadBtn);
+
+  let ignoreController: IgnoreController | undefined;
+  let galleryTitle: string | undefined;
 
   const markGalleryDownloaded = (): void => {
     $gallery.addClass('downloaded');
+    ignoreController?.setStatus(true);
+  };
+  const unmarkGalleryDownloaded = (): void => {
+    $gallery.removeClass('downloaded');
+    ignoreController?.setStatus(false);
   };
 
   void isDownloadedByGid(gid).then(downloaded => {
     if (downloaded) markGalleryDownloaded();
+
+    if (settings.showIgnoreButton) {
+      ignoreController = new IgnoreController(false, downloaded);
+      const { ignoreBtn } = ignoreController;
+      ignoreBtn.addEventListener('click', () => {
+        const ignore = ignoreController!.getStatus();
+        if (ignore) {
+          unmarkGalleryDownloaded();
+          unmarkAsDownloaded(gid, galleryTitle);
+        } else {
+          markGalleryDownloaded();
+          markAsDownloaded(gid, galleryTitle);
+        }
+      });
+      $gallery.append(ignoreBtn);
+    }
   });
 
   let gallery: NHentaiGalleryInfo | undefined;
@@ -113,6 +148,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     if (!gallery) {
       try {
         gallery = await getGalleryInfo(gid);
+        galleryTitle = gallery.title;
       } catch (error) {
         logger.error(error);
         progressDisplayController.error();
@@ -142,5 +178,5 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded });
   };
 
-  btn.addEventListener('click', startDownload);
+  downloadBtn.addEventListener('click', startDownload);
 };
