@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import { saveAs } from 'file-saver';
 import { createMangaDownloadInfo, getShowAllBtn } from '../common';
 import { downloadAgainConfirm } from '../dialog';
 import { downloadGalleryByInfo, RangeChecker } from '../download';
@@ -64,14 +63,12 @@ export const initDetailPage = async (): Promise<void> => {
         return;
       }
 
-      const zip = await (
+      await (
         await downloadGalleryByInfo(createMangaDownloadInfo(gallery), {
           progressDisplayController,
           rangeCheckers,
         })
       )?.();
-      if (!zip) return;
-      saveAs(zip);
       markAsDownloaded(gallery.gid, gallery.title);
       ignoreController?.setStatus(true);
     } catch (error) {

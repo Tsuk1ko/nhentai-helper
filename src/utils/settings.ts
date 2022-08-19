@@ -17,6 +17,8 @@ export interface Settings {
   compressionLevel: number;
   /** 压缩选项 streamFiles */
   compressionStreamFiles: boolean;
+  /** 流式压缩 */
+  streamCompression: boolean;
   /** 串行下载模式 */
   seriesMode: boolean;
   /** 文件名补零 */
@@ -78,6 +80,11 @@ const settingsMap: {
   },
   compressionStreamFiles: {
     key: 'c_stream_files',
+    default: false,
+    validator: booleanValidator,
+  },
+  streamCompression: {
+    key: 'stream_compression',
     default: false,
     validator: booleanValidator,
   },

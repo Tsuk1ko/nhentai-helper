@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "comlink": "^4.3.1",
@@ -23,6 +24,7 @@
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
     "noty": "3.1.4",
+    "streamsaver": "^2.0.6",
     "uuid": "^8.3.2",
     "vue": "^3.2.37"
   },
@@ -36,6 +38,7 @@
     "@types/lodash-es": "^4.17.6",
     "@types/md5": "^2.3.2",
     "@types/node": "^16.11.48",
+    "@types/streamsaver": "^2.0.1",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
