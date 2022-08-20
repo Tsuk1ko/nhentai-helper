@@ -91,3 +91,13 @@ export const isDownloadedByTitle = async (title: string): Promise<boolean> => {
   }
   return false;
 };
+
+export const getDownloadNumber = async (): Promise<number> => {
+  try {
+    if (!(await dlGidStoreReady)) return 0;
+    return await dlGidStore.length();
+  } catch (error) {
+    logger.error(error);
+  }
+  return 0;
+};
