@@ -8,6 +8,8 @@ import minifiedRawLoader from './plugins/minifiedRawLoader';
 import cleanCss from './plugins/cleanCss';
 import tsx from './plugins/tsx';
 
+const IS_DEV = process.env.npm_lifecycle_event === 'dev';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
@@ -45,6 +47,7 @@ export default defineConfig({
           'https://nhentai.xxx/*',
           'https://nhentai.to/*',
           'https://nhentai.website/*',
+          ...(IS_DEV ? ['https://www.blank.org/*'] : []),
         ],
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],

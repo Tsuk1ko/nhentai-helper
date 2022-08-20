@@ -1,7 +1,8 @@
 import { monkeyWindow, unsafeWindow } from '$';
 import logger from '../logger';
+import { IS_DEV } from '@/const';
 
-if (process.env.NODE_ENV === 'development') {
+if (IS_DEV) {
   logger.log('fix window.Date');
   unsafeWindow.Date = monkeyWindow.Date;
 }

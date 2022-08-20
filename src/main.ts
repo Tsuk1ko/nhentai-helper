@@ -6,6 +6,7 @@ import once from 'just-once';
 import DownloadPanelVue from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { initPage } from './utils/initPage';
+import { IS_SETTINGS_DIALOG_DEV } from './const';
 
 GM_addStyle(GM_getResourceText('notycss'));
 
@@ -23,7 +24,14 @@ initPage();
 
 const initSettingsDialogApp = once(() => createAppAndMount(SettingsDialog));
 
-GM_registerMenuCommand('Settings', () => {
+const openSettingsDialog = (): void => {
   const dialog = initSettingsDialogApp();
   dialog.open();
-});
+};
+
+GM_registerMenuCommand('Settings', openSettingsDialog);
+
+if (IS_SETTINGS_DIALOG_DEV) {
+  document.body.outerHTML = '<body></body>';
+  openSettingsDialog();
+}

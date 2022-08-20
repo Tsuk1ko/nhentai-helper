@@ -1,6 +1,7 @@
 import { unsafeWindow } from '$';
 import $ from 'jquery';
+import { IS_DEV } from '@/const';
 
-if (process.env.NODE_ENV === 'development') {
+if (IS_DEV) {
   unsafeWindow.jQuery = $;
 }

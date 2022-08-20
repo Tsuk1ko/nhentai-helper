@@ -1,5 +1,5 @@
 import { monkeyWindow, unsafeWindow } from '$';
-import { IS_NHENTAI } from '@/const';
+import { IS_DEV, IS_NHENTAI } from '@/const';
 
 const isNodeOrElement =
   typeof Node === 'function'
@@ -11,10 +11,7 @@ const isNodeOrElement =
         typeof val.nodeName === 'string';
 
 // 防 nhentai console 屏蔽
-if (
-  IS_NHENTAI &&
-  (process.env.NODE_ENV === 'development' || localStorage.getItem('NHENTAI_HELPER_DEBUG'))
-) {
+if (IS_NHENTAI && (IS_DEV || localStorage.getItem('NHENTAI_HELPER_DEBUG'))) {
   const c = unsafeWindow.console;
   c._clear = c.clear;
   c.clear = () => {};
