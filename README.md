@@ -51,15 +51,14 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   `0` means "no compression", `1` means "best speed", `9` means "best compression".  
    Actually, for manga, compression output size of `0` and `9` usually differ by less than **1%**.
 - **Filename length**  
-  Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.  
-  Accept a nonnegative integer or `auto`.
+  Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.
 - **Auto cancel downloaded manga**  
   When you are going to download an already downloaded manga, it will be canceled automatically instead of pop-up a confirmation box.
 - **Auto retry when error occurs**  
   Automatically retry when an error occurs, instead of pop-up a confirmation box.
 - **Auto show all**  
   Help you to click the "Show all" button on manga detail page automatically.
-- **Show ignore button**
+- **Show ignore button**  
   Show an button that allow you to mark or unmark the manga as downloaded.
 - **Compression "streamFiles"**  
   Enable this option will use less memory but some program might not support the generated zip file.  
