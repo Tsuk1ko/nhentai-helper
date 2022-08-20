@@ -7,7 +7,7 @@ import type { DisposableJSZip } from '@/workers/jszip';
 
 type RemoteDisposableJSZip = Remote<typeof DisposableJSZip>;
 
-type OnUpdateCallback = (data: JSZipMetadata & { workerId: number }) => void;
+export type OnUpdateCallback = (data: JSZipMetadata & { workerId: number }) => void;
 
 interface PoolMember {
   id: number;
@@ -63,21 +63,52 @@ class JSZipWorkerPool {
 
   public async generateAsync(
     files: JSZipFile[],
-    options: JSZipGeneratorOptions,
+    options: JSZipGeneratorOptions | undefined,
     onUpdate: OnUpdateCallback,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     const worker = await this.acquireWorker();
     const zip = await new worker.JSZip!();
     for (const { name, data } of files) {
       await zip.file(name, transfer({ data }, [data]));
     }
-    const { data } = await zip.generateAsync(
+    const data = await zip.generateAsync(
       options,
-      proxy(data => onUpdate({ workerId: worker.id, ...data })),
+      proxy(metaData => {
+        if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
+      }),
     );
     zip[releaseProxy]();
     this.releaseWorker(worker);
     return data;
+  }
+
+  public async generateStream(
+    files: JSZipFile[],
+    options: JSZipGeneratorOptions | undefined,
+    onUpdate: OnUpdateCallback,
+  ): Promise<ReadableStream<Uint8Array>> {
+    const worker = await this.acquireWorker();
+    const zip = await new worker.JSZip!();
+    const clean = (): void => {
+      zip[releaseProxy]();
+      this.releaseWorker(worker);
+    };
+    try {
+      for (const { name, data } of files) {
+        await zip.file(name, transfer({ data }, [data]));
+      }
+      const { zipStream } = await zip.generateStream(
+        options,
+        proxy(metaData => {
+          if (metaData.currentFile) onUpdate({ workerId: worker.id, ...metaData });
+        }),
+        proxy(clean),
+      );
+      return zipStream;
+    } catch (error) {
+      clean();
+      throw error;
+    }
   }
 }
 
@@ -91,11 +122,20 @@ export class JSZip {
   }
 
   public generateAsync(
-    options: JSZipGeneratorOptions,
+    options: JSZipGeneratorOptions | undefined,
     onUpdate: OnUpdateCallback,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     const { files } = this;
     this.files = [];
     return jszipPool.generateAsync(files, options, onUpdate);
+  }
+
+  public generateStream(
+    options: JSZipGeneratorOptions | undefined,
+    onUpdate: OnUpdateCallback,
+  ): Promise<ReadableStream<Uint8Array>> {
+    const { files } = this;
+    this.files = [];
+    return jszipPool.generateStream(files, options, onUpdate);
   }
 }

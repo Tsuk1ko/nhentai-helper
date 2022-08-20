@@ -1,7 +1,8 @@
 import { reactive } from 'vue';
 import { saveAs } from 'file-saver';
+import { createWriteStream } from 'streamsaver';
 import { compileTemplate, createMangaDownloadInfo, getCompressionOptions } from './common';
-import { JSZip } from './jszip';
+import { JSZip, OnUpdateCallback } from './jszip';
 import logger from './logger';
 import { MultiThread, TaskFunction } from './multiThread';
 import { getMediaDownloadUrl, NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
@@ -21,7 +22,7 @@ interface DownloadOptions {
   markGalleryDownloaded?: Function;
 }
 
-type ZipFunction = () => Promise<File>;
+type ZipFunction = () => Promise<void>;
 
 export const downloadGalleryByInfo = async (
   info: MangaDownloadInfo, // 必须 reactive
@@ -103,25 +104,32 @@ export const downloadGalleryByInfo = async (
   return async () => {
     info.compressing = true;
     progressDisplayController?.updateProgress();
-    logger.log('Start compressing', cfName);
+    logger.log('start compressing', cfName);
 
     let lastZipFile = '';
-    const data = await zip.generateAsync(
-      getCompressionOptions(),
-      ({ workerId, percent, currentFile }) => {
-        if (lastZipFile !== currentFile && currentFile) {
-          lastZipFile = currentFile;
-          logger.log(`[${workerId}] Compressing ${percent.toFixed(2)}%`, currentFile);
-        }
-        info.compressingPercent = percent.toFixed(2);
-        progressDisplayController?.updateProgress();
-      },
-    );
 
-    logger.log('Completed', cfName);
+    const onCompressionUpdate: OnUpdateCallback = ({ workerId, percent, currentFile }) => {
+      if (lastZipFile !== currentFile && currentFile) {
+        lastZipFile = currentFile;
+        logger.log(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile);
+      }
+      info.compressingPercent = percent.toFixed(2);
+      progressDisplayController?.updateProgress();
+    };
+
+    if (settings.streamDownload) {
+      logger.log('stream mode on');
+      const fileStream = createWriteStream(cfName);
+      const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
+      await zipStream.pipeTo(fileStream);
+    } else {
+      const data = await zip.generateAsync(getCompressionOptions(), onCompressionUpdate);
+      saveAs(new File([data], cfName, { type: 'application/zip' }));
+    }
+
+    logger.log('completed', cfName);
     progressDisplayController?.complete();
     progressDisplayController?.unbindInfo();
-    return new File([data], cfName, { type: 'application/zip' });
   };
 };
 
@@ -149,14 +157,15 @@ export const addDownloadGalleryTask = (
 
     if (zipFunc) {
       zipQueue.push(async () => {
-        const zip = await zipFunc();
-        if (!zip) {
-          progressDisplayController?.reset();
-          return;
+        try {
+          await zipFunc();
+          markAsDownloaded(gallery.gid, gallery.title);
+          markGalleryDownloaded?.();
+        } catch (error) {
+          if (!error) logger.warn('user abort stream download');
+          logger.error(error);
+          progressDisplayController?.error();
         }
-        saveAs(zip);
-        markAsDownloaded(gallery.gid, gallery.title);
-        markGalleryDownloaded?.();
       }, info);
 
       zipQueue.start().catch(logger.error);

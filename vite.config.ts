@@ -68,6 +68,7 @@ export default defineConfig({
           localforage: cdn.jsdelivrFastly('localforage', 'dist/localforage.min.js'),
           md5: cdn.jsdelivrFastly('MD5', 'dist/md5.min.js'),
           noty: cdn.jsdelivrFastly('Noty', 'lib/noty.min.js'),
+          streamsaver: cdn.jsdelivrFastly('streamSaver', 'StreamSaver.min.js'),
           vue: cdn.jsdelivrFastly('Vue', 'dist/vue.global.prod.js'),
         },
       },

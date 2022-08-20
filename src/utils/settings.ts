@@ -2,6 +2,7 @@ import { GM_getValue, GM_setValue } from '$';
 import { reactive, Ref, toRefs, watch } from 'vue';
 import { each, mapValues } from 'lodash';
 import once from 'just-once';
+import { detect } from 'detect-browser';
 import logger from './logger';
 
 export interface Settings {
@@ -17,6 +18,8 @@ export interface Settings {
   compressionLevel: number;
   /** 压缩选项 streamFiles */
   compressionStreamFiles: boolean;
+  /** 流式下载 */
+  streamDownload: boolean;
   /** 串行下载模式 */
   seriesMode: boolean;
   /** 文件名补零 */
@@ -81,6 +84,11 @@ const settingsMap: {
     default: false,
     validator: booleanValidator,
   },
+  streamDownload: {
+    key: 'stream_download',
+    default: false,
+    validator: booleanValidator,
+  },
   seriesMode: {
     key: 'series_mode',
     default: false,
@@ -114,10 +122,17 @@ const settingsMap: {
   },
 };
 
+const browserDetect = detect();
+
+export const DISABLE_STREAM_DOWNLOAD =
+  !!browserDetect && (browserDetect.name === 'safari' || browserDetect.name === 'firefox');
+
 const readSettings = (): Settings =>
   mapValues(settingsMap, ({ key, default: defaultVal }) => GM_getValue<any>(key, defaultVal));
 
 export const settings = reactive<Settings>(readSettings());
+
+if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) settings.streamDownload = false;
 
 export const startWatchSettings = once(() => {
   const settingRefs = toRefs(settings);

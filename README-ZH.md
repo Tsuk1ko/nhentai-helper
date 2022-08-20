@@ -56,13 +56,16 @@
   当错误发生时自动重试，而不是弹出选择对话框
 - **Auto show all 自动显示全部**  
   本子详情页自动帮你点击“Show all”按钮
+- **Show ignore button 显示忽略按钮**
+  会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
 - **Compression "streamFiles" 压缩 "streamFiles" 选项**  
   启用这个选项可以减少内存消耗，但可能导致某些压缩软件不支持生成的压缩文件，详见[说明](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option)
 - **Series mode 串行模式**  
   启用这个选项可以使下载和压缩变为串行任务以减少内存消耗  
   如果经常出现 `RangeError: Array buffer allocation failed` 错误，可以尝试启用它
-- **Show ignore button 显示忽略按钮**
-  会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
+- **Stream download 流式下载**  
+  利用 [StreamSaver.js](https://github.com/jimmywarting/StreamSaver.js) 直接下载压缩流来减少内存占用  
+  在 Safari 和 Firefox 上无法使用，且下载速度**极慢**，因此不推荐启用除非真的有内存消耗问题
 
 ## 其他功能
 
