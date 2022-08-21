@@ -31,14 +31,12 @@ jobs:
           files: |
             dist/script.user.js
       - name: Trigger Greasy Fork synchronization
-        uses: antaljanosbenjamin/single-commit-publish@v1.0.1
+        uses: casperdcl/push-dir@v1
         with:
-          github-token: ${{ secrets.DIST_TOKEN }}
-          github-repository: Tsuk1ko/nhentai-helper-dist
-          branch: main
-          source-dir: dist
-          files-and-dirs: "script.user.js script.meta.js"
-          commit-message: ${{ github.ref_name }}
+          message: ${{ github.ref_name }}
+          branch: dist
+          dir: dist
+          history: true
   deploy:
     needs: build
     runs-on: ubuntu-latest
