@@ -12,6 +12,7 @@
     "postversion": "node ./scripts/confirmVersion.cjs && git push && git push --tags"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.0.9",
     "comlink": "^4.3.1",
     "detect-browser": "^5.3.0",
     "element-plus": "^2.2.13",
@@ -22,6 +23,7 @@
     "jszip": "^3.10.1",
     "just-once": "^2.1.1",
     "localforage": "^1.10.0",
+    "localforage-setitems": "^1.4.0",
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
     "noty": "3.1.4",

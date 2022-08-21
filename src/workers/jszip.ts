@@ -1,4 +1,4 @@
-import type { JSZipGeneratorOptions, OnUpdateCallback } from 'jszip';
+import type { JSZipGeneratorOptions, JSZipObject, OnUpdateCallback } from 'jszip';
 
 declare const JSZip: typeof import('jszip');
 declare const Comlink: typeof import('comlink');
@@ -8,11 +8,36 @@ importScripts(
   'https://fastly.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js',
 );
 
+export interface JSZipFile {
+  name: string;
+  data: ArrayBuffer | string;
+}
+
+export type JSZipOutputType = Parameters<JSZipObject['async']>[0];
+
+export interface JSZipUnzipParams<T extends JSZipOutputType> {
+  data: ArrayBuffer;
+  path: string;
+  type: T;
+}
+
 class DisposableJSZip {
   private readonly zip = new JSZip();
 
-  public file(name: string, { data }: { data: ArrayBuffer }): void {
+  public file({ name, data }: JSZipFile): void {
     this.zip.file(name, data);
+  }
+
+  public files(files: JSZipFile[]): void {
+    files.forEach(({ name, data }) => {
+      this.zip.file(name, data);
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  public async unzipFile<T extends JSZipOutputType>({ data, path, type }: JSZipUnzipParams<T>) {
+    const zip = await JSZip.loadAsync(data);
+    return zip.file(path)?.async(type);
   }
 
   public async generateAsync(
@@ -24,7 +49,7 @@ class DisposableJSZip {
   }
 
   public generateStream(
-    options: JSZipGeneratorOptions | undefined,
+    options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
     onEnd?: () => void,
   ): { zipStream: ReadableStream<Uint8Array> } {

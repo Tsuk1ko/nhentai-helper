@@ -1,6 +1,12 @@
+import { saveAs } from 'file-saver';
 import localforage from 'localforage';
+import { extendPrototype } from 'localforage-setitems';
 import md5 from 'md5';
+import { dateTimeFormatter } from './formatter';
+import { JSZip } from './jszip';
 import logger from './logger';
+
+extendPrototype(localforage);
 
 const dlGidStore = localforage.createInstance({
   name: 'nhentai_helper',
@@ -31,7 +37,7 @@ export const markAsDownloaded = (gid: string | number, title?: string): void => 
     if (!ready) return;
     dlGidStore
       .setItem(String(gid), true)
-      .then(() => logger.log('mark', gid, 'as downloaded'))
+      .then(() => logger.log(`mark "${gid}" as downloaded`))
       .catch(logger.error);
   });
   if (title) {
@@ -39,7 +45,7 @@ export const markAsDownloaded = (gid: string | number, title?: string): void => 
       if (!ready) return;
       dlTitleStore
         .setItem(md5(title.replace(/\s/g, '')), true)
-        .then(() => logger.log('mark', title, 'as downloaded'))
+        .then(() => logger.log(`mark "${title}" as downloaded`))
         .catch(logger.error);
     });
   }
@@ -94,10 +100,83 @@ export const isDownloadedByTitle = async (title: string): Promise<boolean> => {
 
 export const getDownloadNumber = async (): Promise<number> => {
   try {
-    if (!(await dlGidStoreReady)) return 0;
+    if (!(await dlGidStoreReady)) throw new Error('store cannot ready');
     return await dlGidStore.length();
   } catch (error) {
     logger.error(error);
   }
-  return 0;
+  return NaN;
+};
+
+const EXPORT_HEADER_GID = 'gid:';
+const EXPORT_HEADER_TITLE = 'title:';
+const EXPORT_SEPARATOR = ',';
+const EXPORT_TEXT_FILENAME = 'history.txt';
+
+export const exportDownloadHistory = async (): Promise<boolean> => {
+  try {
+    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
+      throw new Error('store cannot ready');
+    // 导出
+    const gids = await dlGidStore.keys();
+    const titles = await dlTitleStore.keys();
+    const text = `${EXPORT_HEADER_GID}${gids.join(EXPORT_SEPARATOR)}
+${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
+    // 压缩
+    const zip = new JSZip();
+    zip.file(EXPORT_TEXT_FILENAME, text);
+    const data = await zip.generateAsync({
+      compression: 'DEFLATE',
+      compressionOptions: { level: 9 },
+    });
+    const timeStr = dateTimeFormatter.format(Date.now()).replace(/[^\d]/g, '');
+    const filename = `nhentai-helper-download-history-${timeStr}.zip`;
+    saveAs(new File([data], filename, { type: 'application/zip' }));
+    logger.log('export download history', filename);
+    return true;
+  } catch (error) {
+    logger.error(error);
+  }
+  return false;
+};
+
+export const importDownloadHistory = async (data: ArrayBuffer): Promise<boolean> => {
+  try {
+    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
+      throw new Error('store cannot ready');
+    // 解压
+    const str = await JSZip.unzipFile({ data, path: EXPORT_TEXT_FILENAME, type: 'string' });
+    if (!str) {
+      logger.error("zip doesn't contain file", EXPORT_TEXT_FILENAME);
+      return false;
+    }
+    // 导入
+    const lines = str.split('\n');
+    for (const line of lines) {
+      if (line.startsWith(EXPORT_HEADER_GID)) {
+        const gids = line.replace(EXPORT_HEADER_GID, '').split(EXPORT_SEPARATOR);
+        await dlGidStore.setItems(gids.map(gid => ({ key: gid, value: true })));
+      } else if (line.startsWith(EXPORT_HEADER_TITLE)) {
+        const titles = line.replace(EXPORT_HEADER_TITLE, '').split(EXPORT_SEPARATOR);
+        await dlTitleStore.setItems(titles.map(gid => ({ key: gid, value: true })));
+      }
+    }
+    return true;
+  } catch (error) {
+    logger.error(error);
+  }
+  return false;
+};
+
+export const clearDownloadHistory = async (): Promise<boolean> => {
+  try {
+    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
+      throw new Error('store cannot ready');
+    await dlGidStore.clear();
+    await dlTitleStore.clear();
+    return true;
+  } catch (error) {
+    logger.error(error);
+  }
+  return false;
 };

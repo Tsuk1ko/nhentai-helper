@@ -44,3 +44,5 @@ type CastArray<T> = T | T[];
 declare namespace JSX {
   type Element = HTMLElement;
 }
+
+type Transferable = ArrayBuffer | ReadableStream | WritableStream | TransformStream | ImageBitmap;

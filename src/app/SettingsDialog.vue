@@ -78,7 +78,24 @@
         </el-form-item>
       </el-form>
       <el-divider>Download History</el-divider>
-      <p>You have downloaded {{ downloadNum }} manga using nHentai Helper.</p>
+      <p class="no-sl">You have downloaded {{ downloadNum }} manga using nHentai Helper.</p>
+      <el-button
+        type="primary"
+        :icon="Download"
+        :disabled="!downloadNum"
+        :loading="exporting"
+        @click="exportHistory"
+        >Export</el-button
+      >
+      <el-button type="primary" :icon="Upload" :loading="importing" @click="importHistory"
+        >Import</el-button
+      >
+      <el-popconfirm title="Are you sure?" placement="top" @confirm="clearHistory">
+        <template #reference>
+          <el-button type="danger" :icon="Delete" :loading="clearing">Clear</el-button>
+        </template>
+      </el-popconfirm>
+      <p class="no-sl">Notice: Import will not clear the existing history, but merges it.</p>
     </div>
   </el-dialog>
 </template>
@@ -86,9 +103,17 @@
 <script setup lang="ts">
 import { monkeyWindow } from '$';
 import { computed, ref } from 'vue';
+import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { DISABLE_STREAM_DOWNLOAD, settings, startWatchSettings } from '@/utils/settings';
 import { ElMarks } from '@/typings';
-import { getDownloadNumber } from '@/utils/downloadHistory';
+import {
+  clearDownloadHistory,
+  exportDownloadHistory,
+  getDownloadNumber,
+  importDownloadHistory,
+} from '@/utils/downloadHistory';
+import { pickAndReadFile } from '@/utils/file';
+import { showMessage } from '@/utils/elMessage';
 
 startWatchSettings();
 
@@ -109,7 +134,7 @@ const compressionLevelMarks: ElMarks = {
 };
 
 const show = ref(false);
-const downloadNum = ref(0);
+const downloadNum = ref(NaN);
 
 const filenameLengthNumber = computed<number>({
   get: () => (typeof settings.filenameLength === 'number' ? settings.filenameLength : 0),
@@ -124,11 +149,13 @@ const filenameLengthAuto = computed<boolean>({
   },
 });
 
+const refreshDownloadNum = async () => {
+  downloadNum.value = await getDownloadNumber();
+};
+
 const open = () => {
   show.value = true;
-  getDownloadNumber().then(number => {
-    downloadNum.value = number;
-  });
+  refreshDownloadNum();
 };
 
 const openHelp = () => {
@@ -143,6 +170,42 @@ const openHelpCn = () => {
     'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE',
     '_blank',
   );
+};
+
+const exporting = ref(false);
+const importing = ref(false);
+const clearing = ref(false);
+
+const showMessageBySucceed = (succeed: boolean): void => {
+  showMessage({
+    type: succeed ? 'success' : 'error',
+    message: succeed ? 'Succeed' : 'Failed, please check console for error message',
+  });
+};
+
+const exportHistory = async () => {
+  exporting.value = true;
+  const succeed = await exportDownloadHistory();
+  exporting.value = false;
+  showMessageBySucceed(succeed);
+};
+
+const importHistory = async () => {
+  const data = await pickAndReadFile('application/zip');
+  if (!data) return;
+  importing.value = true;
+  const succeed = await importDownloadHistory(data);
+  importing.value = false;
+  refreshDownloadNum();
+  showMessageBySucceed(succeed);
+};
+
+const clearHistory = async () => {
+  clearing.value = true;
+  const succeed = await clearDownloadHistory();
+  clearing.value = false;
+  refreshDownloadNum();
+  showMessageBySucceed(succeed);
 };
 
 defineExpose({ open });
