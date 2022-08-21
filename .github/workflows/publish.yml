@@ -30,6 +30,13 @@ jobs:
           prerelease: false
           files: |
             dist/script.user.js
+      - name: Trigger Greasy Fork synchronization
+        uses: antaljanosbenjamin/single-commit-publish@v1.0.1
+        with:
+          github-token: ${{ github.token }}
+          branch: dist
+          source-dir: dist
+          files-and-dirs: script.user.js
   deploy:
     needs: build
     runs-on: ubuntu-latest
