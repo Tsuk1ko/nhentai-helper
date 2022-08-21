@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="show" :center="true">
+  <el-dialog v-model="show" :center="true" top="50px">
     <template #header="{ titleId, titleClass }">
       <div class="nhentai-helper-setting-help-buttons no-sl">
         <el-button size="small" @click="openHelp">Help</el-button>
@@ -95,7 +95,7 @@
           <el-button type="danger" :icon="Delete" :loading="clearing">Clear</el-button>
         </template>
       </el-popconfirm>
-      <p class="no-sl">Notice: Import will not clear the existing history, but merges it.</p>
+      <p class="no-sl">Notice: Import will not clear the existing history, but merges with it.</p>
     </div>
   </el-dialog>
 </template>
