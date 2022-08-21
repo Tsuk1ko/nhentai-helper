@@ -33,8 +33,9 @@ jobs:
       - name: Trigger Greasy Fork synchronization
         uses: antaljanosbenjamin/single-commit-publish@v1.0.1
         with:
-          github-token: ${{ github.token }}
-          branch: dist
+          github-token: ${{ secrets.DIST_TOKEN }}
+          github-repository: Tsuk1ko/nhentai-helper-dist
+          branch: main
           source-dir: dist
           files-and-dirs: "script.user.js script.meta.js"
           commit-message: ${{ github.ref_name }}
