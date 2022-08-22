@@ -25,17 +25,12 @@
 
 ![settings](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/settings.png)
 
+在设置面板中，带星号`*`的设置项需要刷新页面才能生效
+
 - **Download thread 下载线程数**  
   如果你觉得下载太慢，可以适当提高线程数，不过你得清楚，挂（一个好一点的）代理才是拯救辣鸡网络的实在方法
 - **Open on new tab 在新选项卡打开**  
   本子详情页会默认变为在新选项卡中打开，如果不喜欢就关掉它
-- **Custom download URL 自定义下载链接**  
-  **警告：不知道这是做什么的就不要动**  
-  提示：你可能还需要往脚本设置的 *XHR 安全* 中加入域名  
-  提供一个包含以下占位符的 URL：
-  - `{{mid}}` - Media ID
-  - `{{index}}` - 页号
-  - `{{ext}}` - 图片扩展名
 - **Compression filename 压缩文件名**  
   默认是`{{japanese}}.zip`，可自定义下载下来的压缩文件的文件名，包括扩展名，比如`{{english}}.cbz`  
   支持的占位符：  
@@ -55,6 +50,16 @@
   当错误发生时自动重试，而不是弹出选择对话框
 - **Auto show all 自动显示全部**  
   本子详情页自动帮你点击“Show all”按钮
+
+### 进阶设置
+
+- **Custom download URL 自定义下载链接**  
+  **警告：不知道这是做什么的就不要动**  
+  提示：你可能还需要往脚本设置的 *XHR 安全* 中加入域名  
+  提供一个包含以下占位符的 URL：
+  - `{{mid}}` - Media ID
+  - `{{index}}` - 页号
+  - `{{ext}}` - 图片扩展名
 - **Show ignore button 显示忽略按钮**  
   会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
 - **Compression "streamFiles" 压缩 "streamFiles" 选项**  
@@ -65,6 +70,8 @@
 - **Stream download 流式下载**  
   利用 [StreamSaver.js](https://github.com/jimmywarting/StreamSaver.js) 直接下载压缩流来减少内存占用  
   在 Safari 和 Firefox 上无法使用，且下载速度**极慢**，因此不推荐启用除非真的有内存消耗问题
+- **Prevent console clearing 阻止控制台清空**  
+  只在 nHentai 官方站点可用（需要），当你需要提交控制台日志来定位问题的时候请启用它
 
 ## 其他功能
 

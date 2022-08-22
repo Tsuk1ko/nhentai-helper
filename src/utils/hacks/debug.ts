@@ -1,4 +1,4 @@
-import { monkeyWindow, unsafeWindow } from '$';
+import { GM_getValue, monkeyWindow, unsafeWindow } from '$';
 import { IS_DEV, IS_NHENTAI } from '@/const';
 
 const isNodeOrElement =
@@ -11,14 +11,20 @@ const isNodeOrElement =
         typeof val.nodeName === 'string';
 
 // 防 nhentai console 屏蔽
-if (IS_NHENTAI && (IS_DEV || localStorage.getItem('NHENTAI_HELPER_DEBUG'))) {
-  const c = unsafeWindow.console;
-  c._clear = c.clear;
-  c.clear = () => {};
-  c._log = c.log;
-  c.log = (...args) => {
-    if (args.length === 1 && isNodeOrElement(args[0])) return;
-    return c._log!(...args);
-  };
-  unsafeWindow.Date = monkeyWindow.Date;
+if (IS_NHENTAI) {
+  if (IS_DEV) unsafeWindow.Date = monkeyWindow.Date;
+  if (
+    IS_DEV ||
+    GM_getValue('prevent_console_clear', false) ||
+    localStorage.getItem('NHENTAI_HELPER_DEBUG')
+  ) {
+    const c = unsafeWindow.console;
+    c._clear = c.clear;
+    c.clear = () => {};
+    c._log = c.log;
+    c.log = (...args) => {
+      if (args.length === 1 && isNodeOrElement(args[0])) return;
+      return c._log!(...args);
+    };
+  }
 }

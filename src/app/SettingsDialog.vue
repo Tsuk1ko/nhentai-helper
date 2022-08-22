@@ -20,10 +20,6 @@
         <el-form-item class="refresh-required" label="Open on new tab">
           <el-switch v-model="settings.openOnNewTab" />
         </el-form-item>
-        <!-- 自定义下载地址 -->
-        <el-form-item label="Custom download URL">
-          <el-input v-model="settings.customDownloadUrl" />
-        </el-form-item>
         <!-- 自定义压缩文件名 -->
         <el-form-item label="Compression filename">
           <el-input
@@ -73,6 +69,10 @@
           <el-switch v-model="settings.showIgnoreButton" />
         </el-form-item>
         <el-divider>Advance Settings</el-divider>
+        <!-- 自定义下载地址 -->
+        <el-form-item label="Custom download URL">
+          <el-input v-model="settings.customDownloadUrl" />
+        </el-form-item>
         <!-- streamFiles 压缩选项 -->
         <el-form-item label='Compression "streamFiles"'>
           <el-switch v-model="settings.compressionStreamFiles" />
@@ -84,6 +84,10 @@
         <!-- 流式下载 -->
         <el-form-item label="Stream download">
           <el-switch v-model="settings.streamDownload" :disabled="DISABLE_STREAM_DOWNLOAD" />
+        </el-form-item>
+        <!-- 阻止控制台清空 -->
+        <el-form-item v-if="IS_NHENTAI" class="refresh-required" label="Prevent console clearing">
+          <el-switch v-model="settings.preventConsoleClearing" />
         </el-form-item>
       </el-form>
       <el-divider>Download History</el-divider>
@@ -130,6 +134,7 @@ import {
 } from '@/utils/downloadHistory';
 import { pickAndReadFile } from '@/utils/file';
 import { showMessage } from '@/utils/elMessage';
+import { IS_NHENTAI } from '@/const';
 
 startWatchSettings();
 

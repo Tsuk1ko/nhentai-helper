@@ -32,6 +32,8 @@ export interface Settings {
   autoShowAll: boolean;
   /** 显示忽略按钮 */
   showIgnoreButton: boolean;
+  /** 阻止控制台清空 */
+  preventConsoleClearing: boolean;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -49,9 +51,9 @@ const createNumberValidator =
   val =>
     typeof val === 'number' && start <= val && val <= end;
 
-export const settingDefinitions: {
-  [key in keyof Settings]: SettingDefinition<Settings[key]>;
-} = {
+export const settingDefinitions: Readonly<{
+  [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
+}> = {
   threadNum: {
     key: 'thread_num',
     default: 8,
@@ -119,6 +121,11 @@ export const settingDefinitions: {
   },
   showIgnoreButton: {
     key: 'show_ignore_button',
+    default: false,
+    validator: booleanValidator,
+  },
+  preventConsoleClearing: {
+    key: 'prevent_console_clear',
     default: false,
     validator: booleanValidator,
   },

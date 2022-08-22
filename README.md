@@ -31,13 +31,6 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   If you think the download speed is too slow, you can try to increase the number of download threads from this setting.
 - **Open on new tab**  
   Gallery page will be open on a new window by default, turn off it if you don't like it.
-- **Custom download URL**  
-  **WARNING: Please don't set this if you don't know what it does.**  
-  Tip: You may need to add your domain into *XHR security* for this script.  
-  Provide a URL containing the following placeholder:
-  - `{{mid}}` - Media ID
-  - `{{index}}` - Page index, starting from 1
-  - `{{ext}}` - Image file extension
 - **Compression filename**  
   Default is `{{japanese}}.zip`. You can custom the naming of downloaded compression file, including the file extension, such as `{{english}}.cbz`.  
   Available placeholders:  
@@ -60,6 +53,16 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Help you to click the "Show all" button on manga detail page automatically.
 - **Show ignore button**  
   Show an button that allow you to mark or unmark the manga as downloaded.
+
+### Advance Settings
+
+- **Custom download URL**  
+  **WARNING: Please don't set this if you don't know what it does.**  
+  Tip: You may need to add your domain into *XHR security* for this script.  
+  Provide a URL containing the following placeholder:
+  - `{{mid}}` - Media ID
+  - `{{index}}` - Page index, starting from 1
+  - `{{ext}}` - Image file extension
 - **Compression "streamFiles"**  
   Enable this option will use less memory but some program might not support the generated zip file.  
   See [here](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option) for more information.
@@ -69,6 +72,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 - **Stream download**  
   Use [StreamSaver.js](https://github.com/jimmywarting/StreamSaver.js) to download zip stream to reduce memory usage.  
   But this not work on Safari and Firefox, and the download process is **extremely slow**. So not recommended unless you really have memory usage issues.
+- **Prevent console clearing**  
+  Only available on nHentai official site. It is useful when you need to submit console log for debugging.
 
 ## Other features
 
@@ -86,7 +91,7 @@ You can select a language in the navigation bar to filter mangas.
 
 ### 100% view height
 
-Effective when reading online, only for mirror sites (now nHentai already has this feature).
+Effective when reading online, only for mirror sites (now nHentai official site already has this feature).
 
 ![viewMode](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/viewMode.png)
 
