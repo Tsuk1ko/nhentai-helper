@@ -36,19 +36,21 @@ export interface Settings {
 
 type SettingValidator = (val: any) => boolean;
 
+interface SettingDefinition<T> {
+  key: string;
+  default: T;
+  validator: SettingValidator;
+  formatter?: (val: T) => T;
+}
+
 const booleanValidator: SettingValidator = val => typeof val === 'boolean';
 const createNumberValidator =
   (start: number, end: number): SettingValidator =>
   val =>
     typeof val === 'number' && start <= val && val <= end;
 
-const settingsMap: {
-  [key in keyof Settings]: {
-    key: string;
-    default: Settings[key];
-    validator: SettingValidator;
-    formatter?: (val: Settings[key]) => Settings[key];
-  };
+export const settingDefinitions: {
+  [key in keyof Settings]: SettingDefinition<Settings[key]>;
 } = {
   threadNum: {
     key: 'thread_num',
@@ -128,29 +130,29 @@ export const DISABLE_STREAM_DOWNLOAD =
   !!browserDetect && (browserDetect.name === 'safari' || browserDetect.name === 'firefox');
 
 const readSettings = (): Settings =>
-  mapValues(settingsMap, ({ key, default: defaultVal }) => GM_getValue<any>(key, defaultVal));
+  mapValues(settingDefinitions, ({ key, default: defaultVal }) =>
+    GM_getValue<any>(key, defaultVal),
+  );
 
-export const settings = reactive<Settings>(readSettings());
+export const writeableSettings: Settings = reactive(readSettings());
 
-if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) settings.streamDownload = false;
+export const settings = writeableSettings as Readonly<Settings>;
+
+if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) writeableSettings.streamDownload = false;
 
 export const startWatchSettings = once(() => {
-  const settingRefs = toRefs(settings);
+  const settingRefs = toRefs(writeableSettings);
   each(settingRefs, (ref, key) => {
-    const cur = settingsMap[key as keyof Settings];
+    const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
     watch(ref as Ref<any>, val => {
       if (!cur.validator(val)) {
-        // @ts-expect-error never
-        settings[key] = cur.default;
+        ref.value = cur.default;
         return;
       }
       if (cur.formatter) {
-        // @ts-expect-error never
-        val = cur.formatter(val);
-        // @ts-expect-error never
-        if (settings[key] !== val) {
-          // @ts-expect-error never
-          settings[key] = val;
+        const formattedVal = cur.formatter(val);
+        if (ref.value !== formattedVal) {
+          ref.value = formattedVal;
           return;
         }
       }

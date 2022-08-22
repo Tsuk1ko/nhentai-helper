@@ -198,12 +198,7 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.1.tgz#75b4c27948c81e88ccd3a8902047bcd797f38d32"
   integrity sha512-ej5oVy6lykXsvieQtqZxCOaLT+xD4+QNarq78cIYISHmZXshCvROLudpQN3lfL8G0NL7plMSSK+zlyvCaIJ4Iw==
 
-"@element-plus/icons-vue@^2.0.6":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@element-plus/icons-vue/-/icons-vue-2.0.9.tgz#b7777c57534522e387303d194451d50ff549d49a"
-  integrity sha512-okdrwiVeKBmW41Hkl0eMrXDjzJwhQMuKiBOu17rOszqM+LS/yBYpNQNV5Jvoh06Wc+89fMmb/uhzf8NZuDuUaQ==
-
-"@element-plus/icons-vue@^2.0.9":
+"@element-plus/icons-vue@^2.0.6", "@element-plus/icons-vue@^2.0.9":
   version "2.0.9"
   resolved "https://mirrors.tencent.com/npm/@element-plus%2ficons-vue/-/icons-vue-2.0.9.tgz#b7777c57534522e387303d194451d50ff549d49a"
   integrity sha512-okdrwiVeKBmW41Hkl0eMrXDjzJwhQMuKiBOu17rOszqM+LS/yBYpNQNV5Jvoh06Wc+89fMmb/uhzf8NZuDuUaQ==

@@ -26,7 +26,15 @@
         </el-form-item>
         <!-- 自定义压缩文件名 -->
         <el-form-item label="Compression filename">
-          <el-input v-model="settings.compressionFileName" placeholder="{{japanese}}.zip" />
+          <el-input
+            v-model="settings.compressionFileName"
+            :placeholder="settingDefinitions.compressionFileName.default"
+            @blur="
+              if (!settings.compressionFileName) {
+                settings.compressionFileName = settingDefinitions.compressionFileName.default;
+              }
+            "
+          />
         </el-form-item>
         <!-- 自定义压缩级别 -->
         <el-form-item class="m-b-32" label="Compression level">
@@ -42,6 +50,7 @@
           <el-input-number
             v-model="filenameLengthNumber"
             :min="0"
+            :value-on-clear="settingDefinitions.filenameLength.default"
             :step-strictly="true"
             :disabled="settings.filenameLength === 'auto'"
           />
@@ -78,7 +87,9 @@
         </el-form-item>
       </el-form>
       <el-divider>Download History</el-divider>
-      <p class="no-sl">You have downloaded {{ downloadNum }} manga using nHentai Helper.</p>
+      <p class="no-sl">
+        You have downloaded {{ downloadNum }} manga on this site using nHentai Helper.
+      </p>
       <el-button
         type="primary"
         :icon="Download"
@@ -104,7 +115,12 @@
 import { monkeyWindow } from '$';
 import { computed, ref } from 'vue';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
-import { DISABLE_STREAM_DOWNLOAD, settings, startWatchSettings } from '@/utils/settings';
+import {
+  DISABLE_STREAM_DOWNLOAD,
+  settingDefinitions,
+  writeableSettings as settings,
+  startWatchSettings,
+} from '@/utils/settings';
 import { ElMarks } from '@/typings';
 import {
   clearDownloadHistory,
