@@ -1,3 +1,4 @@
+const { spawn } = require('child_process');
 const yesno = require('yesno');
 const { version } = require('../package.json');
 
@@ -7,4 +8,8 @@ const { version } = require('../package.json');
     defaultValue: null,
   });
   if (!ok) process.exit(1);
+  spawn(`git push && git push origin v${version}`, {
+    shell: true,
+    stdio: 'inherit',
+  });
 })();

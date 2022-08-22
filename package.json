@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "postversion": "node ./scripts/confirmVersion.cjs && git push && git push --tags"
+    "postversion": "node ./scripts/confirmVersion.cjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
