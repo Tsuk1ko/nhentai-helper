@@ -5,7 +5,6 @@ import components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
-import cleanCss from './plugins/cleanCss';
 import tsx from './plugins/tsx';
 
 const IS_DEV = process.env.npm_lifecycle_event === 'dev';
@@ -26,7 +25,6 @@ export default defineConfig({
       dirs: [],
       resolvers: [ElementPlusResolver()],
     }),
-    cleanCss(),
     monkey({
       entry: 'src/main.ts',
       userscript: {
@@ -62,6 +60,7 @@ export default defineConfig({
       build: {
         fileName: 'script.user.js',
         metaFileName: true,
+        minifyCss: true,
         externalGlobals: {
           comlink: cdn.jsdelivrFastly('Comlink', 'dist/umd/comlink.min.js'),
           eventemitter3: cdn.jsdelivrFastly('EventEmitter3', 'umd/eventemitter3.min.js'),
