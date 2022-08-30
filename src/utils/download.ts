@@ -138,6 +138,9 @@ export const addDownloadGalleryTask = (
   { progressDisplayController, markGalleryDownloaded }: DownloadOptions = {},
 ): void => {
   const info = reactive(createMangaDownloadInfo(gallery));
+  info.cancel = () => {
+    progressDisplayController?.reset();
+  };
 
   dlQueue.push(async () => {
     const zipFunc = await downloadGalleryByInfo(info, { progressDisplayController }).catch(e => {
