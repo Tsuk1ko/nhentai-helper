@@ -30,6 +30,8 @@ jobs:
           prerelease: false
           files: |
             dist/script.user.js
+      - name: Copy .gitignore
+        run: cp .gitignore ./dist
       - name: Trigger Greasy Fork synchronization
         uses: casperdcl/push-dir@v1
         with:
