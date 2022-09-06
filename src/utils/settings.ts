@@ -1,6 +1,6 @@
 import { GM_getValue, GM_setValue } from '$';
 import { reactive, Ref, toRefs, watch } from 'vue';
-import { each, mapValues } from 'lodash';
+import { each, mapValues } from 'lodash-es';
 import once from 'just-once';
 import { detect } from 'detect-browser';
 import logger from './logger';

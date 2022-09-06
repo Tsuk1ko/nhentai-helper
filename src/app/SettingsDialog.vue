@@ -133,7 +133,7 @@ import {
   importDownloadHistory,
 } from '@/utils/downloadHistory';
 import { pickAndReadFile } from '@/utils/file';
-import { showMessage } from '@/utils/elMessage';
+import { showMessage } from '@/utils/elementPlus';
 import { IS_NHENTAI } from '@/const';
 
 startWatchSettings();

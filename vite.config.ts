@@ -1,8 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
@@ -20,11 +18,6 @@ export default defineConfig({
     minifiedRawLoader(),
     tsx(),
     vue(),
-    components({
-      dts: false,
-      dirs: [],
-      resolvers: [ElementPlusResolver()],
-    }),
     monkey({
       entry: 'src/main.ts',
       userscript: {
@@ -50,7 +43,9 @@ export default defineConfig({
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
         resource: {
-          notycss: 'https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css',
+          notyCss: 'https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css',
+          elementPlus: 'https://cdn.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js',
+          elementPlusCss: 'https://cdn.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css',
         },
         'run-at': 'document-end',
         noframes: true,

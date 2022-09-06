@@ -7,7 +7,7 @@ const { version } = require('../package.json');
     question: `Are you sure you want to publish v${version}?`,
     defaultValue: null,
   });
-  if (!ok) process.exit(1);
+  if (!ok) process.exit();
   spawn(`git push && git push origin v${version}`, {
     shell: true,
     stdio: 'inherit',

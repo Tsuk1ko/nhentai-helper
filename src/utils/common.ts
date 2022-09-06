@@ -1,3 +1,4 @@
+import { GM_addStyle, GM_getResourceText } from '$';
 import $ from 'jquery';
 import { last, template } from 'lodash-es';
 import type { JSZipGeneratorOptions } from 'jszip';
@@ -54,3 +55,6 @@ export const createMangaDownloadInfo = (gallery: NHentaiGalleryInfo): MangaDownl
   compressingPercent: '0',
   error: false,
 });
+
+export const addResourceStyle = (name: string): ReturnType<typeof GM_addStyle> =>
+  GM_addStyle(GM_getResourceText(name));
