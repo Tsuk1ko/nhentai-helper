@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { readFileSync } from 'fs';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import monkey, { cdn } from 'vite-plugin-monkey';
@@ -6,6 +7,21 @@ import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
 
 const IS_DEV = process.env.npm_lifecycle_event === 'dev';
+
+const jsdelivrFastly = (() => {
+  const verCache = new Map<string, string>();
+  const getVer = (name: string): string => {
+    if (verCache.has(name)) return verCache.get(name);
+    const pkgPath = resolve(__dirname, 'node_modules', name, 'package.json');
+    const { version } = JSON.parse(readFileSync(pkgPath).toString());
+    verCache.set(name, version);
+    return version;
+  };
+  return (name: string, path?: string) => {
+    const [, getUrl] = cdn.jsdelivrFastly('', path);
+    return getUrl(getVer(name), name);
+  };
+})();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -43,9 +59,9 @@ export default defineConfig({
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
         resource: {
-          notyCss: 'https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css',
-          elementPlus: 'https://cdn.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js',
-          elementPlusCss: 'https://cdn.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css',
+          notyCss: jsdelivrFastly('noty', 'lib/noty.min.css'),
+          elementPlus: jsdelivrFastly('element-plus', 'dist/index.full.min.js'),
+          elementPlusCss: jsdelivrFastly('element-plus', 'dist/index.css'),
         },
         'run-at': 'document-end',
         noframes: true,
