@@ -6,8 +6,6 @@ import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
 
-const IS_DEV = process.env.npm_lifecycle_event === 'dev';
-
 const jsdelivrFastly = (() => {
   const verCache = new Map<string, string>();
   const getVer = (name: string): string => {
@@ -24,7 +22,7 @@ const jsdelivrFastly = (() => {
 })();
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -54,7 +52,7 @@ export default defineConfig({
           'https://nhentai.xxx/*',
           'https://nhentai.to/*',
           'https://nhentai.website/*',
-          ...(IS_DEV ? ['https://www.blank.org/*'] : []),
+          ...(mode === 'development' ? ['https://www.blank.org/*'] : []),
         ],
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
@@ -87,4 +85,4 @@ export default defineConfig({
       },
     }),
   ],
-});
+}));
