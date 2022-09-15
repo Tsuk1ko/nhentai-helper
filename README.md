@@ -8,7 +8,7 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 [Via Greasy Fork](https://greasyfork.org/zh-CN/scripts/375992) (login required due to adult content)
 
-[Via Github Pages](https://tsuk1ko.github.io/nhentai-helper/script.user.js)
+[Via Github Pages](https://nhelper.lolicon.app/script.user.js)
 
 ## Main features
 

@@ -6,7 +6,7 @@
 
 [从 Greasy Fork 安装](https://greasyfork.org/scripts/375992)（由于成人内容，需要登录才能安装）
 
-[从 Github Pages 安装](https://tsuk1ko.github.io/nhentai-helper/script.user.js)
+[从 Github Pages 安装](https://nhelper.lolicon.app/script.user.js)
 
 ## 主要功能
 
