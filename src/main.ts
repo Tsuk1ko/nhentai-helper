@@ -1,5 +1,6 @@
 import './utils/hacks';
 import './index.less';
+import 'noty/lib/noty.css';
 import { GM_registerMenuCommand } from '$';
 import { App, Component, createApp } from 'vue';
 import once from 'just-once';
@@ -7,7 +8,6 @@ import DownloadPanelVue from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { initPage } from './utils/initPage';
 import { IS_SETTINGS_DIALOG_DEV } from './const';
-import { addResourceStyle } from './utils/common';
 import { elementPlus } from './utils/elementPlus';
 
 const createAppAndMount = <T extends Component & (abstract new (...args: any) => any)>(
@@ -32,7 +32,6 @@ const openSettingsDialog = (): void => {
   dialog.open();
 };
 
-addResourceStyle('notyCss');
 createAppAndMount(DownloadPanelVue);
 initPage();
 

@@ -1,33 +1,19 @@
 import { resolve } from 'path';
-import { readFileSync } from 'fs';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import monkey, { cdn } from 'vite-plugin-monkey';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
 
-const jsdelivrFastly = (() => {
-  const verCache = new Map<string, string>();
-  const getVer = (name: string): string => {
-    if (verCache.has(name)) return verCache.get(name);
-    const pkgPath = resolve(__dirname, 'node_modules', name, 'package.json');
-    const { version } = JSON.parse(readFileSync(pkgPath).toString());
-    verCache.set(name, version);
-    return version;
-  };
-  return (name: string, path?: string) => {
-    const [, getUrl] = cdn.jsdelivrFastly('', path);
-    return getUrl(getVer(name), name);
-  };
-})();
-
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(async ({ mode }) => ({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
     },
   },
+  // fix raw loader issue
+  define: mode === 'development' ? { 'process.env.NODE_ENV': "'development'" } : {},
   plugins: [
     minifiedRawLoader(),
     tsx(),
@@ -56,11 +42,6 @@ export default defineConfig(({ mode }) => ({
         ],
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
-        resource: {
-          notyCss: jsdelivrFastly('noty', 'lib/noty.min.css'),
-          elementPlus: jsdelivrFastly('element-plus', 'dist/index.full.min.js'),
-          elementPlusCss: jsdelivrFastly('element-plus', 'dist/index.css'),
-        },
         'run-at': 'document-end',
         noframes: true,
         homepageURL: 'https://github.com/Tsuk1ko/nhentai-helper',
@@ -75,12 +56,17 @@ export default defineConfig(({ mode }) => ({
           eventemitter3: cdn.jsdelivrFastly('EventEmitter3', 'umd/eventemitter3.min.js'),
           'file-saver': cdn.jsdelivrFastly('saveAs', 'dist/FileSaver.min.js'),
           jquery: cdn.jsdelivrFastly('$', 'dist/jquery.min.js'),
-          'jquery-pjax': cdn.jsdelivrFastly('', 'jquery.pjax.min.js'),
+          'jquery-pjax': cdn.jsdelivrFastly(undefined, 'jquery.pjax.min.js'),
           localforage: cdn.jsdelivrFastly('localforage', 'dist/localforage.min.js'),
           md5: cdn.jsdelivrFastly('MD5', 'dist/md5.min.js'),
           noty: cdn.jsdelivrFastly('Noty', 'lib/noty.min.js'),
           streamsaver: cdn.jsdelivrFastly('streamSaver', 'StreamSaver.min.js'),
           vue: cdn.jsdelivrFastly('Vue', 'dist/vue.global.prod.js'),
+        },
+        externalResource: {
+          'noty/lib/noty.css': cdn.jsdelivrFastly('notyCss', 'lib/noty.min.css'),
+          'element-plus/dist/index.full.min.js?raw': cdn.jsdelivrFastly('elementPlusJs'),
+          'element-plus/dist/index.css?raw': cdn.jsdelivrFastly('elementPlusCss'),
         },
       },
     }),
