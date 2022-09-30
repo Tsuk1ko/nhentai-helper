@@ -30,8 +30,10 @@ jobs:
           prerelease: false
           files: |
             dist/script.user.js
-      - name: Copy .gitignore
-        run: cp .gitignore ./dist
+      - name: Prepare dist branch files
+        run: |
+          cp .gitignore ./dist
+          rm ./dist/*.html
       - name: Trigger Greasy Fork synchronization
         uses: casperdcl/push-dir@v1
         with:
@@ -39,6 +41,7 @@ jobs:
           branch: dist
           dir: dist
           history: true
+          nojekyll: true
   deploy:
     needs: build
     runs-on: ubuntu-latest
