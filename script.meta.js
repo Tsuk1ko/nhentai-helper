@@ -31,13 +31,13 @@
 // @connect            i.nhentai.net
 // @connect            cdn.nhentai.xxx
 // @connect            cdn.nload.xyz
-// @resource           notyCss https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @resource           elementPlus https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
-// @resource           elementPlusCss https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
-// @grant              GM_registerMenuCommand
-// @grant              unsafeWindow
+// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
+// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
+// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
+// @grant              GM_registerMenuCommand
+// @grant              unsafeWindow
 // @grant              GM_getValue
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest

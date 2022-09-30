@@ -31,13 +31,13 @@
 // @connect            i.nhentai.net
 // @connect            cdn.nhentai.xxx
 // @connect            cdn.nload.xyz
-// @resource           notyCss https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @resource           elementPlus https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
-// @resource           elementPlusCss https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
-// @grant              GM_registerMenuCommand
-// @grant              unsafeWindow
+// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
+// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
+// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
+// @grant              GM_registerMenuCommand
+// @grant              unsafeWindow
 // @grant              GM_getValue
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest
@@ -45,16 +45,7 @@
 // @noframes          
 // ==/UserScript==
 
-// use vite-plugin-monkey@2.3.1 at 2022-09-07T03:37:42.225Z
-
-;(({ css = "" }) => {
-  const style = document.createElement("style");
-  style.innerText = css;
-  style.dataset.source = "vite-plugin-monkey";
-  document.head.appendChild(style);
-})({
-  "css": ".nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.download-item[data-v-5e3261cd]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-5e3261cd]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-5e3261cd]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-5e3261cd]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-5e3261cd]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-5e3261cd]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-5e3261cd]{background-color:#00ff0080}.download-item__progress-text[data-v-5e3261cd]{transform:scale(.8)}#download-panel[data-v-658acab9]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-658acab9]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-658acab9]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons{float:left;position:absolute}#nhentai-helper-setting-dialog .asterisk-left:before{content:\"*\";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=\"file\"]):not([type=\"checkbox\"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:\"*\";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}"
-});
+(t=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.innerText=t,document.head.appendChild(e)})('.nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.download-item[data-v-5e3261cd]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-5e3261cd]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-5e3261cd]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-5e3261cd]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-5e3261cd]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-5e3261cd]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-5e3261cd]{background-color:#00ff0080}.download-item__progress-text[data-v-5e3261cd]{transform:scale(.8)}#download-panel[data-v-658acab9]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-658acab9]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-658acab9]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons{float:left;position:absolute}#nhentai-helper-setting-dialog .asterisk-left:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type="file"]):not([type="checkbox"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}');
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -69,50 +60,33 @@ var __publicField = (obj, key, value) => {
   function _interopNamespace(e) {
     if (e && e.__esModule)
       return e;
-    const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
+    const n2 = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
     if (e) {
       for (const k in e) {
         if (k !== "default") {
           const d = Object.getOwnPropertyDescriptor(e, k);
-          Object.defineProperty(n, k, d.get ? d : {
+          Object.defineProperty(n2, k, d.get ? d : {
             enumerable: true,
             get: () => e[k]
           });
         }
       }
     }
-    n.default = e;
-    return Object.freeze(n);
+    n2.default = e;
+    return Object.freeze(n2);
   }
   const $__default = /* @__PURE__ */ _interopDefaultLegacy($);
   const Vue__namespace = /* @__PURE__ */ _interopNamespace(Vue);
   const localforage__default = /* @__PURE__ */ _interopDefaultLegacy(localforage);
   const md5__default = /* @__PURE__ */ _interopDefaultLegacy(md5);
   const Noty__default = /* @__PURE__ */ _interopDefaultLegacy(Noty);
-  var monkeyWindow = (_a = Reflect.get(document, "__monkeyWindow")) != null ? _a : window;
-  monkeyWindow.GM;
-  monkeyWindow.unsafeWindow = (_b = monkeyWindow.unsafeWindow) != null ? _b : window;
-  var unsafeWindow = monkeyWindow.unsafeWindow;
-  monkeyWindow.GM_info;
-  monkeyWindow.GM_cookie;
-  var GM_setValue = (...args) => {
-    return monkeyWindow.GM_setValue(...args);
-  };
-  var GM_getResourceText = (...args) => {
-    return monkeyWindow.GM_getResourceText(...args);
-  };
-  var GM_addStyle = (...args) => {
-    return monkeyWindow.GM_addStyle(...args);
-  };
-  var GM_registerMenuCommand = (...args) => {
-    return monkeyWindow.GM_registerMenuCommand(...args);
-  };
-  var GM_xmlhttpRequest = (...args) => {
-    return monkeyWindow.GM_xmlhttpRequest(...args);
-  };
-  var GM_getValue = (...args) => {
-    return monkeyWindow.GM_getValue(...args);
-  };
+  var r = (_a = Reflect.get(document, "__monkeyWindow")) != null ? _a : window;
+  r.GM;
+  r.unsafeWindow = (_b = r.unsafeWindow) != null ? _b : window;
+  var n = r.unsafeWindow;
+  r.GM_info;
+  r.GM_cookie;
+  var u = (...e) => r.GM_setValue(...e), l = (...e) => r.GM_addStyle(...e), m = (...e) => r.GM_registerMenuCommand(...e), b = (...e) => r.GM_xmlhttpRequest(...e), h = (...e) => r.GM_getValue(...e);
   const WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1);
   const { pathname, host } = location;
   const IS_PAGE_MANGA_DETAIL = /^\/g\/[0-9]+\/?(\?.*)?$/.test(pathname);
@@ -122,8 +96,8 @@ var __publicField = (obj, key, value) => {
   const IS_NHENTAI_TO = host === "nhentai.to" || host === "nhentai.website";
   const isNodeOrElement = typeof Node === "function" ? (val) => val instanceof Node : (val) => val && typeof val === "object" && typeof val.nodeType === "number" && typeof val.nodeName === "string";
   if (IS_NHENTAI) {
-    if (GM_getValue("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG")) {
-      const c = unsafeWindow.console;
+    if (h("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG")) {
+      const c = n.console;
       c._clear = c.clear;
       c.clear = () => {
       };
@@ -141,6 +115,11 @@ var __publicField = (obj, key, value) => {
     error: (...args) => console.error("[nhentai-helper]", ...args)
   };
   const index = "";
+  const cssLoader = (e) => {
+    const t = GM_getResourceText(e);
+    return GM_addStyle(t), t;
+  }, rawLoader = (e) => GM_getResourceText(e);
+  cssLoader("notyCss");
   var functionOnce = once;
   function once(fn) {
     var called, value;
@@ -571,9 +550,9 @@ var __publicField = (obj, key, value) => {
     var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$d;
     return value === proto;
   }
-  function baseTimes(n, iteratee) {
-    var index2 = -1, result = Array(n);
-    while (++index2 < n) {
+  function baseTimes(n2, iteratee) {
+    var index2 = -1, result = Array(n2);
+    while (++index2 < n2) {
       result[index2] = iteratee(index2);
     }
     return result;
@@ -1932,7 +1911,7 @@ var __publicField = (obj, key, value) => {
   }
   var __spreadArray = globalThis && globalThis.__spreadArray || function(to, from, pack) {
     if (pack || arguments.length === 2)
-      for (var i = 0, l = from.length, ar; i < l; i++) {
+      for (var i = 0, l2 = from.length, ar; i < l2; i++) {
         if (ar || !(i in from)) {
           if (!ar)
             ar = Array.prototype.slice.call(from, 0, i);
@@ -2210,7 +2189,7 @@ var __publicField = (obj, key, value) => {
   const DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox");
   const readSettings = () => mapValues(
     settingDefinitions,
-    ({ key, default: defaultVal }) => GM_getValue(key, defaultVal)
+    ({ key, default: defaultVal }) => h(key, defaultVal)
   );
   const writeableSettings = Vue.reactive(readSettings());
   const settings = writeableSettings;
@@ -2233,7 +2212,7 @@ var __publicField = (obj, key, value) => {
           }
         }
         logger.log("update setting", cur.key, val);
-        GM_setValue(cur.key, val);
+        u(cur.key, val);
       });
     });
   });
@@ -2244,7 +2223,7 @@ var __publicField = (obj, key, value) => {
     if (settings.seriesMode)
       dlQueue.start().catch(logger.error);
   });
-  const _withScopeId = (n) => (Vue.pushScopeId("data-v-5e3261cd"), n = n(), Vue.popScopeId(), n);
+  const _withScopeId = (n2) => (Vue.pushScopeId("data-v-5e3261cd"), n2 = n2(), Vue.popScopeId(), n2);
   const _hoisted_1$2 = ["title"];
   const _hoisted_2$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ Vue.createElementVNode("i", { class: "fa fa-times" }, null, -1));
   const _hoisted_3$1 = [
@@ -2897,58 +2876,17 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     if (file)
       return readFile(file);
   };
-  const compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
-  const getDownloadExt = () => {
-    const ext = last(settings.compressionFileName.split("."));
-    if (ext)
-      return ext.toLowerCase();
-    return "zip";
-  };
-  const getCompressionOptions = () => {
-    return {
-      streamFiles: settings.compressionStreamFiles,
-      compression: settings.compressionLevel > 0 ? "DEFLATE" : "STORE",
-      compressionOptions: { level: settings.compressionLevel }
-    };
-  };
-  const getShowAllBtn = () => new Promise((resolve, reject) => {
-    const $btn = $__default.default("#show-all-images-button");
-    if ($btn.length > 0) {
-      resolve($btn);
-      return;
-    }
-    const container = document.getElementById("thumbnail-container");
-    if (!container) {
-      reject(new Error("Show all button not found"));
-      return;
-    }
-    new MutationObserver((mutations, self2) => {
-      mutations.forEach(({ addedNodes }) => {
-        const btnContainer = addedNodes[0];
-        if ((btnContainer == null ? void 0 : btnContainer.id) === "show-all-images-container") {
-          self2.disconnect();
-          resolve($__default.default("#show-all-images-button"));
-        }
-      });
-    }).observe(container, { childList: true });
-  });
-  const createMangaDownloadInfo = (gallery2) => ({
-    gallery: gallery2,
-    done: 0,
-    compressing: false,
-    compressingPercent: "0",
-    error: false
-  });
-  const addResourceStyle = (name) => GM_addStyle(GM_getResourceText(name));
+  const elementPlusJs = rawLoader("elementPlusJs");
+  const elementPlusCss = rawLoader("elementPlusCss");
   const elementPlus = functionOnce(() => {
     const win = window;
     if (!win.Vue)
       win.Vue = Vue__namespace;
-    eval(GM_getResourceText("elementPlus"));
-    addResourceStyle("elementPlusCss");
+    eval(elementPlusJs);
+    l(elementPlusCss);
     return win.ElementPlus;
   });
-  const showMessage = (params) => elementPlus().ElMessage({ ...params, appendTo: monkeyWindow.document.body });
+  const showMessage = (params) => elementPlus().ElMessage({ ...params, appendTo: r.document.body });
   const _hoisted_1 = { class: "nhentai-helper-setting-help-buttons no-sl" };
   const _hoisted_2 = /* @__PURE__ */ Vue.createTextVNode("Help");
   const _hoisted_3 = /* @__PURE__ */ Vue.createTextVNode("\u8BF4\u660E");
@@ -3006,13 +2944,13 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
         refreshDownloadNum();
       };
       const openHelp = () => {
-        monkeyWindow.open(
+        r.open(
           "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings",
           "_blank"
         );
       };
       const openHelpCn = () => {
-        monkeyWindow.open(
+        r.open(
           "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE",
           "_blank"
         );
@@ -3334,6 +3272,48 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     }
   });
   const SettingsDialog_vue_vue_type_style_index_0_lang = "";
+  const compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
+  const getDownloadExt = () => {
+    const ext = last(settings.compressionFileName.split("."));
+    if (ext)
+      return ext.toLowerCase();
+    return "zip";
+  };
+  const getCompressionOptions = () => {
+    return {
+      streamFiles: settings.compressionStreamFiles,
+      compression: settings.compressionLevel > 0 ? "DEFLATE" : "STORE",
+      compressionOptions: { level: settings.compressionLevel }
+    };
+  };
+  const getShowAllBtn = () => new Promise((resolve, reject) => {
+    const $btn = $__default.default("#show-all-images-button");
+    if ($btn.length > 0) {
+      resolve($btn);
+      return;
+    }
+    const container = document.getElementById("thumbnail-container");
+    if (!container) {
+      reject(new Error("Show all button not found"));
+      return;
+    }
+    new MutationObserver((mutations, self2) => {
+      mutations.forEach(({ addedNodes }) => {
+        const btnContainer = addedNodes[0];
+        if ((btnContainer == null ? void 0 : btnContainer.id) === "show-all-images-container") {
+          self2.disconnect();
+          resolve($__default.default("#show-all-images-button"));
+        }
+      });
+    }).observe(container, { childList: true });
+  });
+  const createMangaDownloadInfo = (gallery2) => ({
+    gallery: gallery2,
+    done: 0,
+    compressing: false,
+    compressingPercent: "0",
+    error: false
+  });
   const notyConfirmOption = {
     type: "error",
     layout: "bottomRight",
@@ -3347,21 +3327,21 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       return false;
     }
     return new Promise((resolve) => {
-      const n = new Noty__default.default({
+      const n2 = new Noty__default.default({
         ...notyConfirmOption,
         text: `"${title}" is already downloaded${hasQueue ? " or in queue" : ""}.<br>Do you want to download again?`,
         buttons: [
           Noty__default.default.button("YES", "btn btn-noty-blue btn-noty", () => {
-            n.close();
+            n2.close();
             resolve(true);
           }),
           Noty__default.default.button("NO", "btn btn-noty-green btn-noty", () => {
-            n.close();
+            n2.close();
             resolve(false);
           })
         ]
       });
-      n.show();
+      n2.show();
     });
   };
   const errorRetryConfirm = (action, noCb, yesCb) => {
@@ -3370,21 +3350,21 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       yesCb == null ? void 0 : yesCb();
       return;
     }
-    const n = new Noty__default.default({
+    const n2 = new Noty__default.default({
       ...notyConfirmOption,
       text: `Error occurred while ${action}, retry?`,
       buttons: [
         Noty__default.default.button("NO", "btn btn-noty-blue btn-noty", () => {
-          n.close();
+          n2.close();
           noCb == null ? void 0 : noCb();
         }),
         Noty__default.default.button("YES", "btn btn-noty-green btn-noty", () => {
-          n.close();
+          n2.close();
           yesCb == null ? void 0 : yesCb();
         })
       ]
     });
-    n.show();
+    n2.show();
   };
   const downloadedTip = (title) => {
     new Noty__default.default({
@@ -3461,7 +3441,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     let abortFunc;
     const dataPromise = new Promise((resolve, reject) => {
       try {
-        const req = GM_xmlhttpRequest({
+        const req = b({
           method: "GET",
           url,
           responseType,
@@ -3591,7 +3571,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       if (gid2)
         return getGallery(gid2);
       const gidFromUrl = (_a2 = /^\/g\/(\d+)/.exec(location.pathname)) == null ? void 0 : _a2[1];
-      const localGallery = (_b2 = unsafeWindow._gallery) != null ? _b2 : unsafeWindow.gallery;
+      const localGallery = (_b2 = n._gallery) != null ? _b2 : n.gallery;
       if (localGallery) {
         if (gidFromUrl)
           localGallery.id = Number(gidFromUrl);
@@ -4114,7 +4094,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       "#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:100vh}"
     );
     const viewModeText = ["[off]", "[on]"];
-    let viewMode = GM_getValue("online_view_mode", 0);
+    let viewMode = h("online_view_mode", 0);
     applyOnlineViewStyle(!!viewMode, style);
     const btnText = /* @__PURE__ */ createElement("span", null, viewModeText[viewMode]);
     const btn = /* @__PURE__ */ createElement("button", {
@@ -4123,7 +4103,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     }, "100% view height ", btnText);
     btn.addEventListener("click", () => {
       viewMode = 1 - viewMode;
-      GM_setValue("online_view_mode", viewMode);
+      u("online_view_mode", viewMode);
       btnText.innerText = viewModeText[viewMode];
       applyOnlineViewStyle(!!viewMode, style);
     });
@@ -4163,7 +4143,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     });
   };
   const applyLazyLoad = () => {
-    const { _n_app } = unsafeWindow;
+    const { _n_app } = n;
     if (_n_app) {
       _n_app.install_lazy_loader();
       _n_app.install_blacklisting();
@@ -4185,8 +4165,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     const dialog = initSettingsDialogApp();
     dialog.open();
   };
-  addResourceStyle("notyCss");
   createAppAndMount(_sfc_main$1);
   initPage();
-  GM_registerMenuCommand("Settings", openSettingsDialog);
+  m("Settings", openSettingsDialog);
 })($, null, Vue, EventEmitter3, saveAs, localforage, MD5, Comlink, Noty, streamSaver);
