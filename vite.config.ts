@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import monkey, { cdn } from 'vite-plugin-monkey';
+import copy from 'rollup-plugin-copy';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
 
@@ -38,7 +39,7 @@ export default defineConfig(async ({ mode }) => ({
           'https://nhentai.xxx/*',
           'https://nhentai.to/*',
           'https://nhentai.website/*',
-          ...(mode === 'development' ? ['https://www.blank.org/*'] : []),
+          ...(mode === 'development' ? ['https://nhelper.lolicon.app/dev.html'] : []),
         ],
         include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
         connect: ['nhentai.net', 'i.nhentai.net', 'cdn.nhentai.xxx', 'cdn.nload.xyz'],
@@ -69,6 +70,10 @@ export default defineConfig(async ({ mode }) => ({
           'element-plus/dist/index.css?raw': cdn.jsdelivrFastly('elementPlusCss'),
         },
       },
+    }),
+    copy({
+      targets: [{ src: ['docs/*.html'], dest: 'dist' }],
+      hook: 'writeBundle',
     }),
   ],
 }));
