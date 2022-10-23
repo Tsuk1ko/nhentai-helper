@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.3.9
+// @version            3.3.10
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -3163,9 +3163,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
                     ]),
                     _: 1
                   }),
-                  Vue.createVNode(_component_el_form_item, {
-                    class: Vue.normalizeClass(COMPRESSION_STREAM_FILES_LABEL)
-                  }, {
+                  Vue.createVNode(_component_el_form_item, { label: COMPRESSION_STREAM_FILES_LABEL }, {
                     default: Vue.withCtx(() => [
                       Vue.createVNode(_component_el_switch, {
                         modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
