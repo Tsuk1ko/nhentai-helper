@@ -74,7 +74,7 @@
           <el-input v-model="settings.customDownloadUrl" />
         </el-form-item>
         <!-- streamFiles 压缩选项 -->
-        <el-form-item :class="COMPRESSION_STREAM_FILES_LABEL">
+        <el-form-item :label="COMPRESSION_STREAM_FILES_LABEL">
           <el-switch v-model="settings.compressionStreamFiles" />
         </el-form-item>
         <!-- 串行模式 -->
