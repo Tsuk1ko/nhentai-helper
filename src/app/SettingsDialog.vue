@@ -8,7 +8,7 @@
       <span :id="titleId" :class="[titleClass, 'no-sl']">Settings</span>
     </template>
     <div id="nhentai-helper-setting-dialog">
-      <div class="asterisk-left no-sl" style="margin-bottom: 18px">
+      <div class="asterisk-example no-sl" style="margin-bottom: 18px">
         means refresh is required to take effect
       </div>
       <el-form label-width="auto" label-position="left">
@@ -74,7 +74,7 @@
           <el-input v-model="settings.customDownloadUrl" />
         </el-form-item>
         <!-- streamFiles 压缩选项 -->
-        <el-form-item label='Compression "streamFiles"'>
+        <el-form-item :class="COMPRESSION_STREAM_FILES_LABEL">
           <el-switch v-model="settings.compressionStreamFiles" />
         </el-form-item>
         <!-- 串行模式 -->
@@ -137,6 +137,8 @@ import { showMessage } from '@/utils/elementPlus';
 import { IS_NHENTAI } from '@/const';
 
 startWatchSettings();
+
+const COMPRESSION_STREAM_FILES_LABEL = 'Compression "streamFiles"';
 
 const threadNumMarks: ElMarks = {
   1: '1',
@@ -239,7 +241,7 @@ defineExpose({ open });
 }
 
 #nhentai-helper-setting-dialog {
-  .asterisk-left::before {
+  .asterisk-example::before {
     content: '*';
     color: var(--el-color-danger);
     margin-right: 4px;
