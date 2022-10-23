@@ -1,6 +1,7 @@
 export const IS_DEV = process.env.NODE_ENV === 'development';
 
-export const IS_SETTINGS_DIALOG_DEV = IS_DEV && location.host === 'www.blank.org';
+export const IS_SETTINGS_DIALOG_DEV =
+  IS_DEV && location.href === 'https://nhelper.lolicon.app/dev.html';
 
 /** 建议的 worker 最大线程数 */
 export const WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1);
