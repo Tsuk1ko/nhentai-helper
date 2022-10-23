@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.3.8
+// @version            3.3.9
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -27,25 +27,25 @@
 // @require            https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require            https://fastly.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
 // @require            https://fastly.jsdelivr.net/npm/vue@3.2.38/dist/vue.global.prod.js
+// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
+// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
+// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            cdn.nhentai.xxx
 // @connect            cdn.nload.xyz
-// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
-// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
-// @grant              GM_registerMenuCommand
-// @grant              unsafeWindow
 // @grant              GM_getValue
+// @grant              GM_registerMenuCommand
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest
+// @grant              unsafeWindow
 // @run-at             document-end
 // @noframes          
 // ==/UserScript==
 
-(t=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.innerText=t,document.head.appendChild(e)})('.nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.download-item[data-v-5e3261cd]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-5e3261cd]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-5e3261cd]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-5e3261cd]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-5e3261cd]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-5e3261cd]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-5e3261cd]{background-color:#00ff0080}.download-item__progress-text[data-v-5e3261cd]{transform:scale(.8)}#download-panel[data-v-658acab9]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-658acab9]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-658acab9]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons{float:left;position:absolute}#nhentai-helper-setting-dialog .asterisk-left:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type="file"]):not([type="checkbox"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}');
+(t=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.innerText=t,document.head.appendChild(e)})('.nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.download-item[data-v-5e3261cd]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-5e3261cd]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-5e3261cd]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-5e3261cd]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-5e3261cd]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-5e3261cd]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-5e3261cd]{background-color:#00ff0080}.download-item__progress-text[data-v-5e3261cd]{transform:scale(.8)}#download-panel[data-v-658acab9]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-658acab9]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-658acab9]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons{float:left;position:absolute}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type="file"]):not([type="checkbox"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}');
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -53,40 +53,32 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-(function($, jqueryPjax, Vue, eventemitter3, fileSaver, localforage, md5, comlink, Noty, streamsaver) {
-  var _a, _b;
+(function(client, $, jqueryPjax, Vue, eventemitter3, fileSaver, localforage, md5, comlink, Noty, streamsaver) {
   "use strict";
   const _interopDefaultLegacy = (e) => e && typeof e === "object" && "default" in e ? e : { default: e };
   function _interopNamespace(e) {
     if (e && e.__esModule)
       return e;
-    const n2 = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
+    const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
     if (e) {
       for (const k in e) {
         if (k !== "default") {
           const d = Object.getOwnPropertyDescriptor(e, k);
-          Object.defineProperty(n2, k, d.get ? d : {
+          Object.defineProperty(n, k, d.get ? d : {
             enumerable: true,
             get: () => e[k]
           });
         }
       }
     }
-    n2.default = e;
-    return Object.freeze(n2);
+    n.default = e;
+    return Object.freeze(n);
   }
   const $__default = /* @__PURE__ */ _interopDefaultLegacy($);
   const Vue__namespace = /* @__PURE__ */ _interopNamespace(Vue);
   const localforage__default = /* @__PURE__ */ _interopDefaultLegacy(localforage);
   const md5__default = /* @__PURE__ */ _interopDefaultLegacy(md5);
   const Noty__default = /* @__PURE__ */ _interopDefaultLegacy(Noty);
-  var r = (_a = Reflect.get(document, "__monkeyWindow")) != null ? _a : window;
-  r.GM;
-  r.unsafeWindow = (_b = r.unsafeWindow) != null ? _b : window;
-  var n = r.unsafeWindow;
-  r.GM_info;
-  r.GM_cookie;
-  var u = (...e) => r.GM_setValue(...e), l = (...e) => r.GM_addStyle(...e), m = (...e) => r.GM_registerMenuCommand(...e), b = (...e) => r.GM_xmlhttpRequest(...e), h = (...e) => r.GM_getValue(...e);
   const WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1);
   const { pathname, host } = location;
   const IS_PAGE_MANGA_DETAIL = /^\/g\/[0-9]+\/?(\?.*)?$/.test(pathname);
@@ -96,8 +88,8 @@ var __publicField = (obj, key, value) => {
   const IS_NHENTAI_TO = host === "nhentai.to" || host === "nhentai.website";
   const isNodeOrElement = typeof Node === "function" ? (val) => val instanceof Node : (val) => val && typeof val === "object" && typeof val.nodeType === "number" && typeof val.nodeName === "string";
   if (IS_NHENTAI) {
-    if (h("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG")) {
-      const c = n.console;
+    if (client.GM_getValue("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG")) {
+      const c = client.unsafeWindow.console;
       c._clear = c.clear;
       c.clear = () => {
       };
@@ -116,8 +108,8 @@ var __publicField = (obj, key, value) => {
   };
   const index = "";
   const cssLoader = (e) => {
-    const t = GM_getResourceText(e);
-    return GM_addStyle(t), t;
+    const t = GM_getResourceText(e), o = document.createElement("style");
+    return o.innerText = t, document.head.append(o), t;
   }, rawLoader = (e) => GM_getResourceText(e);
   cssLoader("notyCss");
   var functionOnce = once;
@@ -550,9 +542,9 @@ var __publicField = (obj, key, value) => {
     var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$d;
     return value === proto;
   }
-  function baseTimes(n2, iteratee) {
-    var index2 = -1, result = Array(n2);
-    while (++index2 < n2) {
+  function baseTimes(n, iteratee) {
+    var index2 = -1, result = Array(n);
+    while (++index2 < n) {
       result[index2] = iteratee(index2);
     }
     return result;
@@ -1911,7 +1903,7 @@ var __publicField = (obj, key, value) => {
   }
   var __spreadArray = globalThis && globalThis.__spreadArray || function(to, from, pack) {
     if (pack || arguments.length === 2)
-      for (var i = 0, l2 = from.length, ar; i < l2; i++) {
+      for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
           if (!ar)
             ar = Array.prototype.slice.call(from, 0, i);
@@ -2051,8 +2043,8 @@ var __publicField = (obj, key, value) => {
     return getNodeVersion();
   }
   function matchUserAgent(ua) {
-    return ua !== "" && userAgentRules.reduce(function(matched, _a2) {
-      var browser = _a2[0], regex = _a2[1];
+    return ua !== "" && userAgentRules.reduce(function(matched, _a) {
+      var browser = _a[0], regex = _a[1];
       if (matched) {
         return matched;
       }
@@ -2087,7 +2079,7 @@ var __publicField = (obj, key, value) => {
   }
   function detectOS(ua) {
     for (var ii = 0, count = operatingSystemRules.length; ii < count; ii++) {
-      var _a2 = operatingSystemRules[ii], os = _a2[0], regex = _a2[1];
+      var _a = operatingSystemRules[ii], os = _a[0], regex = _a[1];
       var match2 = regex.exec(ua);
       if (match2) {
         return os;
@@ -2189,7 +2181,7 @@ var __publicField = (obj, key, value) => {
   const DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox");
   const readSettings = () => mapValues(
     settingDefinitions,
-    ({ key, default: defaultVal }) => h(key, defaultVal)
+    ({ key, default: defaultVal }) => client.GM_getValue(key, defaultVal)
   );
   const writeableSettings = Vue.reactive(readSettings());
   const settings = writeableSettings;
@@ -2212,7 +2204,7 @@ var __publicField = (obj, key, value) => {
           }
         }
         logger.log("update setting", cur.key, val);
-        u(cur.key, val);
+        client.GM_setValue(cur.key, val);
       });
     });
   });
@@ -2223,7 +2215,7 @@ var __publicField = (obj, key, value) => {
     if (settings.seriesMode)
       dlQueue.start().catch(logger.error);
   });
-  const _withScopeId = (n2) => (Vue.pushScopeId("data-v-5e3261cd"), n2 = n2(), Vue.popScopeId(), n2);
+  const _withScopeId = (n) => (Vue.pushScopeId("data-v-5e3261cd"), n = n(), Vue.popScopeId(), n);
   const _hoisted_1$2 = ["title"];
   const _hoisted_2$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ Vue.createElementVNode("i", { class: "fa fa-times" }, null, -1));
   const _hoisted_3$1 = [
@@ -2252,9 +2244,9 @@ var __publicField = (obj, key, value) => {
       });
       const canCancel = Vue.computed(() => !props.item.compressing);
       const cancel = () => {
-        var _a2;
+        var _a;
         const { info } = props.index === 0 ? dlQueue.queue[0] : removeAt(dlQueue.queue, props.index);
-        (_a2 = info == null ? void 0 : info.cancel) == null ? void 0 : _a2.call(info);
+        (_a = info == null ? void 0 : info.cancel) == null ? void 0 : _a.call(info);
       };
       return (_ctx, _cache) => {
         return Vue.openBlock(), Vue.createElementBlock("div", {
@@ -2328,8 +2320,8 @@ var __publicField = (obj, key, value) => {
       const dlList = Vue.computed(() => dlQueue.queue.map(({ info }) => info));
       const infoList = Vue.computed(() => [...zipList.value, ...dlList.value]);
       const error = Vue.computed(() => {
-        var _a2;
-        return !!((_a2 = dlList.value[0]) == null ? void 0 : _a2.error);
+        var _a;
+        return !!((_a = dlList.value[0]) == null ? void 0 : _a.error);
       });
       const titleWithStatus = Vue.computed(() => {
         if (error.value)
@@ -2865,8 +2857,8 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       type: "file",
       accept,
       onChange: () => {
-        var _a2;
-        return resolve((_a2 = input.files) == null ? void 0 : _a2[0]);
+        var _a;
+        return resolve((_a = input.files) == null ? void 0 : _a[0]);
       }
     });
     input.click();
@@ -2883,17 +2875,17 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     if (!win.Vue)
       win.Vue = Vue__namespace;
     eval(elementPlusJs);
-    l(elementPlusCss);
+    client.GM_addStyle(elementPlusCss);
     return win.ElementPlus;
   });
-  const showMessage = (params) => elementPlus().ElMessage({ ...params, appendTo: r.document.body });
+  const showMessage = (params) => elementPlus().ElMessage({ ...params, appendTo: client.monkeyWindow.document.body });
   const _hoisted_1 = { class: "nhentai-helper-setting-help-buttons no-sl" };
   const _hoisted_2 = /* @__PURE__ */ Vue.createTextVNode("Help");
   const _hoisted_3 = /* @__PURE__ */ Vue.createTextVNode("\u8BF4\u660E");
   const _hoisted_4 = ["id"];
   const _hoisted_5 = { id: "nhentai-helper-setting-dialog" };
   const _hoisted_6 = /* @__PURE__ */ Vue.createElementVNode("div", {
-    class: "asterisk-left no-sl",
+    class: "asterisk-example no-sl",
     style: { "margin-bottom": "18px" }
   }, " means refresh is required to take effect ", -1);
   const _hoisted_7 = /* @__PURE__ */ Vue.createTextVNode("Advance Settings");
@@ -2907,6 +2899,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     __name: "SettingsDialog",
     setup(__props, { expose }) {
       startWatchSettings();
+      const COMPRESSION_STREAM_FILES_LABEL = 'Compression "streamFiles"';
       const threadNumMarks = {
         1: "1",
         4: "4",
@@ -2944,13 +2937,13 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
         refreshDownloadNum();
       };
       const openHelp = () => {
-        r.open(
+        client.monkeyWindow.open(
           "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings",
           "_blank"
         );
       };
       const openHelpCn = () => {
-        r.open(
+        client.monkeyWindow.open(
           "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE",
           "_blank"
         );
@@ -3170,7 +3163,9 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
                     ]),
                     _: 1
                   }),
-                  Vue.createVNode(_component_el_form_item, { label: 'Compression "streamFiles"' }, {
+                  Vue.createVNode(_component_el_form_item, {
+                    class: Vue.normalizeClass(COMPRESSION_STREAM_FILES_LABEL)
+                  }, {
                     default: Vue.withCtx(() => [
                       Vue.createVNode(_component_el_switch, {
                         modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
@@ -3327,21 +3322,21 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       return false;
     }
     return new Promise((resolve) => {
-      const n2 = new Noty__default.default({
+      const n = new Noty__default.default({
         ...notyConfirmOption,
         text: `"${title}" is already downloaded${hasQueue ? " or in queue" : ""}.<br>Do you want to download again?`,
         buttons: [
           Noty__default.default.button("YES", "btn btn-noty-blue btn-noty", () => {
-            n2.close();
+            n.close();
             resolve(true);
           }),
           Noty__default.default.button("NO", "btn btn-noty-green btn-noty", () => {
-            n2.close();
+            n.close();
             resolve(false);
           })
         ]
       });
-      n2.show();
+      n.show();
     });
   };
   const errorRetryConfirm = (action, noCb, yesCb) => {
@@ -3350,21 +3345,21 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       yesCb == null ? void 0 : yesCb();
       return;
     }
-    const n2 = new Noty__default.default({
+    const n = new Noty__default.default({
       ...notyConfirmOption,
       text: `Error occurred while ${action}, retry?`,
       buttons: [
         Noty__default.default.button("NO", "btn btn-noty-blue btn-noty", () => {
-          n2.close();
+          n.close();
           noCb == null ? void 0 : noCb();
         }),
         Noty__default.default.button("YES", "btn btn-noty-green btn-noty", () => {
-          n2.close();
+          n.close();
           yesCb == null ? void 0 : yesCb();
         })
       ]
     });
-    n2.show();
+    n.show();
   };
   const downloadedTip = (title) => {
     new Noty__default.default({
@@ -3441,7 +3436,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     let abortFunc;
     const dataPromise = new Promise((resolve, reject) => {
       try {
-        const req = b({
+        const req = client.GM_xmlhttpRequest({
           method: "GET",
           url,
           responseType,
@@ -3503,11 +3498,11 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     return getJSON(url);
   };
   const getGalleryFromWebpage = async (gid) => {
-    var _a2;
+    var _a;
     let doc = document;
     if (!IS_PAGE_MANGA_DETAIL) {
       const html = await getText(`/g/${gid}`);
-      const match = (_a2 = /gallery(\(\{[\s\S]+\}\));/.exec(html)) == null ? void 0 : _a2[1];
+      const match = (_a = /gallery(\(\{[\s\S]+\}\));/.exec(html)) == null ? void 0 : _a[1];
       if (match) {
         try {
           const gallery = eval(match);
@@ -3525,8 +3520,8 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     const pages = [];
     let mediaId = "";
     $doc.find("#thumbnail-container img").each((i, img) => {
-      var _a3;
-      const src = (_a3 = img.dataset.src) != null ? _a3 : img.src;
+      var _a2;
+      const src = (_a2 = img.dataset.src) != null ? _a2 : img.src;
       const match2 = /\/(\d+)\/(\d+)t?\.(\w+)/.exec(src);
       if (!match2)
         return;
@@ -3567,11 +3562,11 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       images: { pages: pages2 },
       num_pages
     } = await (async () => {
-      var _a2, _b2;
+      var _a, _b;
       if (gid2)
         return getGallery(gid2);
-      const gidFromUrl = (_a2 = /^\/g\/(\d+)/.exec(location.pathname)) == null ? void 0 : _a2[1];
-      const localGallery = (_b2 = n._gallery) != null ? _b2 : n.gallery;
+      const gidFromUrl = (_a = /^\/g\/(\d+)/.exec(location.pathname)) == null ? void 0 : _a[1];
+      const localGallery = (_b = client.unsafeWindow._gallery) != null ? _b : client.unsafeWindow.gallery;
       if (localGallery) {
         if (gidFromUrl)
           localGallery.id = Number(gidFromUrl);
@@ -3853,7 +3848,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       $__default.default("#info > .buttons").append(ignoreBtn);
     }
     downloadBtn.addEventListener("click", async () => {
-      var _a2;
+      var _a;
       const rangeCheckers = pagesInput.value.split(",").filter((range) => !Number.isNaN(parseInt(range))).map((range) => {
         const [start, end] = range.split("-").map((num) => parseInt(num));
         if (typeof end === "undefined")
@@ -3872,10 +3867,10 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
           ignoreController == null ? void 0 : ignoreController.setStatus(true);
           return;
         }
-        await ((_a2 = await downloadGalleryByInfo(createMangaDownloadInfo(gallery2), {
+        await ((_a = await downloadGalleryByInfo(createMangaDownloadInfo(gallery2), {
           progressDisplayController,
           rangeCheckers
-        })) == null ? void 0 : _a2());
+        })) == null ? void 0 : _a());
         markAsDownloaded(gallery2.gid, gallery2.title);
         ignoreController == null ? void 0 : ignoreController.setStatus(true);
       } catch (error) {
@@ -3985,7 +3980,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     }
   };
   const initGallery = function() {
-    var _a2;
+    var _a;
     const $gallery = $__default.default(this);
     if ($gallery.attr("init"))
       return;
@@ -3993,7 +3988,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     const $a = $gallery.find("a.cover");
     if (settings.openOnNewTab)
       $a.attr("target", "_blank");
-    const gid2 = (_a2 = /\/g\/([0-9]+)/.exec($a.attr("href"))) == null ? void 0 : _a2[1];
+    const gid2 = (_a = /\/g\/([0-9]+)/.exec($a.attr("href"))) == null ? void 0 : _a[1];
     if (!gid2)
       return;
     const progressDisplayController = new ProgressDisplayController();
@@ -4094,7 +4089,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
       "#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:100vh}"
     );
     const viewModeText = ["[off]", "[on]"];
-    let viewMode = h("online_view_mode", 0);
+    let viewMode = client.GM_getValue("online_view_mode", 0);
     applyOnlineViewStyle(!!viewMode, style);
     const btnText = /* @__PURE__ */ createElement("span", null, viewModeText[viewMode]);
     const btn = /* @__PURE__ */ createElement("button", {
@@ -4103,7 +4098,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     }, "100% view height ", btnText);
     btn.addEventListener("click", () => {
       viewMode = 1 - viewMode;
-      u("online_view_mode", viewMode);
+      client.GM_setValue("online_view_mode", viewMode);
       btnText.innerText = viewModeText[viewMode];
       applyOnlineViewStyle(!!viewMode, style);
     });
@@ -4143,7 +4138,7 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
     });
   };
   const applyLazyLoad = () => {
-    const { _n_app } = n;
+    const { _n_app } = client.unsafeWindow;
     if (_n_app) {
       _n_app.install_lazy_loader();
       _n_app.install_blacklisting();
@@ -4167,5 +4162,5 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
   };
   createAppAndMount(_sfc_main$1);
   initPage();
-  m("Settings", openSettingsDialog);
-})($, null, Vue, EventEmitter3, saveAs, localforage, MD5, Comlink, Noty, streamSaver);
+  client.GM_registerMenuCommand("Settings", openSettingsDialog);
+})((window.monkeyWindow = window, window), $, null, Vue, EventEmitter3, saveAs, localforage, MD5, Comlink, Noty, streamSaver);

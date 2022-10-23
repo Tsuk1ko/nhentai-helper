@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.3.8
+// @version            3.3.9
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -27,20 +27,20 @@
 // @require            https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.js
 // @require            https://fastly.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
 // @require            https://fastly.jsdelivr.net/npm/vue@3.2.38/dist/vue.global.prod.js
+// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
+// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
+// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            cdn.nhentai.xxx
 // @connect            cdn.nload.xyz
-// @resource           notyCss         https://fastly.jsdelivr.net/npm/noty@3.1.4/lib/noty.min.css
-// @resource           elementPlusJs   https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.full.min.js
-// @resource           elementPlusCss  https://fastly.jsdelivr.net/npm/element-plus@2.2.16/dist/index.css
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
-// @grant              GM_registerMenuCommand
-// @grant              unsafeWindow
 // @grant              GM_getValue
+// @grant              GM_registerMenuCommand
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest
+// @grant              unsafeWindow
 // @run-at             document-end
 // @noframes          
 // ==/UserScript==
