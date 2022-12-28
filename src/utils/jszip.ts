@@ -1,8 +1,8 @@
 import { wrap, Remote, transfer, proxy, releaseProxy } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipMetadata } from 'jszip';
 import { removeAt } from './array';
-import { WORKER_THREAD_NUM } from '@/const';
-import jszipWorkerCode from '@/workers/jszip?minraw';
+import { IS_DEV, WORKER_THREAD_NUM } from '@/const';
+import JSZipWorker from '@/workers/jszip?worker&inline';
 import type { DisposableJSZip, JSZipFile } from '@/workers/jszip';
 
 type RemoteDisposableJSZip = Remote<typeof DisposableJSZip>;
@@ -15,12 +15,16 @@ interface PoolMember {
   JSZip?: RemoteDisposableJSZip;
 }
 
-const WORKER_URL = URL.createObjectURL(new Blob([jszipWorkerCode], { type: 'text/javascript' }));
-
 const getTransferableData = (files: JSZipFile[]): Transferable[] =>
   files
     .map(({ data }) => data)
     .filter((data): data is Exclude<JSZipFile['data'], string> => typeof data !== 'string');
+
+const getDevWorker = async (): Promise<Worker> => {
+  const code = (await import('@/workers/jszip.dev?minraw')).default;
+  const url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
+  return new Worker(url);
+};
 
 class JSZipWorkerPool {
   private readonly pool: PoolMember[] = [];
@@ -35,8 +39,8 @@ class JSZipWorkerPool {
     }
   }
 
-  private createWorker(): RemoteDisposableJSZip {
-    const worker = new Worker(WORKER_URL);
+  private async createWorker(): Promise<RemoteDisposableJSZip> {
+    const worker = IS_DEV ? await getDevWorker() : new JSZipWorker();
     return wrap<typeof DisposableJSZip>(worker);
   }
 
@@ -49,7 +53,7 @@ class JSZipWorkerPool {
   private async acquireWorker(): Promise<Required<PoolMember>> {
     let worker = this.pool.find(({ idle }) => idle);
     if (!worker) worker = await this.waitIdleWorker();
-    if (!worker.JSZip) worker.JSZip = this.createWorker();
+    if (!worker.JSZip) worker.JSZip = await this.createWorker();
     worker.idle = false;
     return worker as any;
   }

@@ -1,6 +1,12 @@
 import type { JSZipGeneratorOptions, JSZipObject, OnUpdateCallback } from 'jszip';
-import JSZip from 'jszip';
-import { expose, transfer } from 'comlink';
+
+declare const JSZip: typeof import('jszip');
+declare const Comlink: typeof import('comlink');
+
+importScripts(
+  'https://fastly.jsdelivr.net/npm/comlink@4.3.1/dist/umd/comlink.min.js',
+  'https://fastly.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js',
+);
 
 export interface JSZipFile {
   name: string;
@@ -39,7 +45,7 @@ class DisposableJSZip {
     onUpdate?: OnUpdateCallback,
   ): Promise<Uint8Array> {
     const data = await this.zip.generateAsync({ ...options, type: 'uint8array' }, onUpdate);
-    return transfer(data, [data.buffer]);
+    return Comlink.transfer(data, [data.buffer]);
   }
 
   public generateStream(
@@ -67,10 +73,10 @@ class DisposableJSZip {
         stream.resume();
       },
     });
-    return transfer({ zipStream }, [zipStream as any]);
+    return Comlink.transfer({ zipStream }, [zipStream as any]);
   }
 }
 
-expose(DisposableJSZip);
+Comlink.expose(DisposableJSZip);
 
 export type { DisposableJSZip };
