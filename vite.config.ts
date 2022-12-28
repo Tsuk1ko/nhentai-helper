@@ -1,8 +1,10 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import monkey, { cdn } from 'vite-plugin-monkey';
+import monkey from 'vite-plugin-monkey';
 import copy from 'rollup-plugin-copy';
+import components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import minifiedRawLoader from './plugins/minifiedRawLoader';
 import tsx from './plugins/tsx';
 
@@ -19,6 +21,11 @@ export default defineConfig(async ({ mode }) => ({
     minifiedRawLoader(),
     tsx(),
     vue(),
+    components({
+      dts: false,
+      dirs: [],
+      resolvers: [ElementPlusResolver()],
+    }),
     monkey({
       entry: 'src/main.ts',
       userscript: {
@@ -52,23 +59,6 @@ export default defineConfig(async ({ mode }) => ({
         fileName: 'script.user.js',
         metaFileName: true,
         minifyCss: true,
-        externalGlobals: {
-          comlink: cdn.jsdelivrFastly('Comlink', 'dist/umd/comlink.min.js'),
-          eventemitter3: cdn.jsdelivrFastly('EventEmitter3', 'umd/eventemitter3.min.js'),
-          'file-saver': cdn.jsdelivrFastly('saveAs', 'dist/FileSaver.min.js'),
-          jquery: cdn.jsdelivrFastly('$', 'dist/jquery.min.js'),
-          'jquery-pjax': cdn.jsdelivrFastly(undefined, 'jquery.pjax.min.js'),
-          localforage: cdn.jsdelivrFastly('localforage', 'dist/localforage.min.js'),
-          md5: cdn.jsdelivrFastly('MD5', 'dist/md5.min.js'),
-          noty: cdn.jsdelivrFastly('Noty', 'lib/noty.min.js'),
-          streamsaver: cdn.jsdelivrFastly('streamSaver', 'StreamSaver.min.js'),
-          vue: cdn.jsdelivrFastly('Vue', 'dist/vue.global.prod.js'),
-        },
-        externalResource: {
-          'noty/lib/noty.css': cdn.jsdelivrFastly('notyCss', 'lib/noty.min.css'),
-          'element-plus/dist/index.full.min.js?raw': cdn.jsdelivrFastly('elementPlusJs'),
-          'element-plus/dist/index.css?raw': cdn.jsdelivrFastly('elementPlusCss'),
-        },
       },
     }),
     copy({
