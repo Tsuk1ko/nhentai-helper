@@ -1,4 +1,4 @@
-export const IS_DEV = process.env.NODE_ENV === 'development';
+export const IS_DEV = import.meta.env.DEV;
 
 export const IS_SETTINGS_DIALOG_DEV =
   IS_DEV && location.href === 'https://nhelper.lolicon.app/dev.html';

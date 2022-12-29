@@ -9,7 +9,7 @@ declare module '*.vue' {
   export default component;
 }
 
-declare module '*?minraw' {
+declare module '*?worker-dev' {
   const code: string;
   export default code;
 }

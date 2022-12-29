@@ -5,7 +5,7 @@ import monkey from 'vite-plugin-monkey';
 import copy from 'rollup-plugin-copy';
 import components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-import minifiedRawLoader from './plugins/minifiedRawLoader';
+import workerDevLoader from './plugins/workerDevLoader';
 import tsx from './plugins/tsx';
 
 // https://vitejs.dev/config/
@@ -15,10 +15,8 @@ export default defineConfig(async ({ mode }) => ({
       '@': resolve(__dirname, 'src'),
     },
   },
-  // fix raw loader issue
-  define: mode === 'development' ? { 'process.env.NODE_ENV': "'development'" } : {},
   plugins: [
-    minifiedRawLoader(),
+    workerDevLoader(),
     tsx(),
     vue(),
     components({

@@ -21,7 +21,7 @@ const getTransferableData = (files: JSZipFile[]): Transferable[] =>
     .filter((data): data is Exclude<JSZipFile['data'], string> => typeof data !== 'string');
 
 const getDevWorker = async (): Promise<Worker> => {
-  const code = (await import('@/workers/jszip.dev?minraw')).default;
+  const code = (await import('@/workers/jszip?worker-dev')).default;
   const url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
   return new Worker(url);
 };
