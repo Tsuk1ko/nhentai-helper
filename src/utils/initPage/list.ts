@@ -8,7 +8,7 @@ import {
   unmarkAsDownloaded,
 } from '../downloadHistory';
 import logger from '../logger';
-import { getGalleryInfo, NHentaiGalleryInfo } from '../nhentai';
+import { getGalleryInfo, NHentaiGallery, type NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { createLangFilter, filterLang } from '../langFilter';
@@ -87,13 +87,14 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   if (settings.openOnNewTab) $a.attr('target', '_blank');
   const gid = /\/g\/([0-9]+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
+  const enTitle = $gallery.find('.caption').text().trim();
 
   const progressDisplayController = new ProgressDisplayController();
   const { downloadBtn } = progressDisplayController;
   $gallery.append(downloadBtn);
 
   let ignoreController: IgnoreController | undefined;
-  let galleryTitle: string | undefined;
+  let galleryTitle: NHentaiGallery['title'] | undefined;
 
   const markGalleryDownloaded = (): void => {
     $gallery.addClass('downloaded');
@@ -104,25 +105,28 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     ignoreController?.setStatus(false);
   };
 
-  void isDownloadedByGid(gid).then(downloaded => {
-    if (downloaded) markGalleryDownloaded();
+  void Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
+    ([gidDownloaded, titleDownloaded]) => {
+      const downloaded = gidDownloaded || titleDownloaded;
+      if (downloaded) markGalleryDownloaded();
 
-    if (settings.showIgnoreButton) {
-      ignoreController = new IgnoreController(false, downloaded);
-      const { ignoreBtn } = ignoreController;
-      ignoreBtn.addEventListener('click', () => {
-        const ignore = ignoreController!.getStatus();
-        if (ignore) {
-          unmarkGalleryDownloaded();
-          unmarkAsDownloaded(gid, galleryTitle);
-        } else {
-          markGalleryDownloaded();
-          markAsDownloaded(gid, galleryTitle);
-        }
-      });
-      $gallery.append(ignoreBtn);
-    }
-  });
+      if (settings.showIgnoreButton) {
+        ignoreController = new IgnoreController(false, downloaded);
+        const { ignoreBtn } = ignoreController;
+        ignoreBtn.addEventListener('click', () => {
+          const ignore = ignoreController!.getStatus();
+          if (ignore) {
+            unmarkGalleryDownloaded();
+            unmarkAsDownloaded(gid, galleryTitle);
+          } else {
+            markGalleryDownloaded();
+            markAsDownloaded(gid, galleryTitle);
+          }
+        });
+        $gallery.append(ignoreBtn);
+      }
+    },
+  );
 
   let gallery: NHentaiGalleryInfo | undefined;
   let skipDownloadedCheck = false;
@@ -167,7 +171,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
             },
           }) => title === gallery!.title,
         )) &&
-      !(await downloadAgainConfirm(gallery.title, true))
+      !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true))
     ) {
       progressDisplayController.reset();
       markAsDownloaded(gid, gallery.title);

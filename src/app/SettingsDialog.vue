@@ -68,6 +68,12 @@
         <el-form-item class="refresh-required" label="Show ignore button">
           <el-switch v-model="settings.showIgnoreButton" />
         </el-form-item>
+        <!-- 已下载判断 key -->
+        <el-form-item label="Judge downloaded manga by title">
+          <el-checkbox v-model="settings.judgeDownloadedByEnglish" label="English" />
+          <el-checkbox v-model="settings.judgeDownloadedByJapanese" label="Japanese" />
+          <el-checkbox v-model="settings.judgeDownloadedByPretty" label="Pretty" />
+        </el-form-item>
         <el-divider>Advance Settings</el-divider>
         <!-- 自定义下载地址 -->
         <el-form-item label="Custom download URL">

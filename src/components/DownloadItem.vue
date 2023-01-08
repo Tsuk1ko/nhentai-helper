@@ -29,7 +29,10 @@ const props = defineProps<{
   index: number;
 }>();
 
-const title = computed(() => props.item.gallery.title);
+const title = computed(() => {
+  const { english, japanese, pretty } = props.item.gallery.title;
+  return japanese || english || pretty;
+});
 
 const progressWidth = computed(() => {
   const {

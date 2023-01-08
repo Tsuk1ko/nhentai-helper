@@ -56,7 +56,10 @@ export const initDetailPage = async (): Promise<void> => {
     try {
       const downloaded =
         (await isDownloadedByGid(gallery.gid)) || (await isDownloadedByTitle(gallery.title));
-      if (downloaded && !(await downloadAgainConfirm(gallery.title))) {
+      if (
+        downloaded &&
+        !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english))
+      ) {
         progressDisplayController.reset();
         markAsDownloaded(gallery.gid, gallery.title);
         ignoreController?.setStatus(true);

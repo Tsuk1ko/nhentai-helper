@@ -34,6 +34,12 @@ export interface Settings {
   showIgnoreButton: boolean;
   /** 阻止控制台清空 */
   preventConsoleClearing: boolean;
+  /** 已下载判断 english 标题 */
+  judgeDownloadedByEnglish: boolean;
+  /** 已下载判断 japanese 标题 */
+  judgeDownloadedByJapanese: boolean;
+  /** 已下载判断 pretty 标题 */
+  judgeDownloadedByPretty: boolean;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -126,6 +132,21 @@ export const settingDefinitions: Readonly<{
   },
   preventConsoleClearing: {
     key: 'prevent_console_clear',
+    default: false,
+    validator: booleanValidator,
+  },
+  judgeDownloadedByEnglish: {
+    key: 'judge_downloaded_by_english',
+    default: false,
+    validator: booleanValidator,
+  },
+  judgeDownloadedByJapanese: {
+    key: 'judge_downloaded_by_japanese',
+    default: true,
+    validator: booleanValidator,
+  },
+  judgeDownloadedByPretty: {
+    key: 'judge_downloaded_by_pretty',
     default: false,
     validator: booleanValidator,
   },

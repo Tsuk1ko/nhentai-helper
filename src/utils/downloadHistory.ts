@@ -5,123 +5,168 @@ import md5 from 'md5';
 import { dateTimeFormatter } from './formatter';
 import { JSZip } from './jszip';
 import logger from './logger';
+import type { NHentaiGallery } from './nhentai';
+import { settings } from './settings';
+
+type Title = Partial<NHentaiGallery['title']>;
 
 extendPrototype(localforage);
 
-const dlGidStore = localforage.createInstance({
-  name: 'nhentai_helper',
-  storeName: 'dl_history_gid',
-});
-const dlGidStoreReady = dlGidStore
-  .ready()
-  .then(() => true)
-  .catch(e => {
-    logger.error(e);
-    return false;
-  });
+class DownloadHistory {
+  private readonly store: typeof localforage;
+  private readonly ready: Promise<boolean>;
 
-const dlTitleStore = localforage.createInstance({
-  name: 'nhentai_helper',
-  storeName: 'dl_history',
-});
-const dlTitleStoreReady = dlTitleStore
-  .ready()
-  .then(() => true)
-  .catch(e => {
-    logger.error(e);
-    return false;
-  });
-
-export const markAsDownloaded = (gid: string | number, title?: string): void => {
-  void dlGidStoreReady.then(ready => {
-    if (!ready) return;
-    dlGidStore
-      .setItem(String(gid), true)
-      .then(() => logger.log(`mark "${gid}" as downloaded`))
-      .catch(logger.error);
-  });
-  if (title) {
-    void dlTitleStoreReady.then(ready => {
-      if (!ready) return;
-      dlTitleStore
-        .setItem(md5(title.replace(/\s/g, '')), true)
-        .then(() => logger.log(`mark "${title}" as downloaded`))
-        .catch(logger.error);
+  public constructor(private readonly name: string) {
+    this.store = localforage.createInstance({
+      name: 'nhentai_helper',
+      storeName: name,
     });
+    this.ready = this.store
+      .ready()
+      .then(() => true)
+      .catch(e => {
+        logger.error(e);
+        return false;
+      });
   }
-};
 
-export const unmarkAsDownloaded = (gid: string | number, title?: string): void => {
-  void dlGidStoreReady.then(ready => {
-    if (!ready) return;
-    dlGidStore
-      .removeItem(String(gid))
-      .then(() => logger.log('unmark', gid, 'as downloaded'))
-      .catch(logger.error);
-  });
-  if (title) {
-    void dlTitleStoreReady.then(ready => {
-      if (!ready) return;
-      dlTitleStore
-        .removeItem(md5(title.replace(/\s/g, '')))
-        .then(() => logger.log('unmark', title, 'as downloaded'))
-        .catch(logger.error);
-    });
-  }
-};
-
-export const isDownloadedByGid = async (gid: string | number): Promise<boolean> => {
-  try {
-    if (await dlGidStoreReady) {
-      return (await dlGidStore.getItem<boolean>(String(gid))) === true;
+  public async add(key: string): Promise<void> {
+    if (!(await this.ready)) return;
+    try {
+      await this.store.setItem(key, true);
+      logger.log(`mark "${key}" as downloaded`);
+    } catch (e) {
+      logger.error(e);
     }
-  } catch (e) {
-    logger.error(e);
   }
-  return false;
+
+  public async del(key: string): Promise<void> {
+    if (!(await this.ready)) return;
+    try {
+      await this.store.removeItem(key);
+      logger.log(`unmark "${key}" as downloaded`);
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  public async has(key: string): Promise<boolean> {
+    if (!(await this.ready)) return false;
+    try {
+      return (await this.store.getItem<boolean>(key)) === true;
+    } catch (e) {
+      logger.error(e);
+    }
+    return false;
+  }
+
+  public async size(): Promise<number> {
+    if (!(await this.ready)) return NaN;
+    return this.store.length();
+  }
+
+  public async import(keys: string[]): Promise<void> {
+    if (!(await this.ready)) throw new Error(`store ${this.name} cannot ready`);
+    try {
+      await this.store.setItems(keys.map(gid => ({ key: gid, value: true })));
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  public async export(): Promise<string[]> {
+    if (!(await this.ready)) throw new Error(`store ${this.name} cannot ready`);
+    return this.store.keys();
+  }
+
+  public async clear(): Promise<void> {
+    if (!(await this.ready)) return;
+    await this.store.clear();
+  }
+}
+
+const gidHistory = new DownloadHistory('dl_history_gid');
+const enTitleHistory = new DownloadHistory('dl_history_en');
+const jpTitleHistory = new DownloadHistory('dl_history');
+const prettyTitleHistory = new DownloadHistory('dl_history_pretty');
+
+const getTitleMd5 = (title: string): string => md5(title.replace(/\s/g, ''));
+
+export const markAsDownloaded = (
+  gid: string | number,
+  { english, japanese, pretty }: Title = {},
+): void => {
+  void gidHistory.add(String(gid));
+  if (english) void enTitleHistory.add(getTitleMd5(english));
+  if (japanese) void jpTitleHistory.add(getTitleMd5(japanese));
+  if (pretty) void prettyTitleHistory.add(getTitleMd5(pretty));
 };
 
-export const isDownloadedByTitle = async (title: string): Promise<boolean> => {
-  try {
-    if (!(await dlTitleStoreReady)) return false;
-    const md5v2 = md5(title.replace(/\s/g, ''));
-    if ((await dlTitleStore.getItem<boolean>(md5v2)) === true) return true;
-    const md5v1 = md5(title);
-    if ((await dlTitleStore.getItem<boolean>(md5v1)) === true) {
-      dlTitleStore.setItem(md5v2, true).catch(logger.error);
-      dlTitleStore.removeItem(md5v1).catch(logger.error);
+export const unmarkAsDownloaded = (
+  gid: string | number,
+  { english, japanese, pretty }: Title = {},
+): void => {
+  void gidHistory.del(String(gid));
+  if (english) void enTitleHistory.del(getTitleMd5(english));
+  if (japanese) void jpTitleHistory.del(getTitleMd5(japanese));
+  if (pretty) void prettyTitleHistory.del(getTitleMd5(pretty));
+};
+
+export const isDownloadedByGid = (gid: string | number): Promise<boolean> =>
+  gidHistory.has(String(gid));
+
+export const isDownloadedByTitle = async ({
+  english,
+  japanese,
+  pretty,
+}: Title = {}): Promise<boolean> => {
+  if (settings.judgeDownloadedByJapanese && japanese) {
+    const md5v2 = getTitleMd5(japanese);
+    if (await jpTitleHistory.has(md5v2)) return true;
+    const md5v1 = md5(japanese);
+    if (await jpTitleHistory.has(md5v1)) {
+      void jpTitleHistory.add(md5v2);
+      void jpTitleHistory.del(md5v1);
       return true;
     }
-  } catch (e) {
-    logger.error(e);
+  }
+  if (
+    settings.judgeDownloadedByEnglish &&
+    english &&
+    (await enTitleHistory.has(getTitleMd5(english)))
+  ) {
+    return true;
+  }
+  if (
+    settings.judgeDownloadedByPretty &&
+    pretty &&
+    (await enTitleHistory.has(getTitleMd5(pretty)))
+  ) {
+    return true;
   }
   return false;
 };
 
-export const getDownloadNumber = async (): Promise<number> => {
-  try {
-    if (!(await dlGidStoreReady)) throw new Error('store cannot ready');
-    return await dlGidStore.length();
-  } catch (error) {
-    logger.error(error);
-  }
-  return NaN;
-};
+export const getDownloadNumber = (): Promise<number> => gidHistory.size();
 
 const EXPORT_HEADER_GID = 'gid:';
-const EXPORT_HEADER_TITLE = 'title:';
+const EXPORT_HEADER_TITLE_JP = 'title:';
+const EXPORT_HEADER_TITLE_EN = 'title_en:';
+const EXPORT_HEADER_TITLE_PRETTY = 'title_pretty:';
 const EXPORT_SEPARATOR = ',';
 const EXPORT_TEXT_FILENAME = 'history.txt';
 
 export const exportDownloadHistory = async (): Promise<boolean> => {
   try {
-    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
-      throw new Error('store cannot ready');
     // 导出
-    const gids = await dlGidStore.keys();
-    const titles = await dlTitleStore.keys();
+    const gids = await gidHistory.export();
+    const jpTitles = await jpTitleHistory.export();
+    const enTitles = await enTitleHistory.export();
+    const prettyTitles = await prettyTitleHistory.export();
     const text = `${EXPORT_HEADER_GID}${gids.join(EXPORT_SEPARATOR)}
-${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
+${EXPORT_HEADER_TITLE_JP}${jpTitles.join(EXPORT_SEPARATOR)}
+${EXPORT_HEADER_TITLE_EN}${enTitles.join(EXPORT_SEPARATOR)}
+${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
     // 压缩
     const zip = new JSZip();
     zip.file(EXPORT_TEXT_FILENAME, text);
@@ -142,8 +187,6 @@ ${EXPORT_HEADER_TITLE}${titles.join(EXPORT_SEPARATOR)}`;
 
 export const importDownloadHistory = async (data: ArrayBuffer): Promise<boolean> => {
   try {
-    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
-      throw new Error('store cannot ready');
     // 解压
     const str = await JSZip.unzipFile({ data, path: EXPORT_TEXT_FILENAME, type: 'string' });
     if (!str) {
@@ -155,10 +198,16 @@ export const importDownloadHistory = async (data: ArrayBuffer): Promise<boolean>
     for (const line of lines) {
       if (line.startsWith(EXPORT_HEADER_GID)) {
         const gids = line.replace(EXPORT_HEADER_GID, '').split(EXPORT_SEPARATOR);
-        await dlGidStore.setItems(gids.map(gid => ({ key: gid, value: true })));
-      } else if (line.startsWith(EXPORT_HEADER_TITLE)) {
-        const titles = line.replace(EXPORT_HEADER_TITLE, '').split(EXPORT_SEPARATOR);
-        await dlTitleStore.setItems(titles.map(gid => ({ key: gid, value: true })));
+        await gidHistory.import(gids);
+      } else if (line.startsWith(EXPORT_HEADER_TITLE_JP)) {
+        const titles = line.replace(EXPORT_HEADER_TITLE_JP, '').split(EXPORT_SEPARATOR);
+        await jpTitleHistory.import(titles);
+      } else if (line.startsWith(EXPORT_HEADER_TITLE_EN)) {
+        const titles = line.replace(EXPORT_HEADER_TITLE_EN, '').split(EXPORT_SEPARATOR);
+        await enTitleHistory.import(titles);
+      } else if (line.startsWith(EXPORT_HEADER_TITLE_PRETTY)) {
+        const titles = line.replace(EXPORT_HEADER_TITLE_PRETTY, '').split(EXPORT_SEPARATOR);
+        await prettyTitleHistory.import(titles);
       }
     }
     return true;
@@ -170,10 +219,10 @@ export const importDownloadHistory = async (data: ArrayBuffer): Promise<boolean>
 
 export const clearDownloadHistory = async (): Promise<boolean> => {
   try {
-    if (!((await dlGidStoreReady) && (await dlTitleStoreReady)))
-      throw new Error('store cannot ready');
-    await dlGidStore.clear();
-    await dlTitleStore.clear();
+    await gidHistory.clear();
+    await enTitleHistory.clear();
+    await jpTitleHistory.clear();
+    await prettyTitleHistory.clear();
     return true;
   } catch (error) {
     logger.error(error);

@@ -64,7 +64,7 @@ export interface NHentaiGalleryInfoPage {
 export interface NHentaiGalleryInfo {
   gid: number;
   mid: string;
-  title: string;
+  title: NHentaiGallery['title'];
   pages: NHentaiGalleryInfoPage[];
   cfName: string;
 }
@@ -133,7 +133,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     title: {
       english: english || japanese,
       japanese: japanese || english,
-      pretty: english || japanese,
+      pretty: '',
     },
     images: {
       pages,
@@ -151,7 +151,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
   const {
     id,
     media_id,
-    title: { english, japanese, pretty },
+    title,
     images: { pages },
     num_pages,
   }: NHentaiGallery = await (async () => {
@@ -171,6 +171,8 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     throw new Error('Cannot get gallery info.');
   })();
 
+  const { english, japanese, pretty } = title;
+
   // 有些站点例如 nhentai.website 的 gallery 里面的图片列表是个 object，需要特殊处理
   const infoPages = (Array.isArray(pages) ? pages : Object.values<NHentaiImage>(pages)).map(
     (img, i) => ({ i: i + 1, t: NHentaiImgExt[img.t] }),
@@ -179,12 +181,12 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
   const info: NHentaiGalleryInfo = {
     gid: id,
     mid: media_id,
-    title: japanese || english,
+    title,
     pages: infoPages,
     cfName: compileTemplate(settings.compressionFileName)({
-      english,
+      english: english || japanese,
       japanese: japanese || english,
-      pretty,
+      pretty: pretty || english || japanese,
       id,
       pages: num_pages,
     }),

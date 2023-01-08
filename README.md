@@ -53,6 +53,9 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Help you to click the "Show all" button on manga detail page automatically.
 - **Show ignore button**  
   Show an button that allow you to mark or unmark the manga as downloaded.
+- **Judge downloaded manga by title**  
+  You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
+  Note that `pretty` is not available in most mirror sites.
 
 ### Advance Settings
 
