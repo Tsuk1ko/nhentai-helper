@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.5.0
+// @version            3.5.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -28514,7 +28514,8 @@ var __publicField = (obj, key, value) => {
   const enTitleHistory = new DownloadHistory("dl_history_en");
   const jpTitleHistory = new DownloadHistory("dl_history");
   const prettyTitleHistory = new DownloadHistory("dl_history_pretty");
-  const getTitleMd5 = (title) => md5.exports(title.replace(/\s/g, ""));
+  const normalizeTitle = (title) => title.replace(/\s/g, "");
+  const getTitleMd5 = (title) => md5.exports(normalizeTitle(title));
   const markAsDownloaded = (gid2, { english: english2, japanese: japanese2, pretty } = {}) => {
     void gidHistory.add(String(gid2));
     if (english2)
@@ -28629,6 +28630,19 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       return true;
     } catch (error) {
       logger.error(error);
+    }
+    return false;
+  };
+  const isSameTitleString = (title1, title2) => !!title1 && !!title2 && normalizeTitle(title1) === normalizeTitle(title2);
+  const isSameTitle = (title1, title2) => {
+    if (settings.judgeDownloadedByJapanese && isSameTitleString(title1.japanese, title2.japanese)) {
+      return true;
+    }
+    if (settings.judgeDownloadedByEnglish && isSameTitleString(title1.english, title2.english)) {
+      return true;
+    }
+    if (settings.judgeDownloadedByPretty && isSameTitleString(title1.pretty, title2.pretty)) {
+      return true;
     }
     return false;
   };
@@ -32088,17 +32102,23 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           return;
         }
       }
-      if (!skipDownloadedCheck && (await isDownloadedByTitle(gallery2.title) || dlQueue.queue.some(
-        ({
-          info: {
-            gallery: { title }
-          }
-        }) => title === gallery2.title
-      )) && !await downloadAgainConfirm(gallery2.title.japanese || gallery2.title.english, true)) {
-        progressDisplayController.reset();
-        markAsDownloaded(gid2, gallery2.title);
-        markGalleryDownloaded();
-        return;
+      if (!skipDownloadedCheck) {
+        if (await isDownloadedByTitle(gallery2.title) && !await downloadAgainConfirm(gallery2.title.japanese || gallery2.title.english, true)) {
+          progressDisplayController.reset();
+          markAsDownloaded(gid2, gallery2.title);
+          markGalleryDownloaded();
+          return;
+        }
+        if (dlQueue.queue.some(
+          ({
+            info: {
+              gallery: { title }
+            }
+          }) => isSameTitle(title, gallery2.title)
+        ) && !await downloadAgainConfirm(gallery2.title.japanese || gallery2.title.english, true)) {
+          progressDisplayController.reset();
+          return;
+        }
       }
       addDownloadGalleryTask(gallery2, { progressDisplayController, markGalleryDownloaded });
     };
