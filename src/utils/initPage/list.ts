@@ -4,6 +4,7 @@ import { addDownloadGalleryTask } from '../download';
 import {
   isDownloadedByGid,
   isDownloadedByTitle,
+  isSameTitle,
   markAsDownloaded,
   unmarkAsDownloaded,
 } from '../downloadHistory';
@@ -161,22 +162,29 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       }
     }
 
-    if (
-      !skipDownloadedCheck &&
-      ((await isDownloadedByTitle(gallery.title)) ||
+    if (!skipDownloadedCheck) {
+      if (
+        (await isDownloadedByTitle(gallery.title)) &&
+        !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true))
+      ) {
+        progressDisplayController.reset();
+        markAsDownloaded(gid, gallery.title);
+        markGalleryDownloaded();
+        return;
+      }
+      if (
         dlQueue.queue.some(
           ({
             info: {
               gallery: { title },
             },
-          }) => title === gallery!.title,
-        )) &&
-      !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true))
-    ) {
-      progressDisplayController.reset();
-      markAsDownloaded(gid, gallery.title);
-      markGalleryDownloaded();
-      return;
+          }) => isSameTitle(title, gallery!.title),
+        ) &&
+        !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true))
+      ) {
+        progressDisplayController.reset();
+        return;
+      }
     }
 
     addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded });

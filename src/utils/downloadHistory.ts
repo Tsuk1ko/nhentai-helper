@@ -90,7 +90,8 @@ const enTitleHistory = new DownloadHistory('dl_history_en');
 const jpTitleHistory = new DownloadHistory('dl_history');
 const prettyTitleHistory = new DownloadHistory('dl_history_pretty');
 
-const getTitleMd5 = (title: string): string => md5(title.replace(/\s/g, ''));
+const normalizeTitle = (title: string): string => title.replace(/\s/g, '');
+const getTitleMd5 = (title: string): string => md5(normalizeTitle(title));
 
 export const markAsDownloaded = (
   gid: string | number,
@@ -226,6 +227,22 @@ export const clearDownloadHistory = async (): Promise<boolean> => {
     return true;
   } catch (error) {
     logger.error(error);
+  }
+  return false;
+};
+
+const isSameTitleString = (title1?: string, title2?: string): boolean =>
+  !!title1 && !!title2 && normalizeTitle(title1) === normalizeTitle(title2);
+
+export const isSameTitle = (title1: Title, title2: Title): boolean => {
+  if (settings.judgeDownloadedByJapanese && isSameTitleString(title1.japanese, title2.japanese)) {
+    return true;
+  }
+  if (settings.judgeDownloadedByEnglish && isSameTitleString(title1.english, title2.english)) {
+    return true;
+  }
+  if (settings.judgeDownloadedByPretty && isSameTitleString(title1.pretty, title2.pretty)) {
+    return true;
   }
   return false;
 };
