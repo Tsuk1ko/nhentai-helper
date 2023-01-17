@@ -12,7 +12,7 @@ export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTi
 export const compileTemplate = (tpl: string) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
 
 export const getDownloadExt = (): string => {
-  const ext = last(settings.compressionFileName.split('.'));
+  const ext = last(settings.compressionFilename.split('.'));
   if (ext) return ext.toLowerCase();
   return 'zip';
 };

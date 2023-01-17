@@ -23,14 +23,38 @@
         <!-- 自定义压缩文件名 -->
         <el-form-item label="Compression filename">
           <el-input
-            v-model="settings.compressionFileName"
-            :placeholder="settingDefinitions.compressionFileName.default"
+            v-model="settings.compressionFilename"
+            :placeholder="settingDefinitions.compressionFilename.default"
             @blur="
-              if (!settings.compressionFileName) {
-                settings.compressionFileName = settingDefinitions.compressionFileName.default;
+              if (!settings.compressionFilename) {
+                settings.compressionFilename = settingDefinitions.compressionFilename.default;
               }
             "
           />
+        </el-form-item>
+        <el-form-item label="└ {{artist}}">
+          <!-- 文件名最大作者数量 -->
+          <div class="inline-item">
+            <span class="inline-item__name">Max number</span>
+            <el-input-number
+              v-model="settings.filenameMaxArtistsNumber"
+              size="small"
+              :min="0"
+              :value-on-clear="settingDefinitions.filenameMaxArtistsNumber.default"
+              :step-strictly="true"
+              :style="{ width: '90px' }"
+            />
+          </div>
+          <!-- 文件名作者分隔符 -->
+          <div class="inline-item">
+            <span class="inline-item__name">Separator</span>
+            <el-input
+              v-model="settings.filenameArtistsSeparator"
+              size="small"
+              :placeholder="settingDefinitions.filenameArtistsSeparator.default"
+              :style="{ width: '50px' }"
+            />
+          </div>
         </el-form-item>
         <!-- 自定义压缩级别 -->
         <el-form-item class="m-b-32" label="Compression level">
@@ -240,12 +264,25 @@ const clearHistory = async () => {
 defineExpose({ open });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .nhentai-helper-setting-help-buttons {
   float: left;
   position: absolute;
 }
 
+.inline-item {
+  display: inline-block;
+  &:not(:last-of-type) {
+    margin-right: 8px;
+  }
+  &__name {
+    margin-right: 4px;
+    user-select: none;
+  }
+}
+</style>
+
+<style lang="less">
 #nhentai-helper-setting-dialog {
   .asterisk-example::before {
     content: '*';

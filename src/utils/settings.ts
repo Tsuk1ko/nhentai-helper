@@ -13,7 +13,11 @@ export interface Settings {
   /** 自定义下载地址 */
   customDownloadUrl: string;
   /** 自定义压缩文件名 */
-  compressionFileName: string;
+  compressionFilename: string;
+  /** 文件名最大作者数量 */
+  filenameMaxArtistsNumber: number;
+  /** 文件名作者分隔符 */
+  filenameArtistsSeparator: string;
   /** 自定义压缩级别 */
   compressionLevel: number;
   /** 压缩选项 streamFiles */
@@ -43,19 +47,23 @@ export interface Settings {
 }
 
 type SettingValidator = (val: any) => boolean;
+type SettingFormatter<T> = (val: T) => T;
 
 interface SettingDefinition<T> {
   key: string;
   default: T;
   validator: SettingValidator;
-  formatter?: (val: T) => T;
+  formatter?: SettingFormatter<T>;
 }
 
 const booleanValidator: SettingValidator = val => typeof val === 'boolean';
+const stringValidator: SettingValidator = val => typeof val === 'string';
 const createNumberValidator =
   (start: number, end: number): SettingValidator =>
   val =>
     typeof val === 'number' && start <= val && val <= end;
+
+const trimFormatter: SettingFormatter<string> = val => val.trim();
 
 export const settingDefinitions: Readonly<{
   [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
@@ -74,14 +82,24 @@ export const settingDefinitions: Readonly<{
   customDownloadUrl: {
     key: 'custom_download_url',
     default: '',
-    validator: val => typeof val === 'string',
-    formatter: val => val.trim(),
+    validator: stringValidator,
+    formatter: trimFormatter,
   },
-  compressionFileName: {
+  compressionFilename: {
     key: 'cf_name',
     default: '{{japanese}}.zip',
-    validator: val => typeof val === 'string',
-    formatter: val => val.trim(),
+    validator: stringValidator,
+    formatter: trimFormatter,
+  },
+  filenameMaxArtistsNumber: {
+    key: 'cf_name_max_artists_number',
+    default: 3,
+    validator: createNumberValidator(0, Infinity),
+  },
+  filenameArtistsSeparator: {
+    key: 'cf_name_artists_separator',
+    default: ', ',
+    validator: stringValidator,
   },
   compressionLevel: {
     key: 'c_lv',

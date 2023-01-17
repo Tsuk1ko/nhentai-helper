@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { unsafeWindow } from '$';
 import $ from 'jquery';
-import { invert } from 'lodash-es';
+import { filter, invert, map } from 'lodash-es';
 import { getJSON, getText } from './request';
 import { compileTemplate } from './common';
 import { settings } from './settings';
@@ -29,11 +29,12 @@ interface NHentaiImage {
 }
 
 interface NHentaiTag {
-  id: number;
+  id?: number;
   type: string;
   name: string;
-  url: string;
-  count: number;
+  /** will be `_url` if in `window.gallery` */
+  url?: string;
+  count?: number;
 }
 
 export interface NHentaiGallery {
@@ -51,7 +52,7 @@ export interface NHentaiGallery {
   };
   scanlator?: string;
   upload_date?: number;
-  tags?: NHentaiTag[];
+  tags: NHentaiTag[];
   num_pages?: number;
   num_favorites?: number;
 }
@@ -127,6 +128,11 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     throw new Error('Get gallery info error.');
   }
 
+  // 只用到 artists tag
+  const $artistTags = $('#tags .tag-container:contains(Artists:) .tag > .name');
+  const artists = filter(Array.from($artistTags).map(el => el.innerText.trim()));
+  const tags = artists.map((name): NHentaiTag => ({ type: 'artist', name }));
+
   return {
     id: Number(gid),
     media_id: mediaId,
@@ -138,7 +144,19 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     images: {
       pages,
     },
+    tags,
   };
+};
+
+const getCFNameArtists = (tags: NHentaiTag[]): string => {
+  const artists = map(
+    tags.filter(({ name, type }) => type === 'artist' && name),
+    'name',
+  );
+  if (!artists.length) return 'none';
+  const maxNum = settings.filenameMaxArtistsNumber;
+  if (maxNum && artists.length > maxNum) return 'various';
+  return artists.join(settings.filenameArtistsSeparator);
 };
 
 const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
@@ -154,6 +172,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     title,
     images: { pages },
     num_pages,
+    tags,
   }: NHentaiGallery = await (async () => {
     if (gid) return getGallery(gid);
 
@@ -183,13 +202,14 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     mid: media_id,
     title,
     pages: infoPages,
-    cfName: compileTemplate(settings.compressionFileName)({
+    cfName: compileTemplate(settings.compressionFilename)({
       english: english || japanese,
       japanese: japanese || english,
       pretty: pretty || english || japanese,
       id,
       pages: num_pages,
-    }),
+      artist: getCFNameArtists(tags),
+    }).replace(/[/\\:*?"<>|]/g, ''),
   };
   logger.log('info', info);
 

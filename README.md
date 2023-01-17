@@ -39,6 +39,9 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   - `{{pretty}}` - English simple title of manga
   - `{{id}}` - Gallery ID
   - `{{pages}}` - Number of pages
+  - `{{artist}}` - Artist tags of manga
+    - Maximum number: The default is `3`, exceeding will become "various". Can be modify in settings. `0` means infinity.
+    - Separator: The default is `, `. Can be modify in settings.
 - **Compression level**  
   Accept a numer in `0-9`, default is `0`.  
   `0` means "no compression", `1` means "best speed", `9` means "best compression".  

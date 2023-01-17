@@ -23,11 +23,10 @@ export const initDetailPage = async (): Promise<void> => {
   ) as HTMLInputElement;
   $('#info > .buttons').append(downloadBtn).after(pagesInput);
 
-  const gallery = await getGalleryInfo();
-
   let ignoreController: IgnoreController | undefined;
 
   if (settings.showIgnoreButton) {
+    const gallery = await getGalleryInfo();
     const isDownloaded = await isDownloadedByGid(gallery.gid);
     ignoreController = new IgnoreController(true, isDownloaded);
     const { ignoreBtn } = ignoreController;
@@ -41,6 +40,7 @@ export const initDetailPage = async (): Promise<void> => {
   }
 
   downloadBtn.addEventListener('click', async () => {
+    const gallery = await getGalleryInfo();
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
       .filter(range => !Number.isNaN(parseInt(range)))
