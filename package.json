@@ -1,7 +1,7 @@
 {
   "name": "nhentai-helper",
   "author": "Jindai Kirin",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "type": "module",
   "license": "GPL-3.0",
   "private": true,
