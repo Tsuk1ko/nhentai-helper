@@ -9,7 +9,8 @@ import {
   unmarkAsDownloaded,
 } from '../downloadHistory';
 import logger from '../logger';
-import { getGalleryInfo, NHentaiGallery, type NHentaiGalleryInfo } from '../nhentai';
+import { getGalleryInfo } from '../nhentai';
+import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { createLangFilter, filterLang } from '../langFilter';

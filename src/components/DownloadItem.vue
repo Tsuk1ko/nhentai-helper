@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MangaDownloadInfo } from '@/typings';
+import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue } from '@/common/queue';
 import { removeAt } from '@/utils/array';
 

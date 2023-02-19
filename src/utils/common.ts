@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { last, template } from 'lodash-es';
 import type { JSZipGeneratorOptions } from 'jszip';
 import { settings } from './settings';
-import { NHentaiGalleryInfo } from './nhentai';
-import { MangaDownloadInfo } from '@/typings';
+import type { NHentaiGalleryInfo } from './nhentai';
+import type { MangaDownloadInfo } from '@/typings';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 

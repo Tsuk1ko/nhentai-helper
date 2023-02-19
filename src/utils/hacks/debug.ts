@@ -24,7 +24,7 @@ if (IS_NHENTAI) {
     c._log = c.log;
     c.log = (...args) => {
       if (args.length === 1 && isNodeOrElement(args[0])) return;
-      return c._log!(...args);
+      c._log!(...args);
     };
   }
 }

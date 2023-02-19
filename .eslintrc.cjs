@@ -60,6 +60,12 @@ module.exports = {
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/promise-function-async': 'off',
+    '@typescript-eslint/consistent-type-imports': [
+      'warn',
+      {
+        disallowTypeAnnotations: false,
+      },
+    ],
   },
   settings: {
     'import/resolver': {

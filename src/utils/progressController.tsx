@@ -1,5 +1,5 @@
 import { getDownloadExt } from './common';
-import { MangaDownloadInfo } from '@/typings';
+import type { MangaDownloadInfo } from '@/typings';
 
 export class ProgressDisplayController {
   public readonly downloadBtn: HTMLElement;

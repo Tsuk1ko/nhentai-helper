@@ -1,4 +1,5 @@
-import Noty, { Options } from 'noty';
+import type { Options } from 'noty';
+import Noty from 'noty';
 import { settings } from './settings';
 
 const notyConfirmOption: Options = {

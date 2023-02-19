@@ -1,4 +1,4 @@
-import { wrap, Remote, transfer, proxy, releaseProxy } from 'comlink';
+import { wrap, type Remote, transfer, proxy, releaseProxy } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipMetadata } from 'jszip';
 import { removeAt } from './array';
 import { IS_DEV, WORKER_THREAD_NUM } from '@/const';
@@ -76,7 +76,7 @@ class JSZipWorkerPool {
       await zip.files(transfer(files, getTransferableData(files)));
       return await zip.generateAsync(
         options,
-        proxy(metaData => {
+        proxy((metaData: JSZipMetadata) => {
           if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
         }),
       );
@@ -97,7 +97,7 @@ class JSZipWorkerPool {
       await zip.files(transfer(files, getTransferableData(files)));
       const { zipStream } = await zip.generateStream(
         options,
-        proxy(metaData => {
+        proxy((metaData: JSZipMetadata) => {
           if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
         }),
       );

@@ -1,4 +1,5 @@
-import { Plugin, transformWithEsbuild } from 'vite';
+import type { Plugin } from 'vite';
+import { transformWithEsbuild } from 'vite';
 
 const regexp = /\?worker-dev$/;
 

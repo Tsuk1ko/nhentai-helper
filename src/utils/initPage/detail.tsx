@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import { createMangaDownloadInfo, getShowAllBtn } from '../common';
 import { downloadAgainConfirm } from '../dialog';
-import { downloadGalleryByInfo, RangeChecker } from '../download';
+import type { RangeChecker } from '../download';
+import { downloadGalleryByInfo } from '../download';
 import {
   isDownloadedByGid,
   isDownloadedByTitle,

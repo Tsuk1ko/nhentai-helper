@@ -12,7 +12,13 @@ const readFile = (file: File): Promise<ArrayBuffer> =>
 const pickFile = (accept: string): Promise<File | undefined> =>
   new Promise(resolve => {
     const input = (
-      <input type="file" accept={accept} onChange={() => resolve(input.files?.[0])} />
+      <input
+        type="file"
+        accept={accept}
+        onChange={() => {
+          resolve(input.files?.[0]);
+        }}
+      />
     ) as HTMLInputElement;
     input.click();
   });

@@ -155,7 +155,7 @@ import {
   writeableSettings as settings,
   startWatchSettings,
 } from '@/utils/settings';
-import { ElMarks } from '@/typings';
+import type { ElMarks } from '@/typings';
 import {
   clearDownloadHistory,
   exportDownloadHistory,

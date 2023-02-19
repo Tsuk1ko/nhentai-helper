@@ -1,4 +1,4 @@
-import { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 import type { NHentaiGalleryInfo } from '@/utils/nhentai';
 
 export interface MangaDownloadInfo {

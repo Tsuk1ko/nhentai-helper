@@ -2,16 +2,19 @@ import { reactive } from 'vue';
 import { saveAs } from 'file-saver';
 import { createWriteStream } from 'streamsaver';
 import { compileTemplate, createMangaDownloadInfo, getCompressionOptions } from './common';
-import { JSZip, OnUpdateCallback } from './jszip';
+import type { OnUpdateCallback } from './jszip';
+import { JSZip } from './jszip';
 import logger from './logger';
-import { MultiThread, TaskFunction } from './multiThread';
-import { getMediaDownloadUrl, NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
-import { ProgressDisplayController } from './progressController';
+import type { TaskFunction } from './multiThread';
+import { MultiThread } from './multiThread';
+import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
+import { getMediaDownloadUrl } from './nhentai';
+import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
 import { settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
-import { MangaDownloadInfo } from '@/typings';
+import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
 
 export type RangeChecker = (i: number) => boolean;
@@ -45,7 +48,7 @@ export const downloadGalleryByInfo = async (
   progressDisplayController?.bindInfo(info);
   progressDisplayController?.updateProgress();
 
-  const zip = await new JSZip();
+  const zip = new JSZip();
 
   const downloadTask: TaskFunction<
     NHentaiGalleryInfoPage,

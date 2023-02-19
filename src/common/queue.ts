@@ -1,5 +1,5 @@
 import { WORKER_THREAD_NUM } from '@/const';
-import { MangaDownloadInfo } from '@/typings';
+import type { MangaDownloadInfo } from '@/typings';
 import { AsyncQueue } from '@/utils/asyncQueue';
 import logger from '@/utils/logger';
 import { settings } from '@/utils/settings';
