@@ -607,6 +607,13 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
+"@tsuk1ko/postversion@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@tsuk1ko/postversion/-/postversion-1.0.1.tgz#aad6b277b92178cd8d069ffec539d48a822091ef"
+  integrity sha512-68hxHkSD6tNEsBZZH7QC39gjZA0/42n8dSN8Ea3B/zJ8L5N5T2BRP6SQ8sIkJWMcjZiXS13GL1edLEtJCWuk5w==
+  dependencies:
+    yesno "^0.4.0"
+
 "@types/clean-css@^4.2.6":
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/@types/clean-css/-/clean-css-4.2.6.tgz#48b427285b2b654751a9bbc6f7d35e6173dec8d2"
