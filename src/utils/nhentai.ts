@@ -2,7 +2,7 @@
 import { unsafeWindow } from '$';
 import $ from 'jquery';
 import { filter, invert, map } from 'lodash-es';
-import { getJSON, getText } from './request';
+import { fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
 import { settings } from './settings';
 import logger from './logger';
@@ -78,7 +78,7 @@ export const getMediaDownloadUrl = IS_NHENTAI
 
 const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
   const url = `https://nhentai.net/api/gallery/${gid}`;
-  return getJSON<NHentaiGallery>(url);
+  return fetchJSON<NHentaiGallery>(url);
 };
 
 const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGallery> => {

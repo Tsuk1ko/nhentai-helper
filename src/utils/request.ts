@@ -1,4 +1,4 @@
-import { GM_xmlhttpRequest, XhrRequest } from '$';
+import { GM_xmlhttpRequest, type XhrRequest } from '$';
 import logger from './logger';
 
 class RequestAbortError extends Error {
@@ -23,10 +23,10 @@ export const request = <D = any>(
         responseType,
         onerror: e => {
           if (retry === 0) {
-            logger.error('Network error', url);
+            logger.error('Network error', url, e);
             reject(e);
           } else {
-            logger.warn('Network error, retry', url);
+            logger.warn('Network error, retry', url, e);
             setTimeout(() => {
               const { abort, dataPromise } = request(url, responseType, retry - 1);
               abortFunc = abort;
@@ -34,11 +34,12 @@ export const request = <D = any>(
             }, 1000);
           }
         },
-        onload: ({ status, response }) => {
+        onload: r => {
+          const { status, response } = r;
           if (status === 200) resolve(response as D);
-          else if (retry === 0) reject(new Error(`${status} ${url}`));
+          else if (retry === 0) reject(r);
           else {
-            logger.warn(status, url);
+            logger.warn('Request error, retry', status, url, r);
             setTimeout(() => {
               const { abort, dataPromise } = request(url, responseType, retry - 1);
               abortFunc = abort;
@@ -65,3 +66,5 @@ export const request = <D = any>(
 export const getJSON = <D = any>(url: string): Promise<D> => request<D>(url, 'json').dataPromise;
 
 export const getText = (url: string): Promise<string> => request<string>(url).dataPromise;
+
+export const fetchJSON = <D = any>(url: string): Promise<D> => fetch(url).then(r => r.json());
