@@ -104,4 +104,4 @@ Effective when reading online, only for mirror sites (now nHentai official site 
 ## Recommended scripts
 
 - [Super-preloader](https://github.com/machsix/Super-preloader)  
-  Let you have unlimited drop-down page turning experience in the manga list page.
+  A userscript for auto loading paginated web pages. It will join pages together, which is useful on manga list page.
