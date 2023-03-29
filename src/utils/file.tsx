@@ -1,3 +1,5 @@
+import jsx from '@/utils/jsx';
+
 const readFile = (file: File): Promise<ArrayBuffer> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();

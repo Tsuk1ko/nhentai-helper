@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import jsx from '@/utils/jsx';
 import { IS_NHENTAI_TO } from '@/const';
 
 export const createLangFilter = (): HTMLSelectElement => {

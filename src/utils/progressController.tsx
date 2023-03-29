@@ -1,4 +1,5 @@
 import { getDownloadExt } from './common';
+import jsx from '@/utils/jsx';
 import type { MangaDownloadInfo } from '@/typings';
 
 export class ProgressDisplayController {

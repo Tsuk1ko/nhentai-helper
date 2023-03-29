@@ -6,7 +6,6 @@ import copy from 'rollup-plugin-copy';
 import components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import workerDevLoader from './plugins/workerDevLoader';
-import tsx from './plugins/tsx';
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => ({
@@ -17,7 +16,6 @@ export default defineConfig(async ({ mode }) => ({
   },
   plugins: [
     workerDevLoader(),
-    tsx(),
     vue(),
     components({
       dts: false,

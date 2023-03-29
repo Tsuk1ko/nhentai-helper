@@ -2,7 +2,7 @@
 // MIT License - Copyright (c) Kartik Nair
 import { camelCase, kebabCase } from 'lodash-es';
 
-export const createElement = (
+const createElement = (
   tag: string | Function,
   props?: Record<string, any>,
   ...children: Array<CastArray<HTMLElement | string>>
@@ -36,9 +36,11 @@ const appendChild = (parent: HTMLElement, child: HTMLElement | string): void => 
   parent.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
 };
 
-export const Fragment = (
+const Fragment = (
   props: any,
   ...children: Array<HTMLElement | string>
 ): Array<HTMLElement | string> => {
   return children;
 };
+
+export default { createElement, Fragment };

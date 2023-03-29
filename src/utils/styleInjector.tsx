@@ -1,3 +1,5 @@
+import jsx from '@/utils/jsx';
+
 export class StyleInjector {
   private readonly styleNode: HTMLElement;
 

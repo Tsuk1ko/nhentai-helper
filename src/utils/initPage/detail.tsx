@@ -14,6 +14,7 @@ import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { IgnoreController } from '../ignoreController';
+import jsx from '@/utils/jsx';
 
 export const initDetailPage = async (): Promise<void> => {
   const progressDisplayController = new ProgressDisplayController(true, document.title);

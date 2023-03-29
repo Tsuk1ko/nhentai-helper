@@ -1,3 +1,5 @@
+import jsx from '@/utils/jsx';
+
 export class IgnoreController {
   public ignoreBtn: HTMLElement;
   private readonly icon: HTMLElement;

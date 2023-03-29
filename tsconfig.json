@@ -6,7 +6,7 @@
     "moduleResolution": "Node",
     "useDefineForClassFields": true,
     "strict": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "jsxFactory": "jsx.createElement",
     "jsxFragmentFactory": "jsx.Fragment",
     "sourceMap": true,
