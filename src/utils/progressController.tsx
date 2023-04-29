@@ -1,6 +1,9 @@
 import { getDownloadExt } from './common';
 import jsx from '@/utils/jsx';
 import type { MangaDownloadInfo } from '@/typings';
+import { i18n } from '@/i18n';
+
+const { t } = i18n.global;
 
 export class ProgressDisplayController {
   public readonly downloadBtn: HTMLElement;
@@ -20,16 +23,16 @@ export class ProgressDisplayController {
   }
 
   private get compressingHeadText(): string {
-    return this.enableHeadTxt ? `Compressing ${getDownloadExt()} ` : '';
+    return this.enableHeadTxt ? `${t('button.compressing')} ${getDownloadExt()} ` : '';
   }
 
   private get downloadingHeadText(): string {
-    return this.enableHeadTxt ? `Downloading ${getDownloadExt()} ` : '';
+    return this.enableHeadTxt ? `${t('button.downloading')} ${getDownloadExt()} ` : '';
   }
 
   private defaultBtnText(suffix?: string): string {
     if (!this.enableHeadTxt) return suffix ?? '';
-    return `Download ${getDownloadExt()}${suffix ? ` ${suffix}` : ''}`;
+    return `${t('button.download')} ${getDownloadExt()}${suffix ? ` ${suffix}` : ''}`;
   }
 
   public bindInfo(info: MangaDownloadInfo): void {

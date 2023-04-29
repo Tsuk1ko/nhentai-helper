@@ -16,6 +16,7 @@ import { settings } from '../settings';
 import { createLangFilter, filterLang } from '../langFilter';
 import { IgnoreController } from '../ignoreController';
 import { dlQueue } from '@/common/queue';
+import { ErrorAction } from '@/typings';
 
 export const initListPage = (): void => {
   $('.gallery').each(initGallery);
@@ -158,7 +159,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       } catch (error) {
         logger.error(error);
         progressDisplayController.error();
-        errorRetryConfirm('getting information', undefined, startDownload);
+        errorRetryConfirm(ErrorAction.GET_INFO, undefined, startDownload);
         return;
       }
     }

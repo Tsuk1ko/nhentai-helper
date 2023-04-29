@@ -9,6 +9,7 @@ import DownloadPanelVue from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { initPage } from './utils/initPage';
 import { IS_SETTINGS_DIALOG_DEV } from './const';
+import { i18n } from './i18n';
 
 const createAppAndMount = <T extends Component & (abstract new (...args: any) => any)>(
   component: T,
@@ -21,7 +22,11 @@ const createAppAndMount = <T extends Component & (abstract new (...args: any) =>
   return app.mount(el) as any;
 };
 
-const initSettingsDialogApp = once(() => createAppAndMount(SettingsDialog));
+const initSettingsDialogApp = once(() =>
+  createAppAndMount(SettingsDialog, app => {
+    app.use(i18n);
+  }),
+);
 
 const openSettingsDialog = (): void => {
   const dialog = initSettingsDialogApp();
@@ -31,7 +36,7 @@ const openSettingsDialog = (): void => {
 createAppAndMount(DownloadPanelVue);
 initPage();
 
-GM_registerMenuCommand('Settings', openSettingsDialog);
+GM_registerMenuCommand(i18n.global.t('common.settings'), openSettingsDialog);
 
 if (IS_SETTINGS_DIALOG_DEV) {
   document.body.outerHTML = '<body></body>';

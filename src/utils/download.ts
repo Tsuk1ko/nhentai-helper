@@ -16,6 +16,7 @@ import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
 import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
+import { ErrorAction } from '@/typings';
 
 export type RangeChecker = (i: number) => boolean;
 
@@ -149,7 +150,7 @@ export const addDownloadGalleryTask = (
     const zipFunc = await downloadGalleryByInfo(info, { progressDisplayController }).catch(e => {
       progressDisplayController?.error();
       errorRetryConfirm(
-        'downloading',
+        ErrorAction.DOWNLOAD,
         () => {
           dlQueue.skipFromError().catch(logger.error);
         },

@@ -39,6 +39,7 @@ declare interface Console {
 }
 
 type ValueOf<T> = T[keyof T];
+type ValueOfRecord<T> = T extends Record<any, infer P> ? P : never;
 type CastArray<T> = T | T[];
 
 declare namespace JSX {

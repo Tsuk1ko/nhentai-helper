@@ -5,8 +5,11 @@ import { each, mapValues } from 'lodash-es';
 import once from 'just-once';
 import { detect } from 'detect-browser';
 import logger from './logger';
+import { defaultLocale, supportLanguage } from '@/i18n/utils';
 
 export interface Settings {
+  /** 语言 */
+  language: string;
   /** 下载线程数 */
   threadNum: number;
   /** 在新窗口打开本子 */
@@ -60,15 +63,20 @@ interface SettingDefinition<T> {
 const booleanValidator: SettingValidator = val => typeof val === 'boolean';
 const stringValidator: SettingValidator = val => typeof val === 'string';
 const createNumberValidator =
-  (start: number, end: number): SettingValidator =>
+  (min: number, max: number): SettingValidator =>
   val =>
-    typeof val === 'number' && start <= val && val <= end;
+    typeof val === 'number' && min <= val && val <= max;
 
 const trimFormatter: SettingFormatter<string> = val => val.trim();
 
 export const settingDefinitions: Readonly<{
   [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
 }> = {
+  language: {
+    key: 'language',
+    default: defaultLocale,
+    validator: val => supportLanguage.has(val),
+  },
   threadNum: {
     key: 'thread_num',
     default: 8,

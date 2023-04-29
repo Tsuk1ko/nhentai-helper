@@ -2,26 +2,32 @@
   <el-dialog v-model="show" :center="true" top="50px">
     <template #header="{ titleId, titleClass }">
       <div class="nhentai-helper-setting-help-buttons no-sl">
-        <el-button size="small" @click="openHelp">Help</el-button>
-        <el-button size="small" @click="openHelpCn">说明</el-button>
+        <el-button size="small" @click="openHelp">{{ t('setting.helpButton') }}</el-button>
       </div>
-      <span :id="titleId" :class="[titleClass, 'no-sl']">Settings</span>
+      <span :id="titleId" :class="[titleClass, 'no-sl']">{{ t('setting.title') }}</span>
     </template>
     <div id="nhentai-helper-setting-dialog">
       <div class="asterisk-example no-sl" style="margin-bottom: 18px">
-        means refresh is required to take effect
+        {{ t('setting.asteriskTip') }}
       </div>
       <el-form label-width="auto" label-position="left">
+        <!-- 语言 -->
+        <el-form-item label="Language">
+          <el-select v-model="settings.language">
+            <el-option label="English" value="en" />
+            <el-option label="中文" value="zh" />
+          </el-select>
+        </el-form-item>
         <!-- 下载线程数 -->
-        <el-form-item class="m-b-32" label="Download thread">
+        <el-form-item class="m-b-32" :label="t('setting.downloadThread')">
           <el-slider v-model="settings.threadNum" :min="1" :max="32" :marks="threadNumMarks" />
         </el-form-item>
         <!-- 在新窗口打开本子 -->
-        <el-form-item class="refresh-required" label="Open on new tab">
+        <el-form-item class="refresh-required" :label="t('setting.openOnNewTab')">
           <el-switch v-model="settings.openOnNewTab" />
         </el-form-item>
         <!-- 自定义压缩文件名 -->
-        <el-form-item label="Compression filename">
+        <el-form-item :label="t('setting.compressionFilename')">
           <el-input
             v-model="settings.compressionFilename"
             :placeholder="settingDefinitions.compressionFilename.default"
@@ -35,7 +41,7 @@
         <el-form-item label="└ {{artist}}">
           <!-- 文件名最大作者数量 -->
           <div class="inline-item">
-            <span class="inline-item__name">Max number</span>
+            <span class="inline-item__name">{{ t('setting.maxNumber') }}</span>
             <el-input-number
               v-model="settings.filenameMaxArtistsNumber"
               size="small"
@@ -47,7 +53,7 @@
           </div>
           <!-- 文件名作者分隔符 -->
           <div class="inline-item">
-            <span class="inline-item__name">Separator</span>
+            <span class="inline-item__name">{{ t('setting.separator') }}</span>
             <el-input
               v-model="settings.filenameArtistsSeparator"
               size="small"
@@ -57,7 +63,7 @@
           </div>
         </el-form-item>
         <!-- 自定义压缩级别 -->
-        <el-form-item class="m-b-32" label="Compression level">
+        <el-form-item class="m-b-32" :label="t('setting.compressionLevel')">
           <el-slider
             v-model="settings.compressionLevel"
             :min="0"
@@ -66,7 +72,7 @@
           />
         </el-form-item>
         <!-- 文件名补零 -->
-        <el-form-item label="Filename length">
+        <el-form-item :label="t('setting.filenameLength')">
           <el-input-number
             v-model="filenameLengthNumber"
             :min="0"
@@ -74,81 +80,98 @@
             :step-strictly="true"
             :disabled="settings.filenameLength === 'auto'"
           />
-          <el-checkbox v-model="filenameLengthAuto" class="m-l-16" label="Auto" />
+          <el-checkbox v-model="filenameLengthAuto" class="m-l-16" :label="t('common.auto')" />
         </el-form-item>
         <!-- 自动取消下载过的本子 -->
-        <el-form-item label="Auto cancel downloaded manga">
+        <el-form-item :label="t('setting.autoCancelDownloadedManga')">
           <el-switch v-model="settings.autoCancelDownloadedManga" />
         </el-form-item>
         <!-- 自动重试 -->
-        <el-form-item label="Auto retry when error occurs">
+        <el-form-item :label="t('setting.autoRetryWhenErrorOccurs')">
           <el-switch v-model="settings.autoRetryWhenErrorOccurs" />
         </el-form-item>
         <!-- 自动显示全部 -->
-        <el-form-item label="Auto show all">
+        <el-form-item :label="t('setting.autoShowAll')">
           <el-switch v-model="settings.autoShowAll" />
         </el-form-item>
         <!-- 显示忽略按钮 -->
-        <el-form-item class="refresh-required" label="Show ignore button">
+        <el-form-item class="refresh-required" :label="t('setting.showIgnoreButton')">
           <el-switch v-model="settings.showIgnoreButton" />
         </el-form-item>
         <!-- 已下载判断 key -->
-        <el-form-item label="Judge downloaded manga by title">
-          <el-checkbox v-model="settings.judgeDownloadedByEnglish" label="English" />
-          <el-checkbox v-model="settings.judgeDownloadedByJapanese" label="Japanese" />
-          <el-checkbox v-model="settings.judgeDownloadedByPretty" label="Pretty" />
+        <el-form-item :label="t('setting.judgeDownloadedMangaByTitle')">
+          <el-checkbox v-model="settings.judgeDownloadedByEnglish" :label="t('common.english')" />
+          <el-checkbox v-model="settings.judgeDownloadedByJapanese" :label="t('common.japanese')" />
+          <el-checkbox v-model="settings.judgeDownloadedByPretty" :label="t('common.pretty')" />
         </el-form-item>
-        <el-divider>Advance Settings</el-divider>
+        <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
         <!-- 自定义下载地址 -->
-        <el-form-item label="Custom download URL">
+        <el-form-item :label="t('setting.customDownloadUrl')">
           <el-input v-model="settings.customDownloadUrl" />
         </el-form-item>
         <!-- streamFiles 压缩选项 -->
-        <el-form-item :label="COMPRESSION_STREAM_FILES_LABEL">
+        <el-form-item :label="t('setting.compressionStreamFiles')">
           <el-switch v-model="settings.compressionStreamFiles" />
         </el-form-item>
         <!-- 串行模式 -->
-        <el-form-item label="Series mode">
+        <el-form-item :label="t('setting.seriesMode')">
           <el-switch v-model="settings.seriesMode" />
         </el-form-item>
         <!-- 流式下载 -->
-        <el-form-item label="Stream download">
+        <el-form-item :label="t('setting.streamDownload')">
           <el-switch v-model="settings.streamDownload" :disabled="DISABLE_STREAM_DOWNLOAD" />
         </el-form-item>
         <!-- 阻止控制台清空 -->
-        <el-form-item v-if="IS_NHENTAI" class="refresh-required" label="Prevent console clearing">
+        <el-form-item
+          v-if="IS_NHENTAI"
+          class="refresh-required"
+          :label="t('setting.preventConsoleClearing')"
+        >
           <el-switch v-model="settings.preventConsoleClearing" />
         </el-form-item>
       </el-form>
-      <el-divider>Download History</el-divider>
+      <el-divider>{{ t('setting.history.title') }}</el-divider>
       <p class="no-sl">
-        You have downloaded {{ downloadNum }} manga on this site using nHentai Helper.
+        {{
+          t('setting.history.downloadedNumberTip', {
+            num: Number.isNaN(downloadedNum) ? downloadedNum : n(downloadedNum),
+          })
+        }}
       </p>
       <el-button
         type="primary"
         :icon="Download"
-        :disabled="!downloadNum"
+        :disabled="!downloadedNum"
         :loading="exporting"
         @click="exportHistory"
-        >Export</el-button
+        >{{ t('setting.history.export') }}</el-button
       >
-      <el-button type="primary" :icon="Upload" :loading="importing" @click="importHistory"
-        >Import</el-button
+      <el-button type="primary" :icon="Upload" :loading="importing" @click="importHistory">{{
+        t('setting.history.import')
+      }}</el-button>
+      <el-popconfirm
+        :title="t('setting.history.clearConfirm')"
+        :confirm-button-text="t('setting.history.clearConfirmYes')"
+        :cancel-button-text="t('setting.history.clearConfirmNo')"
+        placement="top"
+        @confirm="clearHistory"
       >
-      <el-popconfirm title="Are you sure?" placement="top" @confirm="clearHistory">
         <template #reference>
-          <el-button type="danger" :icon="Delete" :loading="clearing">Clear</el-button>
+          <el-button type="danger" :icon="Delete" :loading="clearing">{{
+            t('setting.history.clear')
+          }}</el-button>
         </template>
       </el-popconfirm>
-      <p class="no-sl">Notice: Import will not clear the existing history, but merges with it.</p>
+      <p class="no-sl">{{ t('setting.history.importTip') }}</p>
     </div>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { monkeyWindow } from '$';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
+import { useI18n } from 'vue-i18n';
 import {
   DISABLE_STREAM_DOWNLOAD,
   settingDefinitions,
@@ -168,8 +191,6 @@ import { IS_NHENTAI } from '@/const';
 
 startWatchSettings();
 
-const COMPRESSION_STREAM_FILES_LABEL = 'Compression "streamFiles"';
-
 const threadNumMarks: ElMarks = {
   1: '1',
   4: '4',
@@ -186,8 +207,10 @@ const compressionLevelMarks: ElMarks = {
   9: '9',
 };
 
+const { t, n, locale } = useI18n();
+
 const show = ref(false);
-const downloadNum = ref(NaN);
+const downloadedNum = ref(NaN);
 
 const filenameLengthNumber = computed<number>({
   get: () => (typeof settings.filenameLength === 'number' ? settings.filenameLength : 0),
@@ -203,7 +226,7 @@ const filenameLengthAuto = computed<boolean>({
 });
 
 const refreshDownloadNum = async () => {
-  downloadNum.value = await getDownloadNumber();
+  downloadedNum.value = await getDownloadNumber();
 };
 
 const open = () => {
@@ -213,14 +236,9 @@ const open = () => {
 
 const openHelp = () => {
   monkeyWindow.open(
-    'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings',
-    '_blank',
-  );
-};
-
-const openHelpCn = () => {
-  monkeyWindow.open(
-    'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE',
+    locale.value === 'zh'
+      ? 'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE'
+      : 'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings',
     '_blank',
   );
 };
@@ -260,6 +278,13 @@ const clearHistory = async () => {
   refreshDownloadNum();
   showMessageBySucceed(succeed);
 };
+
+watch(
+  () => settings.language,
+  val => {
+    locale.value = val;
+  },
+);
 
 defineExpose({ open });
 </script>

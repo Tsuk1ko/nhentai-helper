@@ -1,6 +1,10 @@
 import type { Options } from 'noty';
 import Noty from 'noty';
 import { settings } from './settings';
+import { i18n } from '@/i18n';
+import type { ErrorAction } from '@/typings';
+
+const { t } = i18n.global;
 
 const notyConfirmOption: Options = {
   type: 'error',
@@ -18,15 +22,13 @@ export const downloadAgainConfirm = async (title: string, hasQueue = false): Pro
   return new Promise(resolve => {
     const n = new Noty({
       ...notyConfirmOption,
-      text: `"${title}" is already downloaded${
-        hasQueue ? ' or in queue' : ''
-      }.<br>Do you want to download again?`,
+      text: t('dialog.downloadAgainConfirm', { title, hasQueue }),
       buttons: [
-        Noty.button('YES', 'btn btn-noty-blue btn-noty', () => {
+        Noty.button(t('dialog.yes'), 'btn btn-noty-blue btn-noty', () => {
           n.close();
           resolve(true);
         }),
-        Noty.button('NO', 'btn btn-noty-green btn-noty', () => {
+        Noty.button(t('dialog.no'), 'btn btn-noty-green btn-noty', () => {
           n.close();
           resolve(false);
         }),
@@ -36,7 +38,7 @@ export const downloadAgainConfirm = async (title: string, hasQueue = false): Pro
   });
 };
 
-export const errorRetryConfirm = (action: string, noCb?: Function, yesCb?: Function): void => {
+export const errorRetryConfirm = (action: ErrorAction, noCb?: Function, yesCb?: Function): void => {
   if (settings.autoRetryWhenErrorOccurs) {
     errorRetryTip(action);
     yesCb?.();
@@ -44,13 +46,13 @@ export const errorRetryConfirm = (action: string, noCb?: Function, yesCb?: Funct
   }
   const n = new Noty({
     ...notyConfirmOption,
-    text: `Error occurred while ${action}, retry?`,
+    text: t('dialog.errorRetryConfirm', { action }),
     buttons: [
-      Noty.button('NO', 'btn btn-noty-blue btn-noty', () => {
+      Noty.button(t('dialog.no'), 'btn btn-noty-blue btn-noty', () => {
         n.close();
         noCb?.();
       }),
-      Noty.button('YES', 'btn btn-noty-green btn-noty', () => {
+      Noty.button(t('dialog.yes'), 'btn btn-noty-green btn-noty', () => {
         n.close();
         yesCb?.();
       }),
@@ -66,17 +68,17 @@ export const downloadedTip = (title: string): void => {
     theme: 'nest',
     closeWith: [],
     timeout: 4000,
-    text: `"${title}" is already downloaded or in queue.`,
+    text: t('dialog.downloadedTip', { title }),
   }).show();
 };
 
-export const errorRetryTip = (action: string): void => {
+export const errorRetryTip = (action: ErrorAction): void => {
   new Noty({
     type: 'warning',
     layout: 'bottomRight',
     theme: 'nest',
     closeWith: [],
     timeout: 3000,
-    text: `Error occurred while ${action}, retrying...`,
+    text: t('dialog.errorRetryTip', { action }),
   }).show();
 };

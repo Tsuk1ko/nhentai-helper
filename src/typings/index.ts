@@ -16,3 +16,8 @@ export interface ElMark {
 }
 
 export type ElMarks = Record<number, ElMark | string>;
+
+export enum ErrorAction {
+  GET_INFO = 'getInfo',
+  DOWNLOAD = 'download',
+}
