@@ -13,14 +13,14 @@ import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
-import { createLangFilter, filterLang } from '../langFilter';
 import { IgnoreController } from '../ignoreController';
+import { mountLanguageFilter } from '../languageFilter';
 import { dlQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
 
 export const initListPage = (): void => {
   $('.gallery').each(initGallery);
-  const langFilter = initLangFilter();
+  const { filterLanguage } = mountLanguageFilter();
   initShortcut();
   restoreDownloadQueue();
 
@@ -31,25 +31,11 @@ export const initListPage = (): void => {
         addedNodes.forEach(node => {
           const $el = $(node as HTMLElement);
           $el.find('.gallery').each(initGallery);
-          const lang = langFilter.value;
-          if (lang) filterLang(lang, $el);
+          filterLanguage?.($el);
         });
       });
     }).observe(contentEl, { childList: true });
   }
-};
-
-/** 语言过滤 */
-const initLangFilter = (): HTMLSelectElement => {
-  const langFilter = createLangFilter();
-
-  const storedLangFilterVal = sessionStorage.getItem('lang-filter');
-  if (storedLangFilterVal) {
-    langFilter.value = storedLangFilterVal;
-    filterLang(storedLangFilterVal);
-  }
-
-  return langFilter;
 };
 
 const initShortcut = (): void => {

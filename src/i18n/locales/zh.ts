@@ -8,7 +8,10 @@ export default {
     auto: '自动',
     english: '英文',
     japanese: '日文',
+    chinese: '中文',
     pretty: '简略',
+    filter: '过滤',
+    none: '无',
   },
   setting: {
     title: '@:common.settings',

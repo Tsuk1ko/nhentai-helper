@@ -61,6 +61,7 @@ module.exports = {
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/consistent-type-imports': [
       'warn',
       {
