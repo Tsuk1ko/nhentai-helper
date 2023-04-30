@@ -7,6 +7,19 @@ import { detect } from 'detect-browser';
 import logger from './logger';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 
+export const nHentaiDownloadHosts = [
+  'i.nhentai.net',
+  'i2.nhentai.net',
+  'i3.nhentai.net',
+  'i5.nhentai.net',
+  'i7.nhentai.net',
+];
+
+export enum NHentaiDownloadHostSpecial {
+  RANDOM = 'random',
+  BALANCE = 'balance',
+}
+
 export interface Settings {
   /** 语言 */
   language: string;
@@ -48,6 +61,8 @@ export interface Settings {
   judgeDownloadedByJapanese: boolean;
   /** 已下载判断 pretty 标题 */
   judgeDownloadedByPretty: boolean;
+  /** nHentai 下载地址 */
+  nHentaiDownloadHost: string;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -176,6 +191,14 @@ export const settingDefinitions: Readonly<{
     key: 'judge_downloaded_by_pretty',
     default: false,
     validator: booleanValidator,
+  },
+  nHentaiDownloadHost: {
+    key: 'nHentai_media_host',
+    default: nHentaiDownloadHosts[0],
+    validator: val =>
+      val === NHentaiDownloadHostSpecial.RANDOM ||
+      val === NHentaiDownloadHostSpecial.BALANCE ||
+      nHentaiDownloadHosts.includes(val),
   },
 };
 

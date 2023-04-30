@@ -8,15 +8,17 @@ import logger from './logger';
 import type { TaskFunction } from './multiThread';
 import { MultiThread } from './multiThread';
 import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
-import { getMediaDownloadUrl } from './nhentai';
+import { nHentaiDownloadHostCounter, getMediaDownloadUrl } from './nhentai';
+
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
-import { settings } from './settings';
+import { NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
 import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
+import { IS_NHENTAI } from '@/const';
 
 export type RangeChecker = (i: number) => boolean;
 
@@ -59,10 +61,21 @@ export const downloadGalleryByInfo = async (
     }
   > = (page, threadID, { filenameLength, customDownloadUrl }) => {
     if (info.error) return { abort: () => {}, promise: Promise.resolve() };
+
     const url = customDownloadUrl
       ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t })
       : getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
     logger.log(`[${threadID}] ${url}`);
+
+    const isUsingCounter =
+      IS_NHENTAI &&
+      !customDownloadUrl &&
+      settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE;
+    const counterKey = isUsingCounter ? new URL(url).host : '';
+    if (isUsingCounter) {
+      nHentaiDownloadHostCounter.add(counterKey);
+    }
+
     const { abort, dataPromise } = request<ArrayBuffer>(url, 'arraybuffer');
     return {
       abort: () => {
@@ -81,6 +94,11 @@ export const downloadGalleryByInfo = async (
           if (isAbortError(e)) return;
           info.error = true;
           throw e;
+        })
+        .finally(() => {
+          if (isUsingCounter) {
+            nHentaiDownloadHostCounter.del(counterKey);
+          }
         }),
     };
   };

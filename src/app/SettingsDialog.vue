@@ -104,7 +104,24 @@
           <el-checkbox v-model="settings.judgeDownloadedByJapanese" :label="t('common.japanese')" />
           <el-checkbox v-model="settings.judgeDownloadedByPretty" :label="t('common.pretty')" />
         </el-form-item>
+        <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
+        <!-- nHentai 下载地址 -->
+        <el-form-item v-if="IS_NHENTAI" :label="t('setting.nHentaiDownloadHost')">
+          <el-select
+            v-model="settings.nHentaiDownloadHost"
+            :disabled="!!settings.customDownloadUrl"
+          >
+            <el-option
+              v-for="host in nHentaiDownloadHosts"
+              :key="host"
+              :label="host"
+              :value="host"
+            />
+            <el-option :label="t('common.random')" value="random" />
+            <el-option :label="t('common.balance')" value="balance" />
+          </el-select>
+        </el-form-item>
         <!-- 自定义下载地址 -->
         <el-form-item :label="t('setting.customDownloadUrl')">
           <el-input v-model="settings.customDownloadUrl" />
@@ -174,6 +191,7 @@ import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
 import {
   DISABLE_STREAM_DOWNLOAD,
+  nHentaiDownloadHosts,
   settingDefinitions,
   writeableSettings as settings,
   startWatchSettings,

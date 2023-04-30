@@ -58,10 +58,12 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Show an button that allow you to mark or unmark the manga as downloaded.
 - **Judge downloaded manga by title**  
   You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
-  Note that `pretty` is not available in most mirror sites.
+  Note that `Pretty` is not available in most mirror sites.
 
 ### Advance Settings
 
+- **nHentai download host**  
+  Choose a host for downloading images. Only available on nHentai.
 - **Custom download URL**  
   **WARNING: Please don't set this if you don't know what it does.**  
   Tip: You may need to add your domain into *XHR security* for this script.  

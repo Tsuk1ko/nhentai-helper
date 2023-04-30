@@ -12,6 +12,8 @@ export default {
     pretty: 'Pretty',
     filter: 'Filter',
     none: 'None',
+    random: 'Random',
+    balance: 'Balance',
   },
   setting: {
     title: '@:common.settings',
@@ -35,6 +37,7 @@ export default {
     seriesMode: 'Series mode',
     streamDownload: 'Stream download',
     preventConsoleClearing: 'Prevent console clearing',
+    nHentaiDownloadHost: 'nHentai download host',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',

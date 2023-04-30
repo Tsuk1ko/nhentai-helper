@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { unsafeWindow } from '$';
 import $ from 'jquery';
-import { filter, invert, map } from 'lodash-es';
+import { filter, invert, map, sample } from 'lodash-es';
 import { fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
-import { settings } from './settings';
+import { NHentaiDownloadHostSpecial, nHentaiDownloadHosts, settings } from './settings';
 import logger from './logger';
+import { Counter } from './counter';
 import { IS_NHENTAI, IS_NHENTAI_TO, IS_PAGE_MANGA_DETAIL } from '@/const';
 
 enum NHentaiImgExt {
@@ -70,8 +71,22 @@ export interface NHentaiGalleryInfo {
   cfName: string;
 }
 
+export const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
+
+const getNHentaiDownloadHost = () => {
+  switch (settings.nHentaiDownloadHost) {
+    case NHentaiDownloadHostSpecial.RANDOM:
+      return sample(nHentaiDownloadHosts);
+    case NHentaiDownloadHostSpecial.BALANCE:
+      return nHentaiDownloadHostCounter.getMin();
+    default:
+      return settings.nHentaiDownloadHost;
+  }
+};
+
 export const getMediaDownloadUrl = IS_NHENTAI
-  ? (mid: string, filename: string) => `https://i.nhentai.net/galleries/${mid}/${filename}`
+  ? (mid: string, filename: string) =>
+      `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`
   : IS_NHENTAI_TO
   ? (mid: string, filename: string) => `https://cdn.nload.xyz/galleries/${mid}/${filename}`
   : (mid: string, filename: string) => `https://cdn.nhentai.xxx/g/${mid}/${filename}`;
