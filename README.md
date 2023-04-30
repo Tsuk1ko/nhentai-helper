@@ -63,7 +63,7 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 ### Advance Settings
 
 - **nHentai download host**  
-  Choose a host for downloading images. Only available on nHentai.
+  Choose a host for downloading nHentai images. Only available on nHentai.
 - **Custom download URL**  
   **WARNING: Please don't set this if you don't know what it does.**  
   Tip: You may need to add your domain into *XHR security* for this script.  

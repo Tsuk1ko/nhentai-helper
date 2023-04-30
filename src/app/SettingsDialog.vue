@@ -106,7 +106,7 @@
         </el-form-item>
         <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
-        <!-- nHentai 下载地址 -->
+        <!-- nHentai 下载节点 -->
         <el-form-item v-if="IS_NHENTAI" :label="t('setting.nHentaiDownloadHost')">
           <el-select
             v-model="settings.nHentaiDownloadHost"

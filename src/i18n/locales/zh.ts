@@ -37,7 +37,7 @@ export default {
     seriesMode: '串行模式',
     streamDownload: '流式下载',
     preventConsoleClearing: '阻止控制台清空',
-    nHentaiDownloadHost: 'nHentai 下载地址',
+    nHentaiDownloadHost: 'nHentai 下载节点',
     history: {
       title: '下载历史',
       downloadedNumberTip: '你在这个站点上已经用 nHentai 助手下载了 {num} 个本子',

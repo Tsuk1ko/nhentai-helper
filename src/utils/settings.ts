@@ -61,7 +61,7 @@ export interface Settings {
   judgeDownloadedByJapanese: boolean;
   /** 已下载判断 pretty 标题 */
   judgeDownloadedByPretty: boolean;
-  /** nHentai 下载地址 */
+  /** nHentai 下载节点 */
   nHentaiDownloadHost: string;
 }
 
