@@ -8,5 +8,5 @@
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true
   },
-  "include": ["vite.config.ts", ".*.cjs", "plugins/*.ts"]
+  "include": ["vite.config.ts", "plugins/*.ts"]
 }

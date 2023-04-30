@@ -9,6 +9,12 @@ import workerDevLoader from './plugins/workerDevLoader';
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => ({
+  server: {
+    open: false,
+  },
+  preview: {
+    open: true,
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
