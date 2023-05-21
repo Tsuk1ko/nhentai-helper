@@ -61,6 +61,8 @@ export interface NHentaiGallery {
 export interface NHentaiGalleryInfoPage {
   i: number;
   t: NHentaiImgExt;
+  w?: number;
+  h?: number;
 }
 
 export interface NHentaiGalleryInfo {
@@ -69,6 +71,8 @@ export interface NHentaiGalleryInfo {
   title: NHentaiGallery['title'];
   pages: NHentaiGalleryInfoPage[];
   cfName: string;
+  tags: NHentaiTag[];
+  uploadDate?: number;
 }
 
 export const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
@@ -143,10 +147,21 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     throw new Error('Get gallery info error.');
   }
 
-  // 只用到 artists tag
-  const $artistTags = $('#tags .tag-container:contains(Artists:) .tag > .name');
-  const artists = filter(Array.from($artistTags).map(el => el.innerText.trim()));
-  const tags = artists.map((name): NHentaiTag => ({ type: 'artist', name }));
+  const getTags = (type: string, elContains: string): NHentaiTag[] => {
+    const $names = $(`#tags .tag-container:contains(${elContains}) .tag > .name`);
+    const names = filter(Array.from($names).map(el => el.innerText.trim()));
+    return names.map((name): NHentaiTag => ({ type, name }));
+  };
+
+  const tags = [
+    ...getTags('character', 'Characters'),
+    ...getTags('tag', 'Tags'),
+    ...getTags('artist', 'Artists'),
+    ...getTags('language', 'Languages'),
+  ];
+
+  const uploadDateStr = $('#tags .tag-container:contains(Uploaded) time').attr('datetime');
+  const uploadDate = uploadDateStr ? new Date(uploadDateStr) : undefined;
 
   return {
     id: Number(gid),
@@ -160,6 +175,10 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
       pages,
     },
     tags,
+    upload_date:
+      uploadDate && String(uploadDate) !== 'Invalid Date'
+        ? Math.floor(uploadDate.getTime() / 1000)
+        : undefined,
   };
 };
 
@@ -188,6 +207,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     images: { pages },
     num_pages,
     tags,
+    upload_date,
   }: NHentaiGallery = await (async () => {
     if (gid) return getGallery(gid);
 
@@ -209,7 +229,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
 
   // 有些站点例如 nhentai.website 的 gallery 里面的图片列表是个 object，需要特殊处理
   const infoPages = (Array.isArray(pages) ? pages : Object.values<NHentaiImage>(pages)).map(
-    (img, i) => ({ i: i + 1, t: NHentaiImgExt[img.t] }),
+    ({ t, w, h }, i) => ({ i: i + 1, t: NHentaiImgExt[t], w, h }),
   );
 
   const info: NHentaiGalleryInfo = {
@@ -225,6 +245,8 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
       pages: num_pages,
       artist: getCFNameArtists(tags),
     }).replace(/[/\\:*?"<>|]/g, ''),
+    tags,
+    uploadDate: upload_date,
   };
   logger.log('info', info);
 

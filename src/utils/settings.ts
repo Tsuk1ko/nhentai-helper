@@ -63,6 +63,10 @@ export interface Settings {
   judgeDownloadedByPretty: boolean;
   /** nHentai 下载节点 */
   nHentaiDownloadHost: string;
+  /** 元数据文件 */
+  includeMetaFile: string[];
+  /** 元数据标题语言 */
+  metaFileTitleLanguage: string;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -70,7 +74,7 @@ type SettingFormatter<T> = (val: T) => T;
 
 interface SettingDefinition<T> {
   key: string;
-  default: T;
+  default: T extends any[] | Record<any, any> ? () => T : T;
   validator: SettingValidator;
   formatter?: SettingFormatter<T>;
 }
@@ -83,6 +87,8 @@ const createNumberValidator =
     typeof val === 'number' && min <= val && val <= max;
 
 const trimFormatter: SettingFormatter<string> = val => val.trim();
+
+const availableMetaFileTitleLanguage = new Set(['english', 'japanese']);
 
 export const settingDefinitions: Readonly<{
   [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
@@ -200,6 +206,16 @@ export const settingDefinitions: Readonly<{
       val === NHentaiDownloadHostSpecial.BALANCE ||
       nHentaiDownloadHosts.includes(val),
   },
+  includeMetaFile: {
+    key: 'include_meta_file',
+    default: () => [],
+    validator: val => Array.isArray(val) && val.every(stringValidator),
+  },
+  metaFileTitleLanguage: {
+    key: 'meta_file_title_language',
+    default: 'english',
+    validator: val => availableMetaFileTitleLanguage.has(val),
+  },
 };
 
 const browserDetect = detect();
@@ -224,7 +240,7 @@ export const startWatchSettings = once(() => {
     const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
     watch(ref as Ref<any>, val => {
       if (!cur.validator(val)) {
-        ref.value = cur.default;
+        ref.value = typeof cur.default === 'function' ? cur.default() : cur.default;
         return;
       }
       if (cur.formatter) {
