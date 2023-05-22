@@ -1,6 +1,7 @@
 import { each, isNil, map } from 'lodash-es';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import { settings } from '../settings';
+import { MetaBuilder } from './MetaBuilder';
 
 const langMap: Record<string, string> = {
   chinese: 'zh',
@@ -8,12 +9,16 @@ const langMap: Record<string, string> = {
   japanese: 'ja',
 };
 
-class ComicInfoXmlBuilder {
+export class ComicInfoXmlBuilder extends MetaBuilder {
   protected serializer = new XMLSerializer();
-
   protected doc = document.implementation.createDocument(null, 'ComicInfo');
 
-  public constructor(info: NHentaiGalleryInfo) {
+  public build() {
+    const xml = this.serializer.serializeToString(this.doc);
+    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
+  }
+
+  protected prepare(info: NHentaiGalleryInfo): void {
     this.setRootNS();
     this.appendElement('Title', (info.title as any)[settings.metaFileTitleLanguage]);
     this.appendElement(
@@ -23,9 +28,9 @@ class ComicInfoXmlBuilder {
 
     if (info.uploadDate) {
       const date = new Date(info.uploadDate * 1000);
-      this.appendElement('Year', date.getFullYear());
-      this.appendElement('Month', date.getMonth() + 1);
-      this.appendElement('Day', date.getDate());
+      this.appendElement('Year', date.getUTCFullYear());
+      this.appendElement('Month', date.getUTCMonth() + 1);
+      this.appendElement('Day', date.getUTCDate());
     }
 
     const getTags = (type: string) => info.tags.filter(t => t.type === type);
@@ -64,11 +69,6 @@ class ComicInfoXmlBuilder {
     this.root.append(pagesEl);
   }
 
-  public serialize() {
-    const xml = this.serializer.serializeToString(this.doc);
-    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
-  }
-
   protected get root() {
     return this.doc.documentElement;
   }
@@ -93,6 +93,3 @@ class ComicInfoXmlBuilder {
     this.root.append(this.createElement(name, value, attrs));
   }
 }
-
-export const generateComicInfoXml = (info: NHentaiGalleryInfo) =>
-  new ComicInfoXmlBuilder(info).serialize();

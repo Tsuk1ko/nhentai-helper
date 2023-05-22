@@ -154,10 +154,13 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   };
 
   const tags = [
+    ...getTags('parody', 'Parodies'),
     ...getTags('character', 'Characters'),
     ...getTags('tag', 'Tags'),
     ...getTags('artist', 'Artists'),
+    ...getTags('group', 'Groups'),
     ...getTags('language', 'Languages'),
+    ...getTags('category', 'Categories'),
   ];
 
   const uploadDateStr = $('#tags .tag-container:contains(Uploaded) time').attr('datetime');
