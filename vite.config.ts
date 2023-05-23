@@ -15,6 +15,9 @@ export default defineConfig(async ({ mode }) => ({
   preview: {
     open: true,
   },
+  build: {
+    cssMinify: true,
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -36,7 +39,7 @@ export default defineConfig(async ({ mode }) => ({
           'zh-CN': 'nHentai 助手',
           'zh-TW': 'nHentai 助手',
         },
-        icon: 'https://nhentai.net/favicon.ico',
+        icon: 'https://icon.horse/icon/nhentai.net',
         namespace: 'https://github.com/Tsuk1ko',
         description: {
           '': 'Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.',
@@ -69,7 +72,6 @@ export default defineConfig(async ({ mode }) => ({
       build: {
         fileName: 'script.user.js',
         metaFileName: true,
-        minifyCss: true,
       },
     }),
     copy({
