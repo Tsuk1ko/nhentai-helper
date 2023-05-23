@@ -38,6 +38,8 @@ export default {
     streamDownload: 'Stream download',
     preventConsoleClearing: 'Prevent console clearing',
     nHentaiDownloadHost: 'nHentai download host',
+    addMetaFile: 'Add metadata file',
+    metaFileTitleLanguage: 'Title language',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',

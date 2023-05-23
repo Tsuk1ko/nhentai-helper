@@ -57,6 +57,12 @@
   会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
 - **用标题判断本子是否下载过**  
   你可以指定用来判断本子是否下载过所使用的标题，如果全不选则可以关闭提醒本子下载过的功能；需要注意 `简略` 在大部分镜像站是无效的
+- **添加元数据文件**  
+  目前支持添加这些元数据文件：
+  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))
+  - info.json (eze 样式，不保证能正常工作)
+
+  若添加 ComicInfo.xml 则需要指定标题语言（英语或日语）
 
 ### 进阶设置
 

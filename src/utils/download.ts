@@ -1,4 +1,3 @@
-import { reactive } from 'vue';
 import { saveAs } from 'file-saver';
 import { createWriteStream } from 'streamsaver';
 import { compileTemplate, createMangaDownloadInfo, getCompressionOptions } from './common';
@@ -9,12 +8,12 @@ import type { TaskFunction } from './multiThread';
 import { MultiThread } from './multiThread';
 import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
 import { nHentaiDownloadHostCounter, getMediaDownloadUrl } from './nhentai';
-
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
 import { NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
+import { generateMetaFiles } from './meta';
 import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
@@ -31,7 +30,7 @@ interface DownloadOptions {
 type ZipFunction = () => Promise<void>;
 
 export const downloadGalleryByInfo = async (
-  info: MangaDownloadInfo, // 必须 reactive
+  info: MangaDownloadInfo,
   { progressDisplayController, rangeCheckers }: DownloadOptions = {},
 ): Promise<ZipFunction | undefined> => {
   info.done = 0; // 发生错误重新下载需要进度置 0
@@ -52,6 +51,14 @@ export const downloadGalleryByInfo = async (
   progressDisplayController?.updateProgress();
 
   const zip = new JSZip();
+
+  const metaFiles = generateMetaFiles(info.gallery);
+  console.warn('metaFiles', metaFiles);
+  if (metaFiles.length) {
+    metaFiles.forEach(({ name, data }) => {
+      zip.file(name, data);
+    });
+  }
 
   const downloadTask: TaskFunction<
     NHentaiGalleryInfoPage,
@@ -159,7 +166,7 @@ export const addDownloadGalleryTask = (
   gallery: NHentaiGalleryInfo,
   { progressDisplayController, markGalleryDownloaded }: DownloadOptions = {},
 ): void => {
-  const info = reactive(createMangaDownloadInfo(gallery));
+  const info = createMangaDownloadInfo(gallery, true);
   info.cancel = () => {
     progressDisplayController?.reset();
   };

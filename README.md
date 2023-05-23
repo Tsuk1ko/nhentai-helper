@@ -59,6 +59,12 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 - **Judge downloaded manga by title**  
   You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
   Note that `Pretty` is not available in most mirror sites.
+- **Add metadata file**  
+  These metadata files is currently supported:
+  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))
+  - info.json (eze style, not guaranteed to work properly)
+
+  If you choose to add ComicInfo.xml, you need to specify the title language (english or japanese).
 
 ### Advance Settings
 

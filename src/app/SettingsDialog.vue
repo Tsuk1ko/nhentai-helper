@@ -104,6 +104,23 @@
           <el-checkbox v-model="settings.judgeDownloadedByJapanese" :label="t('common.japanese')" />
           <el-checkbox v-model="settings.judgeDownloadedByPretty" :label="t('common.pretty')" />
         </el-form-item>
+        <!-- 添加元数据文件 -->
+        <el-form-item :label="t('setting.addMetaFile')">
+          <el-checkbox-group v-model="settings.addMetaFile">
+            <el-checkbox label="ComicInfoXml">ComicInfo.xml</el-checkbox>
+            <el-checkbox label="EzeInfoJson">info.json (eze)</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <!-- 元数据标题语言 -->
+        <el-form-item
+          v-if="settings.addMetaFile.includes('ComicInfoXml')"
+          :label="`└ ${t('setting.metaFileTitleLanguage')}`"
+        >
+          <el-select v-model="settings.metaFileTitleLanguage">
+            <el-option :label="t('common.english')" value="english" />
+            <el-option :label="t('common.japanese')" value="japanese" />
+          </el-select>
+        </el-form-item>
         <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
         <!-- nHentai 下载节点 -->

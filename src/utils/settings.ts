@@ -1,7 +1,7 @@
 import { GM_getValue, GM_setValue } from '$';
 import type { Ref } from 'vue';
 import { reactive, toRefs, watch } from 'vue';
-import { each, mapValues } from 'lodash-es';
+import { each, intersection, isEqual, mapValues } from 'lodash-es';
 import once from 'just-once';
 import { detect } from 'detect-browser';
 import logger from './logger';
@@ -63,6 +63,10 @@ export interface Settings {
   judgeDownloadedByPretty: boolean;
   /** nHentai 下载节点 */
   nHentaiDownloadHost: string;
+  /** 元数据文件 */
+  addMetaFile: string[];
+  /** 元数据标题语言 */
+  metaFileTitleLanguage: string;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -70,7 +74,7 @@ type SettingFormatter<T> = (val: T) => T;
 
 interface SettingDefinition<T> {
   key: string;
-  default: T;
+  default: T extends any[] | Record<any, any> ? () => T : T;
   validator: SettingValidator;
   formatter?: SettingFormatter<T>;
 }
@@ -83,6 +87,9 @@ const createNumberValidator =
     typeof val === 'number' && min <= val && val <= max;
 
 const trimFormatter: SettingFormatter<string> = val => val.trim();
+
+const availableMetaFiles = ['ComicInfoXml', 'EzeInfoJson'];
+const availableMetaFileTitleLanguage = new Set(['english', 'japanese']);
 
 export const settingDefinitions: Readonly<{
   [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
@@ -200,6 +207,17 @@ export const settingDefinitions: Readonly<{
       val === NHentaiDownloadHostSpecial.BALANCE ||
       nHentaiDownloadHosts.includes(val),
   },
+  addMetaFile: {
+    key: 'add_meta_file',
+    default: () => [],
+    validator: val => Array.isArray(val) && val.every(stringValidator),
+    formatter: val => intersection(val, availableMetaFiles),
+  },
+  metaFileTitleLanguage: {
+    key: 'meta_file_title_language',
+    default: 'english',
+    validator: val => availableMetaFileTitleLanguage.has(val),
+  },
 };
 
 const browserDetect = detect();
@@ -209,7 +227,7 @@ export const DISABLE_STREAM_DOWNLOAD =
 
 const readSettings = (): Settings =>
   mapValues(settingDefinitions, ({ key, default: defaultVal }) =>
-    GM_getValue<any>(key, defaultVal),
+    GM_getValue<any>(key, typeof defaultVal === 'function' ? defaultVal() : defaultVal),
   );
 
 export const writeableSettings: Settings = reactive(readSettings());
@@ -224,12 +242,16 @@ export const startWatchSettings = once(() => {
     const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
     watch(ref as Ref<any>, val => {
       if (!cur.validator(val)) {
-        ref.value = cur.default;
+        ref.value = typeof cur.default === 'function' ? cur.default() : cur.default;
         return;
       }
       if (cur.formatter) {
         const formattedVal = cur.formatter(val);
-        if (ref.value !== formattedVal) {
+        if (
+          typeof formattedVal === 'object'
+            ? !isEqual(ref.value, formattedVal)
+            : ref.value !== formattedVal
+        ) {
           ref.value = formattedVal;
           return;
         }

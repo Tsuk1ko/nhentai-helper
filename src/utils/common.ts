@@ -2,6 +2,7 @@ import { GM_addStyle, GM_getResourceText } from '$';
 import $ from 'jquery';
 import { last, template } from 'lodash-es';
 import type { JSZipGeneratorOptions } from 'jszip';
+import { markRaw, reactive } from 'vue';
 import { settings } from './settings';
 import type { NHentaiGalleryInfo } from './nhentai';
 import type { MangaDownloadInfo } from '@/typings';
@@ -48,13 +49,23 @@ export const getShowAllBtn = (): Promise<JQuery<HTMLElement>> =>
     }).observe(container, { childList: true });
   });
 
-export const createMangaDownloadInfo = (gallery: NHentaiGalleryInfo): MangaDownloadInfo => ({
-  gallery,
-  done: 0,
-  compressing: false,
-  compressingPercent: '0',
-  error: false,
-});
+export const createMangaDownloadInfo = (
+  gallery: NHentaiGalleryInfo,
+  needReactive = false,
+): MangaDownloadInfo => {
+  const info = {
+    gallery,
+    done: 0,
+    compressing: false,
+    compressingPercent: '0',
+    error: false,
+  };
+  if (needReactive) {
+    markRaw(info.gallery);
+    return reactive(info);
+  }
+  return info;
+};
 
 export const addResourceStyle = (name: string): ReturnType<typeof GM_addStyle> =>
   GM_addStyle(GM_getResourceText(name));
