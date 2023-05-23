@@ -1,7 +1,7 @@
 import { GM_getValue, GM_setValue } from '$';
 import type { Ref } from 'vue';
 import { reactive, toRefs, watch } from 'vue';
-import { each, mapValues } from 'lodash-es';
+import { each, intersection, isEqual, mapValues } from 'lodash-es';
 import once from 'just-once';
 import { detect } from 'detect-browser';
 import logger from './logger';
@@ -64,7 +64,7 @@ export interface Settings {
   /** nHentai 下载节点 */
   nHentaiDownloadHost: string;
   /** 元数据文件 */
-  includeMetaFile: string[];
+  addMetaFile: string[];
   /** 元数据标题语言 */
   metaFileTitleLanguage: string;
 }
@@ -88,6 +88,7 @@ const createNumberValidator =
 
 const trimFormatter: SettingFormatter<string> = val => val.trim();
 
+const availableMetaFiles = ['ComicInfoXml', 'EzeInfoJson'];
 const availableMetaFileTitleLanguage = new Set(['english', 'japanese']);
 
 export const settingDefinitions: Readonly<{
@@ -206,10 +207,11 @@ export const settingDefinitions: Readonly<{
       val === NHentaiDownloadHostSpecial.BALANCE ||
       nHentaiDownloadHosts.includes(val),
   },
-  includeMetaFile: {
-    key: 'include_meta_file',
+  addMetaFile: {
+    key: 'add_meta_file',
     default: () => [],
     validator: val => Array.isArray(val) && val.every(stringValidator),
+    formatter: val => intersection(val, availableMetaFiles),
   },
   metaFileTitleLanguage: {
     key: 'meta_file_title_language',
@@ -225,7 +227,7 @@ export const DISABLE_STREAM_DOWNLOAD =
 
 const readSettings = (): Settings =>
   mapValues(settingDefinitions, ({ key, default: defaultVal }) =>
-    GM_getValue<any>(key, defaultVal),
+    GM_getValue<any>(key, typeof defaultVal === 'function' ? defaultVal() : defaultVal),
   );
 
 export const writeableSettings: Settings = reactive(readSettings());
@@ -245,7 +247,11 @@ export const startWatchSettings = once(() => {
       }
       if (cur.formatter) {
         const formattedVal = cur.formatter(val);
-        if (ref.value !== formattedVal) {
+        if (
+          typeof formattedVal === 'object'
+            ? !isEqual(ref.value, formattedVal)
+            : ref.value !== formattedVal
+        ) {
           ref.value = formattedVal;
           return;
         }

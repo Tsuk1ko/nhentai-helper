@@ -1,7 +1,7 @@
 import { each, isNil, map } from 'lodash-es';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import { settings } from '../settings';
-import { MetaBuilder } from './MetaBuilder';
+import type { MetaBuilder } from './MetaBuilder';
 
 const langMap: Record<string, string> = {
   chinese: 'zh',
@@ -9,18 +9,18 @@ const langMap: Record<string, string> = {
   japanese: 'ja',
 };
 
-export class ComicInfoXmlBuilder extends MetaBuilder {
+export class ComicInfoXmlBuilder implements MetaBuilder {
   protected serializer = new XMLSerializer();
   protected doc = document.implementation.createDocument(null, 'ComicInfo');
 
-  public build() {
-    const xml = this.serializer.serializeToString(this.doc);
-    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
-  }
-
-  protected prepare(info: NHentaiGalleryInfo): void {
+  public constructor(info: NHentaiGalleryInfo) {
     this.setRootNS();
-    this.appendElement('Title', (info.title as any)[settings.metaFileTitleLanguage]);
+    this.appendElement(
+      'Title',
+      settings.metaFileTitleLanguage in info.title
+        ? (info.title as any)[settings.metaFileTitleLanguage]
+        : info.title.english,
+    );
     this.appendElement(
       'Notes',
       `Created by nHentai Helper (Tsuk1ko/nhentai-helper) on ${new Date().toISOString()}`,
@@ -67,6 +67,11 @@ export class ComicInfoXmlBuilder extends MetaBuilder {
     );
     pagesEl.append(...pageEls);
     this.root.append(pagesEl);
+  }
+
+  public build(): string {
+    const xml = this.serializer.serializeToString(this.doc);
+    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
   }
 
   protected get root() {

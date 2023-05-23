@@ -53,6 +53,7 @@ export const downloadGalleryByInfo = async (
   const zip = new JSZip();
 
   const metaFiles = generateMetaFiles(info.gallery);
+  console.warn('metaFiles', metaFiles);
   if (metaFiles.length) {
     metaFiles.forEach(({ name, data }) => {
       zip.file(name, data);

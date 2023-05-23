@@ -9,18 +9,17 @@ interface MetaFile {
   data: string;
 }
 
-const metaBuilderMap: Record<string, (new (info: NHentaiGalleryInfo) => MetaBuilder) | undefined> =
-  {
-    ComicInfo: ComicInfoXmlBuilder,
-    EzeInfoJson: EzeInfoJsonBuilder,
-  };
+const metaBuilderMap: Record<string, { name: string; Builder: typeof MetaBuilder }> = {
+  ComicInfoXml: { name: 'ComicInfo.xml', Builder: ComicInfoXmlBuilder },
+  EzeInfoJson: { name: 'info.json', Builder: EzeInfoJsonBuilder },
+};
 
 export const generateMetaFiles = (info: NHentaiGalleryInfo): MetaFile[] => {
-  if (!settings.includeMetaFile.length) return [];
+  if (!settings.addMetaFile.length) return [];
   const files: MetaFile[] = [];
-  for (const name of settings.includeMetaFile) {
-    const Builder = metaBuilderMap[name];
-    if (Builder) {
+  for (const key of settings.addMetaFile) {
+    if (key in metaBuilderMap) {
+      const { name, Builder } = metaBuilderMap[key];
       files.push({
         name,
         data: new Builder(info).build(),

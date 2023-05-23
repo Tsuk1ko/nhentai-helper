@@ -1,6 +1,6 @@
 import { groupBy, map, mapValues } from 'lodash-es';
 import type { NHentaiGalleryInfo } from '../nhentai';
-import { MetaBuilder } from './MetaBuilder';
+import type { MetaBuilder } from './MetaBuilder';
 
 interface EzeInfoJson {
   gallery_info: {
@@ -19,14 +19,10 @@ interface EzeInfoJson {
   };
 }
 
-export class EzeInfoJsonBuilder extends MetaBuilder {
+export class EzeInfoJsonBuilder implements MetaBuilder {
   protected data!: EzeInfoJson;
 
-  public build(): string {
-    return JSON.stringify(this.data, undefined, 2);
-  }
-
-  protected prepare(info: NHentaiGalleryInfo): void {
+  public constructor(info: NHentaiGalleryInfo) {
     const date = info.uploadDate ? new Date(info.uploadDate * 1000) : undefined;
 
     this.data = {
@@ -53,6 +49,10 @@ export class EzeInfoJsonBuilder extends MetaBuilder {
         },
       },
     };
+  }
+
+  public build(): string {
+    return JSON.stringify(this.data);
   }
 
   protected getLanguageInfo(info: NHentaiGalleryInfo) {
