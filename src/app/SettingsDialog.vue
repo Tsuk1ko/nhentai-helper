@@ -202,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-import { monkeyWindow } from '$';
+import { GM_openInTab } from '$';
 import { computed, ref, watch } from 'vue';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
@@ -270,11 +270,11 @@ const open = () => {
 };
 
 const openHelp = () => {
-  monkeyWindow.open(
+  GM_openInTab(
     locale.value === 'zh'
       ? 'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE'
       : 'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings',
-    '_blank',
+    { active: true, setParent: true },
   );
 };
 
