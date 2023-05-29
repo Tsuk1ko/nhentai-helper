@@ -1,6 +1,7 @@
 import { GM_getValue, GM_setValue } from '$';
+import { toRaw, reactive, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
-import { reactive, toRefs, watch } from 'vue';
+
 import { each, intersection, isEqual, mapValues } from 'lodash-es';
 import once from 'just-once';
 import { detect } from 'detect-browser';
@@ -256,7 +257,7 @@ export const startWatchSettings = once(() => {
           return;
         }
       }
-      logger.log('update setting', cur.key, val);
+      logger.log('update setting', cur.key, toRaw(val));
       GM_setValue(cur.key, val);
     });
   });
