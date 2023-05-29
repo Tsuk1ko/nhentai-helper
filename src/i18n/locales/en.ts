@@ -1,6 +1,5 @@
 import type { MessageContext } from '@intlify/core-base';
 import { getActionText } from '../utils';
-import { ErrorAction } from '@/typings';
 
 export default {
   common: {
@@ -56,8 +55,8 @@ export default {
     yes: 'YES',
     no: 'NO',
     action: {
-      [ErrorAction.GET_INFO]: 'getting information',
-      [ErrorAction.DOWNLOAD]: 'downloading',
+      getInfo: 'getting information',
+      download: 'downloading',
     },
     downloadAgainConfirm: ({ named }: MessageContext) =>
       `<i>${named('title')}</i> is already downloaded${

@@ -1,10 +1,12 @@
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import monkey from 'vite-plugin-monkey';
 import copy from 'rollup-plugin-copy';
 import components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import workerDevLoader from './plugins/workerDevLoader';
 
 // https://vitejs.dev/config/
@@ -26,6 +28,10 @@ export default defineConfig(async ({ mode }) => ({
   plugins: [
     workerDevLoader(),
     vue(),
+    vueI18nPlugin({
+      include: resolve(dirname(fileURLToPath(import.meta.url)), './src/i18n/locales/**'),
+      strictMessage: false,
+    }),
     components({
       dts: false,
       dirs: [],

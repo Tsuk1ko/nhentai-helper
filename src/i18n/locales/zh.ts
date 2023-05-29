@@ -1,6 +1,5 @@
 import type { MessageContext } from '@intlify/core-base';
 import { getActionText } from '../utils';
-import { ErrorAction } from '@/typings';
 
 export default {
   common: {
@@ -56,8 +55,8 @@ export default {
     yes: '是的',
     no: '算了',
     action: {
-      [ErrorAction.GET_INFO]: '获取信息',
-      [ErrorAction.DOWNLOAD]: '下载',
+      getInfo: '获取信息',
+      download: '下载',
     },
     downloadAgainConfirm: ({ named }: MessageContext) =>
       `《${named('title')}》已下载过${named('hasQueue') ? '或在队列中' : ''}，你希望再次下载吗？`,
