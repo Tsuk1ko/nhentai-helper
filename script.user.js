@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.9.0
+// @version            3.9.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -28,6 +28,7 @@
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
 // @grant              GM_getValue
+// @grant              GM_openInTab
 // @grant              GM_registerMenuCommand
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest
@@ -36,7 +37,7 @@
 // @noframes
 // ==/UserScript==
 
-(o=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.textContent=o,document.head.append(e)})(` @charset "UTF-8";.nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}:root{--el-color-white:#ffffff;--el-color-black:#000000;--el-color-primary-rgb:64,158,255;--el-color-success-rgb:103,194,58;--el-color-warning-rgb:230,162,60;--el-color-danger-rgb:245,108,108;--el-color-error-rgb:245,108,108;--el-color-info-rgb:144,147,153;--el-font-size-extra-large:20px;--el-font-size-large:18px;--el-font-size-medium:16px;--el-font-size-base:14px;--el-font-size-small:13px;--el-font-size-extra-small:12px;--el-font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","\u5FAE\u8F6F\u96C5\u9ED1",Arial,sans-serif;--el-font-weight-primary:500;--el-font-line-height-primary:24px;--el-index-normal:1;--el-index-top:1000;--el-index-popper:2000;--el-border-radius-base:4px;--el-border-radius-small:2px;--el-border-radius-round:20px;--el-border-radius-circle:100%;--el-transition-duration:.3s;--el-transition-duration-fast:.2s;--el-transition-function-ease-in-out-bezier:cubic-bezier(.645, .045, .355, 1);--el-transition-function-fast-bezier:cubic-bezier(.23, 1, .32, 1);--el-transition-all:all var(--el-transition-duration) var(--el-transition-function-ease-in-out-bezier);--el-transition-fade:opacity var(--el-transition-duration) var(--el-transition-function-fast-bezier);--el-transition-md-fade:transform var(--el-transition-duration) var(--el-transition-function-fast-bezier),opacity var(--el-transition-duration) var(--el-transition-function-fast-bezier);--el-transition-fade-linear:opacity var(--el-transition-duration-fast) linear;--el-transition-border:border-color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-transition-box-shadow:box-shadow var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-transition-color:color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-component-size-large:40px;--el-component-size:32px;--el-component-size-small:24px}:root{color-scheme:light;--el-color-white:#ffffff;--el-color-black:#000000;--el-color-primary:#409eff;--el-color-primary-light-3:#79bbff;--el-color-primary-light-5:#a0cfff;--el-color-primary-light-7:#c6e2ff;--el-color-primary-light-8:#d9ecff;--el-color-primary-light-9:#ecf5ff;--el-color-primary-dark-2:#337ecc;--el-color-success:#67c23a;--el-color-success-light-3:#95d475;--el-color-success-light-5:#b3e19d;--el-color-success-light-7:#d1edc4;--el-color-success-light-8:#e1f3d8;--el-color-success-light-9:#f0f9eb;--el-color-success-dark-2:#529b2e;--el-color-warning:#e6a23c;--el-color-warning-light-3:#eebe77;--el-color-warning-light-5:#f3d19e;--el-color-warning-light-7:#f8e3c5;--el-color-warning-light-8:#faecd8;--el-color-warning-light-9:#fdf6ec;--el-color-warning-dark-2:#b88230;--el-color-danger:#f56c6c;--el-color-danger-light-3:#f89898;--el-color-danger-light-5:#fab6b6;--el-color-danger-light-7:#fcd3d3;--el-color-danger-light-8:#fde2e2;--el-color-danger-light-9:#fef0f0;--el-color-danger-dark-2:#c45656;--el-color-error:#f56c6c;--el-color-error-light-3:#f89898;--el-color-error-light-5:#fab6b6;--el-color-error-light-7:#fcd3d3;--el-color-error-light-8:#fde2e2;--el-color-error-light-9:#fef0f0;--el-color-error-dark-2:#c45656;--el-color-info:#909399;--el-color-info-light-3:#b1b3b8;--el-color-info-light-5:#c8c9cc;--el-color-info-light-7:#dedfe0;--el-color-info-light-8:#e9e9eb;--el-color-info-light-9:#f4f4f5;--el-color-info-dark-2:#73767a;--el-bg-color:#ffffff;--el-bg-color-page:#f2f3f5;--el-bg-color-overlay:#ffffff;--el-text-color-primary:#303133;--el-text-color-regular:#606266;--el-text-color-secondary:#909399;--el-text-color-placeholder:#a8abb2;--el-text-color-disabled:#c0c4cc;--el-border-color:#dcdfe6;--el-border-color-light:#e4e7ed;--el-border-color-lighter:#ebeef5;--el-border-color-extra-light:#f2f6fc;--el-border-color-dark:#d4d7de;--el-border-color-darker:#cdd0d6;--el-fill-color:#f0f2f5;--el-fill-color-light:#f5f7fa;--el-fill-color-lighter:#fafafa;--el-fill-color-extra-light:#fafcff;--el-fill-color-dark:#ebedf0;--el-fill-color-darker:#e6e8eb;--el-fill-color-blank:#ffffff;--el-box-shadow:0px 12px 32px 4px rgba(0, 0, 0, .04),0px 8px 20px rgba(0, 0, 0, .08);--el-box-shadow-light:0px 0px 12px rgba(0, 0, 0, .12);--el-box-shadow-lighter:0px 0px 6px rgba(0, 0, 0, .12);--el-box-shadow-dark:0px 16px 48px 16px rgba(0, 0, 0, .08),0px 12px 32px rgba(0, 0, 0, .12),0px 8px 16px -8px rgba(0, 0, 0, .16);--el-disabled-bg-color:var(--el-fill-color-light);--el-disabled-text-color:var(--el-text-color-placeholder);--el-disabled-border-color:var(--el-border-color-light);--el-overlay-color:rgba(0, 0, 0, .8);--el-overlay-color-light:rgba(0, 0, 0, .7);--el-overlay-color-lighter:rgba(0, 0, 0, .5);--el-mask-color:rgba(255, 255, 255, .9);--el-mask-color-extra-light:rgba(255, 255, 255, .3);--el-border-width:1px;--el-border-style:solid;--el-border-color-hover:var(--el-text-color-disabled);--el-border:var(--el-border-width) var(--el-border-style) var(--el-border-color);--el-svg-monochrome-grey:var(--el-border-color)}.fade-in-linear-enter-active,.fade-in-linear-leave-active{transition:var(--el-transition-fade-linear)}.fade-in-linear-enter-from,.fade-in-linear-leave-to{opacity:0}.el-fade-in-linear-enter-active,.el-fade-in-linear-leave-active{transition:var(--el-transition-fade-linear)}.el-fade-in-linear-enter-from,.el-fade-in-linear-leave-to{opacity:0}.el-fade-in-enter-active,.el-fade-in-leave-active{transition:all var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-fade-in-enter-from,.el-fade-in-leave-active{opacity:0}.el-zoom-in-center-enter-active,.el-zoom-in-center-leave-active{transition:all var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-zoom-in-center-enter-from,.el-zoom-in-center-leave-active{opacity:0;transform:scaleX(0)}.el-zoom-in-top-enter-active,.el-zoom-in-top-leave-active{opacity:1;transform:scaleY(1);transition:var(--el-transition-md-fade);transform-origin:center top}.el-zoom-in-top-enter-active[data-popper-placement^=top],.el-zoom-in-top-leave-active[data-popper-placement^=top]{transform-origin:center bottom}.el-zoom-in-top-enter-from,.el-zoom-in-top-leave-active{opacity:0;transform:scaleY(0)}.el-zoom-in-bottom-enter-active,.el-zoom-in-bottom-leave-active{opacity:1;transform:scaleY(1);transition:var(--el-transition-md-fade);transform-origin:center bottom}.el-zoom-in-bottom-enter-from,.el-zoom-in-bottom-leave-active{opacity:0;transform:scaleY(0)}.el-zoom-in-left-enter-active,.el-zoom-in-left-leave-active{opacity:1;transform:scale(1);transition:var(--el-transition-md-fade);transform-origin:top left}.el-zoom-in-left-enter-from,.el-zoom-in-left-leave-active{opacity:0;transform:scale(.45)}.collapse-transition{transition:var(--el-transition-duration) height ease-in-out,var(--el-transition-duration) padding-top ease-in-out,var(--el-transition-duration) padding-bottom ease-in-out}.el-collapse-transition-enter-active,.el-collapse-transition-leave-active{transition:var(--el-transition-duration) max-height ease-in-out,var(--el-transition-duration) padding-top ease-in-out,var(--el-transition-duration) padding-bottom ease-in-out}.horizontal-collapse-transition{transition:var(--el-transition-duration) width ease-in-out,var(--el-transition-duration) padding-left ease-in-out,var(--el-transition-duration) padding-right ease-in-out}.el-list-enter-active,.el-list-leave-active{transition:all 1s}.el-list-enter-from,.el-list-leave-to{opacity:0;transform:translateY(-30px)}.el-list-leave-active{position:absolute!important}.el-opacity-transition{transition:opacity var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-icon-loading{-webkit-animation:rotating 2s linear infinite;animation:rotating 2s linear infinite}.el-icon--right{margin-left:5px}.el-icon--left{margin-right:5px}@-webkit-keyframes rotating{0%{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes rotating{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.el-icon{--color:inherit;height:1em;width:1em;line-height:1em;display:inline-flex;justify-content:center;align-items:center;position:relative;fill:currentColor;color:var(--color);font-size:inherit}.el-icon.is-loading{-webkit-animation:rotating 2s linear infinite;animation:rotating 2s linear infinite}.el-icon svg{height:1em;width:1em}:root{--el-popup-modal-bg-color:var(--el-color-black);--el-popup-modal-opacity:.5}.v-modal-enter{-webkit-animation:v-modal-in var(--el-transition-duration-fast) ease;animation:v-modal-in var(--el-transition-duration-fast) ease}.v-modal-leave{-webkit-animation:v-modal-out var(--el-transition-duration-fast) ease forwards;animation:v-modal-out var(--el-transition-duration-fast) ease forwards}@-webkit-keyframes v-modal-in{0%{opacity:0}}@keyframes v-modal-in{0%{opacity:0}}@-webkit-keyframes v-modal-out{to{opacity:0}}@keyframes v-modal-out{to{opacity:0}}.v-modal{position:fixed;left:0;top:0;width:100%;height:100%;opacity:var(--el-popup-modal-opacity);background:var(--el-popup-modal-bg-color)}.el-popup-parent--hidden{overflow:hidden}.el-dialog{--el-dialog-width:50%;--el-dialog-margin-top:15vh;--el-dialog-bg-color:var(--el-bg-color);--el-dialog-box-shadow:var(--el-box-shadow);--el-dialog-title-font-size:var(--el-font-size-large);--el-dialog-content-font-size:14px;--el-dialog-font-line-height:var(--el-font-line-height-primary);--el-dialog-padding-primary:20px;--el-dialog-border-radius:var(--el-border-radius-small);position:relative;margin:var(--el-dialog-margin-top,15vh) auto 50px;background:var(--el-dialog-bg-color);border-radius:var(--el-dialog-border-radius);box-shadow:var(--el-dialog-box-shadow);box-sizing:border-box;width:var(--el-dialog-width,50%)}.el-dialog:focus{outline:0!important}.el-dialog.is-align-center{margin:auto}.el-dialog.is-fullscreen{--el-dialog-width:100%;--el-dialog-margin-top:0;margin-bottom:0;height:100%;overflow:auto}.el-dialog__wrapper{position:fixed;top:0;right:0;bottom:0;left:0;overflow:auto;margin:0}.el-dialog.is-draggable .el-dialog__header{cursor:move;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-dialog__header{padding:var(--el-dialog-padding-primary);padding-bottom:10px;margin-right:16px}.el-dialog__headerbtn{position:absolute;top:6px;right:0;padding:0;width:54px;height:54px;background:0 0;border:none;outline:0;cursor:pointer;font-size:var(--el-message-close-size,16px)}.el-dialog__headerbtn .el-dialog__close{color:var(--el-color-info);font-size:inherit}.el-dialog__headerbtn:focus .el-dialog__close,.el-dialog__headerbtn:hover .el-dialog__close{color:var(--el-color-primary)}.el-dialog__title{line-height:var(--el-dialog-font-line-height);font-size:var(--el-dialog-title-font-size);color:var(--el-text-color-primary)}.el-dialog__body{padding:calc(var(--el-dialog-padding-primary) + 10px) var(--el-dialog-padding-primary);color:var(--el-text-color-regular);font-size:var(--el-dialog-content-font-size)}.el-dialog__footer{padding:var(--el-dialog-padding-primary);padding-top:10px;text-align:right;box-sizing:border-box}.el-dialog--center{text-align:center}.el-dialog--center .el-dialog__body{text-align:initial;padding:25px calc(var(--el-dialog-padding-primary) + 5px) 30px}.el-dialog--center .el-dialog__footer{text-align:inherit}.el-overlay-dialog{position:fixed;top:0;right:0;bottom:0;left:0;overflow:auto}.dialog-fade-enter-active{-webkit-animation:modal-fade-in var(--el-transition-duration);animation:modal-fade-in var(--el-transition-duration)}.dialog-fade-enter-active .el-overlay-dialog{-webkit-animation:dialog-fade-in var(--el-transition-duration);animation:dialog-fade-in var(--el-transition-duration)}.dialog-fade-leave-active{-webkit-animation:modal-fade-out var(--el-transition-duration);animation:modal-fade-out var(--el-transition-duration)}.dialog-fade-leave-active .el-overlay-dialog{-webkit-animation:dialog-fade-out var(--el-transition-duration);animation:dialog-fade-out var(--el-transition-duration)}@-webkit-keyframes dialog-fade-in{0%{transform:translate3d(0,-20px,0);opacity:0}to{transform:translateZ(0);opacity:1}}@keyframes dialog-fade-in{0%{transform:translate3d(0,-20px,0);opacity:0}to{transform:translateZ(0);opacity:1}}@-webkit-keyframes dialog-fade-out{0%{transform:translateZ(0);opacity:1}to{transform:translate3d(0,-20px,0);opacity:0}}@keyframes dialog-fade-out{0%{transform:translateZ(0);opacity:1}to{transform:translate3d(0,-20px,0);opacity:0}}@-webkit-keyframes modal-fade-in{0%{opacity:0}to{opacity:1}}@keyframes modal-fade-in{0%{opacity:0}to{opacity:1}}@-webkit-keyframes modal-fade-out{0%{opacity:1}to{opacity:0}}@keyframes modal-fade-out{0%{opacity:1}to{opacity:0}}.el-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2000;height:100%;background-color:var(--el-overlay-color-lighter);overflow:auto}.el-overlay .el-overlay-root{height:0}.el-popconfirm__main{display:flex;align-items:center}.el-popconfirm__icon{margin-right:5px}.el-popconfirm__action{text-align:right;margin-top:8px}.el-popper{--el-popper-border-radius:var(--el-popover-border-radius, 4px)}.el-popper{position:absolute;border-radius:var(--el-popper-border-radius);padding:5px 11px;z-index:2000;font-size:12px;line-height:20px;min-width:10px;word-wrap:break-word;visibility:visible}.el-popper.is-dark{color:var(--el-bg-color);background:var(--el-text-color-primary);border:1px solid var(--el-text-color-primary)}.el-popper.is-dark .el-popper__arrow:before{border:1px solid var(--el-text-color-primary);background:var(--el-text-color-primary);right:0}.el-popper.is-light{background:var(--el-bg-color-overlay);border:1px solid var(--el-border-color-light)}.el-popper.is-light .el-popper__arrow:before{border:1px solid var(--el-border-color-light);background:var(--el-bg-color-overlay);right:0}.el-popper.is-pure{padding:0}.el-popper__arrow{position:absolute;width:10px;height:10px;z-index:-1}.el-popper__arrow:before{position:absolute;width:10px;height:10px;z-index:-1;content:" ";transform:rotate(45deg);background:var(--el-text-color-primary);box-sizing:border-box}.el-popper[data-popper-placement^=top]>.el-popper__arrow{bottom:-5px}.el-popper[data-popper-placement^=top]>.el-popper__arrow:before{border-bottom-right-radius:2px}.el-popper[data-popper-placement^=bottom]>.el-popper__arrow{top:-5px}.el-popper[data-popper-placement^=bottom]>.el-popper__arrow:before{border-top-left-radius:2px}.el-popper[data-popper-placement^=left]>.el-popper__arrow{right:-5px}.el-popper[data-popper-placement^=left]>.el-popper__arrow:before{border-top-right-radius:2px}.el-popper[data-popper-placement^=right]>.el-popper__arrow{left:-5px}.el-popper[data-popper-placement^=right]>.el-popper__arrow:before{border-bottom-left-radius:2px}.el-popper[data-popper-placement^=top] .el-popper__arrow:before{border-top-color:transparent!important;border-left-color:transparent!important}.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before{border-bottom-color:transparent!important;border-right-color:transparent!important}.el-popper[data-popper-placement^=left] .el-popper__arrow:before{border-left-color:transparent!important;border-bottom-color:transparent!important}.el-popper[data-popper-placement^=right] .el-popper__arrow:before{border-right-color:transparent!important;border-top-color:transparent!important}.el-popover{--el-popover-bg-color:var(--el-bg-color-overlay);--el-popover-font-size:var(--el-font-size-base);--el-popover-border-color:var(--el-border-color-lighter);--el-popover-padding:12px;--el-popover-padding-large:18px 20px;--el-popover-title-font-size:16px;--el-popover-title-text-color:var(--el-text-color-primary);--el-popover-border-radius:4px}.el-popover.el-popper{background:var(--el-popover-bg-color);min-width:150px;border-radius:var(--el-popover-border-radius);border:1px solid var(--el-popover-border-color);padding:var(--el-popover-padding);z-index:var(--el-index-popper);color:var(--el-text-color-regular);line-height:1.4;text-align:justify;font-size:var(--el-popover-font-size);box-shadow:var(--el-box-shadow-light);word-break:break-all;box-sizing:border-box}.el-popover.el-popper--plain{padding:var(--el-popover-padding-large)}.el-popover__title{color:var(--el-popover-title-text-color);font-size:var(--el-popover-title-font-size);line-height:1;margin-bottom:12px}.el-popover__reference:focus:hover,.el-popover__reference:focus:not(.focusing){outline-width:0}.el-popover.el-popper.is-dark{--el-popover-bg-color:var(--el-text-color-primary);--el-popover-border-color:var(--el-text-color-primary);--el-popover-title-text-color:var(--el-bg-color);color:var(--el-bg-color)}.el-popover.el-popper:focus,.el-popover.el-popper:focus:active{outline-width:0}.el-button{--el-button-font-weight:var(--el-font-weight-primary);--el-button-border-color:var(--el-border-color);--el-button-bg-color:var(--el-fill-color-blank);--el-button-text-color:var(--el-text-color-regular);--el-button-disabled-text-color:var(--el-disabled-text-color);--el-button-disabled-bg-color:var(--el-fill-color-blank);--el-button-disabled-border-color:var(--el-border-color-light);--el-button-divide-border-color:rgba(255, 255, 255, .5);--el-button-hover-text-color:var(--el-color-primary);--el-button-hover-bg-color:var(--el-color-primary-light-9);--el-button-hover-border-color:var(--el-color-primary-light-7);--el-button-active-text-color:var(--el-button-hover-text-color);--el-button-active-border-color:var(--el-color-primary);--el-button-active-bg-color:var(--el-button-hover-bg-color);--el-button-outline-color:var(--el-color-primary-light-5);--el-button-hover-link-text-color:var(--el-color-info);--el-button-active-color:var(--el-text-color-primary)}.el-button{display:inline-flex;justify-content:center;align-items:center;line-height:1;height:32px;white-space:nowrap;cursor:pointer;color:var(--el-button-text-color);text-align:center;box-sizing:border-box;outline:0;transition:.1s;font-weight:var(--el-button-font-weight);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;vertical-align:middle;-webkit-appearance:none;background-color:var(--el-button-bg-color);border:var(--el-border);border-color:var(--el-button-border-color);padding:8px 15px;font-size:var(--el-font-size-base);border-radius:var(--el-border-radius-base)}.el-button:focus,.el-button:hover{color:var(--el-button-hover-text-color);border-color:var(--el-button-hover-border-color);background-color:var(--el-button-hover-bg-color);outline:0}.el-button:active{color:var(--el-button-active-text-color);border-color:var(--el-button-active-border-color);background-color:var(--el-button-active-bg-color);outline:0}.el-button:focus-visible{outline:2px solid var(--el-button-outline-color);outline-offset:1px}.el-button>span{display:inline-flex;align-items:center}.el-button+.el-button{margin-left:12px}.el-button.is-round{padding:8px 15px}.el-button::-moz-focus-inner{border:0}.el-button [class*=el-icon]+span{margin-left:6px}.el-button [class*=el-icon] svg{vertical-align:bottom}.el-button.is-plain{--el-button-hover-text-color:var(--el-color-primary);--el-button-hover-bg-color:var(--el-fill-color-blank);--el-button-hover-border-color:var(--el-color-primary)}.el-button.is-active{color:var(--el-button-active-text-color);border-color:var(--el-button-active-border-color);background-color:var(--el-button-active-bg-color);outline:0}.el-button.is-disabled,.el-button.is-disabled:focus,.el-button.is-disabled:hover{color:var(--el-button-disabled-text-color);cursor:not-allowed;background-image:none;background-color:var(--el-button-disabled-bg-color);border-color:var(--el-button-disabled-border-color)}.el-button.is-loading{position:relative;pointer-events:none}.el-button.is-loading:before{z-index:1;pointer-events:none;content:"";position:absolute;left:-1px;top:-1px;right:-1px;bottom:-1px;border-radius:inherit;background-color:var(--el-mask-color-extra-light)}.el-button.is-round{border-radius:var(--el-border-radius-round)}.el-button.is-circle{border-radius:50%;padding:8px}.el-button.is-text{color:var(--el-button-text-color);border:0 solid transparent;background-color:transparent}.el-button.is-text.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important}.el-button.is-text:not(.is-disabled):focus,.el-button.is-text:not(.is-disabled):hover{background-color:var(--el-fill-color-light)}.el-button.is-text:not(.is-disabled):focus-visible{outline:2px solid var(--el-button-outline-color);outline-offset:1px}.el-button.is-text:not(.is-disabled):active{background-color:var(--el-fill-color)}.el-button.is-text:not(.is-disabled).is-has-bg{background-color:var(--el-fill-color-light)}.el-button.is-text:not(.is-disabled).is-has-bg:focus,.el-button.is-text:not(.is-disabled).is-has-bg:hover{background-color:var(--el-fill-color)}.el-button.is-text:not(.is-disabled).is-has-bg:active{background-color:var(--el-fill-color-dark)}.el-button__text--expand{letter-spacing:.3em;margin-right:-.3em}.el-button.is-link{border-color:transparent;color:var(--el-button-text-color);background:0 0;padding:2px;height:auto}.el-button.is-link:focus,.el-button.is-link:hover{color:var(--el-button-hover-link-text-color)}.el-button.is-link.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important;border-color:transparent!important}.el-button.is-link:not(.is-disabled):focus,.el-button.is-link:not(.is-disabled):hover{border-color:transparent;background-color:transparent}.el-button.is-link:not(.is-disabled):active{color:var(--el-button-active-color);border-color:transparent;background-color:transparent}.el-button--text{border-color:transparent;background:0 0;color:var(--el-color-primary);padding-left:0;padding-right:0}.el-button--text.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important;border-color:transparent!important}.el-button--text:not(.is-disabled):focus,.el-button--text:not(.is-disabled):hover{color:var(--el-color-primary-light-3);border-color:transparent;background-color:transparent}.el-button--text:not(.is-disabled):active{color:var(--el-color-primary-dark-2);border-color:transparent;background-color:transparent}.el-button__link--expand{letter-spacing:.3em;margin-right:-.3em}.el-button--primary{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-primary);--el-button-border-color:var(--el-color-primary);--el-button-outline-color:var(--el-color-primary-light-5);--el-button-active-color:var(--el-color-primary-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-primary-light-5);--el-button-hover-bg-color:var(--el-color-primary-light-3);--el-button-hover-border-color:var(--el-color-primary-light-3);--el-button-active-bg-color:var(--el-color-primary-dark-2);--el-button-active-border-color:var(--el-color-primary-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-primary-light-5);--el-button-disabled-border-color:var(--el-color-primary-light-5)}.el-button--primary.is-link,.el-button--primary.is-plain,.el-button--primary.is-text{--el-button-text-color:var(--el-color-primary);--el-button-bg-color:var(--el-color-primary-light-9);--el-button-border-color:var(--el-color-primary-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-primary);--el-button-hover-border-color:var(--el-color-primary);--el-button-active-text-color:var(--el-color-white)}.el-button--primary.is-link.is-disabled,.el-button--primary.is-link.is-disabled:active,.el-button--primary.is-link.is-disabled:focus,.el-button--primary.is-link.is-disabled:hover,.el-button--primary.is-plain.is-disabled,.el-button--primary.is-plain.is-disabled:active,.el-button--primary.is-plain.is-disabled:focus,.el-button--primary.is-plain.is-disabled:hover,.el-button--primary.is-text.is-disabled,.el-button--primary.is-text.is-disabled:active,.el-button--primary.is-text.is-disabled:focus,.el-button--primary.is-text.is-disabled:hover{color:var(--el-color-primary-light-5);background-color:var(--el-color-primary-light-9);border-color:var(--el-color-primary-light-8)}.el-button--success{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-success);--el-button-border-color:var(--el-color-success);--el-button-outline-color:var(--el-color-success-light-5);--el-button-active-color:var(--el-color-success-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-success-light-5);--el-button-hover-bg-color:var(--el-color-success-light-3);--el-button-hover-border-color:var(--el-color-success-light-3);--el-button-active-bg-color:var(--el-color-success-dark-2);--el-button-active-border-color:var(--el-color-success-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-success-light-5);--el-button-disabled-border-color:var(--el-color-success-light-5)}.el-button--success.is-link,.el-button--success.is-plain,.el-button--success.is-text{--el-button-text-color:var(--el-color-success);--el-button-bg-color:var(--el-color-success-light-9);--el-button-border-color:var(--el-color-success-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-success);--el-button-hover-border-color:var(--el-color-success);--el-button-active-text-color:var(--el-color-white)}.el-button--success.is-link.is-disabled,.el-button--success.is-link.is-disabled:active,.el-button--success.is-link.is-disabled:focus,.el-button--success.is-link.is-disabled:hover,.el-button--success.is-plain.is-disabled,.el-button--success.is-plain.is-disabled:active,.el-button--success.is-plain.is-disabled:focus,.el-button--success.is-plain.is-disabled:hover,.el-button--success.is-text.is-disabled,.el-button--success.is-text.is-disabled:active,.el-button--success.is-text.is-disabled:focus,.el-button--success.is-text.is-disabled:hover{color:var(--el-color-success-light-5);background-color:var(--el-color-success-light-9);border-color:var(--el-color-success-light-8)}.el-button--warning{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-warning);--el-button-border-color:var(--el-color-warning);--el-button-outline-color:var(--el-color-warning-light-5);--el-button-active-color:var(--el-color-warning-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-warning-light-5);--el-button-hover-bg-color:var(--el-color-warning-light-3);--el-button-hover-border-color:var(--el-color-warning-light-3);--el-button-active-bg-color:var(--el-color-warning-dark-2);--el-button-active-border-color:var(--el-color-warning-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-warning-light-5);--el-button-disabled-border-color:var(--el-color-warning-light-5)}.el-button--warning.is-link,.el-button--warning.is-plain,.el-button--warning.is-text{--el-button-text-color:var(--el-color-warning);--el-button-bg-color:var(--el-color-warning-light-9);--el-button-border-color:var(--el-color-warning-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-warning);--el-button-hover-border-color:var(--el-color-warning);--el-button-active-text-color:var(--el-color-white)}.el-button--warning.is-link.is-disabled,.el-button--warning.is-link.is-disabled:active,.el-button--warning.is-link.is-disabled:focus,.el-button--warning.is-link.is-disabled:hover,.el-button--warning.is-plain.is-disabled,.el-button--warning.is-plain.is-disabled:active,.el-button--warning.is-plain.is-disabled:focus,.el-button--warning.is-plain.is-disabled:hover,.el-button--warning.is-text.is-disabled,.el-button--warning.is-text.is-disabled:active,.el-button--warning.is-text.is-disabled:focus,.el-button--warning.is-text.is-disabled:hover{color:var(--el-color-warning-light-5);background-color:var(--el-color-warning-light-9);border-color:var(--el-color-warning-light-8)}.el-button--danger{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-danger);--el-button-border-color:var(--el-color-danger);--el-button-outline-color:var(--el-color-danger-light-5);--el-button-active-color:var(--el-color-danger-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-danger-light-5);--el-button-hover-bg-color:var(--el-color-danger-light-3);--el-button-hover-border-color:var(--el-color-danger-light-3);--el-button-active-bg-color:var(--el-color-danger-dark-2);--el-button-active-border-color:var(--el-color-danger-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-danger-light-5);--el-button-disabled-border-color:var(--el-color-danger-light-5)}.el-button--danger.is-link,.el-button--danger.is-plain,.el-button--danger.is-text{--el-button-text-color:var(--el-color-danger);--el-button-bg-color:var(--el-color-danger-light-9);--el-button-border-color:var(--el-color-danger-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-danger);--el-button-hover-border-color:var(--el-color-danger);--el-button-active-text-color:var(--el-color-white)}.el-button--danger.is-link.is-disabled,.el-button--danger.is-link.is-disabled:active,.el-button--danger.is-link.is-disabled:focus,.el-button--danger.is-link.is-disabled:hover,.el-button--danger.is-plain.is-disabled,.el-button--danger.is-plain.is-disabled:active,.el-button--danger.is-plain.is-disabled:focus,.el-button--danger.is-plain.is-disabled:hover,.el-button--danger.is-text.is-disabled,.el-button--danger.is-text.is-disabled:active,.el-button--danger.is-text.is-disabled:focus,.el-button--danger.is-text.is-disabled:hover{color:var(--el-color-danger-light-5);background-color:var(--el-color-danger-light-9);border-color:var(--el-color-danger-light-8)}.el-button--info{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-info);--el-button-border-color:var(--el-color-info);--el-button-outline-color:var(--el-color-info-light-5);--el-button-active-color:var(--el-color-info-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-info-light-5);--el-button-hover-bg-color:var(--el-color-info-light-3);--el-button-hover-border-color:var(--el-color-info-light-3);--el-button-active-bg-color:var(--el-color-info-dark-2);--el-button-active-border-color:var(--el-color-info-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-info-light-5);--el-button-disabled-border-color:var(--el-color-info-light-5)}.el-button--info.is-link,.el-button--info.is-plain,.el-button--info.is-text{--el-button-text-color:var(--el-color-info);--el-button-bg-color:var(--el-color-info-light-9);--el-button-border-color:var(--el-color-info-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-info);--el-button-hover-border-color:var(--el-color-info);--el-button-active-text-color:var(--el-color-white)}.el-button--info.is-link.is-disabled,.el-button--info.is-link.is-disabled:active,.el-button--info.is-link.is-disabled:focus,.el-button--info.is-link.is-disabled:hover,.el-button--info.is-plain.is-disabled,.el-button--info.is-plain.is-disabled:active,.el-button--info.is-plain.is-disabled:focus,.el-button--info.is-plain.is-disabled:hover,.el-button--info.is-text.is-disabled,.el-button--info.is-text.is-disabled:active,.el-button--info.is-text.is-disabled:focus,.el-button--info.is-text.is-disabled:hover{color:var(--el-color-info-light-5);background-color:var(--el-color-info-light-9);border-color:var(--el-color-info-light-8)}.el-button--large{--el-button-size:40px;height:var(--el-button-size);padding:12px 19px;font-size:var(--el-font-size-base);border-radius:var(--el-border-radius-base)}.el-button--large [class*=el-icon]+span{margin-left:8px}.el-button--large.is-round{padding:12px 19px}.el-button--large.is-circle{width:var(--el-button-size);padding:12px}.el-button--small{--el-button-size:24px;height:var(--el-button-size);padding:5px 11px;font-size:12px;border-radius:calc(var(--el-border-radius-base) - 1px)}.el-button--small [class*=el-icon]+span{margin-left:4px}.el-button--small.is-round{padding:5px 11px}.el-button--small.is-circle{width:var(--el-button-size);padding:5px}.el-form{--el-form-label-font-size:var(--el-font-size-base)}.el-form--label-left .el-form-item__label{justify-content:flex-start}.el-form--label-top .el-form-item{display:block}.el-form--label-top .el-form-item .el-form-item__label{display:block;height:auto;text-align:left;margin-bottom:8px;line-height:22px}.el-form--inline .el-form-item{display:inline-flex;vertical-align:middle;margin-right:32px}.el-form--inline.el-form--label-top{display:flex;flex-wrap:wrap}.el-form--inline.el-form--label-top .el-form-item{display:block}.el-form--large.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:12px;line-height:22px}.el-form--default.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:8px;line-height:22px}.el-form--small.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:4px;line-height:20px}.el-form-item{display:flex;--font-size:14px;margin-bottom:18px}.el-form-item .el-form-item{margin-bottom:0}.el-form-item .el-input__validateIcon{display:none}.el-form-item--large{--font-size:14px;--el-form-label-font-size:var(--font-size);margin-bottom:22px}.el-form-item--large .el-form-item__label{height:40px;line-height:40px}.el-form-item--large .el-form-item__content{line-height:40px}.el-form-item--large .el-form-item__error{padding-top:4px}.el-form-item--default{--font-size:14px;--el-form-label-font-size:var(--font-size);margin-bottom:18px}.el-form-item--default .el-form-item__label{height:32px;line-height:32px}.el-form-item--default .el-form-item__content{line-height:32px}.el-form-item--default .el-form-item__error{padding-top:2px}.el-form-item--small{--font-size:12px;--el-form-label-font-size:var(--font-size);margin-bottom:18px}.el-form-item--small .el-form-item__label{height:24px;line-height:24px}.el-form-item--small .el-form-item__content{line-height:24px}.el-form-item--small .el-form-item__error{padding-top:2px}.el-form-item__label-wrap{display:flex}.el-form-item__label{display:inline-flex;justify-content:flex-end;align-items:flex-start;flex:0 0 auto;font-size:var(--el-form-label-font-size);color:var(--el-text-color-regular);height:32px;line-height:32px;padding:0 12px 0 0;box-sizing:border-box}.el-form-item__content{display:flex;flex-wrap:wrap;align-items:center;flex:1;line-height:32px;position:relative;font-size:var(--font-size);min-width:0}.el-form-item__content .el-input-group{vertical-align:top}.el-form-item__error{color:var(--el-color-danger);font-size:12px;line-height:1;padding-top:2px;position:absolute;top:100%;left:0}.el-form-item__error--inline{position:relative;top:auto;left:auto;display:inline-block;margin-left:10px}.el-form-item.is-required:not(.is-no-asterisk).asterisk-left>.el-form-item__label-wrap>.el-form-item__label:before,.el-form-item.is-required:not(.is-no-asterisk).asterisk-left>.el-form-item__label:before{content:"*";color:var(--el-color-danger);margin-right:4px}.el-form-item.is-required:not(.is-no-asterisk).asterisk-right>.el-form-item__label-wrap>.el-form-item__label:after,.el-form-item.is-required:not(.is-no-asterisk).asterisk-right>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}.el-form-item.is-error .el-select-v2__wrapper,.el-form-item.is-error .el-select-v2__wrapper:focus,.el-form-item.is-error .el-textarea__inner,.el-form-item.is-error .el-textarea__inner:focus{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-form-item.is-error .el-input__wrapper{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-form-item.is-error .el-input-group__append .el-input__wrapper,.el-form-item.is-error .el-input-group__prepend .el-input__wrapper{box-shadow:0 0 0 1px transparent inset}.el-form-item.is-error .el-input__validateIcon{color:var(--el-color-danger)}.el-form-item--feedback .el-input__validateIcon{display:inline-flex}.el-divider{position:relative}.el-divider--horizontal{display:block;height:1px;width:100%;margin:24px 0;border-top:1px var(--el-border-color) var(--el-border-style)}.el-divider--vertical{display:inline-block;width:1px;height:1em;margin:0 8px;vertical-align:middle;position:relative;border-left:1px var(--el-border-color) var(--el-border-style)}.el-divider__text{position:absolute;background-color:var(--el-bg-color);padding:0 20px;font-weight:500;color:var(--el-text-color-primary);font-size:14px}.el-divider__text.is-left{left:20px;transform:translateY(-50%)}.el-divider__text.is-center{left:50%;transform:translate(-50%) translateY(-50%)}.el-divider__text.is-right{right:20px;transform:translateY(-50%)}.el-checkbox-group{font-size:0;line-height:0}.el-checkbox{--el-checkbox-font-size:14px;--el-checkbox-font-weight:var(--el-font-weight-primary);--el-checkbox-text-color:var(--el-text-color-regular);--el-checkbox-input-height:14px;--el-checkbox-input-width:14px;--el-checkbox-border-radius:var(--el-border-radius-small);--el-checkbox-bg-color:var(--el-fill-color-blank);--el-checkbox-input-border:var(--el-border);--el-checkbox-disabled-border-color:var(--el-border-color);--el-checkbox-disabled-input-fill:var(--el-fill-color-light);--el-checkbox-disabled-icon-color:var(--el-text-color-placeholder);--el-checkbox-disabled-checked-input-fill:var(--el-border-color-extra-light);--el-checkbox-disabled-checked-input-border-color:var(--el-border-color);--el-checkbox-disabled-checked-icon-color:var(--el-text-color-placeholder);--el-checkbox-checked-text-color:var(--el-color-primary);--el-checkbox-checked-input-border-color:var(--el-color-primary);--el-checkbox-checked-bg-color:var(--el-color-primary);--el-checkbox-checked-icon-color:var(--el-color-white);--el-checkbox-input-border-color-hover:var(--el-color-primary)}.el-checkbox{color:var(--el-checkbox-text-color);font-weight:var(--el-checkbox-font-weight);font-size:var(--el-font-size-base);position:relative;cursor:pointer;display:inline-flex;align-items:center;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;margin-right:30px;height:32px}.el-checkbox.is-disabled{cursor:not-allowed}.el-checkbox.is-bordered{padding:0 15px 0 9px;border-radius:var(--el-border-radius-base);border:var(--el-border);box-sizing:border-box}.el-checkbox.is-bordered.is-checked{border-color:var(--el-color-primary)}.el-checkbox.is-bordered.is-disabled{border-color:var(--el-border-color-lighter)}.el-checkbox.is-bordered.el-checkbox--large{padding:0 19px 0 11px;border-radius:var(--el-border-radius-base)}.el-checkbox.is-bordered.el-checkbox--large .el-checkbox__label{font-size:var(--el-font-size-base)}.el-checkbox.is-bordered.el-checkbox--large .el-checkbox__inner{height:14px;width:14px}.el-checkbox.is-bordered.el-checkbox--small{padding:0 11px 0 7px;border-radius:calc(var(--el-border-radius-base) - 1px)}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__label{font-size:12px}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__inner{height:12px;width:12px}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__inner:after{height:6px;width:2px}.el-checkbox input:focus-visible+.el-checkbox__inner{outline:2px solid var(--el-checkbox-input-border-color-hover);outline-offset:1px;border-radius:var(--el-checkbox-border-radius)}.el-checkbox__input{white-space:nowrap;cursor:pointer;outline:0;display:inline-flex;position:relative}.el-checkbox__input.is-disabled .el-checkbox__inner{background-color:var(--el-checkbox-disabled-input-fill);border-color:var(--el-checkbox-disabled-border-color);cursor:not-allowed}.el-checkbox__input.is-disabled .el-checkbox__inner:after{cursor:not-allowed;border-color:var(--el-checkbox-disabled-icon-color)}.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner{background-color:var(--el-checkbox-disabled-checked-input-fill);border-color:var(--el-checkbox-disabled-checked-input-border-color)}.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after{border-color:var(--el-checkbox-disabled-checked-icon-color)}.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner{background-color:var(--el-checkbox-disabled-checked-input-fill);border-color:var(--el-checkbox-disabled-checked-input-border-color)}.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner:before{background-color:var(--el-checkbox-disabled-checked-icon-color);border-color:var(--el-checkbox-disabled-checked-icon-color)}.el-checkbox__input.is-disabled+span.el-checkbox__label{color:var(--el-disabled-text-color);cursor:not-allowed}.el-checkbox__input.is-checked .el-checkbox__inner{background-color:var(--el-checkbox-checked-bg-color);border-color:var(--el-checkbox-checked-input-border-color)}.el-checkbox__input.is-checked .el-checkbox__inner:after{transform:rotate(45deg) scaleY(1)}.el-checkbox__input.is-checked+.el-checkbox__label{color:var(--el-checkbox-checked-text-color)}.el-checkbox__input.is-focus:not(.is-checked) .el-checkbox__original:not(:focus-visible){border-color:var(--el-checkbox-input-border-color-hover)}.el-checkbox__input.is-indeterminate .el-checkbox__inner{background-color:var(--el-checkbox-checked-bg-color);border-color:var(--el-checkbox-checked-input-border-color)}.el-checkbox__input.is-indeterminate .el-checkbox__inner:before{content:"";position:absolute;display:block;background-color:var(--el-checkbox-checked-icon-color);height:2px;transform:scale(.5);left:0;right:0;top:5px}.el-checkbox__input.is-indeterminate .el-checkbox__inner:after{display:none}.el-checkbox__inner{display:inline-block;position:relative;border:var(--el-checkbox-input-border);border-radius:var(--el-checkbox-border-radius);box-sizing:border-box;width:var(--el-checkbox-input-width);height:var(--el-checkbox-input-height);background-color:var(--el-checkbox-bg-color);z-index:var(--el-index-normal);transition:border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46),outline .25s cubic-bezier(.71,-.46,.29,1.46)}.el-checkbox__inner:hover{border-color:var(--el-checkbox-input-border-color-hover)}.el-checkbox__inner:after{box-sizing:content-box;content:"";border:1px solid var(--el-checkbox-checked-icon-color);border-left:0;border-top:0;height:7px;left:4px;position:absolute;top:1px;transform:rotate(45deg) scaleY(0);width:3px;transition:transform .15s ease-in 50ms;transform-origin:center}.el-checkbox__original{opacity:0;outline:0;position:absolute;margin:0;width:0;height:0;z-index:-1}.el-checkbox__label{display:inline-block;padding-left:8px;line-height:1;font-size:var(--el-checkbox-font-size)}.el-checkbox.el-checkbox--large{height:40px}.el-checkbox.el-checkbox--large .el-checkbox__label{font-size:14px}.el-checkbox.el-checkbox--large .el-checkbox__inner{width:14px;height:14px}.el-checkbox.el-checkbox--small{height:24px}.el-checkbox.el-checkbox--small .el-checkbox__label{font-size:12px}.el-checkbox.el-checkbox--small .el-checkbox__inner{width:12px;height:12px}.el-checkbox.el-checkbox--small .el-checkbox__input.is-indeterminate .el-checkbox__inner:before{top:4px}.el-checkbox.el-checkbox--small .el-checkbox__inner:after{width:2px;height:6px}.el-checkbox:last-of-type{margin-right:0}.el-input-number{position:relative;display:inline-flex;width:150px;line-height:30px}.el-input-number .el-input__wrapper{padding-left:42px;padding-right:42px}.el-input-number .el-input__inner{-webkit-appearance:none;-moz-appearance:textfield;text-align:center;line-height:1}.el-input-number .el-input__inner::-webkit-inner-spin-button,.el-input-number .el-input__inner::-webkit-outer-spin-button{margin:0;-webkit-appearance:none}.el-input-number__decrease,.el-input-number__increase{display:flex;justify-content:center;align-items:center;height:auto;position:absolute;z-index:1;top:1px;bottom:1px;width:32px;background:var(--el-fill-color-light);color:var(--el-text-color-regular);cursor:pointer;font-size:13px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-input-number__decrease:hover,.el-input-number__increase:hover{color:var(--el-color-primary)}.el-input-number__decrease:hover~.el-input:not(.is-disabled) .el-input_wrapper,.el-input-number__increase:hover~.el-input:not(.is-disabled) .el-input_wrapper{box-shadow:0 0 0 1px var(--el-input-focus-border-color,var(--el-color-primary)) inset}.el-input-number__decrease.is-disabled,.el-input-number__increase.is-disabled{color:var(--el-disabled-text-color);cursor:not-allowed}.el-input-number__increase{right:1px;border-radius:0 var(--el-border-radius-base) var(--el-border-radius-base) 0;border-left:var(--el-border)}.el-input-number__decrease{left:1px;border-radius:var(--el-border-radius-base) 0 0 var(--el-border-radius-base);border-right:var(--el-border)}.el-input-number.is-disabled .el-input-number__decrease,.el-input-number.is-disabled .el-input-number__increase{border-color:var(--el-disabled-border-color);color:var(--el-disabled-border-color)}.el-input-number.is-disabled .el-input-number__decrease:hover,.el-input-number.is-disabled .el-input-number__increase:hover{color:var(--el-disabled-border-color);cursor:not-allowed}.el-input-number--large{width:180px;line-height:38px}.el-input-number--large .el-input-number__decrease,.el-input-number--large .el-input-number__increase{width:40px;font-size:14px}.el-input-number--large .el-input__wrapper{padding-left:47px;padding-right:47px}.el-input-number--small{width:120px;line-height:22px}.el-input-number--small .el-input-number__decrease,.el-input-number--small .el-input-number__increase{width:24px;font-size:12px}.el-input-number--small .el-input__wrapper{padding-left:31px;padding-right:31px}.el-input-number--small .el-input-number__decrease [class*=el-icon],.el-input-number--small .el-input-number__increase [class*=el-icon]{transform:scale(.9)}.el-input-number.is-without-controls .el-input__wrapper{padding-left:15px;padding-right:15px}.el-input-number.is-controls-right .el-input__wrapper{padding-left:15px;padding-right:42px}.el-input-number.is-controls-right .el-input-number__decrease,.el-input-number.is-controls-right .el-input-number__increase{--el-input-number-controls-height:15px;height:var(--el-input-number-controls-height);line-height:var(--el-input-number-controls-height)}.el-input-number.is-controls-right .el-input-number__decrease [class*=el-icon],.el-input-number.is-controls-right .el-input-number__increase [class*=el-icon]{transform:scale(.8)}.el-input-number.is-controls-right .el-input-number__increase{bottom:auto;left:auto;border-radius:0 var(--el-border-radius-base) 0 0;border-bottom:var(--el-border)}.el-input-number.is-controls-right .el-input-number__decrease{right:1px;top:auto;left:auto;border-right:none;border-left:var(--el-border);border-radius:0 0 var(--el-border-radius-base) 0}.el-input-number.is-controls-right[class*=large] [class*=decrease],.el-input-number.is-controls-right[class*=large] [class*=increase]{--el-input-number-controls-height:19px}.el-input-number.is-controls-right[class*=small] [class*=decrease],.el-input-number.is-controls-right[class*=small] [class*=increase]{--el-input-number-controls-height:11px}.el-textarea{--el-input-text-color:var(--el-text-color-regular);--el-input-border:var(--el-border);--el-input-hover-border:var(--el-border-color-hover);--el-input-focus-border:var(--el-color-primary);--el-input-transparent-border:0 0 0 1px transparent inset;--el-input-border-color:var(--el-border-color);--el-input-border-radius:var(--el-border-radius-base);--el-input-bg-color:var(--el-fill-color-blank);--el-input-icon-color:var(--el-text-color-placeholder);--el-input-placeholder-color:var(--el-text-color-placeholder);--el-input-hover-border-color:var(--el-border-color-hover);--el-input-clear-hover-color:var(--el-text-color-secondary);--el-input-focus-border-color:var(--el-color-primary)}.el-textarea{position:relative;display:inline-block;width:100%;vertical-align:bottom;font-size:var(--el-font-size-base)}.el-textarea__inner{position:relative;display:block;resize:vertical;padding:5px 11px;line-height:1.5;box-sizing:border-box;width:100%;font-size:inherit;font-family:inherit;color:var(--el-input-text-color,var(--el-text-color-regular));background-color:var(--el-input-bg-color,var(--el-fill-color-blank));background-image:none;-webkit-appearance:none;box-shadow:0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset;border-radius:var(--el-input-border-radius,var(--el-border-radius-base));transition:var(--el-transition-box-shadow);border:none}.el-textarea__inner::-moz-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner:-ms-input-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner::placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner:hover{box-shadow:0 0 0 1px var(--el-input-hover-border-color) inset}.el-textarea__inner:focus{outline:0;box-shadow:0 0 0 1px var(--el-input-focus-border-color) inset}.el-textarea .el-input__count{color:var(--el-color-info);background:var(--el-fill-color-blank);position:absolute;font-size:12px;line-height:14px;bottom:5px;right:10px}.el-textarea.is-disabled .el-textarea__inner{background-color:var(--el-disabled-bg-color);border-color:var(--el-disabled-border-color);color:var(--el-disabled-text-color);cursor:not-allowed}.el-textarea.is-disabled .el-textarea__inner::-moz-placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-disabled .el-textarea__inner:-ms-input-placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-disabled .el-textarea__inner::placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-exceed .el-textarea__inner{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-textarea.is-exceed .el-input__count{color:var(--el-color-danger)}.el-input{--el-input-text-color:var(--el-text-color-regular);--el-input-border:var(--el-border);--el-input-hover-border:var(--el-border-color-hover);--el-input-focus-border:var(--el-color-primary);--el-input-transparent-border:0 0 0 1px transparent inset;--el-input-border-color:var(--el-border-color);--el-input-border-radius:var(--el-border-radius-base);--el-input-bg-color:var(--el-fill-color-blank);--el-input-icon-color:var(--el-text-color-placeholder);--el-input-placeholder-color:var(--el-text-color-placeholder);--el-input-hover-border-color:var(--el-border-color-hover);--el-input-clear-hover-color:var(--el-text-color-secondary);--el-input-focus-border-color:var(--el-color-primary)}.el-input{--el-input-height:var(--el-component-size);position:relative;font-size:var(--el-font-size-base);display:inline-flex;width:100%;line-height:var(--el-input-height);box-sizing:border-box;vertical-align:middle}.el-input::-webkit-scrollbar{z-index:11;width:6px}.el-input::-webkit-scrollbar:horizontal{height:6px}.el-input::-webkit-scrollbar-thumb{border-radius:5px;width:6px;background:var(--el-text-color-disabled)}.el-input::-webkit-scrollbar-corner{background:var(--el-fill-color-blank)}.el-input::-webkit-scrollbar-track{background:var(--el-fill-color-blank)}.el-input::-webkit-scrollbar-track-piece{background:var(--el-fill-color-blank);width:6px}.el-input .el-input__clear,.el-input .el-input__password{color:var(--el-input-icon-color);font-size:14px;cursor:pointer}.el-input .el-input__clear:hover,.el-input .el-input__password:hover{color:var(--el-input-clear-hover-color)}.el-input .el-input__count{height:100%;display:inline-flex;align-items:center;color:var(--el-color-info);font-size:12px}.el-input .el-input__count .el-input__count-inner{background:var(--el-fill-color-blank);line-height:initial;display:inline-block;padding-left:8px}.el-input__wrapper{display:inline-flex;flex-grow:1;align-items:center;justify-content:center;padding:1px 11px;background-color:var(--el-input-bg-color,var(--el-fill-color-blank));background-image:none;border-radius:var(--el-input-border-radius,var(--el-border-radius-base));transition:var(--el-transition-box-shadow);transform:translateZ(0);box-shadow:0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset}.el-input__wrapper:hover{box-shadow:0 0 0 1px var(--el-input-hover-border-color) inset}.el-input__wrapper.is-focus{box-shadow:0 0 0 1px var(--el-input-focus-border-color) inset}.el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 32px) - 2px);width:100%;flex-grow:1;-webkit-appearance:none;color:var(--el-input-text-color,var(--el-text-color-regular));font-size:inherit;height:var(--el-input-inner-height);line-height:var(--el-input-inner-height);padding:0;outline:0;border:none;background:0 0;box-sizing:border-box}.el-input__inner:focus{outline:0}.el-input__inner::-moz-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner:-ms-input-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner::placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner[type=password]::-ms-reveal{display:none}.el-input__prefix{display:inline-flex;white-space:nowrap;flex-shrink:0;flex-wrap:nowrap;height:100%;text-align:center;color:var(--el-input-icon-color,var(--el-text-color-placeholder));transition:all var(--el-transition-duration);pointer-events:none}.el-input__prefix-inner{pointer-events:all;display:inline-flex;align-items:center;justify-content:center}.el-input__prefix-inner>:last-child{margin-right:8px}.el-input__prefix-inner>:first-child,.el-input__prefix-inner>:first-child.el-input__icon{margin-left:0}.el-input__suffix{display:inline-flex;white-space:nowrap;flex-shrink:0;flex-wrap:nowrap;height:100%;text-align:center;color:var(--el-input-icon-color,var(--el-text-color-placeholder));transition:all var(--el-transition-duration);pointer-events:none}.el-input__suffix-inner{pointer-events:all;display:inline-flex;align-items:center;justify-content:center}.el-input__suffix-inner>:first-child{margin-left:8px}.el-input .el-input__icon{height:inherit;line-height:inherit;display:flex;justify-content:center;align-items:center;transition:all var(--el-transition-duration);margin-left:8px}.el-input__validateIcon{pointer-events:none}.el-input.is-active .el-input__wrapper{box-shadow:0 0 0 1px var(--el-input-focus-color,) inset}.el-input.is-disabled{cursor:not-allowed}.el-input.is-disabled .el-input__wrapper{background-color:var(--el-disabled-bg-color);box-shadow:0 0 0 1px var(--el-disabled-border-color) inset}.el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color);-webkit-text-fill-color:var(--el-disabled-text-color);cursor:not-allowed}.el-input.is-disabled .el-input__inner::-moz-placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__inner:-ms-input-placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__inner::placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__icon{cursor:not-allowed}.el-input.is-exceed .el-input__wrapper{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-input.is-exceed .el-input__suffix .el-input__count{color:var(--el-color-danger)}.el-input--large{--el-input-height:var(--el-component-size-large);font-size:14px}.el-input--large .el-input__wrapper{padding:1px 15px}.el-input--large .el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 40px) - 2px)}.el-input--small{--el-input-height:var(--el-component-size-small);font-size:12px}.el-input--small .el-input__wrapper{padding:1px 7px}.el-input--small .el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 24px) - 2px)}.el-input-group{display:inline-flex;width:100%;align-items:stretch}.el-input-group__append,.el-input-group__prepend{background-color:var(--el-fill-color-light);color:var(--el-color-info);position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:100%;border-radius:var(--el-input-border-radius);padding:0 20px;white-space:nowrap}.el-input-group__append:focus,.el-input-group__prepend:focus{outline:0}.el-input-group__append .el-button,.el-input-group__append .el-select,.el-input-group__prepend .el-button,.el-input-group__prepend .el-select{display:inline-block;margin:0 -20px}.el-input-group__append button.el-button,.el-input-group__append button.el-button:hover,.el-input-group__append div.el-select .el-input__wrapper,.el-input-group__append div.el-select:hover .el-input__wrapper,.el-input-group__prepend button.el-button,.el-input-group__prepend button.el-button:hover,.el-input-group__prepend div.el-select .el-input__wrapper,.el-input-group__prepend div.el-select:hover .el-input__wrapper{border-color:transparent;background-color:transparent;color:inherit}.el-input-group__append .el-button,.el-input-group__append .el-input,.el-input-group__prepend .el-button,.el-input-group__prepend .el-input{font-size:inherit}.el-input-group__prepend{border-right:0;border-top-right-radius:0;border-bottom-right-radius:0;box-shadow:1px 0 0 0 var(--el-input-border-color) inset,0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset}.el-input-group__append{border-left:0;border-top-left-radius:0;border-bottom-left-radius:0;box-shadow:0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset,-1px 0 0 0 var(--el-input-border-color) inset}.el-input-group--prepend>.el-input__wrapper{border-top-left-radius:0;border-bottom-left-radius:0}.el-input-group--prepend .el-input-group__prepend .el-select .el-input .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select .el-input .el-input__wrapper{border-top-right-radius:0;border-bottom-right-radius:0;box-shadow:1px 0 0 0 var(--el-input-border-color) inset,0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__wrapper{box-shadow:1px 0 0 0 var(--el-input-focus-border-color) inset,1px 0 0 0 var(--el-input-focus-border-color),0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important;z-index:2}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__wrapper:focus{outline:0;z-index:2;box-shadow:1px 0 0 0 var(--el-input-focus-border-color) inset,1px 0 0 0 var(--el-input-focus-border-color),0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important}.el-input-group--prepend .el-input-group__prepend .el-select:hover .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select:hover .el-input__wrapper{z-index:1;box-shadow:1px 0 0 0 var(--el-input-hover-border-color) inset,1px 0 0 0 var(--el-input-hover-border-color),0 1px 0 0 var(--el-input-hover-border-color) inset,0 -1px 0 0 var(--el-input-hover-border-color) inset!important}.el-input-group--append>.el-input__wrapper{border-top-right-radius:0;border-bottom-right-radius:0}.el-input-group--append .el-input-group__append .el-select .el-input .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select .el-input .el-input__wrapper{border-top-left-radius:0;border-bottom-left-radius:0;box-shadow:0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset,-1px 0 0 0 var(--el-input-border-color) inset}.el-input-group--append .el-input-group__append .el-select .el-input.is-focus .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select .el-input.is-focus .el-input__wrapper{z-index:2;box-shadow:-1px 0 0 0 var(--el-input-focus-border-color),-1px 0 0 0 var(--el-input-focus-border-color) inset,0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important}.el-input-group--append .el-input-group__append .el-select:hover .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select:hover .el-input__wrapper{z-index:1;box-shadow:-1px 0 0 0 var(--el-input-hover-border-color),-1px 0 0 0 var(--el-input-hover-border-color) inset,0 1px 0 0 var(--el-input-hover-border-color) inset,0 -1px 0 0 var(--el-input-hover-border-color) inset!important}.el-switch{--el-switch-on-color:var(--el-color-primary);--el-switch-off-color:var(--el-border-color)}.el-switch{display:inline-flex;align-items:center;position:relative;font-size:14px;line-height:20px;height:32px;vertical-align:middle}.el-switch.is-disabled .el-switch__core,.el-switch.is-disabled .el-switch__label{cursor:not-allowed}.el-switch__label{transition:var(--el-transition-duration-fast);height:20px;display:inline-block;font-size:14px;font-weight:500;cursor:pointer;vertical-align:middle;color:var(--el-text-color-primary)}.el-switch__label.is-active{color:var(--el-color-primary)}.el-switch__label--left{margin-right:10px}.el-switch__label--right{margin-left:10px}.el-switch__label *{line-height:1;font-size:14px;display:inline-block}.el-switch__label .el-icon{height:inherit}.el-switch__label .el-icon svg{vertical-align:middle}.el-switch__input{position:absolute;width:0;height:0;opacity:0;margin:0}.el-switch__input:focus-visible~.el-switch__core{outline:2px solid var(--el-switch-on-color);outline-offset:1px}.el-switch__core{display:inline-flex;position:relative;align-items:center;min-width:40px;height:20px;border:1px solid var(--el-switch-border-color,var(--el-switch-off-color));outline:0;border-radius:10px;box-sizing:border-box;background:var(--el-switch-off-color);cursor:pointer;transition:border-color var(--el-transition-duration),background-color var(--el-transition-duration)}.el-switch__core .el-switch__inner{width:100%;transition:all var(--el-transition-duration);height:16px;display:flex;justify-content:center;align-items:center;overflow:hidden;padding:0 4px 0 18px}.el-switch__core .el-switch__inner .is-icon,.el-switch__core .el-switch__inner .is-text{font-size:12px;color:var(--el-color-white);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.el-switch__core .el-switch__action{position:absolute;left:1px;border-radius:var(--el-border-radius-circle);transition:all var(--el-transition-duration);width:16px;height:16px;background-color:var(--el-color-white);display:flex;justify-content:center;align-items:center;color:var(--el-switch-off-color)}.el-switch.is-checked .el-switch__core{border-color:var(--el-switch-border-color,var(--el-switch-on-color));background-color:var(--el-switch-on-color)}.el-switch.is-checked .el-switch__core .el-switch__action{left:calc(100% - 17px);color:var(--el-switch-on-color)}.el-switch.is-checked .el-switch__core .el-switch__inner{padding:0 18px 0 4px}.el-switch.is-disabled{opacity:.6}.el-switch--wide .el-switch__label.el-switch__label--left span{left:10px}.el-switch--wide .el-switch__label.el-switch__label--right span{right:10px}.el-switch .label-fade-enter-from,.el-switch .label-fade-leave-active{opacity:0}.el-switch--large{font-size:14px;line-height:24px;height:40px}.el-switch--large .el-switch__label{height:24px;font-size:14px}.el-switch--large .el-switch__label *{font-size:14px}.el-switch--large .el-switch__core{min-width:50px;height:24px;border-radius:12px}.el-switch--large .el-switch__core .el-switch__inner{height:20px;padding:0 6px 0 22px}.el-switch--large .el-switch__core .el-switch__action{width:20px;height:20px}.el-switch--large.is-checked .el-switch__core .el-switch__action{left:calc(100% - 21px)}.el-switch--large.is-checked .el-switch__core .el-switch__inner{padding:0 22px 0 6px}.el-switch--small{font-size:12px;line-height:16px;height:24px}.el-switch--small .el-switch__label{height:16px;font-size:12px}.el-switch--small .el-switch__label *{font-size:12px}.el-switch--small .el-switch__core{min-width:30px;height:16px;border-radius:8px}.el-switch--small .el-switch__core .el-switch__inner{height:12px;padding:0 2px 0 14px}.el-switch--small .el-switch__core .el-switch__action{width:12px;height:12px}.el-switch--small.is-checked .el-switch__core .el-switch__action{left:calc(100% - 13px)}.el-switch--small.is-checked .el-switch__core .el-switch__inner{padding:0 14px 0 2px}.el-slider{--el-slider-main-bg-color:var(--el-color-primary);--el-slider-runway-bg-color:var(--el-border-color-light);--el-slider-stop-bg-color:var(--el-color-white);--el-slider-disabled-color:var(--el-text-color-placeholder);--el-slider-border-radius:3px;--el-slider-height:6px;--el-slider-button-size:20px;--el-slider-button-wrapper-size:36px;--el-slider-button-wrapper-offset:-15px}.el-slider{width:100%;height:32px;display:flex;align-items:center}.el-slider__runway{flex:1;height:var(--el-slider-height);background-color:var(--el-slider-runway-bg-color);border-radius:var(--el-slider-border-radius);position:relative;cursor:pointer}.el-slider__runway.show-input{margin-right:30px;width:auto}.el-slider__runway.is-disabled{cursor:default}.el-slider__runway.is-disabled .el-slider__bar{background-color:var(--el-slider-disabled-color)}.el-slider__runway.is-disabled .el-slider__button{border-color:var(--el-slider-disabled-color)}.el-slider__runway.is-disabled .el-slider__button-wrapper.hover,.el-slider__runway.is-disabled .el-slider__button-wrapper:hover,.el-slider__runway.is-disabled .el-slider__button-wrapper.dragging{cursor:not-allowed}.el-slider__runway.is-disabled .el-slider__button.dragging,.el-slider__runway.is-disabled .el-slider__button.hover,.el-slider__runway.is-disabled .el-slider__button:hover{transform:scale(1)}.el-slider__runway.is-disabled .el-slider__button.hover,.el-slider__runway.is-disabled .el-slider__button:hover,.el-slider__runway.is-disabled .el-slider__button.dragging{cursor:not-allowed}.el-slider__input{flex-shrink:0;width:130px}.el-slider__bar{height:var(--el-slider-height);background-color:var(--el-slider-main-bg-color);border-top-left-radius:var(--el-slider-border-radius);border-bottom-left-radius:var(--el-slider-border-radius);position:absolute}.el-slider__button-wrapper{height:var(--el-slider-button-wrapper-size);width:var(--el-slider-button-wrapper-size);position:absolute;z-index:1;top:var(--el-slider-button-wrapper-offset);transform:translate(-50%);background-color:transparent;text-align:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:normal;outline:0}.el-slider__button-wrapper:after{display:inline-block;content:"";height:100%;vertical-align:middle}.el-slider__button-wrapper.hover,.el-slider__button-wrapper:hover{cursor:-webkit-grab;cursor:grab}.el-slider__button-wrapper.dragging{cursor:-webkit-grabbing;cursor:grabbing}.el-slider__button{display:inline-block;width:var(--el-slider-button-size);height:var(--el-slider-button-size);vertical-align:middle;border:solid 2px var(--el-slider-main-bg-color);background-color:var(--el-color-white);border-radius:50%;box-sizing:border-box;transition:var(--el-transition-duration-fast);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-slider__button.dragging,.el-slider__button.hover,.el-slider__button:hover{transform:scale(1.2)}.el-slider__button.hover,.el-slider__button:hover{cursor:-webkit-grab;cursor:grab}.el-slider__button.dragging{cursor:-webkit-grabbing;cursor:grabbing}.el-slider__stop{position:absolute;height:var(--el-slider-height);width:var(--el-slider-height);border-radius:var(--el-border-radius-circle);background-color:var(--el-slider-stop-bg-color);transform:translate(-50%)}.el-slider__marks{top:0;left:12px;width:18px;height:100%}.el-slider__marks-text{position:absolute;transform:translate(-50%);font-size:14px;color:var(--el-color-info);margin-top:15px;white-space:pre}.el-slider.is-vertical{position:relative;display:inline-flex;width:auto;height:100%;flex:0}.el-slider.is-vertical .el-slider__runway{width:var(--el-slider-height);height:100%;margin:0 16px}.el-slider.is-vertical .el-slider__bar{width:var(--el-slider-height);height:auto;border-radius:0 0 3px 3px}.el-slider.is-vertical .el-slider__button-wrapper{top:auto;left:var(--el-slider-button-wrapper-offset);transform:translateY(50%)}.el-slider.is-vertical .el-slider__stop{transform:translateY(50%)}.el-slider.is-vertical .el-slider__marks-text{margin-top:0;left:15px;transform:translateY(50%)}.el-slider--large{height:40px}.el-slider--small{height:24px}.el-tag{--el-tag-font-size:12px;--el-tag-border-radius:4px;--el-tag-border-radius-rounded:9999px}.el-tag{--el-tag-bg-color:var(--el-color-primary-light-9);--el-tag-border-color:var(--el-color-primary-light-8);--el-tag-hover-color:var(--el-color-primary);--el-tag-text-color:var(--el-color-primary);background-color:var(--el-tag-bg-color);border-color:var(--el-tag-border-color);color:var(--el-tag-text-color);display:inline-flex;justify-content:center;align-items:center;height:24px;padding:0 9px;font-size:var(--el-tag-font-size);line-height:1;border-width:1px;border-style:solid;border-radius:var(--el-tag-border-radius);box-sizing:border-box;white-space:nowrap;--el-icon-size:14px}.el-tag.el-tag--primary{--el-tag-bg-color:var(--el-color-primary-light-9);--el-tag-border-color:var(--el-color-primary-light-8);--el-tag-hover-color:var(--el-color-primary)}.el-tag.el-tag--success{--el-tag-bg-color:var(--el-color-success-light-9);--el-tag-border-color:var(--el-color-success-light-8);--el-tag-hover-color:var(--el-color-success)}.el-tag.el-tag--warning{--el-tag-bg-color:var(--el-color-warning-light-9);--el-tag-border-color:var(--el-color-warning-light-8);--el-tag-hover-color:var(--el-color-warning)}.el-tag.el-tag--danger{--el-tag-bg-color:var(--el-color-danger-light-9);--el-tag-border-color:var(--el-color-danger-light-8);--el-tag-hover-color:var(--el-color-danger)}.el-tag.el-tag--error{--el-tag-bg-color:var(--el-color-error-light-9);--el-tag-border-color:var(--el-color-error-light-8);--el-tag-hover-color:var(--el-color-error)}.el-tag.el-tag--info{--el-tag-bg-color:var(--el-color-info-light-9);--el-tag-border-color:var(--el-color-info-light-8);--el-tag-hover-color:var(--el-color-info)}.el-tag.el-tag--primary{--el-tag-text-color:var(--el-color-primary)}.el-tag.el-tag--success{--el-tag-text-color:var(--el-color-success)}.el-tag.el-tag--warning{--el-tag-text-color:var(--el-color-warning)}.el-tag.el-tag--danger{--el-tag-text-color:var(--el-color-danger)}.el-tag.el-tag--error{--el-tag-text-color:var(--el-color-error)}.el-tag.el-tag--info{--el-tag-text-color:var(--el-color-info)}.el-tag.is-hit{border-color:var(--el-color-primary)}.el-tag.is-round{border-radius:var(--el-tag-border-radius-rounded)}.el-tag .el-tag__close{color:var(--el-tag-text-color)}.el-tag .el-tag__close:hover{color:var(--el-color-white);background-color:var(--el-tag-hover-color)}.el-tag .el-icon{border-radius:50%;cursor:pointer;font-size:calc(var(--el-icon-size) - 2px);height:var(--el-icon-size);width:var(--el-icon-size)}.el-tag .el-tag__close{margin-left:6px}.el-tag--dark{--el-tag-bg-color:var(--el-color-primary);--el-tag-border-color:var(--el-color-primary);--el-tag-hover-color:var(--el-color-primary-light-3);--el-tag-text-color:var(--el-color-white)}.el-tag--dark.el-tag--primary{--el-tag-bg-color:var(--el-color-primary);--el-tag-border-color:var(--el-color-primary);--el-tag-hover-color:var(--el-color-primary-light-3)}.el-tag--dark.el-tag--success{--el-tag-bg-color:var(--el-color-success);--el-tag-border-color:var(--el-color-success);--el-tag-hover-color:var(--el-color-success-light-3)}.el-tag--dark.el-tag--warning{--el-tag-bg-color:var(--el-color-warning);--el-tag-border-color:var(--el-color-warning);--el-tag-hover-color:var(--el-color-warning-light-3)}.el-tag--dark.el-tag--danger{--el-tag-bg-color:var(--el-color-danger);--el-tag-border-color:var(--el-color-danger);--el-tag-hover-color:var(--el-color-danger-light-3)}.el-tag--dark.el-tag--error{--el-tag-bg-color:var(--el-color-error);--el-tag-border-color:var(--el-color-error);--el-tag-hover-color:var(--el-color-error-light-3)}.el-tag--dark.el-tag--info{--el-tag-bg-color:var(--el-color-info);--el-tag-border-color:var(--el-color-info);--el-tag-hover-color:var(--el-color-info-light-3)}.el-tag--dark.el-tag--primary,.el-tag--dark.el-tag--success,.el-tag--dark.el-tag--warning,.el-tag--dark.el-tag--danger,.el-tag--dark.el-tag--error,.el-tag--dark.el-tag--info{--el-tag-text-color:var(--el-color-white)}.el-tag--plain{--el-tag-border-color:var(--el-color-primary-light-5);--el-tag-hover-color:var(--el-color-primary);--el-tag-bg-color:var(--el-fill-color-blank)}.el-tag--plain.el-tag--primary{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-primary-light-5);--el-tag-hover-color:var(--el-color-primary)}.el-tag--plain.el-tag--success{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-success-light-5);--el-tag-hover-color:var(--el-color-success)}.el-tag--plain.el-tag--warning{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-warning-light-5);--el-tag-hover-color:var(--el-color-warning)}.el-tag--plain.el-tag--danger{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-danger-light-5);--el-tag-hover-color:var(--el-color-danger)}.el-tag--plain.el-tag--error{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-error-light-5);--el-tag-hover-color:var(--el-color-error)}.el-tag--plain.el-tag--info{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-info-light-5);--el-tag-hover-color:var(--el-color-info)}.el-tag.is-closable{padding-right:5px}.el-tag--large{padding:0 11px;height:32px;--el-icon-size:16px}.el-tag--large .el-tag__close{margin-left:8px}.el-tag--large.is-closable{padding-right:7px}.el-tag--small{padding:0 7px;height:20px;--el-icon-size:12px}.el-tag--small .el-tag__close{margin-left:4px}.el-tag--small.is-closable{padding-right:3px}.el-tag--small .el-icon-close{transform:scale(.8)}.el-tag.el-tag--primary.is-hit{border-color:var(--el-color-primary)}.el-tag.el-tag--success.is-hit{border-color:var(--el-color-success)}.el-tag.el-tag--warning.is-hit{border-color:var(--el-color-warning)}.el-tag.el-tag--danger.is-hit{border-color:var(--el-color-danger)}.el-tag.el-tag--error.is-hit{border-color:var(--el-color-error)}.el-tag.el-tag--info.is-hit{border-color:var(--el-color-info)}.el-select-dropdown__item{font-size:var(--el-font-size-base);padding:0 32px 0 20px;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--el-text-color-regular);height:34px;line-height:34px;box-sizing:border-box;cursor:pointer}.el-select-dropdown__item.is-disabled{color:var(--el-text-color-placeholder);cursor:not-allowed}.el-select-dropdown__item.hover,.el-select-dropdown__item:hover{background-color:var(--el-fill-color-light)}.el-select-dropdown__item.selected{color:var(--el-color-primary);font-weight:700}.el-select-group{margin:0;padding:0}.el-select-group__wrap{position:relative;list-style:none;margin:0;padding:0}.el-select-group__wrap:not(:last-of-type){padding-bottom:24px}.el-select-group__wrap:not(:last-of-type):after{content:"";position:absolute;display:block;left:20px;right:20px;bottom:12px;height:1px;background:var(--el-border-color-light)}.el-select-group__split-dash{position:absolute;left:20px;right:20px;height:1px;background:var(--el-border-color-light)}.el-select-group__title{padding-left:20px;font-size:12px;color:var(--el-color-info);line-height:30px}.el-select-group .el-select-dropdown__item{padding-left:20px}.el-scrollbar{--el-scrollbar-opacity:.3;--el-scrollbar-bg-color:var(--el-text-color-secondary);--el-scrollbar-hover-opacity:.5;--el-scrollbar-hover-bg-color:var(--el-text-color-secondary)}.el-scrollbar{overflow:hidden;position:relative;height:100%}.el-scrollbar__wrap{overflow:auto;height:100%}.el-scrollbar__wrap--hidden-default{scrollbar-width:none}.el-scrollbar__wrap--hidden-default::-webkit-scrollbar{display:none}.el-scrollbar__thumb{position:relative;display:block;width:0;height:0;cursor:pointer;border-radius:inherit;background-color:var(--el-scrollbar-bg-color,var(--el-text-color-secondary));transition:var(--el-transition-duration) background-color;opacity:var(--el-scrollbar-opacity,.3)}.el-scrollbar__thumb:hover{background-color:var(--el-scrollbar-hover-bg-color,var(--el-text-color-secondary));opacity:var(--el-scrollbar-hover-opacity,.5)}.el-scrollbar__bar{position:absolute;right:2px;bottom:2px;z-index:1;border-radius:4px}.el-scrollbar__bar.is-vertical{width:6px;top:2px}.el-scrollbar__bar.is-vertical>div{width:100%}.el-scrollbar__bar.is-horizontal{height:6px;left:2px}.el-scrollbar__bar.is-horizontal>div{height:100%}.el-scrollbar-fade-enter-active{transition:opacity .34s ease-out}.el-scrollbar-fade-leave-active{transition:opacity .12s ease-out}.el-scrollbar-fade-enter-from,.el-scrollbar-fade-leave-active{opacity:0}.el-select-dropdown{z-index:calc(var(--el-index-top) + 1);border-radius:var(--el-border-radius-base);box-sizing:border-box}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected{color:var(--el-color-primary);background-color:var(--el-bg-color-overlay)}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover{background-color:var(--el-fill-color-light)}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected:after{content:"";position:absolute;top:50%;right:20px;border-top:none;border-right:none;background-repeat:no-repeat;background-position:center;background-color:var(--el-color-primary);-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask-size:100% 100%;-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;-webkit-mask-size:100% 100%;transform:translateY(-50%);width:12px;height:12px}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.is-disabled:after{background-color:var(--el-text-color-disabled)}.el-select-dropdown .el-select-dropdown__option-item.is-selected:after{content:"";position:absolute;top:50%;right:20px;border-top:none;border-right:none;background-repeat:no-repeat;background-position:center;background-color:var(--el-color-primary);-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask-size:100% 100%;-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;-webkit-mask-size:100% 100%;transform:translateY(-50%);width:12px;height:12px}.el-select-dropdown .el-scrollbar.is-empty .el-select-dropdown__list{padding:0}.el-select-dropdown .el-select-dropdown__item.is-disabled:hover{background-color:unset}.el-select-dropdown .el-select-dropdown__item.is-disabled.selected{color:var(--el-text-color-disabled)}.el-select-dropdown__empty{padding:10px 0;margin:0;text-align:center;color:var(--el-text-color-secondary);font-size:var(--el-select-font-size)}.el-select-dropdown__wrap{max-height:274px}.el-select-dropdown__list{list-style:none;padding:6px 0;margin:0;box-sizing:border-box}.el-select{--el-select-border-color-hover:var(--el-border-color-hover);--el-select-disabled-border:var(--el-disabled-border-color);--el-select-font-size:var(--el-font-size-base);--el-select-close-hover-color:var(--el-text-color-secondary);--el-select-input-color:var(--el-text-color-placeholder);--el-select-multiple-input-color:var(--el-text-color-regular);--el-select-input-focus-border-color:var(--el-color-primary);--el-select-input-font-size:14px}.el-select{display:inline-block;position:relative;vertical-align:middle;line-height:32px}.el-select__popper.el-popper{background:var(--el-bg-color-overlay);border:1px solid var(--el-border-color-light);box-shadow:var(--el-box-shadow-light)}.el-select__popper.el-popper .el-popper__arrow:before{border:1px solid var(--el-border-color-light)}.el-select__popper.el-popper[data-popper-placement^=top] .el-popper__arrow:before{border-top-color:transparent;border-left-color:transparent}.el-select__popper.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before{border-bottom-color:transparent;border-right-color:transparent}.el-select__popper.el-popper[data-popper-placement^=left] .el-popper__arrow:before{border-left-color:transparent;border-bottom-color:transparent}.el-select__popper.el-popper[data-popper-placement^=right] .el-popper__arrow:before{border-right-color:transparent;border-top-color:transparent}.el-select .el-select-tags-wrapper.has-prefix{margin-left:6px}.el-select--large{line-height:40px}.el-select--large .el-select-tags-wrapper.has-prefix{margin-left:8px}.el-select--small{line-height:24px}.el-select--small .el-select-tags-wrapper.has-prefix{margin-left:4px}.el-select .el-select__tags>span{display:inline-block}.el-select:hover:not(.el-select--disabled) .el-input__wrapper{box-shadow:0 0 0 1px var(--el-select-border-color-hover) inset}.el-select .el-select__tags-text{display:inline-block;line-height:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.el-select .el-input__wrapper{cursor:pointer}.el-select .el-input__wrapper.is-focus{box-shadow:0 0 0 1px var(--el-select-input-focus-border-color) inset!important}.el-select .el-input__inner{cursor:pointer}.el-select .el-input{display:flex}.el-select .el-input .el-select__caret{color:var(--el-select-input-color);font-size:var(--el-select-input-font-size);transition:transform var(--el-transition-duration);transform:rotate(0);cursor:pointer}.el-select .el-input .el-select__caret.is-reverse{transform:rotate(-180deg)}.el-select .el-input .el-select__caret.is-show-close{font-size:var(--el-select-font-size);text-align:center;transform:rotate(0);border-radius:var(--el-border-radius-circle);color:var(--el-select-input-color);transition:var(--el-transition-color)}.el-select .el-input .el-select__caret.is-show-close:hover{color:var(--el-select-close-hover-color)}.el-select .el-input .el-select__caret.el-icon{position:relative;height:inherit;z-index:2}.el-select .el-input.is-disabled .el-input__wrapper{cursor:not-allowed}.el-select .el-input.is-disabled .el-input__wrapper:hover{box-shadow:0 0 0 1px var(--el-select-disabled-border) inset}.el-select .el-input.is-disabled .el-input__inner,.el-select .el-input.is-disabled .el-select__caret{cursor:not-allowed}.el-select .el-input.is-focus .el-input__wrapper{box-shadow:0 0 0 1px var(--el-select-input-focus-border-color) inset!important}.el-select__input{border:none;outline:0;padding:0;margin-left:15px;color:var(--el-select-multiple-input-color);font-size:var(--el-select-font-size);-webkit-appearance:none;-moz-appearance:none;appearance:none;height:28px;background-color:transparent}.el-select__input.is-disabled{cursor:not-allowed}.el-select__input--iOS{position:absolute;left:0;top:0;z-index:6}.el-select__input.is-small{height:14px}.el-select__close{cursor:pointer;position:absolute;top:8px;z-index:var(--el-index-top);right:25px;color:var(--el-select-input-color);line-height:18px;font-size:var(--el-select-input-font-size)}.el-select__close:hover{color:var(--el-select-close-hover-color)}.el-select__tags{position:absolute;line-height:normal;top:50%;transform:translateY(-50%);white-space:normal;z-index:var(--el-index-normal);display:flex;align-items:center;flex-wrap:wrap;cursor:pointer}.el-select__tags .el-tag{box-sizing:border-box;border-color:transparent;margin:2px 6px 2px 0}.el-select__tags .el-tag:last-child{margin-right:0}.el-select__tags .el-tag .el-icon-close{background-color:var(--el-text-color-placeholder);right:-7px;top:0;color:#fff}.el-select__tags .el-tag .el-icon-close:hover{background-color:var(--el-text-color-secondary)}.el-select__tags .el-tag .el-icon-close:before{display:block;transform:translateY(.5px)}.el-select__tags .el-tag--info{background-color:var(--el-fill-color)}.el-select__tags.is-disabled{cursor:not-allowed}.el-select__collapse-tags{white-space:normal;z-index:var(--el-index-normal);display:flex;align-items:center;flex-wrap:wrap;cursor:pointer}.el-select__collapse-tags .el-tag{box-sizing:border-box;border-color:transparent;margin:2px 6px 2px 0}.el-select__collapse-tags .el-tag:last-child{margin-right:0}.el-select__collapse-tags .el-tag .el-icon-close{background-color:var(--el-text-color-placeholder);right:-7px;top:0;color:#fff}.el-select__collapse-tags .el-tag .el-icon-close:hover{background-color:var(--el-text-color-secondary)}.el-select__collapse-tags .el-tag .el-icon-close:before{display:block;transform:translateY(.5px)}.el-select__collapse-tags .el-tag--info{background-color:var(--el-fill-color)}.el-select__collapse-tag{line-height:inherit;height:inherit;display:flex}.nhentai-helper-setting-help-buttons[data-v-0ac3b9ef]{float:left;position:absolute}.inline-item[data-v-0ac3b9ef]{display:inline-block}.inline-item[data-v-0ac3b9ef]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-0ac3b9ef]{margin-right:4px;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type="file"]):not([type="checkbox"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}.language-filter[data-v-6873bccd]{padding:0 10px;user-select:none} `);
+(o=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.textContent=o,document.head.append(e)})(` @charset "UTF-8";.nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{right:0}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}:root{--el-color-white:#ffffff;--el-color-black:#000000;--el-color-primary-rgb:64,158,255;--el-color-success-rgb:103,194,58;--el-color-warning-rgb:230,162,60;--el-color-danger-rgb:245,108,108;--el-color-error-rgb:245,108,108;--el-color-info-rgb:144,147,153;--el-font-size-extra-large:20px;--el-font-size-large:18px;--el-font-size-medium:16px;--el-font-size-base:14px;--el-font-size-small:13px;--el-font-size-extra-small:12px;--el-font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","\u5FAE\u8F6F\u96C5\u9ED1",Arial,sans-serif;--el-font-weight-primary:500;--el-font-line-height-primary:24px;--el-index-normal:1;--el-index-top:1000;--el-index-popper:2000;--el-border-radius-base:4px;--el-border-radius-small:2px;--el-border-radius-round:20px;--el-border-radius-circle:100%;--el-transition-duration:.3s;--el-transition-duration-fast:.2s;--el-transition-function-ease-in-out-bezier:cubic-bezier(.645, .045, .355, 1);--el-transition-function-fast-bezier:cubic-bezier(.23, 1, .32, 1);--el-transition-all:all var(--el-transition-duration) var(--el-transition-function-ease-in-out-bezier);--el-transition-fade:opacity var(--el-transition-duration) var(--el-transition-function-fast-bezier);--el-transition-md-fade:transform var(--el-transition-duration) var(--el-transition-function-fast-bezier),opacity var(--el-transition-duration) var(--el-transition-function-fast-bezier);--el-transition-fade-linear:opacity var(--el-transition-duration-fast) linear;--el-transition-border:border-color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-transition-box-shadow:box-shadow var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-transition-color:color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);--el-component-size-large:40px;--el-component-size:32px;--el-component-size-small:24px}:root{color-scheme:light;--el-color-white:#ffffff;--el-color-black:#000000;--el-color-primary:#409eff;--el-color-primary-light-3:#79bbff;--el-color-primary-light-5:#a0cfff;--el-color-primary-light-7:#c6e2ff;--el-color-primary-light-8:#d9ecff;--el-color-primary-light-9:#ecf5ff;--el-color-primary-dark-2:#337ecc;--el-color-success:#67c23a;--el-color-success-light-3:#95d475;--el-color-success-light-5:#b3e19d;--el-color-success-light-7:#d1edc4;--el-color-success-light-8:#e1f3d8;--el-color-success-light-9:#f0f9eb;--el-color-success-dark-2:#529b2e;--el-color-warning:#e6a23c;--el-color-warning-light-3:#eebe77;--el-color-warning-light-5:#f3d19e;--el-color-warning-light-7:#f8e3c5;--el-color-warning-light-8:#faecd8;--el-color-warning-light-9:#fdf6ec;--el-color-warning-dark-2:#b88230;--el-color-danger:#f56c6c;--el-color-danger-light-3:#f89898;--el-color-danger-light-5:#fab6b6;--el-color-danger-light-7:#fcd3d3;--el-color-danger-light-8:#fde2e2;--el-color-danger-light-9:#fef0f0;--el-color-danger-dark-2:#c45656;--el-color-error:#f56c6c;--el-color-error-light-3:#f89898;--el-color-error-light-5:#fab6b6;--el-color-error-light-7:#fcd3d3;--el-color-error-light-8:#fde2e2;--el-color-error-light-9:#fef0f0;--el-color-error-dark-2:#c45656;--el-color-info:#909399;--el-color-info-light-3:#b1b3b8;--el-color-info-light-5:#c8c9cc;--el-color-info-light-7:#dedfe0;--el-color-info-light-8:#e9e9eb;--el-color-info-light-9:#f4f4f5;--el-color-info-dark-2:#73767a;--el-bg-color:#ffffff;--el-bg-color-page:#f2f3f5;--el-bg-color-overlay:#ffffff;--el-text-color-primary:#303133;--el-text-color-regular:#606266;--el-text-color-secondary:#909399;--el-text-color-placeholder:#a8abb2;--el-text-color-disabled:#c0c4cc;--el-border-color:#dcdfe6;--el-border-color-light:#e4e7ed;--el-border-color-lighter:#ebeef5;--el-border-color-extra-light:#f2f6fc;--el-border-color-dark:#d4d7de;--el-border-color-darker:#cdd0d6;--el-fill-color:#f0f2f5;--el-fill-color-light:#f5f7fa;--el-fill-color-lighter:#fafafa;--el-fill-color-extra-light:#fafcff;--el-fill-color-dark:#ebedf0;--el-fill-color-darker:#e6e8eb;--el-fill-color-blank:#ffffff;--el-box-shadow:0px 12px 32px 4px rgba(0, 0, 0, .04),0px 8px 20px rgba(0, 0, 0, .08);--el-box-shadow-light:0px 0px 12px rgba(0, 0, 0, .12);--el-box-shadow-lighter:0px 0px 6px rgba(0, 0, 0, .12);--el-box-shadow-dark:0px 16px 48px 16px rgba(0, 0, 0, .08),0px 12px 32px rgba(0, 0, 0, .12),0px 8px 16px -8px rgba(0, 0, 0, .16);--el-disabled-bg-color:var(--el-fill-color-light);--el-disabled-text-color:var(--el-text-color-placeholder);--el-disabled-border-color:var(--el-border-color-light);--el-overlay-color:rgba(0, 0, 0, .8);--el-overlay-color-light:rgba(0, 0, 0, .7);--el-overlay-color-lighter:rgba(0, 0, 0, .5);--el-mask-color:rgba(255, 255, 255, .9);--el-mask-color-extra-light:rgba(255, 255, 255, .3);--el-border-width:1px;--el-border-style:solid;--el-border-color-hover:var(--el-text-color-disabled);--el-border:var(--el-border-width) var(--el-border-style) var(--el-border-color);--el-svg-monochrome-grey:var(--el-border-color)}.fade-in-linear-enter-active,.fade-in-linear-leave-active{transition:var(--el-transition-fade-linear)}.fade-in-linear-enter-from,.fade-in-linear-leave-to{opacity:0}.el-fade-in-linear-enter-active,.el-fade-in-linear-leave-active{transition:var(--el-transition-fade-linear)}.el-fade-in-linear-enter-from,.el-fade-in-linear-leave-to{opacity:0}.el-fade-in-enter-active,.el-fade-in-leave-active{transition:all var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-fade-in-enter-from,.el-fade-in-leave-active{opacity:0}.el-zoom-in-center-enter-active,.el-zoom-in-center-leave-active{transition:all var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-zoom-in-center-enter-from,.el-zoom-in-center-leave-active{opacity:0;transform:scaleX(0)}.el-zoom-in-top-enter-active,.el-zoom-in-top-leave-active{opacity:1;transform:scaleY(1);transition:var(--el-transition-md-fade);transform-origin:center top}.el-zoom-in-top-enter-active[data-popper-placement^=top],.el-zoom-in-top-leave-active[data-popper-placement^=top]{transform-origin:center bottom}.el-zoom-in-top-enter-from,.el-zoom-in-top-leave-active{opacity:0;transform:scaleY(0)}.el-zoom-in-bottom-enter-active,.el-zoom-in-bottom-leave-active{opacity:1;transform:scaleY(1);transition:var(--el-transition-md-fade);transform-origin:center bottom}.el-zoom-in-bottom-enter-from,.el-zoom-in-bottom-leave-active{opacity:0;transform:scaleY(0)}.el-zoom-in-left-enter-active,.el-zoom-in-left-leave-active{opacity:1;transform:scale(1);transition:var(--el-transition-md-fade);transform-origin:top left}.el-zoom-in-left-enter-from,.el-zoom-in-left-leave-active{opacity:0;transform:scale(.45)}.collapse-transition{transition:var(--el-transition-duration) height ease-in-out,var(--el-transition-duration) padding-top ease-in-out,var(--el-transition-duration) padding-bottom ease-in-out}.el-collapse-transition-enter-active,.el-collapse-transition-leave-active{transition:var(--el-transition-duration) max-height ease-in-out,var(--el-transition-duration) padding-top ease-in-out,var(--el-transition-duration) padding-bottom ease-in-out}.horizontal-collapse-transition{transition:var(--el-transition-duration) width ease-in-out,var(--el-transition-duration) padding-left ease-in-out,var(--el-transition-duration) padding-right ease-in-out}.el-list-enter-active,.el-list-leave-active{transition:all 1s}.el-list-enter-from,.el-list-leave-to{opacity:0;transform:translateY(-30px)}.el-list-leave-active{position:absolute!important}.el-opacity-transition{transition:opacity var(--el-transition-duration) cubic-bezier(.55,0,.1,1)}.el-icon-loading{-webkit-animation:rotating 2s linear infinite;animation:rotating 2s linear infinite}.el-icon--right{margin-left:5px}.el-icon--left{margin-right:5px}@-webkit-keyframes rotating{0%{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes rotating{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.el-icon{--color:inherit;height:1em;width:1em;line-height:1em;display:inline-flex;justify-content:center;align-items:center;position:relative;fill:currentColor;color:var(--color);font-size:inherit}.el-icon.is-loading{-webkit-animation:rotating 2s linear infinite;animation:rotating 2s linear infinite}.el-icon svg{height:1em;width:1em}:root{--el-popup-modal-bg-color:var(--el-color-black);--el-popup-modal-opacity:.5}.v-modal-enter{-webkit-animation:v-modal-in var(--el-transition-duration-fast) ease;animation:v-modal-in var(--el-transition-duration-fast) ease}.v-modal-leave{-webkit-animation:v-modal-out var(--el-transition-duration-fast) ease forwards;animation:v-modal-out var(--el-transition-duration-fast) ease forwards}@-webkit-keyframes v-modal-in{0%{opacity:0}}@keyframes v-modal-in{0%{opacity:0}}@-webkit-keyframes v-modal-out{to{opacity:0}}@keyframes v-modal-out{to{opacity:0}}.v-modal{position:fixed;left:0;top:0;width:100%;height:100%;opacity:var(--el-popup-modal-opacity);background:var(--el-popup-modal-bg-color)}.el-popup-parent--hidden{overflow:hidden}.el-dialog{--el-dialog-width:50%;--el-dialog-margin-top:15vh;--el-dialog-bg-color:var(--el-bg-color);--el-dialog-box-shadow:var(--el-box-shadow);--el-dialog-title-font-size:var(--el-font-size-large);--el-dialog-content-font-size:14px;--el-dialog-font-line-height:var(--el-font-line-height-primary);--el-dialog-padding-primary:20px;--el-dialog-border-radius:var(--el-border-radius-small);position:relative;margin:var(--el-dialog-margin-top,15vh) auto 50px;background:var(--el-dialog-bg-color);border-radius:var(--el-dialog-border-radius);box-shadow:var(--el-dialog-box-shadow);box-sizing:border-box;width:var(--el-dialog-width,50%)}.el-dialog:focus{outline:0!important}.el-dialog.is-align-center{margin:auto}.el-dialog.is-fullscreen{--el-dialog-width:100%;--el-dialog-margin-top:0;margin-bottom:0;height:100%;overflow:auto}.el-dialog__wrapper{position:fixed;top:0;right:0;bottom:0;left:0;overflow:auto;margin:0}.el-dialog.is-draggable .el-dialog__header{cursor:move;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-dialog__header{padding:var(--el-dialog-padding-primary);padding-bottom:10px;margin-right:16px}.el-dialog__headerbtn{position:absolute;top:6px;right:0;padding:0;width:54px;height:54px;background:0 0;border:none;outline:0;cursor:pointer;font-size:var(--el-message-close-size,16px)}.el-dialog__headerbtn .el-dialog__close{color:var(--el-color-info);font-size:inherit}.el-dialog__headerbtn:focus .el-dialog__close,.el-dialog__headerbtn:hover .el-dialog__close{color:var(--el-color-primary)}.el-dialog__title{line-height:var(--el-dialog-font-line-height);font-size:var(--el-dialog-title-font-size);color:var(--el-text-color-primary)}.el-dialog__body{padding:calc(var(--el-dialog-padding-primary) + 10px) var(--el-dialog-padding-primary);color:var(--el-text-color-regular);font-size:var(--el-dialog-content-font-size)}.el-dialog__footer{padding:var(--el-dialog-padding-primary);padding-top:10px;text-align:right;box-sizing:border-box}.el-dialog--center{text-align:center}.el-dialog--center .el-dialog__body{text-align:initial;padding:25px calc(var(--el-dialog-padding-primary) + 5px) 30px}.el-dialog--center .el-dialog__footer{text-align:inherit}.el-overlay-dialog{position:fixed;top:0;right:0;bottom:0;left:0;overflow:auto}.dialog-fade-enter-active{-webkit-animation:modal-fade-in var(--el-transition-duration);animation:modal-fade-in var(--el-transition-duration)}.dialog-fade-enter-active .el-overlay-dialog{-webkit-animation:dialog-fade-in var(--el-transition-duration);animation:dialog-fade-in var(--el-transition-duration)}.dialog-fade-leave-active{-webkit-animation:modal-fade-out var(--el-transition-duration);animation:modal-fade-out var(--el-transition-duration)}.dialog-fade-leave-active .el-overlay-dialog{-webkit-animation:dialog-fade-out var(--el-transition-duration);animation:dialog-fade-out var(--el-transition-duration)}@-webkit-keyframes dialog-fade-in{0%{transform:translate3d(0,-20px,0);opacity:0}to{transform:translateZ(0);opacity:1}}@keyframes dialog-fade-in{0%{transform:translate3d(0,-20px,0);opacity:0}to{transform:translateZ(0);opacity:1}}@-webkit-keyframes dialog-fade-out{0%{transform:translateZ(0);opacity:1}to{transform:translate3d(0,-20px,0);opacity:0}}@keyframes dialog-fade-out{0%{transform:translateZ(0);opacity:1}to{transform:translate3d(0,-20px,0);opacity:0}}@-webkit-keyframes modal-fade-in{0%{opacity:0}to{opacity:1}}@keyframes modal-fade-in{0%{opacity:0}to{opacity:1}}@-webkit-keyframes modal-fade-out{0%{opacity:1}to{opacity:0}}@keyframes modal-fade-out{0%{opacity:1}to{opacity:0}}.el-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2000;height:100%;background-color:var(--el-overlay-color-lighter);overflow:auto}.el-overlay .el-overlay-root{height:0}.el-popconfirm__main{display:flex;align-items:center}.el-popconfirm__icon{margin-right:5px}.el-popconfirm__action{text-align:right;margin-top:8px}.el-popper{--el-popper-border-radius:var(--el-popover-border-radius, 4px)}.el-popper{position:absolute;border-radius:var(--el-popper-border-radius);padding:5px 11px;z-index:2000;font-size:12px;line-height:20px;min-width:10px;word-wrap:break-word;visibility:visible}.el-popper.is-dark{color:var(--el-bg-color);background:var(--el-text-color-primary);border:1px solid var(--el-text-color-primary)}.el-popper.is-dark .el-popper__arrow:before{border:1px solid var(--el-text-color-primary);background:var(--el-text-color-primary);right:0}.el-popper.is-light{background:var(--el-bg-color-overlay);border:1px solid var(--el-border-color-light)}.el-popper.is-light .el-popper__arrow:before{border:1px solid var(--el-border-color-light);background:var(--el-bg-color-overlay);right:0}.el-popper.is-pure{padding:0}.el-popper__arrow{position:absolute;width:10px;height:10px;z-index:-1}.el-popper__arrow:before{position:absolute;width:10px;height:10px;z-index:-1;content:" ";transform:rotate(45deg);background:var(--el-text-color-primary);box-sizing:border-box}.el-popper[data-popper-placement^=top]>.el-popper__arrow{bottom:-5px}.el-popper[data-popper-placement^=top]>.el-popper__arrow:before{border-bottom-right-radius:2px}.el-popper[data-popper-placement^=bottom]>.el-popper__arrow{top:-5px}.el-popper[data-popper-placement^=bottom]>.el-popper__arrow:before{border-top-left-radius:2px}.el-popper[data-popper-placement^=left]>.el-popper__arrow{right:-5px}.el-popper[data-popper-placement^=left]>.el-popper__arrow:before{border-top-right-radius:2px}.el-popper[data-popper-placement^=right]>.el-popper__arrow{left:-5px}.el-popper[data-popper-placement^=right]>.el-popper__arrow:before{border-bottom-left-radius:2px}.el-popper[data-popper-placement^=top] .el-popper__arrow:before{border-top-color:transparent!important;border-left-color:transparent!important}.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before{border-bottom-color:transparent!important;border-right-color:transparent!important}.el-popper[data-popper-placement^=left] .el-popper__arrow:before{border-left-color:transparent!important;border-bottom-color:transparent!important}.el-popper[data-popper-placement^=right] .el-popper__arrow:before{border-right-color:transparent!important;border-top-color:transparent!important}.el-popover{--el-popover-bg-color:var(--el-bg-color-overlay);--el-popover-font-size:var(--el-font-size-base);--el-popover-border-color:var(--el-border-color-lighter);--el-popover-padding:12px;--el-popover-padding-large:18px 20px;--el-popover-title-font-size:16px;--el-popover-title-text-color:var(--el-text-color-primary);--el-popover-border-radius:4px}.el-popover.el-popper{background:var(--el-popover-bg-color);min-width:150px;border-radius:var(--el-popover-border-radius);border:1px solid var(--el-popover-border-color);padding:var(--el-popover-padding);z-index:var(--el-index-popper);color:var(--el-text-color-regular);line-height:1.4;text-align:justify;font-size:var(--el-popover-font-size);box-shadow:var(--el-box-shadow-light);word-break:break-all;box-sizing:border-box}.el-popover.el-popper--plain{padding:var(--el-popover-padding-large)}.el-popover__title{color:var(--el-popover-title-text-color);font-size:var(--el-popover-title-font-size);line-height:1;margin-bottom:12px}.el-popover__reference:focus:hover,.el-popover__reference:focus:not(.focusing){outline-width:0}.el-popover.el-popper.is-dark{--el-popover-bg-color:var(--el-text-color-primary);--el-popover-border-color:var(--el-text-color-primary);--el-popover-title-text-color:var(--el-bg-color);color:var(--el-bg-color)}.el-popover.el-popper:focus,.el-popover.el-popper:focus:active{outline-width:0}.el-button{--el-button-font-weight:var(--el-font-weight-primary);--el-button-border-color:var(--el-border-color);--el-button-bg-color:var(--el-fill-color-blank);--el-button-text-color:var(--el-text-color-regular);--el-button-disabled-text-color:var(--el-disabled-text-color);--el-button-disabled-bg-color:var(--el-fill-color-blank);--el-button-disabled-border-color:var(--el-border-color-light);--el-button-divide-border-color:rgba(255, 255, 255, .5);--el-button-hover-text-color:var(--el-color-primary);--el-button-hover-bg-color:var(--el-color-primary-light-9);--el-button-hover-border-color:var(--el-color-primary-light-7);--el-button-active-text-color:var(--el-button-hover-text-color);--el-button-active-border-color:var(--el-color-primary);--el-button-active-bg-color:var(--el-button-hover-bg-color);--el-button-outline-color:var(--el-color-primary-light-5);--el-button-hover-link-text-color:var(--el-color-info);--el-button-active-color:var(--el-text-color-primary)}.el-button{display:inline-flex;justify-content:center;align-items:center;line-height:1;height:32px;white-space:nowrap;cursor:pointer;color:var(--el-button-text-color);text-align:center;box-sizing:border-box;outline:0;transition:.1s;font-weight:var(--el-button-font-weight);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;vertical-align:middle;-webkit-appearance:none;background-color:var(--el-button-bg-color);border:var(--el-border);border-color:var(--el-button-border-color);padding:8px 15px;font-size:var(--el-font-size-base);border-radius:var(--el-border-radius-base)}.el-button:focus,.el-button:hover{color:var(--el-button-hover-text-color);border-color:var(--el-button-hover-border-color);background-color:var(--el-button-hover-bg-color);outline:0}.el-button:active{color:var(--el-button-active-text-color);border-color:var(--el-button-active-border-color);background-color:var(--el-button-active-bg-color);outline:0}.el-button:focus-visible{outline:2px solid var(--el-button-outline-color);outline-offset:1px}.el-button>span{display:inline-flex;align-items:center}.el-button+.el-button{margin-left:12px}.el-button.is-round{padding:8px 15px}.el-button::-moz-focus-inner{border:0}.el-button [class*=el-icon]+span{margin-left:6px}.el-button [class*=el-icon] svg{vertical-align:bottom}.el-button.is-plain{--el-button-hover-text-color:var(--el-color-primary);--el-button-hover-bg-color:var(--el-fill-color-blank);--el-button-hover-border-color:var(--el-color-primary)}.el-button.is-active{color:var(--el-button-active-text-color);border-color:var(--el-button-active-border-color);background-color:var(--el-button-active-bg-color);outline:0}.el-button.is-disabled,.el-button.is-disabled:focus,.el-button.is-disabled:hover{color:var(--el-button-disabled-text-color);cursor:not-allowed;background-image:none;background-color:var(--el-button-disabled-bg-color);border-color:var(--el-button-disabled-border-color)}.el-button.is-loading{position:relative;pointer-events:none}.el-button.is-loading:before{z-index:1;pointer-events:none;content:"";position:absolute;left:-1px;top:-1px;right:-1px;bottom:-1px;border-radius:inherit;background-color:var(--el-mask-color-extra-light)}.el-button.is-round{border-radius:var(--el-border-radius-round)}.el-button.is-circle{border-radius:50%;padding:8px}.el-button.is-text{color:var(--el-button-text-color);border:0 solid transparent;background-color:transparent}.el-button.is-text.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important}.el-button.is-text:not(.is-disabled):focus,.el-button.is-text:not(.is-disabled):hover{background-color:var(--el-fill-color-light)}.el-button.is-text:not(.is-disabled):focus-visible{outline:2px solid var(--el-button-outline-color);outline-offset:1px}.el-button.is-text:not(.is-disabled):active{background-color:var(--el-fill-color)}.el-button.is-text:not(.is-disabled).is-has-bg{background-color:var(--el-fill-color-light)}.el-button.is-text:not(.is-disabled).is-has-bg:focus,.el-button.is-text:not(.is-disabled).is-has-bg:hover{background-color:var(--el-fill-color)}.el-button.is-text:not(.is-disabled).is-has-bg:active{background-color:var(--el-fill-color-dark)}.el-button__text--expand{letter-spacing:.3em;margin-right:-.3em}.el-button.is-link{border-color:transparent;color:var(--el-button-text-color);background:0 0;padding:2px;height:auto}.el-button.is-link:focus,.el-button.is-link:hover{color:var(--el-button-hover-link-text-color)}.el-button.is-link.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important;border-color:transparent!important}.el-button.is-link:not(.is-disabled):focus,.el-button.is-link:not(.is-disabled):hover{border-color:transparent;background-color:transparent}.el-button.is-link:not(.is-disabled):active{color:var(--el-button-active-color);border-color:transparent;background-color:transparent}.el-button--text{border-color:transparent;background:0 0;color:var(--el-color-primary);padding-left:0;padding-right:0}.el-button--text.is-disabled{color:var(--el-button-disabled-text-color);background-color:transparent!important;border-color:transparent!important}.el-button--text:not(.is-disabled):focus,.el-button--text:not(.is-disabled):hover{color:var(--el-color-primary-light-3);border-color:transparent;background-color:transparent}.el-button--text:not(.is-disabled):active{color:var(--el-color-primary-dark-2);border-color:transparent;background-color:transparent}.el-button__link--expand{letter-spacing:.3em;margin-right:-.3em}.el-button--primary{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-primary);--el-button-border-color:var(--el-color-primary);--el-button-outline-color:var(--el-color-primary-light-5);--el-button-active-color:var(--el-color-primary-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-primary-light-5);--el-button-hover-bg-color:var(--el-color-primary-light-3);--el-button-hover-border-color:var(--el-color-primary-light-3);--el-button-active-bg-color:var(--el-color-primary-dark-2);--el-button-active-border-color:var(--el-color-primary-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-primary-light-5);--el-button-disabled-border-color:var(--el-color-primary-light-5)}.el-button--primary.is-link,.el-button--primary.is-plain,.el-button--primary.is-text{--el-button-text-color:var(--el-color-primary);--el-button-bg-color:var(--el-color-primary-light-9);--el-button-border-color:var(--el-color-primary-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-primary);--el-button-hover-border-color:var(--el-color-primary);--el-button-active-text-color:var(--el-color-white)}.el-button--primary.is-link.is-disabled,.el-button--primary.is-link.is-disabled:active,.el-button--primary.is-link.is-disabled:focus,.el-button--primary.is-link.is-disabled:hover,.el-button--primary.is-plain.is-disabled,.el-button--primary.is-plain.is-disabled:active,.el-button--primary.is-plain.is-disabled:focus,.el-button--primary.is-plain.is-disabled:hover,.el-button--primary.is-text.is-disabled,.el-button--primary.is-text.is-disabled:active,.el-button--primary.is-text.is-disabled:focus,.el-button--primary.is-text.is-disabled:hover{color:var(--el-color-primary-light-5);background-color:var(--el-color-primary-light-9);border-color:var(--el-color-primary-light-8)}.el-button--success{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-success);--el-button-border-color:var(--el-color-success);--el-button-outline-color:var(--el-color-success-light-5);--el-button-active-color:var(--el-color-success-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-success-light-5);--el-button-hover-bg-color:var(--el-color-success-light-3);--el-button-hover-border-color:var(--el-color-success-light-3);--el-button-active-bg-color:var(--el-color-success-dark-2);--el-button-active-border-color:var(--el-color-success-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-success-light-5);--el-button-disabled-border-color:var(--el-color-success-light-5)}.el-button--success.is-link,.el-button--success.is-plain,.el-button--success.is-text{--el-button-text-color:var(--el-color-success);--el-button-bg-color:var(--el-color-success-light-9);--el-button-border-color:var(--el-color-success-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-success);--el-button-hover-border-color:var(--el-color-success);--el-button-active-text-color:var(--el-color-white)}.el-button--success.is-link.is-disabled,.el-button--success.is-link.is-disabled:active,.el-button--success.is-link.is-disabled:focus,.el-button--success.is-link.is-disabled:hover,.el-button--success.is-plain.is-disabled,.el-button--success.is-plain.is-disabled:active,.el-button--success.is-plain.is-disabled:focus,.el-button--success.is-plain.is-disabled:hover,.el-button--success.is-text.is-disabled,.el-button--success.is-text.is-disabled:active,.el-button--success.is-text.is-disabled:focus,.el-button--success.is-text.is-disabled:hover{color:var(--el-color-success-light-5);background-color:var(--el-color-success-light-9);border-color:var(--el-color-success-light-8)}.el-button--warning{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-warning);--el-button-border-color:var(--el-color-warning);--el-button-outline-color:var(--el-color-warning-light-5);--el-button-active-color:var(--el-color-warning-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-warning-light-5);--el-button-hover-bg-color:var(--el-color-warning-light-3);--el-button-hover-border-color:var(--el-color-warning-light-3);--el-button-active-bg-color:var(--el-color-warning-dark-2);--el-button-active-border-color:var(--el-color-warning-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-warning-light-5);--el-button-disabled-border-color:var(--el-color-warning-light-5)}.el-button--warning.is-link,.el-button--warning.is-plain,.el-button--warning.is-text{--el-button-text-color:var(--el-color-warning);--el-button-bg-color:var(--el-color-warning-light-9);--el-button-border-color:var(--el-color-warning-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-warning);--el-button-hover-border-color:var(--el-color-warning);--el-button-active-text-color:var(--el-color-white)}.el-button--warning.is-link.is-disabled,.el-button--warning.is-link.is-disabled:active,.el-button--warning.is-link.is-disabled:focus,.el-button--warning.is-link.is-disabled:hover,.el-button--warning.is-plain.is-disabled,.el-button--warning.is-plain.is-disabled:active,.el-button--warning.is-plain.is-disabled:focus,.el-button--warning.is-plain.is-disabled:hover,.el-button--warning.is-text.is-disabled,.el-button--warning.is-text.is-disabled:active,.el-button--warning.is-text.is-disabled:focus,.el-button--warning.is-text.is-disabled:hover{color:var(--el-color-warning-light-5);background-color:var(--el-color-warning-light-9);border-color:var(--el-color-warning-light-8)}.el-button--danger{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-danger);--el-button-border-color:var(--el-color-danger);--el-button-outline-color:var(--el-color-danger-light-5);--el-button-active-color:var(--el-color-danger-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-danger-light-5);--el-button-hover-bg-color:var(--el-color-danger-light-3);--el-button-hover-border-color:var(--el-color-danger-light-3);--el-button-active-bg-color:var(--el-color-danger-dark-2);--el-button-active-border-color:var(--el-color-danger-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-danger-light-5);--el-button-disabled-border-color:var(--el-color-danger-light-5)}.el-button--danger.is-link,.el-button--danger.is-plain,.el-button--danger.is-text{--el-button-text-color:var(--el-color-danger);--el-button-bg-color:var(--el-color-danger-light-9);--el-button-border-color:var(--el-color-danger-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-danger);--el-button-hover-border-color:var(--el-color-danger);--el-button-active-text-color:var(--el-color-white)}.el-button--danger.is-link.is-disabled,.el-button--danger.is-link.is-disabled:active,.el-button--danger.is-link.is-disabled:focus,.el-button--danger.is-link.is-disabled:hover,.el-button--danger.is-plain.is-disabled,.el-button--danger.is-plain.is-disabled:active,.el-button--danger.is-plain.is-disabled:focus,.el-button--danger.is-plain.is-disabled:hover,.el-button--danger.is-text.is-disabled,.el-button--danger.is-text.is-disabled:active,.el-button--danger.is-text.is-disabled:focus,.el-button--danger.is-text.is-disabled:hover{color:var(--el-color-danger-light-5);background-color:var(--el-color-danger-light-9);border-color:var(--el-color-danger-light-8)}.el-button--info{--el-button-text-color:var(--el-color-white);--el-button-bg-color:var(--el-color-info);--el-button-border-color:var(--el-color-info);--el-button-outline-color:var(--el-color-info-light-5);--el-button-active-color:var(--el-color-info-dark-2);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-link-text-color:var(--el-color-info-light-5);--el-button-hover-bg-color:var(--el-color-info-light-3);--el-button-hover-border-color:var(--el-color-info-light-3);--el-button-active-bg-color:var(--el-color-info-dark-2);--el-button-active-border-color:var(--el-color-info-dark-2);--el-button-disabled-text-color:var(--el-color-white);--el-button-disabled-bg-color:var(--el-color-info-light-5);--el-button-disabled-border-color:var(--el-color-info-light-5)}.el-button--info.is-link,.el-button--info.is-plain,.el-button--info.is-text{--el-button-text-color:var(--el-color-info);--el-button-bg-color:var(--el-color-info-light-9);--el-button-border-color:var(--el-color-info-light-5);--el-button-hover-text-color:var(--el-color-white);--el-button-hover-bg-color:var(--el-color-info);--el-button-hover-border-color:var(--el-color-info);--el-button-active-text-color:var(--el-color-white)}.el-button--info.is-link.is-disabled,.el-button--info.is-link.is-disabled:active,.el-button--info.is-link.is-disabled:focus,.el-button--info.is-link.is-disabled:hover,.el-button--info.is-plain.is-disabled,.el-button--info.is-plain.is-disabled:active,.el-button--info.is-plain.is-disabled:focus,.el-button--info.is-plain.is-disabled:hover,.el-button--info.is-text.is-disabled,.el-button--info.is-text.is-disabled:active,.el-button--info.is-text.is-disabled:focus,.el-button--info.is-text.is-disabled:hover{color:var(--el-color-info-light-5);background-color:var(--el-color-info-light-9);border-color:var(--el-color-info-light-8)}.el-button--large{--el-button-size:40px;height:var(--el-button-size);padding:12px 19px;font-size:var(--el-font-size-base);border-radius:var(--el-border-radius-base)}.el-button--large [class*=el-icon]+span{margin-left:8px}.el-button--large.is-round{padding:12px 19px}.el-button--large.is-circle{width:var(--el-button-size);padding:12px}.el-button--small{--el-button-size:24px;height:var(--el-button-size);padding:5px 11px;font-size:12px;border-radius:calc(var(--el-border-radius-base) - 1px)}.el-button--small [class*=el-icon]+span{margin-left:4px}.el-button--small.is-round{padding:5px 11px}.el-button--small.is-circle{width:var(--el-button-size);padding:5px}.el-form{--el-form-label-font-size:var(--el-font-size-base)}.el-form--label-left .el-form-item__label{justify-content:flex-start}.el-form--label-top .el-form-item{display:block}.el-form--label-top .el-form-item .el-form-item__label{display:block;height:auto;text-align:left;margin-bottom:8px;line-height:22px}.el-form--inline .el-form-item{display:inline-flex;vertical-align:middle;margin-right:32px}.el-form--inline.el-form--label-top{display:flex;flex-wrap:wrap}.el-form--inline.el-form--label-top .el-form-item{display:block}.el-form--large.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:12px;line-height:22px}.el-form--default.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:8px;line-height:22px}.el-form--small.el-form--label-top .el-form-item .el-form-item__label{margin-bottom:4px;line-height:20px}.el-form-item{display:flex;--font-size:14px;margin-bottom:18px}.el-form-item .el-form-item{margin-bottom:0}.el-form-item .el-input__validateIcon{display:none}.el-form-item--large{--font-size:14px;--el-form-label-font-size:var(--font-size);margin-bottom:22px}.el-form-item--large .el-form-item__label{height:40px;line-height:40px}.el-form-item--large .el-form-item__content{line-height:40px}.el-form-item--large .el-form-item__error{padding-top:4px}.el-form-item--default{--font-size:14px;--el-form-label-font-size:var(--font-size);margin-bottom:18px}.el-form-item--default .el-form-item__label{height:32px;line-height:32px}.el-form-item--default .el-form-item__content{line-height:32px}.el-form-item--default .el-form-item__error{padding-top:2px}.el-form-item--small{--font-size:12px;--el-form-label-font-size:var(--font-size);margin-bottom:18px}.el-form-item--small .el-form-item__label{height:24px;line-height:24px}.el-form-item--small .el-form-item__content{line-height:24px}.el-form-item--small .el-form-item__error{padding-top:2px}.el-form-item__label-wrap{display:flex}.el-form-item__label{display:inline-flex;justify-content:flex-end;align-items:flex-start;flex:0 0 auto;font-size:var(--el-form-label-font-size);color:var(--el-text-color-regular);height:32px;line-height:32px;padding:0 12px 0 0;box-sizing:border-box}.el-form-item__content{display:flex;flex-wrap:wrap;align-items:center;flex:1;line-height:32px;position:relative;font-size:var(--font-size);min-width:0}.el-form-item__content .el-input-group{vertical-align:top}.el-form-item__error{color:var(--el-color-danger);font-size:12px;line-height:1;padding-top:2px;position:absolute;top:100%;left:0}.el-form-item__error--inline{position:relative;top:auto;left:auto;display:inline-block;margin-left:10px}.el-form-item.is-required:not(.is-no-asterisk).asterisk-left>.el-form-item__label-wrap>.el-form-item__label:before,.el-form-item.is-required:not(.is-no-asterisk).asterisk-left>.el-form-item__label:before{content:"*";color:var(--el-color-danger);margin-right:4px}.el-form-item.is-required:not(.is-no-asterisk).asterisk-right>.el-form-item__label-wrap>.el-form-item__label:after,.el-form-item.is-required:not(.is-no-asterisk).asterisk-right>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}.el-form-item.is-error .el-select-v2__wrapper,.el-form-item.is-error .el-select-v2__wrapper:focus,.el-form-item.is-error .el-textarea__inner,.el-form-item.is-error .el-textarea__inner:focus{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-form-item.is-error .el-input__wrapper{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-form-item.is-error .el-input-group__append .el-input__wrapper,.el-form-item.is-error .el-input-group__prepend .el-input__wrapper{box-shadow:0 0 0 1px transparent inset}.el-form-item.is-error .el-input__validateIcon{color:var(--el-color-danger)}.el-form-item--feedback .el-input__validateIcon{display:inline-flex}.el-divider{position:relative}.el-divider--horizontal{display:block;height:1px;width:100%;margin:24px 0;border-top:1px var(--el-border-color) var(--el-border-style)}.el-divider--vertical{display:inline-block;width:1px;height:1em;margin:0 8px;vertical-align:middle;position:relative;border-left:1px var(--el-border-color) var(--el-border-style)}.el-divider__text{position:absolute;background-color:var(--el-bg-color);padding:0 20px;font-weight:500;color:var(--el-text-color-primary);font-size:14px}.el-divider__text.is-left{left:20px;transform:translateY(-50%)}.el-divider__text.is-center{left:50%;transform:translate(-50%) translateY(-50%)}.el-divider__text.is-right{right:20px;transform:translateY(-50%)}.el-checkbox-group{font-size:0;line-height:0}.el-checkbox{--el-checkbox-font-size:14px;--el-checkbox-font-weight:var(--el-font-weight-primary);--el-checkbox-text-color:var(--el-text-color-regular);--el-checkbox-input-height:14px;--el-checkbox-input-width:14px;--el-checkbox-border-radius:var(--el-border-radius-small);--el-checkbox-bg-color:var(--el-fill-color-blank);--el-checkbox-input-border:var(--el-border);--el-checkbox-disabled-border-color:var(--el-border-color);--el-checkbox-disabled-input-fill:var(--el-fill-color-light);--el-checkbox-disabled-icon-color:var(--el-text-color-placeholder);--el-checkbox-disabled-checked-input-fill:var(--el-border-color-extra-light);--el-checkbox-disabled-checked-input-border-color:var(--el-border-color);--el-checkbox-disabled-checked-icon-color:var(--el-text-color-placeholder);--el-checkbox-checked-text-color:var(--el-color-primary);--el-checkbox-checked-input-border-color:var(--el-color-primary);--el-checkbox-checked-bg-color:var(--el-color-primary);--el-checkbox-checked-icon-color:var(--el-color-white);--el-checkbox-input-border-color-hover:var(--el-color-primary)}.el-checkbox{color:var(--el-checkbox-text-color);font-weight:var(--el-checkbox-font-weight);font-size:var(--el-font-size-base);position:relative;cursor:pointer;display:inline-flex;align-items:center;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;margin-right:30px;height:32px}.el-checkbox.is-disabled{cursor:not-allowed}.el-checkbox.is-bordered{padding:0 15px 0 9px;border-radius:var(--el-border-radius-base);border:var(--el-border);box-sizing:border-box}.el-checkbox.is-bordered.is-checked{border-color:var(--el-color-primary)}.el-checkbox.is-bordered.is-disabled{border-color:var(--el-border-color-lighter)}.el-checkbox.is-bordered.el-checkbox--large{padding:0 19px 0 11px;border-radius:var(--el-border-radius-base)}.el-checkbox.is-bordered.el-checkbox--large .el-checkbox__label{font-size:var(--el-font-size-base)}.el-checkbox.is-bordered.el-checkbox--large .el-checkbox__inner{height:14px;width:14px}.el-checkbox.is-bordered.el-checkbox--small{padding:0 11px 0 7px;border-radius:calc(var(--el-border-radius-base) - 1px)}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__label{font-size:12px}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__inner{height:12px;width:12px}.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__inner:after{height:6px;width:2px}.el-checkbox input:focus-visible+.el-checkbox__inner{outline:2px solid var(--el-checkbox-input-border-color-hover);outline-offset:1px;border-radius:var(--el-checkbox-border-radius)}.el-checkbox__input{white-space:nowrap;cursor:pointer;outline:0;display:inline-flex;position:relative}.el-checkbox__input.is-disabled .el-checkbox__inner{background-color:var(--el-checkbox-disabled-input-fill);border-color:var(--el-checkbox-disabled-border-color);cursor:not-allowed}.el-checkbox__input.is-disabled .el-checkbox__inner:after{cursor:not-allowed;border-color:var(--el-checkbox-disabled-icon-color)}.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner{background-color:var(--el-checkbox-disabled-checked-input-fill);border-color:var(--el-checkbox-disabled-checked-input-border-color)}.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after{border-color:var(--el-checkbox-disabled-checked-icon-color)}.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner{background-color:var(--el-checkbox-disabled-checked-input-fill);border-color:var(--el-checkbox-disabled-checked-input-border-color)}.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner:before{background-color:var(--el-checkbox-disabled-checked-icon-color);border-color:var(--el-checkbox-disabled-checked-icon-color)}.el-checkbox__input.is-disabled+span.el-checkbox__label{color:var(--el-disabled-text-color);cursor:not-allowed}.el-checkbox__input.is-checked .el-checkbox__inner{background-color:var(--el-checkbox-checked-bg-color);border-color:var(--el-checkbox-checked-input-border-color)}.el-checkbox__input.is-checked .el-checkbox__inner:after{transform:rotate(45deg) scaleY(1)}.el-checkbox__input.is-checked+.el-checkbox__label{color:var(--el-checkbox-checked-text-color)}.el-checkbox__input.is-focus:not(.is-checked) .el-checkbox__original:not(:focus-visible){border-color:var(--el-checkbox-input-border-color-hover)}.el-checkbox__input.is-indeterminate .el-checkbox__inner{background-color:var(--el-checkbox-checked-bg-color);border-color:var(--el-checkbox-checked-input-border-color)}.el-checkbox__input.is-indeterminate .el-checkbox__inner:before{content:"";position:absolute;display:block;background-color:var(--el-checkbox-checked-icon-color);height:2px;transform:scale(.5);left:0;right:0;top:5px}.el-checkbox__input.is-indeterminate .el-checkbox__inner:after{display:none}.el-checkbox__inner{display:inline-block;position:relative;border:var(--el-checkbox-input-border);border-radius:var(--el-checkbox-border-radius);box-sizing:border-box;width:var(--el-checkbox-input-width);height:var(--el-checkbox-input-height);background-color:var(--el-checkbox-bg-color);z-index:var(--el-index-normal);transition:border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46),outline .25s cubic-bezier(.71,-.46,.29,1.46)}.el-checkbox__inner:hover{border-color:var(--el-checkbox-input-border-color-hover)}.el-checkbox__inner:after{box-sizing:content-box;content:"";border:1px solid var(--el-checkbox-checked-icon-color);border-left:0;border-top:0;height:7px;left:4px;position:absolute;top:1px;transform:rotate(45deg) scaleY(0);width:3px;transition:transform .15s ease-in 50ms;transform-origin:center}.el-checkbox__original{opacity:0;outline:0;position:absolute;margin:0;width:0;height:0;z-index:-1}.el-checkbox__label{display:inline-block;padding-left:8px;line-height:1;font-size:var(--el-checkbox-font-size)}.el-checkbox.el-checkbox--large{height:40px}.el-checkbox.el-checkbox--large .el-checkbox__label{font-size:14px}.el-checkbox.el-checkbox--large .el-checkbox__inner{width:14px;height:14px}.el-checkbox.el-checkbox--small{height:24px}.el-checkbox.el-checkbox--small .el-checkbox__label{font-size:12px}.el-checkbox.el-checkbox--small .el-checkbox__inner{width:12px;height:12px}.el-checkbox.el-checkbox--small .el-checkbox__input.is-indeterminate .el-checkbox__inner:before{top:4px}.el-checkbox.el-checkbox--small .el-checkbox__inner:after{width:2px;height:6px}.el-checkbox:last-of-type{margin-right:0}.el-input-number{position:relative;display:inline-flex;width:150px;line-height:30px}.el-input-number .el-input__wrapper{padding-left:42px;padding-right:42px}.el-input-number .el-input__inner{-webkit-appearance:none;-moz-appearance:textfield;text-align:center;line-height:1}.el-input-number .el-input__inner::-webkit-inner-spin-button,.el-input-number .el-input__inner::-webkit-outer-spin-button{margin:0;-webkit-appearance:none}.el-input-number__decrease,.el-input-number__increase{display:flex;justify-content:center;align-items:center;height:auto;position:absolute;z-index:1;top:1px;bottom:1px;width:32px;background:var(--el-fill-color-light);color:var(--el-text-color-regular);cursor:pointer;font-size:13px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-input-number__decrease:hover,.el-input-number__increase:hover{color:var(--el-color-primary)}.el-input-number__decrease:hover~.el-input:not(.is-disabled) .el-input_wrapper,.el-input-number__increase:hover~.el-input:not(.is-disabled) .el-input_wrapper{box-shadow:0 0 0 1px var(--el-input-focus-border-color,var(--el-color-primary)) inset}.el-input-number__decrease.is-disabled,.el-input-number__increase.is-disabled{color:var(--el-disabled-text-color);cursor:not-allowed}.el-input-number__increase{right:1px;border-radius:0 var(--el-border-radius-base) var(--el-border-radius-base) 0;border-left:var(--el-border)}.el-input-number__decrease{left:1px;border-radius:var(--el-border-radius-base) 0 0 var(--el-border-radius-base);border-right:var(--el-border)}.el-input-number.is-disabled .el-input-number__decrease,.el-input-number.is-disabled .el-input-number__increase{border-color:var(--el-disabled-border-color);color:var(--el-disabled-border-color)}.el-input-number.is-disabled .el-input-number__decrease:hover,.el-input-number.is-disabled .el-input-number__increase:hover{color:var(--el-disabled-border-color);cursor:not-allowed}.el-input-number--large{width:180px;line-height:38px}.el-input-number--large .el-input-number__decrease,.el-input-number--large .el-input-number__increase{width:40px;font-size:14px}.el-input-number--large .el-input__wrapper{padding-left:47px;padding-right:47px}.el-input-number--small{width:120px;line-height:22px}.el-input-number--small .el-input-number__decrease,.el-input-number--small .el-input-number__increase{width:24px;font-size:12px}.el-input-number--small .el-input__wrapper{padding-left:31px;padding-right:31px}.el-input-number--small .el-input-number__decrease [class*=el-icon],.el-input-number--small .el-input-number__increase [class*=el-icon]{transform:scale(.9)}.el-input-number.is-without-controls .el-input__wrapper{padding-left:15px;padding-right:15px}.el-input-number.is-controls-right .el-input__wrapper{padding-left:15px;padding-right:42px}.el-input-number.is-controls-right .el-input-number__decrease,.el-input-number.is-controls-right .el-input-number__increase{--el-input-number-controls-height:15px;height:var(--el-input-number-controls-height);line-height:var(--el-input-number-controls-height)}.el-input-number.is-controls-right .el-input-number__decrease [class*=el-icon],.el-input-number.is-controls-right .el-input-number__increase [class*=el-icon]{transform:scale(.8)}.el-input-number.is-controls-right .el-input-number__increase{bottom:auto;left:auto;border-radius:0 var(--el-border-radius-base) 0 0;border-bottom:var(--el-border)}.el-input-number.is-controls-right .el-input-number__decrease{right:1px;top:auto;left:auto;border-right:none;border-left:var(--el-border);border-radius:0 0 var(--el-border-radius-base) 0}.el-input-number.is-controls-right[class*=large] [class*=decrease],.el-input-number.is-controls-right[class*=large] [class*=increase]{--el-input-number-controls-height:19px}.el-input-number.is-controls-right[class*=small] [class*=decrease],.el-input-number.is-controls-right[class*=small] [class*=increase]{--el-input-number-controls-height:11px}.el-textarea{--el-input-text-color:var(--el-text-color-regular);--el-input-border:var(--el-border);--el-input-hover-border:var(--el-border-color-hover);--el-input-focus-border:var(--el-color-primary);--el-input-transparent-border:0 0 0 1px transparent inset;--el-input-border-color:var(--el-border-color);--el-input-border-radius:var(--el-border-radius-base);--el-input-bg-color:var(--el-fill-color-blank);--el-input-icon-color:var(--el-text-color-placeholder);--el-input-placeholder-color:var(--el-text-color-placeholder);--el-input-hover-border-color:var(--el-border-color-hover);--el-input-clear-hover-color:var(--el-text-color-secondary);--el-input-focus-border-color:var(--el-color-primary)}.el-textarea{position:relative;display:inline-block;width:100%;vertical-align:bottom;font-size:var(--el-font-size-base)}.el-textarea__inner{position:relative;display:block;resize:vertical;padding:5px 11px;line-height:1.5;box-sizing:border-box;width:100%;font-size:inherit;font-family:inherit;color:var(--el-input-text-color,var(--el-text-color-regular));background-color:var(--el-input-bg-color,var(--el-fill-color-blank));background-image:none;-webkit-appearance:none;box-shadow:0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset;border-radius:var(--el-input-border-radius,var(--el-border-radius-base));transition:var(--el-transition-box-shadow);border:none}.el-textarea__inner::-moz-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner:-ms-input-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner::placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-textarea__inner:hover{box-shadow:0 0 0 1px var(--el-input-hover-border-color) inset}.el-textarea__inner:focus{outline:0;box-shadow:0 0 0 1px var(--el-input-focus-border-color) inset}.el-textarea .el-input__count{color:var(--el-color-info);background:var(--el-fill-color-blank);position:absolute;font-size:12px;line-height:14px;bottom:5px;right:10px}.el-textarea.is-disabled .el-textarea__inner{background-color:var(--el-disabled-bg-color);border-color:var(--el-disabled-border-color);color:var(--el-disabled-text-color);cursor:not-allowed}.el-textarea.is-disabled .el-textarea__inner::-moz-placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-disabled .el-textarea__inner:-ms-input-placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-disabled .el-textarea__inner::placeholder{color:var(--el-text-color-placeholder)}.el-textarea.is-exceed .el-textarea__inner{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-textarea.is-exceed .el-input__count{color:var(--el-color-danger)}.el-input{--el-input-text-color:var(--el-text-color-regular);--el-input-border:var(--el-border);--el-input-hover-border:var(--el-border-color-hover);--el-input-focus-border:var(--el-color-primary);--el-input-transparent-border:0 0 0 1px transparent inset;--el-input-border-color:var(--el-border-color);--el-input-border-radius:var(--el-border-radius-base);--el-input-bg-color:var(--el-fill-color-blank);--el-input-icon-color:var(--el-text-color-placeholder);--el-input-placeholder-color:var(--el-text-color-placeholder);--el-input-hover-border-color:var(--el-border-color-hover);--el-input-clear-hover-color:var(--el-text-color-secondary);--el-input-focus-border-color:var(--el-color-primary)}.el-input{--el-input-height:var(--el-component-size);position:relative;font-size:var(--el-font-size-base);display:inline-flex;width:100%;line-height:var(--el-input-height);box-sizing:border-box;vertical-align:middle}.el-input::-webkit-scrollbar{z-index:11;width:6px}.el-input::-webkit-scrollbar:horizontal{height:6px}.el-input::-webkit-scrollbar-thumb{border-radius:5px;width:6px;background:var(--el-text-color-disabled)}.el-input::-webkit-scrollbar-corner{background:var(--el-fill-color-blank)}.el-input::-webkit-scrollbar-track{background:var(--el-fill-color-blank)}.el-input::-webkit-scrollbar-track-piece{background:var(--el-fill-color-blank);width:6px}.el-input .el-input__clear,.el-input .el-input__password{color:var(--el-input-icon-color);font-size:14px;cursor:pointer}.el-input .el-input__clear:hover,.el-input .el-input__password:hover{color:var(--el-input-clear-hover-color)}.el-input .el-input__count{height:100%;display:inline-flex;align-items:center;color:var(--el-color-info);font-size:12px}.el-input .el-input__count .el-input__count-inner{background:var(--el-fill-color-blank);line-height:initial;display:inline-block;padding-left:8px}.el-input__wrapper{display:inline-flex;flex-grow:1;align-items:center;justify-content:center;padding:1px 11px;background-color:var(--el-input-bg-color,var(--el-fill-color-blank));background-image:none;border-radius:var(--el-input-border-radius,var(--el-border-radius-base));transition:var(--el-transition-box-shadow);transform:translateZ(0);box-shadow:0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset}.el-input__wrapper:hover{box-shadow:0 0 0 1px var(--el-input-hover-border-color) inset}.el-input__wrapper.is-focus{box-shadow:0 0 0 1px var(--el-input-focus-border-color) inset}.el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 32px) - 2px);width:100%;flex-grow:1;-webkit-appearance:none;color:var(--el-input-text-color,var(--el-text-color-regular));font-size:inherit;height:var(--el-input-inner-height);line-height:var(--el-input-inner-height);padding:0;outline:0;border:none;background:0 0;box-sizing:border-box}.el-input__inner:focus{outline:0}.el-input__inner::-moz-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner:-ms-input-placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner::placeholder{color:var(--el-input-placeholder-color,var(--el-text-color-placeholder))}.el-input__inner[type=password]::-ms-reveal{display:none}.el-input__prefix{display:inline-flex;white-space:nowrap;flex-shrink:0;flex-wrap:nowrap;height:100%;text-align:center;color:var(--el-input-icon-color,var(--el-text-color-placeholder));transition:all var(--el-transition-duration);pointer-events:none}.el-input__prefix-inner{pointer-events:all;display:inline-flex;align-items:center;justify-content:center}.el-input__prefix-inner>:last-child{margin-right:8px}.el-input__prefix-inner>:first-child,.el-input__prefix-inner>:first-child.el-input__icon{margin-left:0}.el-input__suffix{display:inline-flex;white-space:nowrap;flex-shrink:0;flex-wrap:nowrap;height:100%;text-align:center;color:var(--el-input-icon-color,var(--el-text-color-placeholder));transition:all var(--el-transition-duration);pointer-events:none}.el-input__suffix-inner{pointer-events:all;display:inline-flex;align-items:center;justify-content:center}.el-input__suffix-inner>:first-child{margin-left:8px}.el-input .el-input__icon{height:inherit;line-height:inherit;display:flex;justify-content:center;align-items:center;transition:all var(--el-transition-duration);margin-left:8px}.el-input__validateIcon{pointer-events:none}.el-input.is-active .el-input__wrapper{box-shadow:0 0 0 1px var(--el-input-focus-color,) inset}.el-input.is-disabled{cursor:not-allowed}.el-input.is-disabled .el-input__wrapper{background-color:var(--el-disabled-bg-color);box-shadow:0 0 0 1px var(--el-disabled-border-color) inset}.el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color);-webkit-text-fill-color:var(--el-disabled-text-color);cursor:not-allowed}.el-input.is-disabled .el-input__inner::-moz-placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__inner:-ms-input-placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__inner::placeholder{color:var(--el-text-color-placeholder)}.el-input.is-disabled .el-input__icon{cursor:not-allowed}.el-input.is-exceed .el-input__wrapper{box-shadow:0 0 0 1px var(--el-color-danger) inset}.el-input.is-exceed .el-input__suffix .el-input__count{color:var(--el-color-danger)}.el-input--large{--el-input-height:var(--el-component-size-large);font-size:14px}.el-input--large .el-input__wrapper{padding:1px 15px}.el-input--large .el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 40px) - 2px)}.el-input--small{--el-input-height:var(--el-component-size-small);font-size:12px}.el-input--small .el-input__wrapper{padding:1px 7px}.el-input--small .el-input__inner{--el-input-inner-height:calc(var(--el-input-height, 24px) - 2px)}.el-input-group{display:inline-flex;width:100%;align-items:stretch}.el-input-group__append,.el-input-group__prepend{background-color:var(--el-fill-color-light);color:var(--el-color-info);position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:100%;border-radius:var(--el-input-border-radius);padding:0 20px;white-space:nowrap}.el-input-group__append:focus,.el-input-group__prepend:focus{outline:0}.el-input-group__append .el-button,.el-input-group__append .el-select,.el-input-group__prepend .el-button,.el-input-group__prepend .el-select{display:inline-block;margin:0 -20px}.el-input-group__append button.el-button,.el-input-group__append button.el-button:hover,.el-input-group__append div.el-select .el-input__wrapper,.el-input-group__append div.el-select:hover .el-input__wrapper,.el-input-group__prepend button.el-button,.el-input-group__prepend button.el-button:hover,.el-input-group__prepend div.el-select .el-input__wrapper,.el-input-group__prepend div.el-select:hover .el-input__wrapper{border-color:transparent;background-color:transparent;color:inherit}.el-input-group__append .el-button,.el-input-group__append .el-input,.el-input-group__prepend .el-button,.el-input-group__prepend .el-input{font-size:inherit}.el-input-group__prepend{border-right:0;border-top-right-radius:0;border-bottom-right-radius:0;box-shadow:1px 0 0 0 var(--el-input-border-color) inset,0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset}.el-input-group__append{border-left:0;border-top-left-radius:0;border-bottom-left-radius:0;box-shadow:0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset,-1px 0 0 0 var(--el-input-border-color) inset}.el-input-group--prepend>.el-input__wrapper{border-top-left-radius:0;border-bottom-left-radius:0}.el-input-group--prepend .el-input-group__prepend .el-select .el-input .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select .el-input .el-input__wrapper{border-top-right-radius:0;border-bottom-right-radius:0;box-shadow:1px 0 0 0 var(--el-input-border-color) inset,0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__wrapper{box-shadow:1px 0 0 0 var(--el-input-focus-border-color) inset,1px 0 0 0 var(--el-input-focus-border-color),0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important;z-index:2}.el-input-group--prepend .el-input-group__prepend .el-select .el-input.is-focus .el-input__wrapper:focus{outline:0;z-index:2;box-shadow:1px 0 0 0 var(--el-input-focus-border-color) inset,1px 0 0 0 var(--el-input-focus-border-color),0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important}.el-input-group--prepend .el-input-group__prepend .el-select:hover .el-input__inner{box-shadow:none!important}.el-input-group--prepend .el-input-group__prepend .el-select:hover .el-input__wrapper{z-index:1;box-shadow:1px 0 0 0 var(--el-input-hover-border-color) inset,1px 0 0 0 var(--el-input-hover-border-color),0 1px 0 0 var(--el-input-hover-border-color) inset,0 -1px 0 0 var(--el-input-hover-border-color) inset!important}.el-input-group--append>.el-input__wrapper{border-top-right-radius:0;border-bottom-right-radius:0}.el-input-group--append .el-input-group__append .el-select .el-input .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select .el-input .el-input__wrapper{border-top-left-radius:0;border-bottom-left-radius:0;box-shadow:0 1px 0 0 var(--el-input-border-color) inset,0 -1px 0 0 var(--el-input-border-color) inset,-1px 0 0 0 var(--el-input-border-color) inset}.el-input-group--append .el-input-group__append .el-select .el-input.is-focus .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select .el-input.is-focus .el-input__wrapper{z-index:2;box-shadow:-1px 0 0 0 var(--el-input-focus-border-color),-1px 0 0 0 var(--el-input-focus-border-color) inset,0 1px 0 0 var(--el-input-focus-border-color) inset,0 -1px 0 0 var(--el-input-focus-border-color) inset!important}.el-input-group--append .el-input-group__append .el-select:hover .el-input__inner{box-shadow:none!important}.el-input-group--append .el-input-group__append .el-select:hover .el-input__wrapper{z-index:1;box-shadow:-1px 0 0 0 var(--el-input-hover-border-color),-1px 0 0 0 var(--el-input-hover-border-color) inset,0 1px 0 0 var(--el-input-hover-border-color) inset,0 -1px 0 0 var(--el-input-hover-border-color) inset!important}.el-switch{--el-switch-on-color:var(--el-color-primary);--el-switch-off-color:var(--el-border-color)}.el-switch{display:inline-flex;align-items:center;position:relative;font-size:14px;line-height:20px;height:32px;vertical-align:middle}.el-switch.is-disabled .el-switch__core,.el-switch.is-disabled .el-switch__label{cursor:not-allowed}.el-switch__label{transition:var(--el-transition-duration-fast);height:20px;display:inline-block;font-size:14px;font-weight:500;cursor:pointer;vertical-align:middle;color:var(--el-text-color-primary)}.el-switch__label.is-active{color:var(--el-color-primary)}.el-switch__label--left{margin-right:10px}.el-switch__label--right{margin-left:10px}.el-switch__label *{line-height:1;font-size:14px;display:inline-block}.el-switch__label .el-icon{height:inherit}.el-switch__label .el-icon svg{vertical-align:middle}.el-switch__input{position:absolute;width:0;height:0;opacity:0;margin:0}.el-switch__input:focus-visible~.el-switch__core{outline:2px solid var(--el-switch-on-color);outline-offset:1px}.el-switch__core{display:inline-flex;position:relative;align-items:center;min-width:40px;height:20px;border:1px solid var(--el-switch-border-color,var(--el-switch-off-color));outline:0;border-radius:10px;box-sizing:border-box;background:var(--el-switch-off-color);cursor:pointer;transition:border-color var(--el-transition-duration),background-color var(--el-transition-duration)}.el-switch__core .el-switch__inner{width:100%;transition:all var(--el-transition-duration);height:16px;display:flex;justify-content:center;align-items:center;overflow:hidden;padding:0 4px 0 18px}.el-switch__core .el-switch__inner .is-icon,.el-switch__core .el-switch__inner .is-text{font-size:12px;color:var(--el-color-white);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.el-switch__core .el-switch__action{position:absolute;left:1px;border-radius:var(--el-border-radius-circle);transition:all var(--el-transition-duration);width:16px;height:16px;background-color:var(--el-color-white);display:flex;justify-content:center;align-items:center;color:var(--el-switch-off-color)}.el-switch.is-checked .el-switch__core{border-color:var(--el-switch-border-color,var(--el-switch-on-color));background-color:var(--el-switch-on-color)}.el-switch.is-checked .el-switch__core .el-switch__action{left:calc(100% - 17px);color:var(--el-switch-on-color)}.el-switch.is-checked .el-switch__core .el-switch__inner{padding:0 18px 0 4px}.el-switch.is-disabled{opacity:.6}.el-switch--wide .el-switch__label.el-switch__label--left span{left:10px}.el-switch--wide .el-switch__label.el-switch__label--right span{right:10px}.el-switch .label-fade-enter-from,.el-switch .label-fade-leave-active{opacity:0}.el-switch--large{font-size:14px;line-height:24px;height:40px}.el-switch--large .el-switch__label{height:24px;font-size:14px}.el-switch--large .el-switch__label *{font-size:14px}.el-switch--large .el-switch__core{min-width:50px;height:24px;border-radius:12px}.el-switch--large .el-switch__core .el-switch__inner{height:20px;padding:0 6px 0 22px}.el-switch--large .el-switch__core .el-switch__action{width:20px;height:20px}.el-switch--large.is-checked .el-switch__core .el-switch__action{left:calc(100% - 21px)}.el-switch--large.is-checked .el-switch__core .el-switch__inner{padding:0 22px 0 6px}.el-switch--small{font-size:12px;line-height:16px;height:24px}.el-switch--small .el-switch__label{height:16px;font-size:12px}.el-switch--small .el-switch__label *{font-size:12px}.el-switch--small .el-switch__core{min-width:30px;height:16px;border-radius:8px}.el-switch--small .el-switch__core .el-switch__inner{height:12px;padding:0 2px 0 14px}.el-switch--small .el-switch__core .el-switch__action{width:12px;height:12px}.el-switch--small.is-checked .el-switch__core .el-switch__action{left:calc(100% - 13px)}.el-switch--small.is-checked .el-switch__core .el-switch__inner{padding:0 14px 0 2px}.el-slider{--el-slider-main-bg-color:var(--el-color-primary);--el-slider-runway-bg-color:var(--el-border-color-light);--el-slider-stop-bg-color:var(--el-color-white);--el-slider-disabled-color:var(--el-text-color-placeholder);--el-slider-border-radius:3px;--el-slider-height:6px;--el-slider-button-size:20px;--el-slider-button-wrapper-size:36px;--el-slider-button-wrapper-offset:-15px}.el-slider{width:100%;height:32px;display:flex;align-items:center}.el-slider__runway{flex:1;height:var(--el-slider-height);background-color:var(--el-slider-runway-bg-color);border-radius:var(--el-slider-border-radius);position:relative;cursor:pointer}.el-slider__runway.show-input{margin-right:30px;width:auto}.el-slider__runway.is-disabled{cursor:default}.el-slider__runway.is-disabled .el-slider__bar{background-color:var(--el-slider-disabled-color)}.el-slider__runway.is-disabled .el-slider__button{border-color:var(--el-slider-disabled-color)}.el-slider__runway.is-disabled .el-slider__button-wrapper.hover,.el-slider__runway.is-disabled .el-slider__button-wrapper:hover,.el-slider__runway.is-disabled .el-slider__button-wrapper.dragging{cursor:not-allowed}.el-slider__runway.is-disabled .el-slider__button.dragging,.el-slider__runway.is-disabled .el-slider__button.hover,.el-slider__runway.is-disabled .el-slider__button:hover{transform:scale(1)}.el-slider__runway.is-disabled .el-slider__button.hover,.el-slider__runway.is-disabled .el-slider__button:hover,.el-slider__runway.is-disabled .el-slider__button.dragging{cursor:not-allowed}.el-slider__input{flex-shrink:0;width:130px}.el-slider__bar{height:var(--el-slider-height);background-color:var(--el-slider-main-bg-color);border-top-left-radius:var(--el-slider-border-radius);border-bottom-left-radius:var(--el-slider-border-radius);position:absolute}.el-slider__button-wrapper{height:var(--el-slider-button-wrapper-size);width:var(--el-slider-button-wrapper-size);position:absolute;z-index:1;top:var(--el-slider-button-wrapper-offset);transform:translate(-50%);background-color:transparent;text-align:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:normal;outline:0}.el-slider__button-wrapper:after{display:inline-block;content:"";height:100%;vertical-align:middle}.el-slider__button-wrapper.hover,.el-slider__button-wrapper:hover{cursor:-webkit-grab;cursor:grab}.el-slider__button-wrapper.dragging{cursor:-webkit-grabbing;cursor:grabbing}.el-slider__button{display:inline-block;width:var(--el-slider-button-size);height:var(--el-slider-button-size);vertical-align:middle;border:solid 2px var(--el-slider-main-bg-color);background-color:var(--el-color-white);border-radius:50%;box-sizing:border-box;transition:var(--el-transition-duration-fast);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.el-slider__button.dragging,.el-slider__button.hover,.el-slider__button:hover{transform:scale(1.2)}.el-slider__button.hover,.el-slider__button:hover{cursor:-webkit-grab;cursor:grab}.el-slider__button.dragging{cursor:-webkit-grabbing;cursor:grabbing}.el-slider__stop{position:absolute;height:var(--el-slider-height);width:var(--el-slider-height);border-radius:var(--el-border-radius-circle);background-color:var(--el-slider-stop-bg-color);transform:translate(-50%)}.el-slider__marks{top:0;left:12px;width:18px;height:100%}.el-slider__marks-text{position:absolute;transform:translate(-50%);font-size:14px;color:var(--el-color-info);margin-top:15px;white-space:pre}.el-slider.is-vertical{position:relative;display:inline-flex;width:auto;height:100%;flex:0}.el-slider.is-vertical .el-slider__runway{width:var(--el-slider-height);height:100%;margin:0 16px}.el-slider.is-vertical .el-slider__bar{width:var(--el-slider-height);height:auto;border-radius:0 0 3px 3px}.el-slider.is-vertical .el-slider__button-wrapper{top:auto;left:var(--el-slider-button-wrapper-offset);transform:translateY(50%)}.el-slider.is-vertical .el-slider__stop{transform:translateY(50%)}.el-slider.is-vertical .el-slider__marks-text{margin-top:0;left:15px;transform:translateY(50%)}.el-slider--large{height:40px}.el-slider--small{height:24px}.el-tag{--el-tag-font-size:12px;--el-tag-border-radius:4px;--el-tag-border-radius-rounded:9999px}.el-tag{--el-tag-bg-color:var(--el-color-primary-light-9);--el-tag-border-color:var(--el-color-primary-light-8);--el-tag-hover-color:var(--el-color-primary);--el-tag-text-color:var(--el-color-primary);background-color:var(--el-tag-bg-color);border-color:var(--el-tag-border-color);color:var(--el-tag-text-color);display:inline-flex;justify-content:center;align-items:center;height:24px;padding:0 9px;font-size:var(--el-tag-font-size);line-height:1;border-width:1px;border-style:solid;border-radius:var(--el-tag-border-radius);box-sizing:border-box;white-space:nowrap;--el-icon-size:14px}.el-tag.el-tag--primary{--el-tag-bg-color:var(--el-color-primary-light-9);--el-tag-border-color:var(--el-color-primary-light-8);--el-tag-hover-color:var(--el-color-primary)}.el-tag.el-tag--success{--el-tag-bg-color:var(--el-color-success-light-9);--el-tag-border-color:var(--el-color-success-light-8);--el-tag-hover-color:var(--el-color-success)}.el-tag.el-tag--warning{--el-tag-bg-color:var(--el-color-warning-light-9);--el-tag-border-color:var(--el-color-warning-light-8);--el-tag-hover-color:var(--el-color-warning)}.el-tag.el-tag--danger{--el-tag-bg-color:var(--el-color-danger-light-9);--el-tag-border-color:var(--el-color-danger-light-8);--el-tag-hover-color:var(--el-color-danger)}.el-tag.el-tag--error{--el-tag-bg-color:var(--el-color-error-light-9);--el-tag-border-color:var(--el-color-error-light-8);--el-tag-hover-color:var(--el-color-error)}.el-tag.el-tag--info{--el-tag-bg-color:var(--el-color-info-light-9);--el-tag-border-color:var(--el-color-info-light-8);--el-tag-hover-color:var(--el-color-info)}.el-tag.el-tag--primary{--el-tag-text-color:var(--el-color-primary)}.el-tag.el-tag--success{--el-tag-text-color:var(--el-color-success)}.el-tag.el-tag--warning{--el-tag-text-color:var(--el-color-warning)}.el-tag.el-tag--danger{--el-tag-text-color:var(--el-color-danger)}.el-tag.el-tag--error{--el-tag-text-color:var(--el-color-error)}.el-tag.el-tag--info{--el-tag-text-color:var(--el-color-info)}.el-tag.is-hit{border-color:var(--el-color-primary)}.el-tag.is-round{border-radius:var(--el-tag-border-radius-rounded)}.el-tag .el-tag__close{color:var(--el-tag-text-color)}.el-tag .el-tag__close:hover{color:var(--el-color-white);background-color:var(--el-tag-hover-color)}.el-tag .el-icon{border-radius:50%;cursor:pointer;font-size:calc(var(--el-icon-size) - 2px);height:var(--el-icon-size);width:var(--el-icon-size)}.el-tag .el-tag__close{margin-left:6px}.el-tag--dark{--el-tag-bg-color:var(--el-color-primary);--el-tag-border-color:var(--el-color-primary);--el-tag-hover-color:var(--el-color-primary-light-3);--el-tag-text-color:var(--el-color-white)}.el-tag--dark.el-tag--primary{--el-tag-bg-color:var(--el-color-primary);--el-tag-border-color:var(--el-color-primary);--el-tag-hover-color:var(--el-color-primary-light-3)}.el-tag--dark.el-tag--success{--el-tag-bg-color:var(--el-color-success);--el-tag-border-color:var(--el-color-success);--el-tag-hover-color:var(--el-color-success-light-3)}.el-tag--dark.el-tag--warning{--el-tag-bg-color:var(--el-color-warning);--el-tag-border-color:var(--el-color-warning);--el-tag-hover-color:var(--el-color-warning-light-3)}.el-tag--dark.el-tag--danger{--el-tag-bg-color:var(--el-color-danger);--el-tag-border-color:var(--el-color-danger);--el-tag-hover-color:var(--el-color-danger-light-3)}.el-tag--dark.el-tag--error{--el-tag-bg-color:var(--el-color-error);--el-tag-border-color:var(--el-color-error);--el-tag-hover-color:var(--el-color-error-light-3)}.el-tag--dark.el-tag--info{--el-tag-bg-color:var(--el-color-info);--el-tag-border-color:var(--el-color-info);--el-tag-hover-color:var(--el-color-info-light-3)}.el-tag--dark.el-tag--primary,.el-tag--dark.el-tag--success,.el-tag--dark.el-tag--warning,.el-tag--dark.el-tag--danger,.el-tag--dark.el-tag--error,.el-tag--dark.el-tag--info{--el-tag-text-color:var(--el-color-white)}.el-tag--plain{--el-tag-border-color:var(--el-color-primary-light-5);--el-tag-hover-color:var(--el-color-primary);--el-tag-bg-color:var(--el-fill-color-blank)}.el-tag--plain.el-tag--primary{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-primary-light-5);--el-tag-hover-color:var(--el-color-primary)}.el-tag--plain.el-tag--success{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-success-light-5);--el-tag-hover-color:var(--el-color-success)}.el-tag--plain.el-tag--warning{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-warning-light-5);--el-tag-hover-color:var(--el-color-warning)}.el-tag--plain.el-tag--danger{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-danger-light-5);--el-tag-hover-color:var(--el-color-danger)}.el-tag--plain.el-tag--error{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-error-light-5);--el-tag-hover-color:var(--el-color-error)}.el-tag--plain.el-tag--info{--el-tag-bg-color:var(--el-fill-color-blank);--el-tag-border-color:var(--el-color-info-light-5);--el-tag-hover-color:var(--el-color-info)}.el-tag.is-closable{padding-right:5px}.el-tag--large{padding:0 11px;height:32px;--el-icon-size:16px}.el-tag--large .el-tag__close{margin-left:8px}.el-tag--large.is-closable{padding-right:7px}.el-tag--small{padding:0 7px;height:20px;--el-icon-size:12px}.el-tag--small .el-tag__close{margin-left:4px}.el-tag--small.is-closable{padding-right:3px}.el-tag--small .el-icon-close{transform:scale(.8)}.el-tag.el-tag--primary.is-hit{border-color:var(--el-color-primary)}.el-tag.el-tag--success.is-hit{border-color:var(--el-color-success)}.el-tag.el-tag--warning.is-hit{border-color:var(--el-color-warning)}.el-tag.el-tag--danger.is-hit{border-color:var(--el-color-danger)}.el-tag.el-tag--error.is-hit{border-color:var(--el-color-error)}.el-tag.el-tag--info.is-hit{border-color:var(--el-color-info)}.el-select-dropdown__item{font-size:var(--el-font-size-base);padding:0 32px 0 20px;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--el-text-color-regular);height:34px;line-height:34px;box-sizing:border-box;cursor:pointer}.el-select-dropdown__item.is-disabled{color:var(--el-text-color-placeholder);cursor:not-allowed}.el-select-dropdown__item.hover,.el-select-dropdown__item:hover{background-color:var(--el-fill-color-light)}.el-select-dropdown__item.selected{color:var(--el-color-primary);font-weight:700}.el-select-group{margin:0;padding:0}.el-select-group__wrap{position:relative;list-style:none;margin:0;padding:0}.el-select-group__wrap:not(:last-of-type){padding-bottom:24px}.el-select-group__wrap:not(:last-of-type):after{content:"";position:absolute;display:block;left:20px;right:20px;bottom:12px;height:1px;background:var(--el-border-color-light)}.el-select-group__split-dash{position:absolute;left:20px;right:20px;height:1px;background:var(--el-border-color-light)}.el-select-group__title{padding-left:20px;font-size:12px;color:var(--el-color-info);line-height:30px}.el-select-group .el-select-dropdown__item{padding-left:20px}.el-scrollbar{--el-scrollbar-opacity:.3;--el-scrollbar-bg-color:var(--el-text-color-secondary);--el-scrollbar-hover-opacity:.5;--el-scrollbar-hover-bg-color:var(--el-text-color-secondary)}.el-scrollbar{overflow:hidden;position:relative;height:100%}.el-scrollbar__wrap{overflow:auto;height:100%}.el-scrollbar__wrap--hidden-default{scrollbar-width:none}.el-scrollbar__wrap--hidden-default::-webkit-scrollbar{display:none}.el-scrollbar__thumb{position:relative;display:block;width:0;height:0;cursor:pointer;border-radius:inherit;background-color:var(--el-scrollbar-bg-color,var(--el-text-color-secondary));transition:var(--el-transition-duration) background-color;opacity:var(--el-scrollbar-opacity,.3)}.el-scrollbar__thumb:hover{background-color:var(--el-scrollbar-hover-bg-color,var(--el-text-color-secondary));opacity:var(--el-scrollbar-hover-opacity,.5)}.el-scrollbar__bar{position:absolute;right:2px;bottom:2px;z-index:1;border-radius:4px}.el-scrollbar__bar.is-vertical{width:6px;top:2px}.el-scrollbar__bar.is-vertical>div{width:100%}.el-scrollbar__bar.is-horizontal{height:6px;left:2px}.el-scrollbar__bar.is-horizontal>div{height:100%}.el-scrollbar-fade-enter-active{transition:opacity .34s ease-out}.el-scrollbar-fade-leave-active{transition:opacity .12s ease-out}.el-scrollbar-fade-enter-from,.el-scrollbar-fade-leave-active{opacity:0}.el-select-dropdown{z-index:calc(var(--el-index-top) + 1);border-radius:var(--el-border-radius-base);box-sizing:border-box}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected{color:var(--el-color-primary);background-color:var(--el-bg-color-overlay)}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover{background-color:var(--el-fill-color-light)}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected:after{content:"";position:absolute;top:50%;right:20px;border-top:none;border-right:none;background-repeat:no-repeat;background-position:center;background-color:var(--el-color-primary);-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask-size:100% 100%;-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;-webkit-mask-size:100% 100%;transform:translateY(-50%);width:12px;height:12px}.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.is-disabled:after{background-color:var(--el-text-color-disabled)}.el-select-dropdown .el-select-dropdown__option-item.is-selected:after{content:"";position:absolute;top:50%;right:20px;border-top:none;border-right:none;background-repeat:no-repeat;background-position:center;background-color:var(--el-color-primary);-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;mask-size:100% 100%;-webkit-mask:url("data:image/svg+xml;utf8,%3Csvg class='icon' width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;-webkit-mask-size:100% 100%;transform:translateY(-50%);width:12px;height:12px}.el-select-dropdown .el-scrollbar.is-empty .el-select-dropdown__list{padding:0}.el-select-dropdown .el-select-dropdown__item.is-disabled:hover{background-color:unset}.el-select-dropdown .el-select-dropdown__item.is-disabled.selected{color:var(--el-text-color-disabled)}.el-select-dropdown__empty{padding:10px 0;margin:0;text-align:center;color:var(--el-text-color-secondary);font-size:var(--el-select-font-size)}.el-select-dropdown__wrap{max-height:274px}.el-select-dropdown__list{list-style:none;padding:6px 0;margin:0;box-sizing:border-box}.el-select{--el-select-border-color-hover:var(--el-border-color-hover);--el-select-disabled-border:var(--el-disabled-border-color);--el-select-font-size:var(--el-font-size-base);--el-select-close-hover-color:var(--el-text-color-secondary);--el-select-input-color:var(--el-text-color-placeholder);--el-select-multiple-input-color:var(--el-text-color-regular);--el-select-input-focus-border-color:var(--el-color-primary);--el-select-input-font-size:14px}.el-select{display:inline-block;position:relative;vertical-align:middle;line-height:32px}.el-select__popper.el-popper{background:var(--el-bg-color-overlay);border:1px solid var(--el-border-color-light);box-shadow:var(--el-box-shadow-light)}.el-select__popper.el-popper .el-popper__arrow:before{border:1px solid var(--el-border-color-light)}.el-select__popper.el-popper[data-popper-placement^=top] .el-popper__arrow:before{border-top-color:transparent;border-left-color:transparent}.el-select__popper.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before{border-bottom-color:transparent;border-right-color:transparent}.el-select__popper.el-popper[data-popper-placement^=left] .el-popper__arrow:before{border-left-color:transparent;border-bottom-color:transparent}.el-select__popper.el-popper[data-popper-placement^=right] .el-popper__arrow:before{border-right-color:transparent;border-top-color:transparent}.el-select .el-select-tags-wrapper.has-prefix{margin-left:6px}.el-select--large{line-height:40px}.el-select--large .el-select-tags-wrapper.has-prefix{margin-left:8px}.el-select--small{line-height:24px}.el-select--small .el-select-tags-wrapper.has-prefix{margin-left:4px}.el-select .el-select__tags>span{display:inline-block}.el-select:hover:not(.el-select--disabled) .el-input__wrapper{box-shadow:0 0 0 1px var(--el-select-border-color-hover) inset}.el-select .el-select__tags-text{display:inline-block;line-height:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.el-select .el-input__wrapper{cursor:pointer}.el-select .el-input__wrapper.is-focus{box-shadow:0 0 0 1px var(--el-select-input-focus-border-color) inset!important}.el-select .el-input__inner{cursor:pointer}.el-select .el-input{display:flex}.el-select .el-input .el-select__caret{color:var(--el-select-input-color);font-size:var(--el-select-input-font-size);transition:transform var(--el-transition-duration);transform:rotate(0);cursor:pointer}.el-select .el-input .el-select__caret.is-reverse{transform:rotate(-180deg)}.el-select .el-input .el-select__caret.is-show-close{font-size:var(--el-select-font-size);text-align:center;transform:rotate(0);border-radius:var(--el-border-radius-circle);color:var(--el-select-input-color);transition:var(--el-transition-color)}.el-select .el-input .el-select__caret.is-show-close:hover{color:var(--el-select-close-hover-color)}.el-select .el-input .el-select__caret.el-icon{position:relative;height:inherit;z-index:2}.el-select .el-input.is-disabled .el-input__wrapper{cursor:not-allowed}.el-select .el-input.is-disabled .el-input__wrapper:hover{box-shadow:0 0 0 1px var(--el-select-disabled-border) inset}.el-select .el-input.is-disabled .el-input__inner,.el-select .el-input.is-disabled .el-select__caret{cursor:not-allowed}.el-select .el-input.is-focus .el-input__wrapper{box-shadow:0 0 0 1px var(--el-select-input-focus-border-color) inset!important}.el-select__input{border:none;outline:0;padding:0;margin-left:15px;color:var(--el-select-multiple-input-color);font-size:var(--el-select-font-size);-webkit-appearance:none;-moz-appearance:none;appearance:none;height:28px;background-color:transparent}.el-select__input.is-disabled{cursor:not-allowed}.el-select__input--iOS{position:absolute;left:0;top:0;z-index:6}.el-select__input.is-small{height:14px}.el-select__close{cursor:pointer;position:absolute;top:8px;z-index:var(--el-index-top);right:25px;color:var(--el-select-input-color);line-height:18px;font-size:var(--el-select-input-font-size)}.el-select__close:hover{color:var(--el-select-close-hover-color)}.el-select__tags{position:absolute;line-height:normal;top:50%;transform:translateY(-50%);white-space:normal;z-index:var(--el-index-normal);display:flex;align-items:center;flex-wrap:wrap;cursor:pointer}.el-select__tags .el-tag{box-sizing:border-box;border-color:transparent;margin:2px 6px 2px 0}.el-select__tags .el-tag:last-child{margin-right:0}.el-select__tags .el-tag .el-icon-close{background-color:var(--el-text-color-placeholder);right:-7px;top:0;color:#fff}.el-select__tags .el-tag .el-icon-close:hover{background-color:var(--el-text-color-secondary)}.el-select__tags .el-tag .el-icon-close:before{display:block;transform:translateY(.5px)}.el-select__tags .el-tag--info{background-color:var(--el-fill-color)}.el-select__tags.is-disabled{cursor:not-allowed}.el-select__collapse-tags{white-space:normal;z-index:var(--el-index-normal);display:flex;align-items:center;flex-wrap:wrap;cursor:pointer}.el-select__collapse-tags .el-tag{box-sizing:border-box;border-color:transparent;margin:2px 6px 2px 0}.el-select__collapse-tags .el-tag:last-child{margin-right:0}.el-select__collapse-tags .el-tag .el-icon-close{background-color:var(--el-text-color-placeholder);right:-7px;top:0;color:#fff}.el-select__collapse-tags .el-tag .el-icon-close:hover{background-color:var(--el-text-color-secondary)}.el-select__collapse-tags .el-tag .el-icon-close:before{display:block;transform:translateY(.5px)}.el-select__collapse-tags .el-tag--info{background-color:var(--el-fill-color)}.el-select__collapse-tag{line-height:inherit;height:inherit;display:flex}.nhentai-helper-setting-help-buttons[data-v-dd9609fc]{float:left;position:absolute}.inline-item[data-v-dd9609fc]{display:inline-block}.inline-item[data-v-dd9609fc]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-dd9609fc]{margin-right:4px;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type="file"]):not([type="checkbox"]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{user-select:none}.language-filter[data-v-6873bccd]{padding:0 10px;user-select:none} `);
 
 (function () {
   'use strict';
@@ -52,8 +53,9 @@
     return value;
   };
   var require_main_001 = __commonJS({
-    "main-7d92b1c7.js"(exports, module) {
+    "main-0fc83d3e.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+      var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
       var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
       var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
@@ -14377,7 +14379,7 @@
         return object2;
       }
       var nativeMax$1 = Math.max;
-      function overRest(func, start, transform2) {
+      function overRest(func, start, transform) {
         start = nativeMax$1(start === void 0 ? func.length - 1 : start, 0);
         return function() {
           var args = arguments, index2 = -1, length = nativeMax$1(args.length - start, 0), array2 = Array(length);
@@ -14389,7 +14391,7 @@
           while (++index2 < start) {
             otherArgs[index2] = args[index2];
           }
-          otherArgs[start] = transform2(array2);
+          otherArgs[start] = transform(array2);
           return apply$1(func, this, otherArgs);
         };
       }
@@ -14512,9 +14514,9 @@
         }
         return result;
       }
-      function overArg(func, transform2) {
+      function overArg(func, transform) {
         return function(arg) {
-          return func(transform2(arg));
+          return func(transform(arg));
         };
       }
       var nativeKeys = overArg(Object.keys, Object);
@@ -16577,7 +16579,6 @@
         }
         return "en";
       })();
-      const getActionText = ({ linked, named }) => linked(`message.dialog.action.${named("action")}`);
       const nHentaiDownloadHosts = [
         "i.nhentai.net",
         "i2.nhentai.net",
@@ -16745,7 +16746,7 @@
                 return;
               }
             }
-            logger.log("update setting", cur.key, val);
+            logger.log("update setting", cur.key, toRaw(val));
             _GM_setValue(cur.key, val);
           });
         });
@@ -17954,14 +17955,14 @@
         });
       };
       const useDraggable = (targetRef, dragRef, draggable) => {
-        let transform2 = {
+        let transform = {
           offsetX: 0,
           offsetY: 0
         };
         const onMousedown = (e) => {
           const downX = e.clientX;
           const downY = e.clientY;
-          const { offsetX, offsetY } = transform2;
+          const { offsetX, offsetY } = transform;
           const targetRect = targetRef.value.getBoundingClientRect();
           const targetLeft = targetRect.left;
           const targetTop = targetRect.top;
@@ -17976,7 +17977,7 @@
           const onMousemove = (e2) => {
             const moveX = Math.min(Math.max(offsetX + e2.clientX - downX, minLeft), maxLeft);
             const moveY = Math.min(Math.max(offsetY + e2.clientY - downY, minTop), maxTop);
-            transform2 = {
+            transform = {
               offsetX: moveX,
               offsetY: moveY
             };
@@ -18825,13 +18826,13 @@
         e.modifiersData[n] = { referenceClippingOffsets: f, popperEscapeOffsets: c, isReferenceHidden: u, hasPopperEscaped: m }, e.attributes.popper = Object.assign({}, e.attributes.popper, { "data-popper-reference-hidden": u, "data-popper-escaped": m });
       }
       var bt = { name: "hide", enabled: true, phase: "main", requiresIfExists: ["preventOverflow"], fn: Zt };
-      function en$1(t2, e, n) {
+      function en(t2, e, n) {
         var r = q(t2), o = [P, E].indexOf(r) >= 0 ? -1 : 1, i = typeof n == "function" ? n(Object.assign({}, e, { placement: t2 })) : n, a = i[0], s = i[1];
         return a = a || 0, s = (s || 0) * o, [P, W].indexOf(r) >= 0 ? { x: s, y: a } : { x: a, y: s };
       }
       function tn(t2) {
         var e = t2.state, n = t2.options, r = t2.name, o = n.offset, i = o === void 0 ? [0, 0] : o, a = Ee.reduce(function(u, m) {
-          return u[m] = en$1(m, e.rects, i), u;
+          return u[m] = en(m, e.rects, i), u;
         }, {}), s = a[e.placement], f = s.x, c = s.y;
         e.modifiersData.popperOffsets != null && (e.modifiersData.popperOffsets.x += f, e.modifiersData.popperOffsets.y += c), e.modifiersData[r] = a;
       }
@@ -30242,1282 +30243,6 @@
         error.domain = domain;
         return error;
       }
-      function defaultOnError(error) {
-        throw error;
-      }
-      function createPosition(line, column, offset) {
-        return { line, column, offset };
-      }
-      function createLocation(start, end2, source) {
-        const loc = { start, end: end2 };
-        if (source != null) {
-          loc.source = source;
-        }
-        return loc;
-      }
-      const CHAR_SP = " ";
-      const CHAR_CR = "\r";
-      const CHAR_LF = "\n";
-      const CHAR_LS = String.fromCharCode(8232);
-      const CHAR_PS = String.fromCharCode(8233);
-      function createScanner(str) {
-        const _buf = str;
-        let _index = 0;
-        let _line = 1;
-        let _column = 1;
-        let _peekOffset = 0;
-        const isCRLF = (index3) => _buf[index3] === CHAR_CR && _buf[index3 + 1] === CHAR_LF;
-        const isLF = (index3) => _buf[index3] === CHAR_LF;
-        const isPS = (index3) => _buf[index3] === CHAR_PS;
-        const isLS = (index3) => _buf[index3] === CHAR_LS;
-        const isLineEnd = (index3) => isCRLF(index3) || isLF(index3) || isPS(index3) || isLS(index3);
-        const index2 = () => _index;
-        const line = () => _line;
-        const column = () => _column;
-        const peekOffset = () => _peekOffset;
-        const charAt = (offset) => isCRLF(offset) || isPS(offset) || isLS(offset) ? CHAR_LF : _buf[offset];
-        const currentChar = () => charAt(_index);
-        const currentPeek = () => charAt(_index + _peekOffset);
-        function next() {
-          _peekOffset = 0;
-          if (isLineEnd(_index)) {
-            _line++;
-            _column = 0;
-          }
-          if (isCRLF(_index)) {
-            _index++;
-          }
-          _index++;
-          _column++;
-          return _buf[_index];
-        }
-        function peek() {
-          if (isCRLF(_index + _peekOffset)) {
-            _peekOffset++;
-          }
-          _peekOffset++;
-          return _buf[_index + _peekOffset];
-        }
-        function reset() {
-          _index = 0;
-          _line = 1;
-          _column = 1;
-          _peekOffset = 0;
-        }
-        function resetPeek(offset = 0) {
-          _peekOffset = offset;
-        }
-        function skipToPeek() {
-          const target = _index + _peekOffset;
-          while (target !== _index) {
-            next();
-          }
-          _peekOffset = 0;
-        }
-        return {
-          index: index2,
-          line,
-          column,
-          peekOffset,
-          charAt,
-          currentChar,
-          currentPeek,
-          next,
-          peek,
-          reset,
-          resetPeek,
-          skipToPeek
-        };
-      }
-      const EOF = void 0;
-      const LITERAL_DELIMITER = "'";
-      const ERROR_DOMAIN$1 = "tokenizer";
-      function createTokenizer(source, options = {}) {
-        const location2 = options.location !== false;
-        const _scnr = createScanner(source);
-        const currentOffset = () => _scnr.index();
-        const currentPosition = () => createPosition(_scnr.line(), _scnr.column(), _scnr.index());
-        const _initLoc = currentPosition();
-        const _initOffset = currentOffset();
-        const _context = {
-          currentType: 14,
-          offset: _initOffset,
-          startLoc: _initLoc,
-          endLoc: _initLoc,
-          lastType: 14,
-          lastOffset: _initOffset,
-          lastStartLoc: _initLoc,
-          lastEndLoc: _initLoc,
-          braceNest: 0,
-          inLinked: false,
-          text: ""
-        };
-        const context = () => _context;
-        const { onError } = options;
-        function emitError(code2, pos, offset, ...args) {
-          const ctx = context();
-          pos.column += offset;
-          pos.offset += offset;
-          if (onError) {
-            const loc = createLocation(ctx.startLoc, pos);
-            const err = createCompileError(code2, loc, {
-              domain: ERROR_DOMAIN$1,
-              args
-            });
-            onError(err);
-          }
-        }
-        function getToken(context2, type2, value) {
-          context2.endLoc = currentPosition();
-          context2.currentType = type2;
-          const token = { type: type2 };
-          if (location2) {
-            token.loc = createLocation(context2.startLoc, context2.endLoc);
-          }
-          if (value != null) {
-            token.value = value;
-          }
-          return token;
-        }
-        const getEndToken = (context2) => getToken(
-          context2,
-          14
-          /* EOF */
-        );
-        function eat(scnr, ch) {
-          if (scnr.currentChar() === ch) {
-            scnr.next();
-            return ch;
-          } else {
-            emitError(CompileErrorCodes.EXPECTED_TOKEN, currentPosition(), 0, ch);
-            return "";
-          }
-        }
-        function peekSpaces(scnr) {
-          let buf = "";
-          while (scnr.currentPeek() === CHAR_SP || scnr.currentPeek() === CHAR_LF) {
-            buf += scnr.currentPeek();
-            scnr.peek();
-          }
-          return buf;
-        }
-        function skipSpaces(scnr) {
-          const buf = peekSpaces(scnr);
-          scnr.skipToPeek();
-          return buf;
-        }
-        function isIdentifierStart(ch) {
-          if (ch === EOF) {
-            return false;
-          }
-          const cc = ch.charCodeAt(0);
-          return cc >= 97 && cc <= 122 || // a-z
-          cc >= 65 && cc <= 90 || // A-Z
-          cc === 95;
-        }
-        function isNumberStart(ch) {
-          if (ch === EOF) {
-            return false;
-          }
-          const cc = ch.charCodeAt(0);
-          return cc >= 48 && cc <= 57;
-        }
-        function isNamedIdentifierStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 2) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ret = isIdentifierStart(scnr.currentPeek());
-          scnr.resetPeek();
-          return ret;
-        }
-        function isListIdentifierStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 2) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ch = scnr.currentPeek() === "-" ? scnr.peek() : scnr.currentPeek();
-          const ret = isNumberStart(ch);
-          scnr.resetPeek();
-          return ret;
-        }
-        function isLiteralStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 2) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ret = scnr.currentPeek() === LITERAL_DELIMITER;
-          scnr.resetPeek();
-          return ret;
-        }
-        function isLinkedDotStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 8) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ret = scnr.currentPeek() === ".";
-          scnr.resetPeek();
-          return ret;
-        }
-        function isLinkedModifierStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 9) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ret = isIdentifierStart(scnr.currentPeek());
-          scnr.resetPeek();
-          return ret;
-        }
-        function isLinkedDelimiterStart(scnr, context2) {
-          const { currentType } = context2;
-          if (!(currentType === 8 || currentType === 12)) {
-            return false;
-          }
-          peekSpaces(scnr);
-          const ret = scnr.currentPeek() === ":";
-          scnr.resetPeek();
-          return ret;
-        }
-        function isLinkedReferStart(scnr, context2) {
-          const { currentType } = context2;
-          if (currentType !== 10) {
-            return false;
-          }
-          const fn2 = () => {
-            const ch = scnr.currentPeek();
-            if (ch === "{") {
-              return isIdentifierStart(scnr.peek());
-            } else if (ch === "@" || ch === "%" || ch === "|" || ch === ":" || ch === "." || ch === CHAR_SP || !ch) {
-              return false;
-            } else if (ch === CHAR_LF) {
-              scnr.peek();
-              return fn2();
-            } else {
-              return isIdentifierStart(ch);
-            }
-          };
-          const ret = fn2();
-          scnr.resetPeek();
-          return ret;
-        }
-        function isPluralStart(scnr) {
-          peekSpaces(scnr);
-          const ret = scnr.currentPeek() === "|";
-          scnr.resetPeek();
-          return ret;
-        }
-        function detectModuloStart(scnr) {
-          const spaces = peekSpaces(scnr);
-          const ret = scnr.currentPeek() === "%" && scnr.peek() === "{";
-          scnr.resetPeek();
-          return {
-            isModulo: ret,
-            hasSpace: spaces.length > 0
-          };
-        }
-        function isTextStart(scnr, reset = true) {
-          const fn2 = (hasSpace = false, prev = "", detectModulo = false) => {
-            const ch = scnr.currentPeek();
-            if (ch === "{") {
-              return prev === "%" ? false : hasSpace;
-            } else if (ch === "@" || !ch) {
-              return prev === "%" ? true : hasSpace;
-            } else if (ch === "%") {
-              scnr.peek();
-              return fn2(hasSpace, "%", true);
-            } else if (ch === "|") {
-              return prev === "%" || detectModulo ? true : !(prev === CHAR_SP || prev === CHAR_LF);
-            } else if (ch === CHAR_SP) {
-              scnr.peek();
-              return fn2(true, CHAR_SP, detectModulo);
-            } else if (ch === CHAR_LF) {
-              scnr.peek();
-              return fn2(true, CHAR_LF, detectModulo);
-            } else {
-              return true;
-            }
-          };
-          const ret = fn2();
-          reset && scnr.resetPeek();
-          return ret;
-        }
-        function takeChar(scnr, fn2) {
-          const ch = scnr.currentChar();
-          if (ch === EOF) {
-            return EOF;
-          }
-          if (fn2(ch)) {
-            scnr.next();
-            return ch;
-          }
-          return null;
-        }
-        function takeIdentifierChar(scnr) {
-          const closure = (ch) => {
-            const cc = ch.charCodeAt(0);
-            return cc >= 97 && cc <= 122 || // a-z
-            cc >= 65 && cc <= 90 || // A-Z
-            cc >= 48 && cc <= 57 || // 0-9
-            cc === 95 || // _
-            cc === 36;
-          };
-          return takeChar(scnr, closure);
-        }
-        function takeDigit(scnr) {
-          const closure = (ch) => {
-            const cc = ch.charCodeAt(0);
-            return cc >= 48 && cc <= 57;
-          };
-          return takeChar(scnr, closure);
-        }
-        function takeHexDigit(scnr) {
-          const closure = (ch) => {
-            const cc = ch.charCodeAt(0);
-            return cc >= 48 && cc <= 57 || // 0-9
-            cc >= 65 && cc <= 70 || // A-F
-            cc >= 97 && cc <= 102;
-          };
-          return takeChar(scnr, closure);
-        }
-        function getDigits(scnr) {
-          let ch = "";
-          let num = "";
-          while (ch = takeDigit(scnr)) {
-            num += ch;
-          }
-          return num;
-        }
-        function readModulo(scnr) {
-          skipSpaces(scnr);
-          const ch = scnr.currentChar();
-          if (ch !== "%") {
-            emitError(CompileErrorCodes.EXPECTED_TOKEN, currentPosition(), 0, ch);
-          }
-          scnr.next();
-          return "%";
-        }
-        function readText(scnr) {
-          let buf = "";
-          while (true) {
-            const ch = scnr.currentChar();
-            if (ch === "{" || ch === "}" || ch === "@" || ch === "|" || !ch) {
-              break;
-            } else if (ch === "%") {
-              if (isTextStart(scnr)) {
-                buf += ch;
-                scnr.next();
-              } else {
-                break;
-              }
-            } else if (ch === CHAR_SP || ch === CHAR_LF) {
-              if (isTextStart(scnr)) {
-                buf += ch;
-                scnr.next();
-              } else if (isPluralStart(scnr)) {
-                break;
-              } else {
-                buf += ch;
-                scnr.next();
-              }
-            } else {
-              buf += ch;
-              scnr.next();
-            }
-          }
-          return buf;
-        }
-        function readNamedIdentifier(scnr) {
-          skipSpaces(scnr);
-          let ch = "";
-          let name = "";
-          while (ch = takeIdentifierChar(scnr)) {
-            name += ch;
-          }
-          if (scnr.currentChar() === EOF) {
-            emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
-          }
-          return name;
-        }
-        function readListIdentifier(scnr) {
-          skipSpaces(scnr);
-          let value = "";
-          if (scnr.currentChar() === "-") {
-            scnr.next();
-            value += `-${getDigits(scnr)}`;
-          } else {
-            value += getDigits(scnr);
-          }
-          if (scnr.currentChar() === EOF) {
-            emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
-          }
-          return value;
-        }
-        function readLiteral(scnr) {
-          skipSpaces(scnr);
-          eat(scnr, `'`);
-          let ch = "";
-          let literal = "";
-          const fn2 = (x) => x !== LITERAL_DELIMITER && x !== CHAR_LF;
-          while (ch = takeChar(scnr, fn2)) {
-            if (ch === "\\") {
-              literal += readEscapeSequence(scnr);
-            } else {
-              literal += ch;
-            }
-          }
-          const current = scnr.currentChar();
-          if (current === CHAR_LF || current === EOF) {
-            emitError(CompileErrorCodes.UNTERMINATED_SINGLE_QUOTE_IN_PLACEHOLDER, currentPosition(), 0);
-            if (current === CHAR_LF) {
-              scnr.next();
-              eat(scnr, `'`);
-            }
-            return literal;
-          }
-          eat(scnr, `'`);
-          return literal;
-        }
-        function readEscapeSequence(scnr) {
-          const ch = scnr.currentChar();
-          switch (ch) {
-            case "\\":
-            case `'`:
-              scnr.next();
-              return `\\${ch}`;
-            case "u":
-              return readUnicodeEscapeSequence(scnr, ch, 4);
-            case "U":
-              return readUnicodeEscapeSequence(scnr, ch, 6);
-            default:
-              emitError(CompileErrorCodes.UNKNOWN_ESCAPE_SEQUENCE, currentPosition(), 0, ch);
-              return "";
-          }
-        }
-        function readUnicodeEscapeSequence(scnr, unicode, digits) {
-          eat(scnr, unicode);
-          let sequence = "";
-          for (let i = 0; i < digits; i++) {
-            const ch = takeHexDigit(scnr);
-            if (!ch) {
-              emitError(CompileErrorCodes.INVALID_UNICODE_ESCAPE_SEQUENCE, currentPosition(), 0, `\\${unicode}${sequence}${scnr.currentChar()}`);
-              break;
-            }
-            sequence += ch;
-          }
-          return `\\${unicode}${sequence}`;
-        }
-        function readInvalidIdentifier(scnr) {
-          skipSpaces(scnr);
-          let ch = "";
-          let identifiers = "";
-          const closure = (ch2) => ch2 !== "{" && ch2 !== "}" && ch2 !== CHAR_SP && ch2 !== CHAR_LF;
-          while (ch = takeChar(scnr, closure)) {
-            identifiers += ch;
-          }
-          return identifiers;
-        }
-        function readLinkedModifier(scnr) {
-          let ch = "";
-          let name = "";
-          while (ch = takeIdentifierChar(scnr)) {
-            name += ch;
-          }
-          return name;
-        }
-        function readLinkedRefer(scnr) {
-          const fn2 = (detect2 = false, buf) => {
-            const ch = scnr.currentChar();
-            if (ch === "{" || ch === "%" || ch === "@" || ch === "|" || !ch) {
-              return buf;
-            } else if (ch === CHAR_SP) {
-              return buf;
-            } else if (ch === CHAR_LF) {
-              buf += ch;
-              scnr.next();
-              return fn2(detect2, buf);
-            } else {
-              buf += ch;
-              scnr.next();
-              return fn2(true, buf);
-            }
-          };
-          return fn2(false, "");
-        }
-        function readPlural(scnr) {
-          skipSpaces(scnr);
-          const plural = eat(
-            scnr,
-            "|"
-            /* Pipe */
-          );
-          skipSpaces(scnr);
-          return plural;
-        }
-        function readTokenInPlaceholder(scnr, context2) {
-          let token = null;
-          const ch = scnr.currentChar();
-          switch (ch) {
-            case "{":
-              if (context2.braceNest >= 1) {
-                emitError(CompileErrorCodes.NOT_ALLOW_NEST_PLACEHOLDER, currentPosition(), 0);
-              }
-              scnr.next();
-              token = getToken(
-                context2,
-                2,
-                "{"
-                /* BraceLeft */
-              );
-              skipSpaces(scnr);
-              context2.braceNest++;
-              return token;
-            case "}":
-              if (context2.braceNest > 0 && context2.currentType === 2) {
-                emitError(CompileErrorCodes.EMPTY_PLACEHOLDER, currentPosition(), 0);
-              }
-              scnr.next();
-              token = getToken(
-                context2,
-                3,
-                "}"
-                /* BraceRight */
-              );
-              context2.braceNest--;
-              context2.braceNest > 0 && skipSpaces(scnr);
-              if (context2.inLinked && context2.braceNest === 0) {
-                context2.inLinked = false;
-              }
-              return token;
-            case "@":
-              if (context2.braceNest > 0) {
-                emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
-              }
-              token = readTokenInLinked(scnr, context2) || getEndToken(context2);
-              context2.braceNest = 0;
-              return token;
-            default:
-              let validNamedIdentifier = true;
-              let validListIdentifier = true;
-              let validLiteral = true;
-              if (isPluralStart(scnr)) {
-                if (context2.braceNest > 0) {
-                  emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
-                }
-                token = getToken(context2, 1, readPlural(scnr));
-                context2.braceNest = 0;
-                context2.inLinked = false;
-                return token;
-              }
-              if (context2.braceNest > 0 && (context2.currentType === 5 || context2.currentType === 6 || context2.currentType === 7)) {
-                emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
-                context2.braceNest = 0;
-                return readToken(scnr, context2);
-              }
-              if (validNamedIdentifier = isNamedIdentifierStart(scnr, context2)) {
-                token = getToken(context2, 5, readNamedIdentifier(scnr));
-                skipSpaces(scnr);
-                return token;
-              }
-              if (validListIdentifier = isListIdentifierStart(scnr, context2)) {
-                token = getToken(context2, 6, readListIdentifier(scnr));
-                skipSpaces(scnr);
-                return token;
-              }
-              if (validLiteral = isLiteralStart(scnr, context2)) {
-                token = getToken(context2, 7, readLiteral(scnr));
-                skipSpaces(scnr);
-                return token;
-              }
-              if (!validNamedIdentifier && !validListIdentifier && !validLiteral) {
-                token = getToken(context2, 13, readInvalidIdentifier(scnr));
-                emitError(CompileErrorCodes.INVALID_TOKEN_IN_PLACEHOLDER, currentPosition(), 0, token.value);
-                skipSpaces(scnr);
-                return token;
-              }
-              break;
-          }
-          return token;
-        }
-        function readTokenInLinked(scnr, context2) {
-          const { currentType } = context2;
-          let token = null;
-          const ch = scnr.currentChar();
-          if ((currentType === 8 || currentType === 9 || currentType === 12 || currentType === 10) && (ch === CHAR_LF || ch === CHAR_SP)) {
-            emitError(CompileErrorCodes.INVALID_LINKED_FORMAT, currentPosition(), 0);
-          }
-          switch (ch) {
-            case "@":
-              scnr.next();
-              token = getToken(
-                context2,
-                8,
-                "@"
-                /* LinkedAlias */
-              );
-              context2.inLinked = true;
-              return token;
-            case ".":
-              skipSpaces(scnr);
-              scnr.next();
-              return getToken(
-                context2,
-                9,
-                "."
-                /* LinkedDot */
-              );
-            case ":":
-              skipSpaces(scnr);
-              scnr.next();
-              return getToken(
-                context2,
-                10,
-                ":"
-                /* LinkedDelimiter */
-              );
-            default:
-              if (isPluralStart(scnr)) {
-                token = getToken(context2, 1, readPlural(scnr));
-                context2.braceNest = 0;
-                context2.inLinked = false;
-                return token;
-              }
-              if (isLinkedDotStart(scnr, context2) || isLinkedDelimiterStart(scnr, context2)) {
-                skipSpaces(scnr);
-                return readTokenInLinked(scnr, context2);
-              }
-              if (isLinkedModifierStart(scnr, context2)) {
-                skipSpaces(scnr);
-                return getToken(context2, 12, readLinkedModifier(scnr));
-              }
-              if (isLinkedReferStart(scnr, context2)) {
-                skipSpaces(scnr);
-                if (ch === "{") {
-                  return readTokenInPlaceholder(scnr, context2) || token;
-                } else {
-                  return getToken(context2, 11, readLinkedRefer(scnr));
-                }
-              }
-              if (currentType === 8) {
-                emitError(CompileErrorCodes.INVALID_LINKED_FORMAT, currentPosition(), 0);
-              }
-              context2.braceNest = 0;
-              context2.inLinked = false;
-              return readToken(scnr, context2);
-          }
-        }
-        function readToken(scnr, context2) {
-          let token = {
-            type: 14
-            /* EOF */
-          };
-          if (context2.braceNest > 0) {
-            return readTokenInPlaceholder(scnr, context2) || getEndToken(context2);
-          }
-          if (context2.inLinked) {
-            return readTokenInLinked(scnr, context2) || getEndToken(context2);
-          }
-          const ch = scnr.currentChar();
-          switch (ch) {
-            case "{":
-              return readTokenInPlaceholder(scnr, context2) || getEndToken(context2);
-            case "}":
-              emitError(CompileErrorCodes.UNBALANCED_CLOSING_BRACE, currentPosition(), 0);
-              scnr.next();
-              return getToken(
-                context2,
-                3,
-                "}"
-                /* BraceRight */
-              );
-            case "@":
-              return readTokenInLinked(scnr, context2) || getEndToken(context2);
-            default:
-              if (isPluralStart(scnr)) {
-                token = getToken(context2, 1, readPlural(scnr));
-                context2.braceNest = 0;
-                context2.inLinked = false;
-                return token;
-              }
-              const { isModulo, hasSpace } = detectModuloStart(scnr);
-              if (isModulo) {
-                return hasSpace ? getToken(context2, 0, readText(scnr)) : getToken(context2, 4, readModulo(scnr));
-              }
-              if (isTextStart(scnr)) {
-                return getToken(context2, 0, readText(scnr));
-              }
-              break;
-          }
-          return token;
-        }
-        function nextToken() {
-          const { currentType, offset, startLoc, endLoc } = _context;
-          _context.lastType = currentType;
-          _context.lastOffset = offset;
-          _context.lastStartLoc = startLoc;
-          _context.lastEndLoc = endLoc;
-          _context.offset = currentOffset();
-          _context.startLoc = currentPosition();
-          if (_scnr.currentChar() === EOF) {
-            return getToken(
-              _context,
-              14
-              /* EOF */
-            );
-          }
-          return readToken(_scnr, _context);
-        }
-        return {
-          nextToken,
-          currentOffset,
-          currentPosition,
-          context
-        };
-      }
-      const ERROR_DOMAIN = "parser";
-      const KNOWN_ESCAPES = /(?:\\\\|\\'|\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{6}))/g;
-      function fromEscapeSequence(match2, codePoint4, codePoint6) {
-        switch (match2) {
-          case `\\\\`:
-            return `\\`;
-          case `\\'`:
-            return `'`;
-          default: {
-            const codePoint = parseInt(codePoint4 || codePoint6, 16);
-            if (codePoint <= 55295 || codePoint >= 57344) {
-              return String.fromCodePoint(codePoint);
-            }
-            return "�";
-          }
-        }
-      }
-      function createParser(options = {}) {
-        const location2 = options.location !== false;
-        const { onError } = options;
-        function emitError(tokenzer, code2, start, offset, ...args) {
-          const end2 = tokenzer.currentPosition();
-          end2.offset += offset;
-          end2.column += offset;
-          if (onError) {
-            const loc = createLocation(start, end2);
-            const err = createCompileError(code2, loc, {
-              domain: ERROR_DOMAIN,
-              args
-            });
-            onError(err);
-          }
-        }
-        function startNode(type2, offset, loc) {
-          const node = {
-            type: type2,
-            start: offset,
-            end: offset
-          };
-          if (location2) {
-            node.loc = { start: loc, end: loc };
-          }
-          return node;
-        }
-        function endNode(node, offset, pos, type2) {
-          node.end = offset;
-          if (type2) {
-            node.type = type2;
-          }
-          if (location2 && node.loc) {
-            node.loc.end = pos;
-          }
-        }
-        function parseText(tokenizer, value) {
-          const context = tokenizer.context();
-          const node = startNode(3, context.offset, context.startLoc);
-          node.value = value;
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseList(tokenizer, index2) {
-          const context = tokenizer.context();
-          const { lastOffset: offset, lastStartLoc: loc } = context;
-          const node = startNode(5, offset, loc);
-          node.index = parseInt(index2, 10);
-          tokenizer.nextToken();
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseNamed(tokenizer, key) {
-          const context = tokenizer.context();
-          const { lastOffset: offset, lastStartLoc: loc } = context;
-          const node = startNode(4, offset, loc);
-          node.key = key;
-          tokenizer.nextToken();
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseLiteral(tokenizer, value) {
-          const context = tokenizer.context();
-          const { lastOffset: offset, lastStartLoc: loc } = context;
-          const node = startNode(9, offset, loc);
-          node.value = value.replace(KNOWN_ESCAPES, fromEscapeSequence);
-          tokenizer.nextToken();
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseLinkedModifier(tokenizer) {
-          const token = tokenizer.nextToken();
-          const context = tokenizer.context();
-          const { lastOffset: offset, lastStartLoc: loc } = context;
-          const node = startNode(8, offset, loc);
-          if (token.type !== 12) {
-            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_EMPTY_LINKED_MODIFIER, context.lastStartLoc, 0);
-            node.value = "";
-            endNode(node, offset, loc);
-            return {
-              nextConsumeToken: token,
-              node
-            };
-          }
-          if (token.value == null) {
-            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-          }
-          node.value = token.value || "";
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return {
-            node
-          };
-        }
-        function parseLinkedKey(tokenizer, value) {
-          const context = tokenizer.context();
-          const node = startNode(7, context.offset, context.startLoc);
-          node.value = value;
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseLinked(tokenizer) {
-          const context = tokenizer.context();
-          const linkedNode = startNode(6, context.offset, context.startLoc);
-          let token = tokenizer.nextToken();
-          if (token.type === 9) {
-            const parsed = parseLinkedModifier(tokenizer);
-            linkedNode.modifier = parsed.node;
-            token = parsed.nextConsumeToken || tokenizer.nextToken();
-          }
-          if (token.type !== 10) {
-            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-          }
-          token = tokenizer.nextToken();
-          if (token.type === 2) {
-            token = tokenizer.nextToken();
-          }
-          switch (token.type) {
-            case 11:
-              if (token.value == null) {
-                emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-              }
-              linkedNode.key = parseLinkedKey(tokenizer, token.value || "");
-              break;
-            case 5:
-              if (token.value == null) {
-                emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-              }
-              linkedNode.key = parseNamed(tokenizer, token.value || "");
-              break;
-            case 6:
-              if (token.value == null) {
-                emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-              }
-              linkedNode.key = parseList(tokenizer, token.value || "");
-              break;
-            case 7:
-              if (token.value == null) {
-                emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-              }
-              linkedNode.key = parseLiteral(tokenizer, token.value || "");
-              break;
-            default:
-              emitError(tokenizer, CompileErrorCodes.UNEXPECTED_EMPTY_LINKED_KEY, context.lastStartLoc, 0);
-              const nextContext = tokenizer.context();
-              const emptyLinkedKeyNode = startNode(7, nextContext.offset, nextContext.startLoc);
-              emptyLinkedKeyNode.value = "";
-              endNode(emptyLinkedKeyNode, nextContext.offset, nextContext.startLoc);
-              linkedNode.key = emptyLinkedKeyNode;
-              endNode(linkedNode, nextContext.offset, nextContext.startLoc);
-              return {
-                nextConsumeToken: token,
-                node: linkedNode
-              };
-          }
-          endNode(linkedNode, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return {
-            node: linkedNode
-          };
-        }
-        function parseMessage(tokenizer) {
-          const context = tokenizer.context();
-          const startOffset = context.currentType === 1 ? tokenizer.currentOffset() : context.offset;
-          const startLoc = context.currentType === 1 ? context.endLoc : context.startLoc;
-          const node = startNode(2, startOffset, startLoc);
-          node.items = [];
-          let nextToken = null;
-          do {
-            const token = nextToken || tokenizer.nextToken();
-            nextToken = null;
-            switch (token.type) {
-              case 0:
-                if (token.value == null) {
-                  emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-                }
-                node.items.push(parseText(tokenizer, token.value || ""));
-                break;
-              case 6:
-                if (token.value == null) {
-                  emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-                }
-                node.items.push(parseList(tokenizer, token.value || ""));
-                break;
-              case 5:
-                if (token.value == null) {
-                  emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-                }
-                node.items.push(parseNamed(tokenizer, token.value || ""));
-                break;
-              case 7:
-                if (token.value == null) {
-                  emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
-                }
-                node.items.push(parseLiteral(tokenizer, token.value || ""));
-                break;
-              case 8:
-                const parsed = parseLinked(tokenizer);
-                node.items.push(parsed.node);
-                nextToken = parsed.nextConsumeToken || null;
-                break;
-            }
-          } while (context.currentType !== 14 && context.currentType !== 1);
-          const endOffset = context.currentType === 1 ? context.lastOffset : tokenizer.currentOffset();
-          const endLoc = context.currentType === 1 ? context.lastEndLoc : tokenizer.currentPosition();
-          endNode(node, endOffset, endLoc);
-          return node;
-        }
-        function parsePlural(tokenizer, offset, loc, msgNode) {
-          const context = tokenizer.context();
-          let hasEmptyMessage = msgNode.items.length === 0;
-          const node = startNode(1, offset, loc);
-          node.cases = [];
-          node.cases.push(msgNode);
-          do {
-            const msg = parseMessage(tokenizer);
-            if (!hasEmptyMessage) {
-              hasEmptyMessage = msg.items.length === 0;
-            }
-            node.cases.push(msg);
-          } while (context.currentType !== 14);
-          if (hasEmptyMessage) {
-            emitError(tokenizer, CompileErrorCodes.MUST_HAVE_MESSAGES_IN_PLURAL, loc, 0);
-          }
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        function parseResource(tokenizer) {
-          const context = tokenizer.context();
-          const { offset, startLoc } = context;
-          const msgNode = parseMessage(tokenizer);
-          if (context.currentType === 14) {
-            return msgNode;
-          } else {
-            return parsePlural(tokenizer, offset, startLoc, msgNode);
-          }
-        }
-        function parse2(source) {
-          const tokenizer = createTokenizer(source, assign({}, options));
-          const context = tokenizer.context();
-          const node = startNode(0, context.offset, context.startLoc);
-          if (location2 && node.loc) {
-            node.loc.source = source;
-          }
-          node.body = parseResource(tokenizer);
-          if (context.currentType !== 14) {
-            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, source[context.offset] || "");
-          }
-          endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
-          return node;
-        }
-        return { parse: parse2 };
-      }
-      function getTokenCaption(token) {
-        if (token.type === 14) {
-          return "EOF";
-        }
-        const name = (token.value || "").replace(/\r?\n/gu, "\\n");
-        return name.length > 10 ? name.slice(0, 9) + "…" : name;
-      }
-      function createTransformer(ast, options = {}) {
-        const _context = {
-          ast,
-          helpers: /* @__PURE__ */ new Set()
-        };
-        const context = () => _context;
-        const helper = (name) => {
-          _context.helpers.add(name);
-          return name;
-        };
-        return { context, helper };
-      }
-      function traverseNodes(nodes, transformer) {
-        for (let i = 0; i < nodes.length; i++) {
-          traverseNode(nodes[i], transformer);
-        }
-      }
-      function traverseNode(node, transformer) {
-        switch (node.type) {
-          case 1:
-            traverseNodes(node.cases, transformer);
-            transformer.helper(
-              "plural"
-              /* PLURAL */
-            );
-            break;
-          case 2:
-            traverseNodes(node.items, transformer);
-            break;
-          case 6:
-            const linked = node;
-            traverseNode(linked.key, transformer);
-            transformer.helper(
-              "linked"
-              /* LINKED */
-            );
-            transformer.helper(
-              "type"
-              /* TYPE */
-            );
-            break;
-          case 5:
-            transformer.helper(
-              "interpolate"
-              /* INTERPOLATE */
-            );
-            transformer.helper(
-              "list"
-              /* LIST */
-            );
-            break;
-          case 4:
-            transformer.helper(
-              "interpolate"
-              /* INTERPOLATE */
-            );
-            transformer.helper(
-              "named"
-              /* NAMED */
-            );
-            break;
-        }
-      }
-      function transform(ast, options = {}) {
-        const transformer = createTransformer(ast);
-        transformer.helper(
-          "normalize"
-          /* NORMALIZE */
-        );
-        ast.body && traverseNode(ast.body, transformer);
-        const context = transformer.context();
-        ast.helpers = Array.from(context.helpers);
-      }
-      function createCodeGenerator(ast, options) {
-        const { sourceMap, filename, breakLineCode, needIndent: _needIndent } = options;
-        const _context = {
-          source: ast.loc.source,
-          filename,
-          code: "",
-          column: 1,
-          line: 1,
-          offset: 0,
-          map: void 0,
-          breakLineCode,
-          needIndent: _needIndent,
-          indentLevel: 0
-        };
-        const context = () => _context;
-        function push(code2, node) {
-          _context.code += code2;
-        }
-        function _newline(n, withBreakLine = true) {
-          const _breakLineCode = withBreakLine ? breakLineCode : "";
-          push(_needIndent ? _breakLineCode + `  `.repeat(n) : _breakLineCode);
-        }
-        function indent(withNewLine = true) {
-          const level = ++_context.indentLevel;
-          withNewLine && _newline(level);
-        }
-        function deindent(withNewLine = true) {
-          const level = --_context.indentLevel;
-          withNewLine && _newline(level);
-        }
-        function newline() {
-          _newline(_context.indentLevel);
-        }
-        const helper = (key) => `_${key}`;
-        const needIndent = () => _context.needIndent;
-        return {
-          context,
-          push,
-          indent,
-          deindent,
-          newline,
-          helper,
-          needIndent
-        };
-      }
-      function generateLinkedNode(generator, node) {
-        const { helper } = generator;
-        generator.push(`${helper(
-        "linked"
-        /* LINKED */
-      )}(`);
-        generateNode(generator, node.key);
-        if (node.modifier) {
-          generator.push(`, `);
-          generateNode(generator, node.modifier);
-          generator.push(`, _type`);
-        } else {
-          generator.push(`, undefined, _type`);
-        }
-        generator.push(`)`);
-      }
-      function generateMessageNode(generator, node) {
-        const { helper, needIndent } = generator;
-        generator.push(`${helper(
-        "normalize"
-        /* NORMALIZE */
-      )}([`);
-        generator.indent(needIndent());
-        const length = node.items.length;
-        for (let i = 0; i < length; i++) {
-          generateNode(generator, node.items[i]);
-          if (i === length - 1) {
-            break;
-          }
-          generator.push(", ");
-        }
-        generator.deindent(needIndent());
-        generator.push("])");
-      }
-      function generatePluralNode(generator, node) {
-        const { helper, needIndent } = generator;
-        if (node.cases.length > 1) {
-          generator.push(`${helper(
-          "plural"
-          /* PLURAL */
-        )}([`);
-          generator.indent(needIndent());
-          const length = node.cases.length;
-          for (let i = 0; i < length; i++) {
-            generateNode(generator, node.cases[i]);
-            if (i === length - 1) {
-              break;
-            }
-            generator.push(", ");
-          }
-          generator.deindent(needIndent());
-          generator.push(`])`);
-        }
-      }
-      function generateResource(generator, node) {
-        if (node.body) {
-          generateNode(generator, node.body);
-        } else {
-          generator.push("null");
-        }
-      }
-      function generateNode(generator, node) {
-        const { helper } = generator;
-        switch (node.type) {
-          case 0:
-            generateResource(generator, node);
-            break;
-          case 1:
-            generatePluralNode(generator, node);
-            break;
-          case 2:
-            generateMessageNode(generator, node);
-            break;
-          case 6:
-            generateLinkedNode(generator, node);
-            break;
-          case 8:
-            generator.push(JSON.stringify(node.value), node);
-            break;
-          case 7:
-            generator.push(JSON.stringify(node.value), node);
-            break;
-          case 5:
-            generator.push(`${helper(
-            "interpolate"
-            /* INTERPOLATE */
-          )}(${helper(
-            "list"
-            /* LIST */
-          )}(${node.index}))`, node);
-            break;
-          case 4:
-            generator.push(`${helper(
-            "interpolate"
-            /* INTERPOLATE */
-          )}(${helper(
-            "named"
-            /* NAMED */
-          )}(${JSON.stringify(node.key)}))`, node);
-            break;
-          case 9:
-            generator.push(JSON.stringify(node.value), node);
-            break;
-          case 3:
-            generator.push(JSON.stringify(node.value), node);
-            break;
-        }
-      }
-      const generate = (ast, options = {}) => {
-        const mode = isString(options.mode) ? options.mode : "normal";
-        const filename = isString(options.filename) ? options.filename : "message.intl";
-        const sourceMap = !!options.sourceMap;
-        const breakLineCode = options.breakLineCode != null ? options.breakLineCode : mode === "arrow" ? ";" : "\n";
-        const needIndent = options.needIndent ? options.needIndent : mode !== "arrow";
-        const helpers = ast.helpers || [];
-        const generator = createCodeGenerator(ast, {
-          mode,
-          filename,
-          sourceMap,
-          breakLineCode,
-          needIndent
-        });
-        generator.push(mode === "normal" ? `function __msg__ (ctx) {` : `(ctx) => {`);
-        generator.indent(needIndent);
-        if (helpers.length > 0) {
-          generator.push(`const { ${helpers.map((s) => `${s}: _${s}`).join(", ")} } = ctx`);
-          generator.newline();
-        }
-        generator.push(`return `);
-        generateNode(generator, ast);
-        generator.deindent(needIndent);
-        generator.push(`}`);
-        const { code: code2, map: map2 } = generator.context();
-        return {
-          ast,
-          code: code2,
-          map: map2 ? map2.toJSON() : void 0
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-        };
-      };
-      function baseCompile(source, options = {}) {
-        const assignedOptions = assign({}, options);
-        const parser2 = createParser(assignedOptions);
-        const ast = parser2.parse(source);
-        transform(ast, assignedOptions);
-        return generate(ast, assignedOptions);
-      }
       /*!
         * devtools-if v9.2.2
         * (c) 2022 kazuya kawaguchi
@@ -32169,9 +30894,6 @@
         };
       }
       let _compiler;
-      function registerMessageCompiler(compiler) {
-        _compiler = compiler;
-      }
       let _resolver;
       function registerMessageResolver(resolver) {
         _resolver = resolver;
@@ -32267,27 +30989,6 @@
         const context = ctx;
         context.__localeChainCache = /* @__PURE__ */ new Map();
         ctx.localeFallbacker(ctx, fallback, locale);
-      }
-      const defaultOnCacheKey = (source) => source;
-      let compileCache = /* @__PURE__ */ Object.create(null);
-      function compileToFunction(source, options = {}) {
-        {
-          const onCacheKey = options.onCacheKey || defaultOnCacheKey;
-          const key = onCacheKey(source);
-          const cached = compileCache[key];
-          if (cached) {
-            return cached;
-          }
-          let occurred = false;
-          const onError = options.onError || defaultOnError;
-          options.onError = (err) => {
-            occurred = true;
-            onError(err);
-          };
-          const { code: code2 } = baseCompile(source, options);
-          const msg = new Function(`return ${code2}`)();
-          return !occurred ? compileCache[key] = msg : msg;
-        }
       }
       let code$1 = CompileErrorCodes.__EXTEND_POINT__;
       const inc$1 = () => ++code$1;
@@ -32736,12 +31437,6 @@
         */
       const VERSION = "9.2.2";
       function initFeatureFlags() {
-        if (typeof __VUE_I18N_FULL_INSTALL__ !== "boolean") {
-          getGlobalThis().__VUE_I18N_FULL_INSTALL__ = true;
-        }
-        if (typeof __VUE_I18N_LEGACY_API__ !== "boolean") {
-          getGlobalThis().__VUE_I18N_LEGACY_API__ = true;
-        }
         if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
           getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
         }
@@ -32822,12 +31517,12 @@
         if (isArray(__i18n)) {
           __i18n.forEach((custom) => {
             if ("locale" in custom && "resource" in custom) {
-              const { locale: locale2, resource } = custom;
+              const { locale: locale2, resource: resource2 } = custom;
               if (locale2) {
                 ret[locale2] = ret[locale2] || {};
-                deepCopy(resource, ret[locale2]);
+                deepCopy(resource2, ret[locale2]);
               } else {
-                deepCopy(resource, ret);
+                deepCopy(resource2, ret);
               }
             } else {
               isString(custom) && deepCopy(JSON.parse(custom), ret);
@@ -33289,307 +31984,6 @@
         }
         return composer;
       }
-      function convertComposerOptions(options) {
-        const locale = isString(options.locale) ? options.locale : DEFAULT_LOCALE;
-        const fallbackLocale = isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
-        const missing = isFunction(options.missing) ? options.missing : void 0;
-        const missingWarn = isBoolean(options.silentTranslationWarn) || isRegExp(options.silentTranslationWarn) ? !options.silentTranslationWarn : true;
-        const fallbackWarn = isBoolean(options.silentFallbackWarn) || isRegExp(options.silentFallbackWarn) ? !options.silentFallbackWarn : true;
-        const fallbackRoot = isBoolean(options.fallbackRoot) ? options.fallbackRoot : true;
-        const fallbackFormat = !!options.formatFallbackMessages;
-        const modifiers = isPlainObject(options.modifiers) ? options.modifiers : {};
-        const pluralizationRules = options.pluralizationRules;
-        const postTranslation = isFunction(options.postTranslation) ? options.postTranslation : void 0;
-        const warnHtmlMessage = isString(options.warnHtmlInMessage) ? options.warnHtmlInMessage !== "off" : true;
-        const escapeParameter = !!options.escapeParameterHtml;
-        const inheritLocale = isBoolean(options.sync) ? options.sync : true;
-        let messages2 = options.messages;
-        if (isPlainObject(options.sharedMessages)) {
-          const sharedMessages = options.sharedMessages;
-          const locales = Object.keys(sharedMessages);
-          messages2 = locales.reduce((messages3, locale2) => {
-            const message2 = messages3[locale2] || (messages3[locale2] = {});
-            assign(message2, sharedMessages[locale2]);
-            return messages3;
-          }, messages2 || {});
-        }
-        const { __i18n, __root, __injectWithOption } = options;
-        const datetimeFormats = options.datetimeFormats;
-        const numberFormats = options.numberFormats;
-        const flatJson = options.flatJson;
-        return {
-          locale,
-          fallbackLocale,
-          messages: messages2,
-          flatJson,
-          datetimeFormats,
-          numberFormats,
-          missing,
-          missingWarn,
-          fallbackWarn,
-          fallbackRoot,
-          fallbackFormat,
-          modifiers,
-          pluralRules: pluralizationRules,
-          postTranslation,
-          warnHtmlMessage,
-          escapeParameter,
-          messageResolver: options.messageResolver,
-          inheritLocale,
-          __i18n,
-          __root,
-          __injectWithOption
-        };
-      }
-      function createVueI18n(options = {}, VueI18nLegacy) {
-        {
-          const composer = createComposer(convertComposerOptions(options));
-          const vueI18n = {
-            // id
-            id: composer.id,
-            // locale
-            get locale() {
-              return composer.locale.value;
-            },
-            set locale(val) {
-              composer.locale.value = val;
-            },
-            // fallbackLocale
-            get fallbackLocale() {
-              return composer.fallbackLocale.value;
-            },
-            set fallbackLocale(val) {
-              composer.fallbackLocale.value = val;
-            },
-            // messages
-            get messages() {
-              return composer.messages.value;
-            },
-            // datetimeFormats
-            get datetimeFormats() {
-              return composer.datetimeFormats.value;
-            },
-            // numberFormats
-            get numberFormats() {
-              return composer.numberFormats.value;
-            },
-            // availableLocales
-            get availableLocales() {
-              return composer.availableLocales;
-            },
-            // formatter
-            get formatter() {
-              return {
-                interpolate() {
-                  return [];
-                }
-              };
-            },
-            set formatter(val) {
-            },
-            // missing
-            get missing() {
-              return composer.getMissingHandler();
-            },
-            set missing(handler) {
-              composer.setMissingHandler(handler);
-            },
-            // silentTranslationWarn
-            get silentTranslationWarn() {
-              return isBoolean(composer.missingWarn) ? !composer.missingWarn : composer.missingWarn;
-            },
-            set silentTranslationWarn(val) {
-              composer.missingWarn = isBoolean(val) ? !val : val;
-            },
-            // silentFallbackWarn
-            get silentFallbackWarn() {
-              return isBoolean(composer.fallbackWarn) ? !composer.fallbackWarn : composer.fallbackWarn;
-            },
-            set silentFallbackWarn(val) {
-              composer.fallbackWarn = isBoolean(val) ? !val : val;
-            },
-            // modifiers
-            get modifiers() {
-              return composer.modifiers;
-            },
-            // formatFallbackMessages
-            get formatFallbackMessages() {
-              return composer.fallbackFormat;
-            },
-            set formatFallbackMessages(val) {
-              composer.fallbackFormat = val;
-            },
-            // postTranslation
-            get postTranslation() {
-              return composer.getPostTranslationHandler();
-            },
-            set postTranslation(handler) {
-              composer.setPostTranslationHandler(handler);
-            },
-            // sync
-            get sync() {
-              return composer.inheritLocale;
-            },
-            set sync(val) {
-              composer.inheritLocale = val;
-            },
-            // warnInHtmlMessage
-            get warnHtmlInMessage() {
-              return composer.warnHtmlMessage ? "warn" : "off";
-            },
-            set warnHtmlInMessage(val) {
-              composer.warnHtmlMessage = val !== "off";
-            },
-            // escapeParameterHtml
-            get escapeParameterHtml() {
-              return composer.escapeParameter;
-            },
-            set escapeParameterHtml(val) {
-              composer.escapeParameter = val;
-            },
-            // preserveDirectiveContent
-            get preserveDirectiveContent() {
-              return true;
-            },
-            set preserveDirectiveContent(val) {
-            },
-            // pluralizationRules
-            get pluralizationRules() {
-              return composer.pluralRules || {};
-            },
-            // for internal
-            __composer: composer,
-            // t
-            t(...args) {
-              const [arg1, arg2, arg3] = args;
-              const options2 = {};
-              let list = null;
-              let named = null;
-              if (!isString(arg1)) {
-                throw createI18nError(I18nErrorCodes.INVALID_ARGUMENT);
-              }
-              const key = arg1;
-              if (isString(arg2)) {
-                options2.locale = arg2;
-              } else if (isArray(arg2)) {
-                list = arg2;
-              } else if (isPlainObject(arg2)) {
-                named = arg2;
-              }
-              if (isArray(arg3)) {
-                list = arg3;
-              } else if (isPlainObject(arg3)) {
-                named = arg3;
-              }
-              return Reflect.apply(composer.t, composer, [
-                key,
-                list || named || {},
-                options2
-              ]);
-            },
-            rt(...args) {
-              return Reflect.apply(composer.rt, composer, [...args]);
-            },
-            // tc
-            tc(...args) {
-              const [arg1, arg2, arg3] = args;
-              const options2 = { plural: 1 };
-              let list = null;
-              let named = null;
-              if (!isString(arg1)) {
-                throw createI18nError(I18nErrorCodes.INVALID_ARGUMENT);
-              }
-              const key = arg1;
-              if (isString(arg2)) {
-                options2.locale = arg2;
-              } else if (isNumber(arg2)) {
-                options2.plural = arg2;
-              } else if (isArray(arg2)) {
-                list = arg2;
-              } else if (isPlainObject(arg2)) {
-                named = arg2;
-              }
-              if (isString(arg3)) {
-                options2.locale = arg3;
-              } else if (isArray(arg3)) {
-                list = arg3;
-              } else if (isPlainObject(arg3)) {
-                named = arg3;
-              }
-              return Reflect.apply(composer.t, composer, [
-                key,
-                list || named || {},
-                options2
-              ]);
-            },
-            // te
-            te(key, locale) {
-              return composer.te(key, locale);
-            },
-            // tm
-            tm(key) {
-              return composer.tm(key);
-            },
-            // getLocaleMessage
-            getLocaleMessage(locale) {
-              return composer.getLocaleMessage(locale);
-            },
-            // setLocaleMessage
-            setLocaleMessage(locale, message2) {
-              composer.setLocaleMessage(locale, message2);
-            },
-            // mergeLocaleMessage
-            mergeLocaleMessage(locale, message2) {
-              composer.mergeLocaleMessage(locale, message2);
-            },
-            // d
-            d(...args) {
-              return Reflect.apply(composer.d, composer, [...args]);
-            },
-            // getDateTimeFormat
-            getDateTimeFormat(locale) {
-              return composer.getDateTimeFormat(locale);
-            },
-            // setDateTimeFormat
-            setDateTimeFormat(locale, format2) {
-              composer.setDateTimeFormat(locale, format2);
-            },
-            // mergeDateTimeFormat
-            mergeDateTimeFormat(locale, format2) {
-              composer.mergeDateTimeFormat(locale, format2);
-            },
-            // n
-            n(...args) {
-              return Reflect.apply(composer.n, composer, [...args]);
-            },
-            // getNumberFormat
-            getNumberFormat(locale) {
-              return composer.getNumberFormat(locale);
-            },
-            // setNumberFormat
-            setNumberFormat(locale, format2) {
-              composer.setNumberFormat(locale, format2);
-            },
-            // mergeNumberFormat
-            mergeNumberFormat(locale, format2) {
-              composer.mergeNumberFormat(locale, format2);
-            },
-            // getChoiceIndex
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            getChoiceIndex(choice, choicesLength) {
-              return -1;
-            },
-            // for internal
-            __onComponentInstanceCreated(target) {
-              const { componentInstanceCreatedListener } = options;
-              if (componentInstanceCreatedListener) {
-                componentInstanceCreatedListener(target, vueI18n);
-              }
-            }
-          };
-          return vueI18n;
-        }
-      }
       const baseFormatProps = {
         tag: {
           type: [String, Object]
@@ -33865,103 +32259,12 @@
           app.directive("t", vTDirective(i18n2));
         }
       }
-      function defineMixin(vuei18n, composer, i18n2) {
-        return {
-          beforeCreate() {
-            const instance = getCurrentInstance();
-            if (!instance) {
-              throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
-            }
-            const options = this.$options;
-            if (options.i18n) {
-              const optionsI18n = options.i18n;
-              if (options.__i18n) {
-                optionsI18n.__i18n = options.__i18n;
-              }
-              optionsI18n.__root = composer;
-              if (this === this.$root) {
-                this.$i18n = mergeToRoot(vuei18n, optionsI18n);
-              } else {
-                optionsI18n.__injectWithOption = true;
-                this.$i18n = createVueI18n(optionsI18n);
-              }
-            } else if (options.__i18n) {
-              if (this === this.$root) {
-                this.$i18n = mergeToRoot(vuei18n, options);
-              } else {
-                this.$i18n = createVueI18n({
-                  __i18n: options.__i18n,
-                  __injectWithOption: true,
-                  __root: composer
-                });
-              }
-            } else {
-              this.$i18n = vuei18n;
-            }
-            if (options.__i18nGlobal) {
-              adjustI18nResources(composer, options, options);
-            }
-            vuei18n.__onComponentInstanceCreated(this.$i18n);
-            i18n2.__setInstance(instance, this.$i18n);
-            this.$t = (...args) => this.$i18n.t(...args);
-            this.$rt = (...args) => this.$i18n.rt(...args);
-            this.$tc = (...args) => this.$i18n.tc(...args);
-            this.$te = (key, locale) => this.$i18n.te(key, locale);
-            this.$d = (...args) => this.$i18n.d(...args);
-            this.$n = (...args) => this.$i18n.n(...args);
-            this.$tm = (key) => this.$i18n.tm(key);
-          },
-          mounted() {
-          },
-          unmounted() {
-            const instance = getCurrentInstance();
-            if (!instance) {
-              throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
-            }
-            delete this.$t;
-            delete this.$rt;
-            delete this.$tc;
-            delete this.$te;
-            delete this.$d;
-            delete this.$n;
-            delete this.$tm;
-            i18n2.__deleteInstance(instance);
-            delete this.$i18n;
-          }
-        };
-      }
-      function mergeToRoot(root2, options) {
-        root2.locale = options.locale || root2.locale;
-        root2.fallbackLocale = options.fallbackLocale || root2.fallbackLocale;
-        root2.missing = options.missing || root2.missing;
-        root2.silentTranslationWarn = options.silentTranslationWarn || root2.silentFallbackWarn;
-        root2.silentFallbackWarn = options.silentFallbackWarn || root2.silentFallbackWarn;
-        root2.formatFallbackMessages = options.formatFallbackMessages || root2.formatFallbackMessages;
-        root2.postTranslation = options.postTranslation || root2.postTranslation;
-        root2.warnHtmlInMessage = options.warnHtmlInMessage || root2.warnHtmlInMessage;
-        root2.escapeParameterHtml = options.escapeParameterHtml || root2.escapeParameterHtml;
-        root2.sync = options.sync || root2.sync;
-        root2.__composer[SetPluralRulesSymbol](options.pluralizationRules || root2.pluralizationRules);
-        const messages2 = getLocaleMessages(root2.locale, {
-          messages: options.messages,
-          __i18n: options.__i18n
-        });
-        Object.keys(messages2).forEach((locale) => root2.mergeLocaleMessage(locale, messages2[locale]));
-        if (options.datetimeFormats) {
-          Object.keys(options.datetimeFormats).forEach((locale) => root2.mergeDateTimeFormat(locale, options.datetimeFormats[locale]));
-        }
-        if (options.numberFormats) {
-          Object.keys(options.numberFormats).forEach((locale) => root2.mergeNumberFormat(locale, options.numberFormats[locale]));
-        }
-        return root2;
-      }
       const I18nInjectionKey = /* @__PURE__ */ makeSymbol("global-vue-i18n");
       function createI18n(options = {}, VueI18nLegacy) {
-        const __legacyMode = __VUE_I18N_LEGACY_API__ && isBoolean(options.legacy) ? options.legacy : __VUE_I18N_LEGACY_API__;
         const __globalInjection = isBoolean(options.globalInjection) ? options.globalInjection : true;
-        const __allowComposition = __VUE_I18N_LEGACY_API__ && __legacyMode ? !!options.allowComposition : true;
+        const __allowComposition = true;
         const __instances = /* @__PURE__ */ new Map();
-        const [globalScope, __global] = createGlobal(options, __legacyMode);
+        const [globalScope, __global] = createGlobal(options);
         const symbol = makeSymbol("");
         function __getInstance(component) {
           return __instances.get(component) || null;
@@ -33976,7 +32279,7 @@
           const i18n2 = {
             // mode
             get mode() {
-              return __VUE_I18N_LEGACY_API__ && __legacyMode ? "legacy" : "composition";
+              return "composition";
             },
             // allowComposition
             get allowComposition() {
@@ -33986,14 +32289,11 @@
             async install(app, ...options2) {
               app.__VUE_I18N_SYMBOL__ = symbol;
               app.provide(app.__VUE_I18N_SYMBOL__, i18n2);
-              if (!__legacyMode && __globalInjection) {
+              if (__globalInjection) {
                 injectGlobalFields(app, i18n2.global);
               }
-              if (__VUE_I18N_FULL_INSTALL__) {
+              {
                 apply(app, i18n2, ...options2);
-              }
-              if (__VUE_I18N_LEGACY_API__ && __legacyMode) {
-                app.mixin(defineMixin(__global, __global.__composer, i18n2));
               }
               const unmountApp = app.unmount;
               app.unmount = () => {
@@ -34032,14 +32332,6 @@
         const global2 = getGlobalComposer(i18n2);
         const componentOptions = getComponentOptions(instance);
         const scope = getScope(options, componentOptions);
-        if (__VUE_I18N_LEGACY_API__) {
-          if (i18n2.mode === "legacy" && !options.__useComponent) {
-            if (!i18n2.allowComposition) {
-              throw createI18nError(I18nErrorCodes.NOT_AVAILABLE_IN_LEGACY_MODE);
-            }
-            return useI18nForLegacy(instance, scope, global2, options);
-          }
-        }
         if (scope === "global") {
           adjustI18nResources(global2, options, componentOptions);
           return global2;
@@ -34070,7 +32362,7 @@
       function createGlobal(options, legacyMode, VueI18nLegacy) {
         const scope = effectScope();
         {
-          const obj = __VUE_I18N_LEGACY_API__ && legacyMode ? scope.run(() => createVueI18n(options)) : scope.run(() => createComposer(options));
+          const obj = scope.run(() => createComposer(options));
           if (obj == null) {
             throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
           }
@@ -34100,16 +32392,6 @@
           const i18nInternal = i18n2;
           if (i18n2.mode === "composition") {
             composer = i18nInternal.__getInstance(current);
-          } else {
-            if (__VUE_I18N_LEGACY_API__) {
-              const vueI18n = i18nInternal.__getInstance(current);
-              if (vueI18n != null) {
-                composer = vueI18n.__composer;
-                if (useComponent && composer && !composer[InejctWithOption]) {
-                  composer = null;
-                }
-              }
-            }
           }
           if (composer != null) {
             break;
@@ -34129,287 +32411,6 @@
             i18n2.__deleteInstance(target);
           }, target);
         }
-      }
-      function useI18nForLegacy(instance, scope, root2, options = {}) {
-        const isLocale = scope === "local";
-        const _composer = shallowRef(null);
-        if (isLocale && instance.proxy && !(instance.proxy.$options.i18n || instance.proxy.$options.__i18n)) {
-          throw createI18nError(I18nErrorCodes.MUST_DEFINE_I18N_OPTION_IN_ALLOW_COMPOSITION);
-        }
-        const _inheritLocale = isBoolean(options.inheritLocale) ? options.inheritLocale : true;
-        const _locale = ref(
-          // prettier-ignore
-          isLocale && _inheritLocale ? root2.locale.value : isString(options.locale) ? options.locale : DEFAULT_LOCALE
-        );
-        const _fallbackLocale = ref(
-          // prettier-ignore
-          isLocale && _inheritLocale ? root2.fallbackLocale.value : isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale.value
-        );
-        const _messages = ref(getLocaleMessages(_locale.value, options));
-        const _datetimeFormats = ref(isPlainObject(options.datetimeFormats) ? options.datetimeFormats : { [_locale.value]: {} });
-        const _numberFormats = ref(isPlainObject(options.numberFormats) ? options.numberFormats : { [_locale.value]: {} });
-        const _missingWarn = isLocale ? root2.missingWarn : isBoolean(options.missingWarn) || isRegExp(options.missingWarn) ? options.missingWarn : true;
-        const _fallbackWarn = isLocale ? root2.fallbackWarn : isBoolean(options.fallbackWarn) || isRegExp(options.fallbackWarn) ? options.fallbackWarn : true;
-        const _fallbackRoot = isLocale ? root2.fallbackRoot : isBoolean(options.fallbackRoot) ? options.fallbackRoot : true;
-        const _fallbackFormat = !!options.fallbackFormat;
-        const _missing = isFunction(options.missing) ? options.missing : null;
-        const _postTranslation = isFunction(options.postTranslation) ? options.postTranslation : null;
-        const _warnHtmlMessage = isLocale ? root2.warnHtmlMessage : isBoolean(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
-        const _escapeParameter = !!options.escapeParameter;
-        const _modifiers = isLocale ? root2.modifiers : isPlainObject(options.modifiers) ? options.modifiers : {};
-        const _pluralRules = options.pluralRules || isLocale && root2.pluralRules;
-        function trackReactivityValues() {
-          return [
-            _locale.value,
-            _fallbackLocale.value,
-            _messages.value,
-            _datetimeFormats.value,
-            _numberFormats.value
-          ];
-        }
-        const locale = computed({
-          get: () => {
-            return _composer.value ? _composer.value.locale.value : _locale.value;
-          },
-          set: (val) => {
-            if (_composer.value) {
-              _composer.value.locale.value = val;
-            }
-            _locale.value = val;
-          }
-        });
-        const fallbackLocale = computed({
-          get: () => {
-            return _composer.value ? _composer.value.fallbackLocale.value : _fallbackLocale.value;
-          },
-          set: (val) => {
-            if (_composer.value) {
-              _composer.value.fallbackLocale.value = val;
-            }
-            _fallbackLocale.value = val;
-          }
-        });
-        const messages2 = computed(() => {
-          if (_composer.value) {
-            return _composer.value.messages.value;
-          } else {
-            return _messages.value;
-          }
-        });
-        const datetimeFormats = computed(() => _datetimeFormats.value);
-        const numberFormats = computed(() => _numberFormats.value);
-        function getPostTranslationHandler() {
-          return _composer.value ? _composer.value.getPostTranslationHandler() : _postTranslation;
-        }
-        function setPostTranslationHandler(handler) {
-          if (_composer.value) {
-            _composer.value.setPostTranslationHandler(handler);
-          }
-        }
-        function getMissingHandler() {
-          return _composer.value ? _composer.value.getMissingHandler() : _missing;
-        }
-        function setMissingHandler(handler) {
-          if (_composer.value) {
-            _composer.value.setMissingHandler(handler);
-          }
-        }
-        function warpWithDeps(fn2) {
-          trackReactivityValues();
-          return fn2();
-        }
-        function t2(...args) {
-          return _composer.value ? warpWithDeps(() => Reflect.apply(_composer.value.t, null, [...args])) : warpWithDeps(() => "");
-        }
-        function rt2(...args) {
-          return _composer.value ? Reflect.apply(_composer.value.rt, null, [...args]) : "";
-        }
-        function d(...args) {
-          return _composer.value ? warpWithDeps(() => Reflect.apply(_composer.value.d, null, [...args])) : warpWithDeps(() => "");
-        }
-        function n(...args) {
-          return _composer.value ? warpWithDeps(() => Reflect.apply(_composer.value.n, null, [...args])) : warpWithDeps(() => "");
-        }
-        function tm(key) {
-          return _composer.value ? _composer.value.tm(key) : {};
-        }
-        function te2(key, locale2) {
-          return _composer.value ? _composer.value.te(key, locale2) : false;
-        }
-        function getLocaleMessage(locale2) {
-          return _composer.value ? _composer.value.getLocaleMessage(locale2) : {};
-        }
-        function setLocaleMessage(locale2, message2) {
-          if (_composer.value) {
-            _composer.value.setLocaleMessage(locale2, message2);
-            _messages.value[locale2] = message2;
-          }
-        }
-        function mergeLocaleMessage(locale2, message2) {
-          if (_composer.value) {
-            _composer.value.mergeLocaleMessage(locale2, message2);
-          }
-        }
-        function getDateTimeFormat(locale2) {
-          return _composer.value ? _composer.value.getDateTimeFormat(locale2) : {};
-        }
-        function setDateTimeFormat(locale2, format2) {
-          if (_composer.value) {
-            _composer.value.setDateTimeFormat(locale2, format2);
-            _datetimeFormats.value[locale2] = format2;
-          }
-        }
-        function mergeDateTimeFormat(locale2, format2) {
-          if (_composer.value) {
-            _composer.value.mergeDateTimeFormat(locale2, format2);
-          }
-        }
-        function getNumberFormat(locale2) {
-          return _composer.value ? _composer.value.getNumberFormat(locale2) : {};
-        }
-        function setNumberFormat(locale2, format2) {
-          if (_composer.value) {
-            _composer.value.setNumberFormat(locale2, format2);
-            _numberFormats.value[locale2] = format2;
-          }
-        }
-        function mergeNumberFormat(locale2, format2) {
-          if (_composer.value) {
-            _composer.value.mergeNumberFormat(locale2, format2);
-          }
-        }
-        const wrapper = {
-          get id() {
-            return _composer.value ? _composer.value.id : -1;
-          },
-          locale,
-          fallbackLocale,
-          messages: messages2,
-          datetimeFormats,
-          numberFormats,
-          get inheritLocale() {
-            return _composer.value ? _composer.value.inheritLocale : _inheritLocale;
-          },
-          set inheritLocale(val) {
-            if (_composer.value) {
-              _composer.value.inheritLocale = val;
-            }
-          },
-          get availableLocales() {
-            return _composer.value ? _composer.value.availableLocales : Object.keys(_messages.value);
-          },
-          get modifiers() {
-            return _composer.value ? _composer.value.modifiers : _modifiers;
-          },
-          get pluralRules() {
-            return _composer.value ? _composer.value.pluralRules : _pluralRules;
-          },
-          get isGlobal() {
-            return _composer.value ? _composer.value.isGlobal : false;
-          },
-          get missingWarn() {
-            return _composer.value ? _composer.value.missingWarn : _missingWarn;
-          },
-          set missingWarn(val) {
-            if (_composer.value) {
-              _composer.value.missingWarn = val;
-            }
-          },
-          get fallbackWarn() {
-            return _composer.value ? _composer.value.fallbackWarn : _fallbackWarn;
-          },
-          set fallbackWarn(val) {
-            if (_composer.value) {
-              _composer.value.missingWarn = val;
-            }
-          },
-          get fallbackRoot() {
-            return _composer.value ? _composer.value.fallbackRoot : _fallbackRoot;
-          },
-          set fallbackRoot(val) {
-            if (_composer.value) {
-              _composer.value.fallbackRoot = val;
-            }
-          },
-          get fallbackFormat() {
-            return _composer.value ? _composer.value.fallbackFormat : _fallbackFormat;
-          },
-          set fallbackFormat(val) {
-            if (_composer.value) {
-              _composer.value.fallbackFormat = val;
-            }
-          },
-          get warnHtmlMessage() {
-            return _composer.value ? _composer.value.warnHtmlMessage : _warnHtmlMessage;
-          },
-          set warnHtmlMessage(val) {
-            if (_composer.value) {
-              _composer.value.warnHtmlMessage = val;
-            }
-          },
-          get escapeParameter() {
-            return _composer.value ? _composer.value.escapeParameter : _escapeParameter;
-          },
-          set escapeParameter(val) {
-            if (_composer.value) {
-              _composer.value.escapeParameter = val;
-            }
-          },
-          t: t2,
-          getPostTranslationHandler,
-          setPostTranslationHandler,
-          getMissingHandler,
-          setMissingHandler,
-          rt: rt2,
-          d,
-          n,
-          tm,
-          te: te2,
-          getLocaleMessage,
-          setLocaleMessage,
-          mergeLocaleMessage,
-          getDateTimeFormat,
-          setDateTimeFormat,
-          mergeDateTimeFormat,
-          getNumberFormat,
-          setNumberFormat,
-          mergeNumberFormat
-        };
-        function sync(composer) {
-          composer.locale.value = _locale.value;
-          composer.fallbackLocale.value = _fallbackLocale.value;
-          Object.keys(_messages.value).forEach((locale2) => {
-            composer.mergeLocaleMessage(locale2, _messages.value[locale2]);
-          });
-          Object.keys(_datetimeFormats.value).forEach((locale2) => {
-            composer.mergeDateTimeFormat(locale2, _datetimeFormats.value[locale2]);
-          });
-          Object.keys(_numberFormats.value).forEach((locale2) => {
-            composer.mergeNumberFormat(locale2, _numberFormats.value[locale2]);
-          });
-          composer.escapeParameter = _escapeParameter;
-          composer.fallbackFormat = _fallbackFormat;
-          composer.fallbackRoot = _fallbackRoot;
-          composer.fallbackWarn = _fallbackWarn;
-          composer.missingWarn = _missingWarn;
-          composer.warnHtmlMessage = _warnHtmlMessage;
-        }
-        onBeforeMount(() => {
-          if (instance.proxy == null || instance.proxy.$i18n == null) {
-            throw createI18nError(I18nErrorCodes.NOT_AVAILABLE_COMPOSITION_IN_LEGACY);
-          }
-          const composer = _composer.value = instance.proxy.$i18n.__composer;
-          if (scope === "global") {
-            _locale.value = composer.locale.value;
-            _fallbackLocale.value = composer.fallbackLocale.value;
-            _messages.value = composer.messages.value;
-            _datetimeFormats.value = composer.datetimeFormats.value;
-            _numberFormats.value = composer.numberFormats.value;
-          } else if (isLocale) {
-            sync(composer);
-          }
-        });
-        return wrapper;
       }
       const globalExportProps = [
         "locale",
@@ -34448,7 +32449,6 @@
           Object.defineProperty(app.config.globalProperties, `$${method2}`, desc);
         });
       }
-      registerMessageCompiler(compileToFunction);
       registerMessageResolver(resolveValue);
       registerLocaleFallbacker(fallbackWithLocaleChain);
       {
@@ -37832,9 +35832,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
             refreshDownloadNum();
           };
           const openHelp = () => {
-            _monkeyWindow.open(
+            _GM_openInTab(
               locale.value === "zh" ? "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE" : "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings",
-              "_blank"
+              { active: true, setParent: true }
             );
           };
           const exporting = ref(false);
@@ -38328,7 +36328,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           };
         }
       });
-      const SettingsDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1, [["__scopeId", "data-v-0ac3b9ef"]]);
+      const SettingsDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1, [["__scopeId", "data-v-dd9609fc"]]);
       const compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
       const getDownloadExt = () => {
         const ext = last(settings.compressionFilename.split("."));
@@ -40712,154 +38712,453 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       })(noty);
       var notyExports = noty.exports;
       const Noty = /* @__PURE__ */ getDefaultExportFromCjs(notyExports);
-      var ErrorAction = /* @__PURE__ */ ((ErrorAction2) => {
-        ErrorAction2["GET_INFO"] = "getInfo";
-        ErrorAction2["DOWNLOAD"] = "download";
-        return ErrorAction2;
-      })(ErrorAction || {});
-      const en = {
-        common: {
-          settings: "Settings",
-          auto: "Auto",
-          english: "English",
-          japanese: "Japanese",
-          chinese: "Chinese",
-          pretty: "Pretty",
-          filter: "Filter",
-          none: "None",
-          random: "Random",
-          balance: "Balance"
-        },
-        setting: {
-          title: "@:common.settings",
-          advanceTitle: "Advance Settings",
-          helpButton: "Help",
-          asteriskTip: "means refresh is required to take effect",
-          downloadThread: "Download thread",
-          openOnNewTab: "Open on new tab",
-          compressionFilename: "Compression filename",
-          maxNumber: "Max number",
-          separator: "Separator",
-          compressionLevel: "Compression level",
-          filenameLength: "Filename length",
-          autoCancelDownloadedManga: "Auto cancel downloaded manga",
-          autoRetryWhenErrorOccurs: "Auto retry when error occurs",
-          autoShowAll: "Auto show all",
-          showIgnoreButton: 'Show "Ignore" button',
-          judgeDownloadedMangaByTitle: "Judge downloaded manga by title",
-          customDownloadUrl: "Custom download URL",
-          compressionStreamFiles: 'Compression "streamFiles"',
-          seriesMode: "Series mode",
-          streamDownload: "Stream download",
-          preventConsoleClearing: "Prevent console clearing",
-          nHentaiDownloadHost: "nHentai download host",
-          addMetaFile: "Add metadata file",
-          metaFileTitleLanguage: "Title language",
-          history: {
-            title: "Download History",
-            downloadedNumberTip: "You have downloaded {num} manga on this site using nHentai Helper.",
-            import: "Import",
-            export: "Export",
-            clear: "Clear",
-            clearConfirm: "Are you sure?",
-            clearConfirmYes: "",
-            // empty will be default text 'Yes'
-            clearConfirmNo: "",
-            // empty will be default text 'No'
-            importTip: "Tip: Import will not clear the existing history, but merges with it."
+      const resource$1 = {
+        "common": {
+          "settings": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Settings"]);
+          },
+          "auto": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Auto"]);
+          },
+          "english": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["English"]);
+          },
+          "japanese": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Japanese"]);
+          },
+          "chinese": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Chinese"]);
+          },
+          "pretty": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Pretty"]);
+          },
+          "filter": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Filter"]);
+          },
+          "none": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["None"]);
+          },
+          "random": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Random"]);
+          },
+          "balance": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Balance"]);
           }
         },
-        dialog: {
-          yes: "YES",
-          no: "NO",
-          action: {
-            [ErrorAction.GET_INFO]: "getting information",
-            [ErrorAction.DOWNLOAD]: "downloading"
+        "setting": {
+          "title": (ctx) => {
+            const { normalize: _normalize, linked: _linked, type: _type } = ctx;
+            return _normalize([_linked("common.settings", void 0, _type)]);
           },
-          downloadAgainConfirm: ({ named }) => `<i>${named("title")}</i> is already downloaded${named("hasQueue") ? " or in queue" : ""}.<br>Do you want to download again?`,
-          errorRetryConfirm: (ctx) => `Error occurred while ${getActionText(ctx)}, retry?`,
-          errorRetryTip: (ctx) => `Error occurred while ${getActionText(ctx)}, retrying...`,
-          downloadedTip: "<i>{title}</i> is already downloaded or in queue."
+          "advanceTitle": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Advance Settings"]);
+          },
+          "helpButton": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Help"]);
+          },
+          "asteriskTip": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["means refresh is required to take effect"]);
+          },
+          "downloadThread": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Download thread"]);
+          },
+          "openOnNewTab": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Open on new tab"]);
+          },
+          "compressionFilename": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Compression filename"]);
+          },
+          "maxNumber": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Max number"]);
+          },
+          "separator": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Separator"]);
+          },
+          "compressionLevel": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Compression level"]);
+          },
+          "filenameLength": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Filename length"]);
+          },
+          "autoCancelDownloadedManga": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Auto cancel downloaded manga"]);
+          },
+          "autoRetryWhenErrorOccurs": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Auto retry when error occurs"]);
+          },
+          "autoShowAll": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Auto show all"]);
+          },
+          "showIgnoreButton": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(['Show "Ignore" button']);
+          },
+          "judgeDownloadedMangaByTitle": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Judge downloaded manga by title"]);
+          },
+          "customDownloadUrl": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Custom download URL"]);
+          },
+          "compressionStreamFiles": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(['Compression "streamFiles"']);
+          },
+          "seriesMode": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Series mode"]);
+          },
+          "streamDownload": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Stream download"]);
+          },
+          "preventConsoleClearing": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Prevent console clearing"]);
+          },
+          "nHentaiDownloadHost": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["nHentai download host"]);
+          },
+          "addMetaFile": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Add metadata file"]);
+          },
+          "metaFileTitleLanguage": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Title language"]);
+          },
+          "history": {
+            "title": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Download History"]);
+            },
+            "downloadedNumberTip": (ctx) => {
+              const { normalize: _normalize, interpolate: _interpolate, named: _named } = ctx;
+              return _normalize(["You have downloaded ", _interpolate(_named("num")), " manga on this site using nHentai Helper."]);
+            },
+            "import": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Import"]);
+            },
+            "export": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Export"]);
+            },
+            "clear": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Clear"]);
+            },
+            "clearConfirm": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Are you sure?"]);
+            },
+            "clearConfirmYes": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize([]);
+            },
+            "clearConfirmNo": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize([]);
+            },
+            "importTip": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["Tip: Import will not clear the existing history, but merges with it."]);
+            }
+          }
         },
-        button: {
-          download: "Download",
-          downloading: "Downloading",
-          compressing: "Compressing"
+        "dialog": {
+          "yes": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["YES"]);
+          },
+          "no": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["NO"]);
+          },
+          "action": {
+            "getInfo": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["getting information"]);
+            },
+            "download": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["downloading"]);
+            }
+          },
+          "downloadAgainConfirm": ({ named }) => `<i>${named("title")}</i> is already downloaded${named("hasQueue") ? " or in queue" : ""}.<br>Do you want to download again?`,
+          "errorRetryConfirm": (ctx) => `Error occurred while ${getActionText(ctx)}, retry?`,
+          "errorRetryTip": (ctx) => `Error occurred while ${getActionText(ctx)}, retrying...`,
+          "downloadedTip": (ctx) => {
+            const { normalize: _normalize, interpolate: _interpolate, named: _named } = ctx;
+            return _normalize(["<i>", _interpolate(_named("title")), "</i> is already downloaded or in queue."]);
+          }
+        },
+        "button": {
+          "download": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Download"]);
+          },
+          "downloading": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Downloading"]);
+          },
+          "compressing": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["Compressing"]);
+          }
         }
       };
-      const zh = {
-        common: {
-          settings: "设置",
-          auto: "自动",
-          english: "英文",
-          japanese: "日文",
-          chinese: "中文",
-          pretty: "简略",
-          filter: "过滤",
-          none: "无",
-          random: "随机",
-          balance: "均衡"
-        },
-        setting: {
-          title: "@:common.settings",
-          advanceTitle: "进阶设置",
-          helpButton: "帮助",
-          asteriskTip: "表示刷新页面才能生效",
-          downloadThread: "下载线程数",
-          openOnNewTab: "在新选项卡打开",
-          compressionFilename: "压缩文件名",
-          maxNumber: "最大数量",
-          separator: "分隔符",
-          compressionLevel: "压缩等级",
-          filenameLength: "文件名长度",
-          autoCancelDownloadedManga: "自动取消下载过的本子",
-          autoRetryWhenErrorOccurs: "发生错误时自动重试",
-          autoShowAll: "自动显示全部",
-          showIgnoreButton: "显示“忽略”按钮",
-          judgeDownloadedMangaByTitle: "用标题判断本子是否下载过",
-          customDownloadUrl: "自定义下载地址",
-          compressionStreamFiles: '压缩 "streamFiles" 选项',
-          seriesMode: "串行模式",
-          streamDownload: "流式下载",
-          preventConsoleClearing: "阻止控制台清空",
-          nHentaiDownloadHost: "nHentai 下载节点",
-          addMetaFile: "添加元数据文件",
-          metaFileTitleLanguage: "标题语言",
-          history: {
-            title: "下载历史",
-            downloadedNumberTip: "你在这个站点上已经用 nHentai 助手下载了 {num} 个本子",
-            import: "导入",
-            export: "导出",
-            clear: "清空",
-            clearConfirm: "真的吗？",
-            clearConfirmYes: "真的",
-            clearConfirmNo: "手滑了",
-            importTip: "提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录"
+      const resource = {
+        "common": {
+          "settings": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["设置"]);
+          },
+          "auto": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["自动"]);
+          },
+          "english": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["英文"]);
+          },
+          "japanese": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["日文"]);
+          },
+          "chinese": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["中文"]);
+          },
+          "pretty": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["简略"]);
+          },
+          "filter": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["过滤"]);
+          },
+          "none": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["无"]);
+          },
+          "random": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["随机"]);
+          },
+          "balance": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["均衡"]);
           }
         },
-        dialog: {
-          yes: "是的",
-          no: "算了",
-          action: {
-            [ErrorAction.GET_INFO]: "获取信息",
-            [ErrorAction.DOWNLOAD]: "下载"
+        "setting": {
+          "title": (ctx) => {
+            const { normalize: _normalize, linked: _linked, type: _type } = ctx;
+            return _normalize([_linked("common.settings", void 0, _type)]);
           },
-          downloadAgainConfirm: ({ named }) => `《${named("title")}》已下载过${named("hasQueue") ? "或在队列中" : ""}，你希望再次下载吗？`,
-          errorRetryConfirm: (ctx) => `${getActionText(ctx)}发生错误，是否重试？`,
-          errorRetryTip: (ctx) => `${getActionText(ctx)}发生错误，重试中……`,
-          downloadedTip: "《{title}》已经下载过或在队列中"
+          "advanceTitle": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["进阶设置"]);
+          },
+          "helpButton": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["帮助"]);
+          },
+          "asteriskTip": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["表示刷新页面才能生效"]);
+          },
+          "downloadThread": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["下载线程数"]);
+          },
+          "openOnNewTab": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["在新选项卡打开"]);
+          },
+          "compressionFilename": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["压缩文件名"]);
+          },
+          "maxNumber": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["最大数量"]);
+          },
+          "separator": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["分隔符"]);
+          },
+          "compressionLevel": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["压缩等级"]);
+          },
+          "filenameLength": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["文件名长度"]);
+          },
+          "autoCancelDownloadedManga": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["自动取消下载过的本子"]);
+          },
+          "autoRetryWhenErrorOccurs": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["发生错误时自动重试"]);
+          },
+          "autoShowAll": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["自动显示全部"]);
+          },
+          "showIgnoreButton": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["显示“忽略”按钮"]);
+          },
+          "judgeDownloadedMangaByTitle": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["用标题判断本子是否下载过"]);
+          },
+          "customDownloadUrl": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["自定义下载地址"]);
+          },
+          "compressionStreamFiles": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(['压缩 "streamFiles" 选项']);
+          },
+          "seriesMode": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["串行模式"]);
+          },
+          "streamDownload": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["流式下载"]);
+          },
+          "preventConsoleClearing": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["阻止控制台清空"]);
+          },
+          "nHentaiDownloadHost": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["nHentai 下载节点"]);
+          },
+          "addMetaFile": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["添加元数据文件"]);
+          },
+          "metaFileTitleLanguage": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["标题语言"]);
+          },
+          "history": {
+            "title": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["下载历史"]);
+            },
+            "downloadedNumberTip": (ctx) => {
+              const { normalize: _normalize, interpolate: _interpolate, named: _named } = ctx;
+              return _normalize(["你在这个站点上已经用 nHentai 助手下载了 ", _interpolate(_named("num")), " 个本子"]);
+            },
+            "import": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["导入"]);
+            },
+            "export": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["导出"]);
+            },
+            "clear": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["清空"]);
+            },
+            "clearConfirm": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["真的吗？"]);
+            },
+            "clearConfirmYes": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["真的"]);
+            },
+            "clearConfirmNo": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["手滑了"]);
+            },
+            "importTip": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录"]);
+            }
+          }
         },
-        button: {
-          download: "下载",
-          downloading: "下载中",
-          compressing: "压缩中"
+        "dialog": {
+          "yes": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["是的"]);
+          },
+          "no": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["算了"]);
+          },
+          "action": {
+            "getInfo": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["获取信息"]);
+            },
+            "download": (ctx) => {
+              const { normalize: _normalize } = ctx;
+              return _normalize(["下载"]);
+            }
+          },
+          "downloadAgainConfirm": ({ named }) => `《${named("title")}》已下载过${named("hasQueue") ? "或在队列中" : ""}，你希望再次下载吗？`,
+          "errorRetryConfirm": (ctx) => `${getActionText(ctx)}发生错误，是否重试？`,
+          "errorRetryTip": (ctx) => `${getActionText(ctx)}发生错误，重试中……`,
+          "downloadedTip": (ctx) => {
+            const { normalize: _normalize, interpolate: _interpolate, named: _named } = ctx;
+            return _normalize(["《", _interpolate(_named("title")), "》已经下载过或在队列中"]);
+          }
+        },
+        "button": {
+          "download": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["下载"]);
+          },
+          "downloading": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["下载中"]);
+          },
+          "compressing": (ctx) => {
+            const { normalize: _normalize } = ctx;
+            return _normalize(["压缩中"]);
+          }
         }
       };
       const i18n = createI18n({
         legacy: false,
         locale: settings.language,
         fallbackLocale: "en",
-        messages: { en, zh }
+        messages: { en: resource$1, zh: resource }
       });
       const { t: t$1 } = i18n.global;
       const notyConfirmOption = {
@@ -41466,6 +39765,15 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         logger.log("info", info);
         return info;
       };
+      let textareaEl;
+      const encodeHtml = (text) => {
+        if (!textareaEl)
+          textareaEl = document.createElement("textarea");
+        textareaEl.innerText = text;
+        const encodedText = textareaEl.innerHTML;
+        textareaEl.innerHTML = "";
+        return encodedText;
+      };
       const langMap = {
         chinese: "zh",
         english: "en",
@@ -41533,7 +39841,7 @@ ${xml}`;
         createElement(name, value, attrs) {
           const el = this.doc.createElement(name);
           if (!isNil(value))
-            el.innerHTML = String(value);
+            el.innerHTML = encodeHtml(String(value));
           if (attrs) {
             forEach(attrs, (v, k) => {
               if (!isNil(v))
@@ -41609,6 +39917,11 @@ ${xml}`;
         }
         return files;
       };
+      var ErrorAction = /* @__PURE__ */ ((ErrorAction2) => {
+        ErrorAction2["GET_INFO"] = "getInfo";
+        ErrorAction2["DOWNLOAD"] = "download";
+        return ErrorAction2;
+      })(ErrorAction || {});
       const downloadGalleryByInfo = async (info, { progressDisplayController, rangeCheckers } = {}) => {
         info.done = 0;
         let { mid, pages: pages2, cfName } = info.gallery;
@@ -41624,7 +39937,6 @@ ${xml}`;
         progressDisplayController == null ? void 0 : progressDisplayController.updateProgress();
         const zip = new JSZip();
         const metaFiles = generateMetaFiles(info.gallery);
-        console.warn("metaFiles", metaFiles);
         if (metaFiles.length) {
           metaFiles.forEach(({ name, data }) => {
             zip.file(name, data);
