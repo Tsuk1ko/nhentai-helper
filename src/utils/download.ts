@@ -7,7 +7,11 @@ import logger from './logger';
 import type { TaskFunction } from './multiThread';
 import { MultiThread } from './multiThread';
 import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
-import { nHentaiDownloadHostCounter, getMediaDownloadUrl } from './nhentai';
+import {
+  nHentaiDownloadHostCounter,
+  getMediaDownloadUrl,
+  getMediaDownloadUrlOnMirrorSite,
+} from './nhentai';
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
 import { NHentaiDownloadHostSpecial, settings } from './settings';
@@ -66,12 +70,20 @@ export const downloadGalleryByInfo = async (
       filenameLength: number;
       customDownloadUrl: string;
     }
-  > = (page, threadID, { filenameLength, customDownloadUrl }) => {
+  > = async (page, threadID, { filenameLength, customDownloadUrl }) => {
     if (info.error) return { abort: () => {}, promise: Promise.resolve() };
 
     const url = customDownloadUrl
       ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t })
-      : getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
+      : IS_NHENTAI
+      ? getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
+      : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {});
+
+    if (!url) {
+      info.error = true;
+      return { abort: () => {}, promise: Promise.resolve() };
+    }
+
     logger.log(`[${threadID}] ${url}`);
 
     const isUsingCounter =

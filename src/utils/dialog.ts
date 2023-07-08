@@ -82,3 +82,19 @@ export const errorRetryTip = (action: ErrorAction): void => {
     text: t('dialog.errorRetryTip', { action }),
   }).show();
 };
+
+export const openAlert = (i18nKey: string) => {
+  const n = new Noty({
+    layout: 'center',
+    theme: 'nest',
+    modal: true,
+    closeWith: [],
+    text: t(i18nKey),
+    buttons: [
+      Noty.button('OK', 'btn btn-noty-blue btn-noty', () => {
+        n.close();
+      }),
+    ],
+  });
+  n.show();
+};

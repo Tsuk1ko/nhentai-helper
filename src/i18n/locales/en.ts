@@ -67,6 +67,8 @@ export default {
     errorRetryTip: (ctx: MessageContext) =>
       `Error occurred while ${getActionText(ctx)}, retrying...`,
     downloadedTip: '<i>{title}</i> is already downloaded or in queue.',
+    getMediaUrlTemplateFailed:
+      'Fail to get image download url. Please set "@:{\'setting.customDownloadUrl\'}" manually, or open a github issue to report with current url.',
   },
   button: {
     download: 'Download',

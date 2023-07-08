@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { unsafeWindow } from '$';
+import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
-import { filter, invert, map, sample } from 'lodash-es';
-import { fetchJSON, getText } from './request';
+import { filter, invert, map, once, sample } from 'lodash-es';
+import { checkHost, fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
 import { NHentaiDownloadHostSpecial, nHentaiDownloadHosts, settings } from './settings';
 import logger from './logger';
 import { Counter } from './counter';
-import { IS_NHENTAI, IS_NHENTAI_TO, IS_PAGE_MANGA_DETAIL } from '@/const';
+import { loadHTML } from './html';
+import { openAlert } from './dialog';
+import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
 
 enum NHentaiImgExt {
   j = 'jpg',
@@ -88,12 +90,11 @@ const getNHentaiDownloadHost = () => {
   }
 };
 
-export const getMediaDownloadUrl = IS_NHENTAI
-  ? (mid: string, filename: string) =>
-      `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`
-  : IS_NHENTAI_TO
-  ? (mid: string, filename: string) => `https://cdn.nload.xyz/galleries/${mid}/${filename}`
-  : (mid: string, filename: string) => `https://cdn.nhentai.xxx/g/${mid}/${filename}`;
+export const getMediaDownloadUrl = (mid: string, filename: string) =>
+  `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`;
+
+export const getMediaDownloadUrlOnMirrorSite = async (mid: string, filename: string) =>
+  (await getCompliedMediaUrlTemplate())({ mid, filename });
 
 const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
   const url = `https://nhentai.net/api/gallery/${gid}`;
@@ -255,3 +256,46 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
 
   return info;
 };
+
+const fetchMediaUrlTemplate = async () => {
+  const onlineViewUrl =
+    document.querySelector('.gallery a')?.getAttribute('href')?.concat('/1') ??
+    document.querySelector('a.gallerythumb')?.getAttribute('href');
+  if (!onlineViewUrl) {
+    throw new Error('get media url failed: cannot find a gallery');
+  }
+
+  logger.log(`fetching media url template by ${onlineViewUrl}`);
+
+  const onlineViewHtml = await getText(onlineViewUrl);
+  const $doc = loadHTML(onlineViewHtml);
+  const imgSrc = $doc.find('#image-container img').attr('src');
+  if (!imgSrc) {
+    throw new Error('get media url failed: cannot find an image src');
+  }
+
+  const template = imgSrc.replace(/\/\d+\//, '/{{mid}}/').replace(/\/\d+\.[^/]+$/, '/{{filename}}');
+  GM_setValue(MEDIA_URL_TEMPLATE_KEY, template);
+
+  return template;
+};
+
+const getMediaUrlTemplate = async () => {
+  const cachedTemplate = GM_getValue<string | undefined>(MEDIA_URL_TEMPLATE_KEY);
+  if (cachedTemplate && (await checkHost(cachedTemplate))) {
+    logger.log(`use cached media url template: ${cachedTemplate}`);
+    return cachedTemplate;
+  }
+
+  try {
+    const template = await fetchMediaUrlTemplate();
+    logger.log(`use media url template: ${template}`);
+    return template;
+  } catch (error) {
+    openAlert('dialog.getMediaUrlTemplateFailed');
+    logger.error(error);
+    throw error;
+  }
+};
+
+const getCompliedMediaUrlTemplate = once(async () => compileTemplate(await getMediaUrlTemplate()));

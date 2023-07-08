@@ -2,13 +2,15 @@
 
 [中文说明](https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#readme)
 
+[GitHub](https://github.com/Tsuk1ko/nhentai-helper)
+
 Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Installation
 
 [Via Greasy Fork](https://greasyfork.org/zh-CN/scripts/375992) (login required due to adult content)
 
-[Via Github Pages](https://nhelper.lolicon.app/script.user.js)
+[Via GitHub Pages](https://nhelper.lolicon.app/script.user.js)
 
 ## Main features
 
@@ -72,7 +74,6 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Choose a host for downloading nHentai images. Only available on nHentai.
 - **Custom download URL**  
   **WARNING: Please don't set this if you don't know what it does.**  
-  Tip: You may need to add your domain into *XHR security* for this script.  
   Provide a URL containing the following placeholder:
   - `{{mid}}` - Media ID
   - `{{index}}` - Page index, starting from 1
@@ -93,9 +94,13 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ### nHentai mirror sites support
 
-This script also support some nHentai mirror sites such as NyaHentai. See the script's `@match` and `@include`.
+This script also support some nHentai mirror sites. See the script's `@match` and `@include`.
 
-If the script does not run on some domains, you can add them to *User matches*, find the correct image URL and set *Custom Download URL*.
+If the script does not run on some domains, you can add them to *User matches*.
+
+When you are on a mirror site, a prompt "A user script wants to access a cross-origin resource" may pop up, please select "Always allow domain" or "Always allow all domain".
+
+![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.en.png)
 
 ### Language filter
 

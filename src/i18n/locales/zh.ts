@@ -63,6 +63,8 @@ export default {
     errorRetryConfirm: (ctx: MessageContext) => `${getActionText(ctx)}发生错误，是否重试？`,
     errorRetryTip: (ctx: MessageContext) => `${getActionText(ctx)}发生错误，重试中……`,
     downloadedTip: '《{title}》已经下载过或在队列中',
+    getMediaUrlTemplateFailed:
+      "获取图片下载地址失败，请手动设置“@:{'setting.customDownloadUrl'}”，或前往 github issue 或脚本页面反馈并附带当前网址",
   },
   button: {
     download: '下载',

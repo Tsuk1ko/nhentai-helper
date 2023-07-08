@@ -1,12 +1,14 @@
 # nHentai 助手
 
+[GitHub](https://github.com/Tsuk1ko/nhentai-helper)
+
 支持 Tampermonkey 和 Violentmonkey，不支持也不会支持 Greasemonkey
 
 ## 安装
 
 [从 Greasy Fork 安装](https://greasyfork.org/scripts/375992)（由于成人内容，需要登录才能安装）
 
-[从 Github Pages 安装](https://nhelper.lolicon.app/script.user.js)
+[从 GitHub Pages 安装](https://nhelper.lolicon.app/script.user.js)
 
 ## 主要功能
 
@@ -70,7 +72,6 @@
   可以切换下载 nHentai 图片的节点，仅在 nHentai 有效
 - **自定义下载地址**  
   **警告：不知道这是做什么的就不要动**  
-  提示：你可能还需要往脚本设置的 *XHR 安全* 中加入域名  
   提供一个包含以下占位符的 URL：
   - `{{mid}}` - Media ID
   - `{{index}}` - 页号
@@ -90,9 +91,13 @@
 
 ### 镜像站支持
 
-同时支持部分镜像站如 NyaHentai 等，具体见脚本的 `@match` 与 `@include`
+该脚本支持部分镜像站，具体见脚本的 `@match` 与 `@include`
 
-如脚本没有在你使用的域名上运行，可自行将网址加入 *用户匹配*，并自行找出本子原图地址，设置 *自定义下载链接*
+如脚本没有在你使用的域名上运行，可自行将网址加入 *用户匹配*
+
+在镜像站使用时，可能会弹出“一个用户脚本试图访问跨源资源”的提示，请选择“总是允许此域名”或“总是允许全部域名”
+
+![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.zh.png)
 
 ### 语言过滤
 

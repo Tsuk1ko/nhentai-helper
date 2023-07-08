@@ -68,3 +68,13 @@ export const getJSON = <D = any>(url: string): Promise<D> => request<D>(url, 'js
 export const getText = (url: string): Promise<string> => request<string>(url).dataPromise;
 
 export const fetchJSON = <D = any>(url: string): Promise<D> => fetch(url).then(r => r.json());
+
+export const checkHost = async (url: string) => {
+  const { origin } = new URL(url);
+  try {
+    await fetch(origin, { method: 'HEAD', mode: 'no-cors' });
+    return true;
+  } catch {
+    return false;
+  }
+};

@@ -4,7 +4,7 @@ import 'noty/lib/noty.css';
 import { GM_registerMenuCommand } from '$';
 import type { App, Component } from 'vue';
 import { createApp } from 'vue';
-import once from 'just-once';
+import { once } from 'lodash-es';
 import DownloadPanelVue from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { initPage } from './utils/initPage';

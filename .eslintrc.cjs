@@ -24,7 +24,7 @@ module.exports = {
   rules: {
     yoda: 'off',
     'no-empty-pattern': 'off',
-    camelcase: ['error', { ignoreDestructuring: true, ignoreImports: true }],
+    camelcase: 'off',
     'import/order': [
       'warn',
       {

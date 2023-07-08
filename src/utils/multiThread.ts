@@ -9,7 +9,7 @@ export type TaskFunction<T = any, P = any> = (
   task: T,
   threadId: number,
   parmas: P,
-) => TaskController;
+) => TaskController | Promise<TaskController>;
 
 export class MultiThread<T = any, P = any> {
   private readonly threads: TaskController[] = [];
@@ -30,7 +30,7 @@ export class MultiThread<T = any, P = any> {
         if (this.aborted) break;
         const i = this.taskIndex++;
         if (i >= this.tasks.length) break;
-        const { abort, promise } = this.taskFunc(this.tasks[i], threadId, this.params);
+        const { abort, promise } = await this.taskFunc(this.tasks[i], threadId, this.params);
         abortFunc = abort;
         await promise;
       }

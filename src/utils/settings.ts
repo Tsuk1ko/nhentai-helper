@@ -2,8 +2,7 @@ import { GM_getValue, GM_setValue } from '$';
 import { toRaw, reactive, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 
-import { each, intersection, isEqual, mapValues } from 'lodash-es';
-import once from 'just-once';
+import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
 import { detect } from 'detect-browser';
 import logger from './logger';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
