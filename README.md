@@ -98,7 +98,7 @@ This script also support some nHentai mirror sites. See the script's `@match` an
 
 If the script does not run on some domains, you can add them to *User matches*.
 
-When you are on a mirror site, a prompt "A user script wants to access a cross-origin resource" may pop up, please select "Always allow domain" or "Always allow all domain".
+When you are on a mirror site, a prompt "A userscript wants to access a cross-origin resource" may pop up, please select "**Always allow domain**" or "**Always allow all domain**".
 
 ![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.en.png)
 
