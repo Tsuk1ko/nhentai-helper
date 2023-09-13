@@ -3,14 +3,16 @@ import { h, render } from 'vue';
 import LanguageFilter from '@/components/LanguageFilter.vue';
 
 /** 语言过滤 */
-export const filterLanguage = (tag: string, $node?: JQuery<HTMLElement>): void => {
+export const filterLanguage = (needHideTags: string[], $node?: JQuery<HTMLElement>): void => {
   const getNode = $node
     ? (selector: string) => $node.find(selector)
     : (selector: string) => $(selector);
-  if (tag === '0') getNode('.gallery').removeClass('hidden');
-  else {
-    getNode(`.gallery[data-tags~=${tag}]`).removeClass('hidden');
-    getNode(`.gallery:not([data-tags~=${tag}])`).addClass('hidden');
+
+  getNode('.gallery').removeClass('hidden');
+  if (needHideTags.length) {
+    needHideTags.forEach(tag => {
+      getNode(`.gallery[data-tags~=${tag}]`).addClass('hidden');
+    });
   }
 };
 
