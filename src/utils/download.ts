@@ -95,7 +95,7 @@ export const downloadGalleryByInfo = async (
       nHentaiDownloadHostCounter.add(counterKey);
     }
 
-    const { abort, dataPromise } = request<ArrayBuffer>(url, 'arraybuffer');
+    const { abort, dataPromise } = request(url, 'arraybuffer');
     return {
       abort: () => {
         logger.log(`[${threadID}] abort`);

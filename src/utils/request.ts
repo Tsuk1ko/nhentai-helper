@@ -1,5 +1,16 @@
-import { GM_xmlhttpRequest, type XhrRequest } from '$';
+import { GM_xmlhttpRequest } from '$';
 import logger from './logger';
+
+interface GmResponseTypeMap {
+  text: string;
+  json: any;
+  arraybuffer: ArrayBuffer;
+  blob: Blob;
+  document: Document;
+  stream: ReadableStream<Uint8Array>;
+}
+
+type GmResponseType = keyof GmResponseTypeMap;
 
 class RequestAbortError extends Error {
   public constructor(url: string) {
@@ -9,13 +20,13 @@ class RequestAbortError extends Error {
 
 export const isAbortError = (e: any): e is RequestAbortError => e instanceof RequestAbortError;
 
-export const request = <D = any>(
+export const request = <T extends GmResponseType = 'text'>(
   url: string,
-  responseType?: XhrRequest['responseType'],
+  responseType?: T,
   retry = 3,
-): { abort: () => void; dataPromise: Promise<D> } => {
+): { abort: () => void; dataPromise: Promise<GmResponseTypeMap[T]> } => {
   let abortFunc: (() => void) | undefined;
-  const dataPromise = new Promise<D>((resolve, reject) => {
+  const dataPromise = new Promise((resolve, reject) => {
     try {
       const req = GM_xmlhttpRequest({
         method: 'GET',
@@ -36,7 +47,7 @@ export const request = <D = any>(
         },
         onload: r => {
           const { status, response } = r;
-          if (status === 200) resolve(response as D);
+          if (status === 200) resolve(response);
           else if (retry === 0) reject(r);
           else {
             logger.warn('Request error, retry', status, url, r);
@@ -63,9 +74,9 @@ export const request = <D = any>(
   };
 };
 
-export const getJSON = <D = any>(url: string): Promise<D> => request<D>(url, 'json').dataPromise;
+export const getJSON = <D = any>(url: string): Promise<D> => request(url, 'json').dataPromise;
 
-export const getText = (url: string): Promise<string> => request<string>(url).dataPromise;
+export const getText = (url: string): Promise<string> => request(url).dataPromise;
 
 export const fetchJSON = <D = any>(url: string): Promise<D> => fetch(url).then(r => r.json());
 
