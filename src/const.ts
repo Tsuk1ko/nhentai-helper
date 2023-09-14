@@ -26,4 +26,4 @@ export const IS_NHENTAI = host === 'nhentai.net';
 /** nhentai.to | nhentai.website */
 export const IS_NHENTAI_TO = host === 'nhentai.to' || host === 'nhentai.website';
 
-export const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${location.hostname}`;
+export const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${host}`;
