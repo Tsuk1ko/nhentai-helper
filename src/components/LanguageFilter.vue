@@ -8,9 +8,13 @@
       collapse-tags-tooltip
       :placeholder="t('common.filter')"
     >
-      <el-option v-for="[key, val] in options" :key="key" :label="langAbbr[key]" :value="val">{{
-        t(`common.${key}`)
-      }}</el-option>
+      <el-option
+        v-for="[key, val] in options"
+        :key="key"
+        :label="t(`common.abbr.${key}`)"
+        :value="val"
+        >{{ t(`common.${key}`) }}</el-option
+      >
     </el-select>
   </li>
 </template>
@@ -27,12 +31,6 @@ const { t } = i18n.global;
 const languageFilter = useSessionStorage<string[]>('languageFilter', [], {
   listenToStorageChanges: false,
 });
-
-const langAbbr: Record<string, string> = {
-  japanese: 'JP',
-  english: 'EN',
-  chinese: 'CN',
-};
 
 const options = IS_NHENTAI_TO
   ? [
@@ -74,6 +72,15 @@ defineExpose({
   :deep(.el-input__inner) {
     color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
     background: 0 0 !important;
+  }
+}
+
+@media screen and (max-width: 644px) {
+  .language-filter {
+    padding: 10px 0;
+  }
+  .filter-select {
+    margin-right: 0;
   }
 }
 </style>

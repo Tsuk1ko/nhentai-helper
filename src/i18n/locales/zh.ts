@@ -13,6 +13,11 @@ export default {
     none: '无',
     random: '随机',
     balance: '均衡',
+    abbr: {
+      english: '英',
+      japanese: '日',
+      chinese: '中',
+    },
   },
   setting: {
     title: '@:common.settings',

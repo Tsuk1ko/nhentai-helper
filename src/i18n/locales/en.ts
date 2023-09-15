@@ -13,6 +13,11 @@ export default {
     none: 'None',
     random: 'Random',
     balance: 'Balance',
+    abbr: {
+      english: 'EN',
+      japanese: 'JP',
+      chinese: 'CN',
+    },
   },
   setting: {
     title: '@:common.settings',
