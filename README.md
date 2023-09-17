@@ -8,7 +8,9 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
 
 ## Installation
 
-[Via Greasy Fork](https://greasyfork.org/zh-CN/scripts/375992) (login required due to adult content)
+[Via Greasy Fork](https://greasyfork.org/scripts/375992) (login required due to adult content)
+
+[Via Sleazy Fork](https://sleazyfork.org/scripts/375992) (no login required)
 
 [Via GitHub Pages](https://nhelper.lolicon.app/script.user.js)
 

@@ -8,6 +8,8 @@
 
 [从 Greasy Fork 安装](https://greasyfork.org/scripts/375992)（由于成人内容，需要登录才能安装）
 
+[从 Sleazy Fork 安装](https://sleazyfork.org/scripts/375992)（不需要登录）
+
 [从 GitHub Pages 安装](https://nhelper.lolicon.app/script.user.js)
 
 ## 主要功能
