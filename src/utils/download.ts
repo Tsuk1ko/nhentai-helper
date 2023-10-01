@@ -73,29 +73,35 @@ export const downloadGalleryByInfo = async (
   > = async (page, threadID, { filenameLength, customDownloadUrl }) => {
     if (info.error) return { abort: () => {}, promise: Promise.resolve() };
 
-    const url = customDownloadUrl
+    const usedCounterKeys: string[] = [];
+    const urlGetter = customDownloadUrl
       ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t })
       : IS_NHENTAI
-      ? getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
+      ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE ||
+        settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM
+        ? () => {
+            const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
+            logger.log(`[${threadID}] ${url}`);
+            if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+              const counterKey = new URL(url).host;
+              usedCounterKeys.push(counterKey);
+              nHentaiDownloadHostCounter.add(counterKey);
+            }
+            return url;
+          }
+        : getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
       : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {});
 
-    if (!url) {
+    if (!urlGetter) {
       info.error = true;
       return { abort: () => {}, promise: Promise.resolve() };
     }
 
-    logger.log(`[${threadID}] ${url}`);
-
-    const isUsingCounter =
-      IS_NHENTAI &&
-      !customDownloadUrl &&
-      settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE;
-    const counterKey = isUsingCounter ? new URL(url).host : '';
-    if (isUsingCounter) {
-      nHentaiDownloadHostCounter.add(counterKey);
+    if (typeof urlGetter !== 'function') {
+      logger.log(`[${threadID}] ${urlGetter}`);
     }
 
-    const { abort, dataPromise } = request(url, 'arraybuffer');
+    const { abort, dataPromise } = request(urlGetter, 'arraybuffer');
     return {
       abort: () => {
         logger.log(`[${threadID}] abort`);
@@ -115,8 +121,10 @@ export const downloadGalleryByInfo = async (
           throw e;
         })
         .finally(() => {
-          if (isUsingCounter) {
-            nHentaiDownloadHostCounter.del(counterKey);
+          if (usedCounterKeys.length) {
+            usedCounterKeys.forEach(key => {
+              nHentaiDownloadHostCounter.del(key);
+            });
           }
         }),
     };

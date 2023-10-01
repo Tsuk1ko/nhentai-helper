@@ -21,13 +21,14 @@ class RequestAbortError extends Error {
 export const isAbortError = (e: any): e is RequestAbortError => e instanceof RequestAbortError;
 
 export const request = <T extends GmResponseType = 'text'>(
-  url: string,
+  urlGetter: string | (() => string),
   responseType?: T,
   retry = 3,
 ): { abort: () => void; dataPromise: Promise<GmResponseTypeMap[T]> } => {
   let abortFunc: (() => void) | undefined;
   const dataPromise = new Promise((resolve, reject) => {
     try {
+      const url = typeof urlGetter === 'function' ? urlGetter() : urlGetter;
       const req = GM_xmlhttpRequest({
         method: 'GET',
         url,
@@ -39,7 +40,7 @@ export const request = <T extends GmResponseType = 'text'>(
           } else {
             logger.warn('Network error, retry', url, e);
             setTimeout(() => {
-              const { abort, dataPromise } = request(url, responseType, retry - 1);
+              const { abort, dataPromise } = request(urlGetter, responseType, retry - 1);
               abortFunc = abort;
               resolve(dataPromise);
             }, 1000);
@@ -52,7 +53,7 @@ export const request = <T extends GmResponseType = 'text'>(
           else {
             logger.warn('Request error, retry', status, url, r);
             setTimeout(() => {
-              const { abort, dataPromise } = request(url, responseType, retry - 1);
+              const { abort, dataPromise } = request(urlGetter, responseType, retry - 1);
               abortFunc = abort;
               resolve(dataPromise);
             }, 1000);
