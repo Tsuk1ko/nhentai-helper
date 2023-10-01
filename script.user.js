@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.11.3
+// @version            3.11.4
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -51,7 +51,7 @@
     return value;
   };
   var require_main_001 = __commonJS({
-    "main-3aa4a29b.js"(exports, module) {
+    "main-8d7869a5.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -39769,10 +39769,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         }
       }
       const isAbortError = (e) => e instanceof RequestAbortError;
-      const request = (url, responseType, retry = 3) => {
+      const request = (urlGetter, responseType, retry = 3) => {
         let abortFunc;
         const dataPromise = new Promise((resolve2, reject) => {
           try {
+            const url = typeof urlGetter === "function" ? urlGetter() : urlGetter;
             const req = _GM_xmlhttpRequest({
               method: "GET",
               url,
@@ -39784,7 +39785,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                 } else {
                   logger.warn("Network error, retry", url, e);
                   setTimeout(() => {
-                    const { abort, dataPromise: dataPromise2 } = request(url, responseType, retry - 1);
+                    const { abort, dataPromise: dataPromise2 } = request(urlGetter, responseType, retry - 1);
                     abortFunc = abort;
                     resolve2(dataPromise2);
                   }, 1e3);
@@ -39799,7 +39800,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                 else {
                   logger.warn("Request error, retry", status, url, r);
                   setTimeout(() => {
-                    const { abort, dataPromise: dataPromise2 } = request(url, responseType, retry - 1);
+                    const { abort, dataPromise: dataPromise2 } = request(urlGetter, responseType, retry - 1);
                     abortFunc = abort;
                     resolve2(dataPromise2);
                   }, 1e3);
@@ -40229,20 +40230,27 @@ ${xml}`;
           if (info.error)
             return { abort: () => {
             }, promise: Promise.resolve() };
-          const url = customDownloadUrl ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t }) : IS_NHENTAI ? getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {
+          const usedCounterKeys = [];
+          const urlGetter = customDownloadUrl ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t }) : IS_NHENTAI ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE || settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM ? () => {
+            const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
+            logger.log(`[${threadID}] ${url}`);
+            if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+              const counterKey = new URL(url).host;
+              usedCounterKeys.push(counterKey);
+              nHentaiDownloadHostCounter.add(counterKey);
+            }
+            return url;
+          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {
           });
-          if (!url) {
+          if (!urlGetter) {
             info.error = true;
             return { abort: () => {
             }, promise: Promise.resolve() };
           }
-          logger.log(`[${threadID}] ${url}`);
-          const isUsingCounter = IS_NHENTAI && !customDownloadUrl && settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE;
-          const counterKey = isUsingCounter ? new URL(url).host : "";
-          if (isUsingCounter) {
-            nHentaiDownloadHostCounter.add(counterKey);
+          if (typeof urlGetter !== "function") {
+            logger.log(`[${threadID}] ${urlGetter}`);
           }
-          const { abort: abort2, dataPromise } = request(url, "arraybuffer");
+          const { abort: abort2, dataPromise } = request(urlGetter, "arraybuffer");
           return {
             abort: () => {
               logger.log(`[${threadID}] abort`);
@@ -40260,8 +40268,10 @@ ${xml}`;
               info.error = true;
               throw e;
             }).finally(() => {
-              if (isUsingCounter) {
-                nHentaiDownloadHostCounter.del(counterKey);
+              if (usedCounterKeys.length) {
+                usedCounterKeys.forEach((key) => {
+                  nHentaiDownloadHostCounter.del(key);
+                });
               }
             })
           };
