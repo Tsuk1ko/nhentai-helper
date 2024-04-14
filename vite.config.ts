@@ -18,6 +18,7 @@ export default defineConfig(async ({ mode }) => ({
     open: true,
   },
   build: {
+    minify: true, // GreasyFork 有代码长度限制，没办法
     cssMinify: true,
   },
   resolve: {
