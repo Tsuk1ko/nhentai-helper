@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="element-plus/global" />
+/// <reference types="vue/jsx" />
 
 type GlobalThis = typeof globalThis;
 

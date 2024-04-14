@@ -5,7 +5,7 @@ module.exports = {
     node: true,
   },
   extends: [
-    'standard-with-typescript',
+    'love',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:vue/vue3-recommended',
@@ -69,6 +69,10 @@ module.exports = {
         disallowTypeAnnotations: false,
       },
     ],
+    '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/unbound-method': 'off',
+    '@typescript-eslint/prefer-promise-reject-errors': 'off',
   },
   settings: {
     'import/resolver': {
