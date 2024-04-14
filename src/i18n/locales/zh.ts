@@ -44,15 +44,13 @@ export default {
     nHentaiDownloadHost: 'nHentai 下载节点',
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
+    titleReplacement: '标题替换',
     history: {
       title: '下载历史',
       downloadedNumberTip: '你在这个站点上已经用 nHentai 助手下载了 {num} 个本子',
       import: '导入',
       export: '导出',
       clear: '清空',
-      clearConfirm: '真的吗？',
-      clearConfirmYes: '真的',
-      clearConfirmNo: '手滑了',
       importTip: '提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录',
     },
   },
@@ -75,5 +73,10 @@ export default {
     download: '下载',
     downloading: '下载中',
     compressing: '压缩中',
+  },
+  confirmPopup: {
+    title: '真的吗？',
+    yes: '真的',
+    no: '算了',
   },
 };

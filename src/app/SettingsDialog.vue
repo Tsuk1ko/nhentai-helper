@@ -107,8 +107,8 @@
         <!-- 添加元数据文件 -->
         <el-form-item :label="t('setting.addMetaFile')">
           <el-checkbox-group v-model="settings.addMetaFile">
-            <el-checkbox label="ComicInfoXml">ComicInfo.xml</el-checkbox>
-            <el-checkbox label="EzeInfoJson">info.json (eze)</el-checkbox>
+            <el-checkbox label="ComicInfo.xml" value="ComicInfoXml" />
+            <el-checkbox label="info.json (eze)" value="EzeInfoJson" />
           </el-checkbox-group>
         </el-form-item>
         <!-- 元数据标题语言 -->
@@ -163,6 +163,49 @@
         >
           <el-switch v-model="settings.preventConsoleClearing" />
         </el-form-item>
+        <el-collapse>
+          <el-collapse-item>
+            <template #title>
+              <span style="color: var(--el-text-color-regular)">{{
+                t('setting.titleReplacement')
+              }}</span>
+            </template>
+            <el-table id="title-replacement-table" :data="settings.titleReplacement">
+              <el-table-column label="From">
+                <template #default="scope">
+                  <el-input v-model="scope.row.from">
+                    <template #prefix>
+                      <span v-if="scope.row.regexp" class="no-sl">/</span>
+                    </template>
+                    <template #suffix>
+                      <span v-if="scope.row.regexp" class="no-sl">/</span>
+                    </template>
+                  </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="To">
+                <template #default="scope">
+                  <el-input v-model="scope.row.to" />
+                </template>
+              </el-table-column>
+              <el-table-column label="RegExp" width="80">
+                <template #default="scope">
+                  <el-switch v-model="scope.row.regexp" />
+                </template>
+              </el-table-column>
+              <el-table-column width="70">
+                <template #default="scope">
+                  <ConfirmPopup @confirm="() => delTitleReplacement(scope.$index)">
+                    <el-button type="danger" :icon="Delete" />
+                  </ConfirmPopup>
+                </template>
+              </el-table-column>
+              <template #append>
+                <el-button text style="width: 100%" @click="addTitleReplacement">+</el-button>
+              </template>
+            </el-table>
+          </el-collapse-item>
+        </el-collapse>
       </el-form>
       <el-divider>{{ t('setting.history.title') }}</el-divider>
       <p class="no-sl">
@@ -183,19 +226,11 @@
       <el-button type="primary" :icon="Upload" :loading="importing" @click="importHistory">{{
         t('setting.history.import')
       }}</el-button>
-      <el-popconfirm
-        :title="t('setting.history.clearConfirm')"
-        :confirm-button-text="t('setting.history.clearConfirmYes')"
-        :cancel-button-text="t('setting.history.clearConfirmNo')"
-        placement="top"
-        @confirm="clearHistory"
-      >
-        <template #reference>
-          <el-button type="danger" :icon="Delete" :loading="clearing">{{
-            t('setting.history.clear')
-          }}</el-button>
-        </template>
-      </el-popconfirm>
+      <ConfirmPopup @confirm="clearHistory">
+        <el-button type="danger" :icon="Delete" :loading="clearing">{{
+          t('setting.history.clear')
+        }}</el-button>
+      </ConfirmPopup>
       <p class="no-sl">{{ t('setting.history.importTip') }}</p>
     </div>
   </el-dialog>
@@ -206,6 +241,7 @@ import { GM_openInTab } from '$';
 import { computed, ref, watch } from 'vue';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
+import ConfirmPopup from '@/components/ConfirmPopup.vue';
 import {
   DISABLE_STREAM_DOWNLOAD,
   nHentaiDownloadHosts,
@@ -314,6 +350,14 @@ const clearHistory = async () => {
   showMessageBySucceed(succeed);
 };
 
+const addTitleReplacement = () => {
+  settings.titleReplacement.push({ from: '', to: '', regexp: false });
+};
+
+const delTitleReplacement = (index: number) => {
+  settings.titleReplacement.splice(index, 1);
+};
+
 watch(
   () => settings.language,
   val => {
@@ -386,5 +430,18 @@ defineExpose({ open });
   .el-form-item__label {
     user-select: none;
   }
+  .el-table {
+    .el-input__prefix,
+    .el-input__suffix {
+      line-height: 30px;
+    }
+  }
+  .el-table__empty-block {
+    display: none;
+  }
+}
+
+.el-select-dropdown {
+  user-select: none;
 }
 </style>

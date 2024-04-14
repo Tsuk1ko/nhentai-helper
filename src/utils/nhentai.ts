@@ -4,7 +4,12 @@ import $ from 'jquery';
 import { filter, invert, map, once, sample } from 'lodash-es';
 import { checkHost, fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
-import { NHentaiDownloadHostSpecial, nHentaiDownloadHosts, settings } from './settings';
+import {
+  NHentaiDownloadHostSpecial,
+  nHentaiDownloadHosts,
+  settings,
+  validTitleReplacement,
+} from './settings';
 import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
@@ -242,9 +247,9 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     title,
     pages: infoPages,
     cfName: compileTemplate(settings.compressionFilename)({
-      english: english || japanese,
-      japanese: japanese || english,
-      pretty: pretty || english || japanese,
+      english: applyTitleReplacement(english || japanese),
+      japanese: applyTitleReplacement(japanese || english),
+      pretty: applyTitleReplacement(pretty || english || japanese),
       id,
       pages: num_pages,
       artist: getCFNameArtists(tags),
@@ -299,3 +304,14 @@ const getMediaUrlTemplate = async () => {
 };
 
 const getCompliedMediaUrlTemplate = once(async () => compileTemplate(await getMediaUrlTemplate()));
+
+const applyTitleReplacement = (title: string) => {
+  if (!validTitleReplacement.value.length) return title;
+  return validTitleReplacement.value.reduce((pre, { from, to, regexp }) => {
+    try {
+      return pre.replaceAll(regexp ? new RegExp(from, 'g') : from, to);
+    } catch {
+      return pre;
+    }
+  }, title);
+};

@@ -44,15 +44,13 @@ export default {
     nHentaiDownloadHost: 'nHentai download host',
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
+    titleReplacement: 'Title replacement',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',
       import: 'Import',
       export: 'Export',
       clear: 'Clear',
-      clearConfirm: 'Are you sure?',
-      clearConfirmYes: '', // empty will be default text 'Yes'
-      clearConfirmNo: '', // empty will be default text 'No'
       importTip: 'Tip: Import will not clear the existing history, but merges with it.',
     },
   },
@@ -79,5 +77,10 @@ export default {
     download: 'Download',
     downloading: 'Downloading',
     compressing: 'Compressing',
+  },
+  confirmPopup: {
+    title: 'Are you sure?',
+    yes: '', // empty will be default text 'Yes'
+    no: '', // empty will be default text 'No'
   },
 };

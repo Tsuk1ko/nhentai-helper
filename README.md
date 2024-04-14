@@ -37,6 +37,7 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Gallery page will be open on a new window by default, turn off it if you don't like it.
 - **Compression filename**  
   Default is `{{japanese}}.zip`. You can custom the naming of downloaded compression file, including the file extension, such as `{{english}}.cbz`.  
+  If the compressed filename contains illegal characters, they will be automatically replaced with spaces. You can also use the *Title replacement* setting to perform custom replacement.  
   Available placeholders:  
   - `{{english}}` - English name of manga
   - `{{japanese}}` - Japanese name of manga
@@ -91,6 +92,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   But this not work on Safari and Firefox, and the download process is **extremely slow**. So not recommended unless you really have memory usage issues.
 - **Prevent console clearing**  
   Only available on nHentai official site. It is useful when you need to submit console log for debugging.
+- **Title replacement**  
+  Character replacement can be performed on the title in the compressed filename, and regular expressions are supported.
 
 ## Other features
 

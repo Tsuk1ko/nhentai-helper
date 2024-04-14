@@ -1,5 +1,5 @@
 import { GM_getValue, GM_setValue } from '$';
-import { toRaw, reactive, toRefs, watch } from 'vue';
+import { toRaw, reactive, toRefs, watch, computed } from 'vue';
 import type { Ref } from 'vue';
 
 import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
@@ -67,6 +67,8 @@ export interface Settings {
   addMetaFile: string[];
   /** 元数据标题语言 */
   metaFileTitleLanguage: string;
+  /** 标题替换 */
+  titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -76,6 +78,7 @@ interface SettingDefinition<T> {
   key: string;
   default: T extends any[] | Record<any, any> ? () => T : T;
   validator: SettingValidator;
+  itemValidator?: SettingValidator;
   formatter?: SettingFormatter<T>;
 }
 
@@ -210,13 +213,23 @@ export const settingDefinitions: Readonly<{
   addMetaFile: {
     key: 'add_meta_file',
     default: () => [],
-    validator: val => Array.isArray(val) && val.every(stringValidator),
+    validator: val => Array.isArray(val),
     formatter: val => intersection(val, availableMetaFiles),
   },
   metaFileTitleLanguage: {
     key: 'meta_file_title_language',
     default: 'english',
     validator: val => availableMetaFileTitleLanguage.has(val),
+  },
+  titleReplacement: {
+    key: 'title_replacement',
+    default: () => [],
+    validator: val => Array.isArray(val),
+    itemValidator: item =>
+      item &&
+      stringValidator(item.from) &&
+      stringValidator(item.to) &&
+      booleanValidator(item.regexp),
   },
 };
 
@@ -240,24 +253,49 @@ export const startWatchSettings = once(() => {
   const settingRefs = toRefs(writeableSettings);
   each(settingRefs, (ref, key) => {
     const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
-    watch(ref as Ref<any>, val => {
-      if (!cur.validator(val)) {
-        ref.value = typeof cur.default === 'function' ? cur.default() : cur.default;
-        return;
-      }
-      if (cur.formatter) {
-        const formattedVal = cur.formatter(val);
-        if (
-          typeof formattedVal === 'object'
-            ? !isEqual(ref.value, formattedVal)
-            : ref.value !== formattedVal
-        ) {
-          ref.value = formattedVal;
-          return;
-        }
-      }
+    let valChanged = false;
+    const saveValue = (val: any) => {
       logger.log('update setting', cur.key, toRaw(val));
       GM_setValue(cur.key, val);
-    });
+    };
+    watch(
+      ref as Ref<any>,
+      val => {
+        if (valChanged) {
+          valChanged = false;
+          saveValue(val);
+          return;
+        }
+        const applyChange = (newVal: any) => {
+          val = newVal;
+          ref.value = newVal;
+          valChanged = true;
+        };
+        if (!cur.validator(val)) {
+          applyChange(typeof cur.default === 'function' ? cur.default() : cur.default);
+          return;
+        }
+        if (Array.isArray(val) && cur.itemValidator) {
+          const validItems = val.filter(cur.itemValidator);
+          if (val.length !== validItems.length) {
+            applyChange(validItems);
+          }
+        }
+        if (cur.formatter) {
+          const formattedVal = cur.formatter(val);
+          if (
+            typeof formattedVal === 'object' ? !isEqual(val, formattedVal) : val !== formattedVal
+          ) {
+            applyChange(formattedVal);
+          }
+        }
+        if (!valChanged) saveValue(val);
+      },
+      typeof ref.value === 'object' ? { deep: true } : undefined,
+    );
   });
 });
+
+export const validTitleReplacement = computed(() =>
+  settings.titleReplacement.filter(item => item?.from),
+);
