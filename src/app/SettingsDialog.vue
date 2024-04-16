@@ -239,6 +239,25 @@
 <script setup lang="ts">
 import { GM_openInTab } from '$';
 import { computed, ref, watch } from 'vue';
+import {
+  ElDialog,
+  ElButton,
+  ElForm,
+  ElFormItem,
+  ElOption,
+  ElSelect,
+  ElSlider,
+  ElInput,
+  ElInputNumber,
+  ElSwitch,
+  ElCheckbox,
+  ElCheckboxGroup,
+  ElDivider,
+  ElCollapse,
+  ElCollapseItem,
+  ElTable,
+  ElTableColumn,
+} from 'element-plus';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
 import ConfirmPopup from '@/components/ConfirmPopup.vue';

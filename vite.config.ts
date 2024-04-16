@@ -2,10 +2,8 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import monkey from 'vite-plugin-monkey';
+import monkey, { cdn, util } from 'vite-plugin-monkey';
 import copy from 'rollup-plugin-copy';
-import components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import workerDevLoader from './plugins/workerDevLoader';
 
@@ -18,7 +16,6 @@ export default defineConfig(async ({ mode }) => ({
     open: true,
   },
   build: {
-    minify: true, // GreasyFork 有代码长度限制，没办法
     cssMinify: true,
   },
   resolve: {
@@ -32,11 +29,6 @@ export default defineConfig(async ({ mode }) => ({
     vueI18nPlugin({
       include: resolve(dirname(fileURLToPath(import.meta.url)), './src/i18n/locales/**'),
       strictMessage: false,
-    }),
-    components({
-      dts: false,
-      dirs: [],
-      resolvers: [ElementPlusResolver()],
     }),
     monkey({
       entry: 'src/main.ts',
@@ -78,6 +70,19 @@ export default defineConfig(async ({ mode }) => ({
       build: {
         fileName: 'script.user.js',
         metaFileName: true,
+        externalGlobals: {
+          vue: cdn.unpkg('Vue', 'dist/vue.global.prod.js').concat(
+            await util.fn2dataUrl(() => {
+              // @ts-expect-error
+              window.Vue = Vue;
+            }),
+          ),
+          'element-plus': cdn.unpkg('ElementPlus', 'dist/index.full.min.js'),
+          jquery: cdn.unpkg('jQuery', 'dist/jquery.slim.min.js'),
+        },
+        externalResource: {
+          'element-plus/dist/index.css': cdn.unpkg('element-plus-css'),
+        },
       },
     }),
     copy({

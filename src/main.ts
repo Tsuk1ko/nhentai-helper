@@ -1,6 +1,7 @@
 import './utils/hacks';
 import './index.less';
 import 'noty/lib/noty.css';
+import 'element-plus/dist/index.css';
 import { GM_registerMenuCommand } from '$';
 import type { App, Component } from 'vue';
 import { createApp } from 'vue';

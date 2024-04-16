@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
+import { ElSelect, ElOption } from 'element-plus';
 import { useSessionStorage } from '@vueuse/core';
 import { IS_NHENTAI_TO } from '@/const';
 import { filterLanguage } from '@/utils/languageFilter';

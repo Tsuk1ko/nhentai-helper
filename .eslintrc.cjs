@@ -73,6 +73,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/prefer-promise-reject-errors': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
   settings: {
     'import/resolver': {
