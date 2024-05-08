@@ -1,4 +1,4 @@
-import jsx from '@/utils/jsx';
+import { h } from 'nano-jsx/lib/core';
 
 export class StyleInjector {
   private readonly styleNode: HTMLElement;

@@ -1,11 +1,14 @@
-import jsx from '@/utils/jsx';
+import { h } from 'nano-jsx/lib/core';
 
 export class IgnoreController {
   public ignoreBtn: HTMLElement;
   private readonly icon: HTMLElement;
   private readonly text?: HTMLElement;
 
-  public constructor(text = true, private status = false) {
+  public constructor(
+    text = true,
+    private status = false,
+  ) {
     this.icon = <i class={this.iconClass} />;
     if (text) this.text = <span>{this.btnText}</span>;
     this.ignoreBtn = (

@@ -74,6 +74,12 @@ module.exports = {
     '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/prefer-promise-reject-errors': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        varsIgnorePattern: 'Fragment|h',
+      },
+    ],
   },
   settings: {
     'import/resolver': {

@@ -1,7 +1,7 @@
 import { GM_getValue, GM_setValue } from '$';
 import $ from 'jquery';
+import { h } from 'nano-jsx/lib/core';
 import { StyleInjector } from '../styleInjector';
-import jsx from '@/utils/jsx';
 import { IS_NHENTAI } from '@/const';
 
 export const initOnlineViewPage = (): void => {

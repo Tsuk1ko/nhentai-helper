@@ -1,5 +1,5 @@
+import { h } from 'nano-jsx/lib/core';
 import { getDownloadExt } from './common';
-import jsx from '@/utils/jsx';
 import type { MangaDownloadInfo } from '@/typings';
 import { i18n } from '@/i18n';
 

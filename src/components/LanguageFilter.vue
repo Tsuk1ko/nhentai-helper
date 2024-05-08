@@ -48,7 +48,7 @@ const options = IS_NHENTAI_TO
 watch(
   languageFilter,
   val => {
-    filterLanguage(languageFilter.value);
+    filterLanguage(val);
   },
   { deep: true, immediate: true },
 );

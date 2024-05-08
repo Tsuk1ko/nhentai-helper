@@ -1,4 +1,4 @@
-import jsx from '@/utils/jsx';
+import { h } from 'nano-jsx/lib/core';
 
 const readFile = (file: File): Promise<ArrayBuffer> =>
   new Promise((resolve, reject) => {

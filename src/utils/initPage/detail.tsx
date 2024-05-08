@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { h } from 'nano-jsx/lib/core';
 import { createMangaDownloadInfo, getShowAllBtn } from '../common';
 import { downloadAgainConfirm } from '../dialog';
 import type { RangeChecker } from '../download';
@@ -14,7 +15,6 @@ import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { IgnoreController } from '../ignoreController';
-import jsx from '@/utils/jsx';
 
 export const initDetailPage = async (): Promise<void> => {
   const progressDisplayController = new ProgressDisplayController(true, document.title);
