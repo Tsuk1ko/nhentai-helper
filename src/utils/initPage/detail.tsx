@@ -15,13 +15,16 @@ import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { IgnoreController } from '../ignoreController';
+import { i18n } from '@/i18n';
+
+const { t } = i18n.global;
 
 export const initDetailPage = async (): Promise<void> => {
   const progressDisplayController = new ProgressDisplayController(true, document.title);
 
   const { downloadBtn } = progressDisplayController;
   const pagesInput = (
-    <input class="pages-input" placeholder="Download pages (e.g. 1-10,12,14,18-)" />
+    <input class="pages-input" placeholder={t('input.downloadSpecifiedPages')} />
   ) as HTMLInputElement;
   $('#info > .buttons').append(downloadBtn).after(pagesInput);
 

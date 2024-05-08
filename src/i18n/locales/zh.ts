@@ -73,6 +73,11 @@ export default {
     download: '下载',
     downloading: '下载中',
     compressing: '压缩中',
+    ignore: '忽略',
+    unignore: '不再忽略',
+  },
+  input: {
+    downloadSpecifiedPages: '下载指定页面（例：1-10,12,14,18-）',
   },
   confirmPopup: {
     title: '真的吗？',

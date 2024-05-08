@@ -77,6 +77,11 @@ export default {
     download: 'Download',
     downloading: 'Downloading',
     compressing: 'Compressing',
+    ignore: 'Ignore this',
+    unignore: 'Ignore this',
+  },
+  input: {
+    downloadSpecifiedPages: 'Download specified pages (e.g. 1-10,12,14,18-)',
   },
   confirmPopup: {
     title: 'Are you sure?',

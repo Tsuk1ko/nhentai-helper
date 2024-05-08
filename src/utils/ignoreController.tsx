@@ -1,4 +1,7 @@
 import { h } from 'nano-jsx/lib/core';
+import { i18n } from '@/i18n';
+
+const { t } = i18n.global;
 
 export class IgnoreController {
   public ignoreBtn: HTMLElement;
@@ -33,7 +36,7 @@ export class IgnoreController {
   }
 
   private get btnText(): string {
-    return this.status ? 'Unignore this' : 'Ignore this';
+    return this.status ? t('button.unignore') : t('button.ignore');
   }
 
   private updateBtn(): void {
