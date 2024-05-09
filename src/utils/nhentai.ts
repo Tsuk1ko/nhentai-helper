@@ -14,6 +14,7 @@ import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
 import { openAlert } from './dialog';
+import { OrderCache } from './orderCache';
 import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
 
 enum NHentaiImgExt {
@@ -202,9 +203,15 @@ const getCFNameArtists = (tags: NHentaiTag[]): string => {
   return artists.join(settings.filenameArtistsSeparator);
 };
 
+const galleryCache = new OrderCache<string, NHentaiGallery>(100);
+
 const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
+  gid = String(gid);
+  const cached = galleryCache.get(gid);
+  if (cached) return cached;
   const gallery = IS_NHENTAI ? await getGalleryFromApi(gid) : await getGalleryFromWebpage(gid);
-  logger.log('gallery', gallery);
+  galleryCache.set(gid, gallery);
+  logger.devLog('gallery', gallery);
   return gallery;
 };
 
