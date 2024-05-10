@@ -98,6 +98,10 @@
         <el-form-item class="refresh-required" :label="t('setting.showIgnoreButton')">
           <el-switch v-model="settings.showIgnoreButton" />
         </el-form-item>
+        <!-- 右击预览 -->
+        <el-form-item :label="t('setting.galleryContextmenuPreview')">
+          <el-switch v-model="settings.galleryContextmenuPreview" />
+        </el-form-item>
         <!-- 已下载判断 key -->
         <el-form-item :label="t('setting.judgeDownloadedMangaByTitle')">
           <el-checkbox v-model="settings.judgeDownloadedByEnglish" :label="t('common.english')" />
@@ -163,6 +167,7 @@
         >
           <el-switch v-model="settings.preventConsoleClearing" />
         </el-form-item>
+        <!-- 标题替换 -->
         <el-collapse>
           <el-collapse-item>
             <template #title>

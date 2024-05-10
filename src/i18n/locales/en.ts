@@ -45,6 +45,7 @@ export default {
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
     titleReplacement: 'Title replacement',
+    galleryContextmenuPreview: 'Context menu preview',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',
@@ -90,8 +91,10 @@ export default {
   },
   meta: {
     id: 'ID',
+    parody: 'Parodies',
     tag: 'Tags',
     artist: 'Artists',
+    group: 'Groups',
     language: 'Languages',
     category: 'Categories',
     page: 'Pages',

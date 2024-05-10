@@ -69,6 +69,8 @@ export interface Settings {
   metaFileTitleLanguage: string;
   /** 标题替换 */
   titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
+  /** 右键预览 */
+  galleryContextmenuPreview: boolean;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -230,6 +232,11 @@ export const settingDefinitions: Readonly<{
       stringValidator(item.from) &&
       stringValidator(item.to) &&
       booleanValidator(item.regexp),
+  },
+  galleryContextmenuPreview: {
+    key: 'gallery_contextmenu_preview',
+    default: false,
+    validator: booleanValidator,
   },
 };
 

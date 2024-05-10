@@ -9,7 +9,7 @@ const initApp = once(() =>
   }),
 );
 
-export const openGalleryMiniPopover = (el: HTMLElement) => {
+export const openGalleryMiniPopover = (el: HTMLElement, gid: string) => {
   const popup = initApp();
-  popup.open(el);
+  popup.open(el, gid);
 };

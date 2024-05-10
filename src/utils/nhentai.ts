@@ -205,7 +205,7 @@ const getCFNameArtists = (tags: NHentaiTag[]): string => {
 
 const galleryCache = new OrderCache<string, NHentaiGallery>(100);
 
-const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
+export const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
   gid = String(gid);
   const cached = galleryCache.get(gid);
   if (cached) return cached;

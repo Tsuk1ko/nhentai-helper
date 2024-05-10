@@ -180,26 +180,9 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
 
   downloadBtn.addEventListener('click', startDownload);
 
-  initHoverOpenPopup(this);
-};
-
-const initHoverOpenPopup = (el: HTMLElement) => {
-  let timer: NodeJS.Timeout | null = null;
-
-  el.addEventListener('mouseenter', () => {
-    console.log('enter');
-    timer = setTimeout(() => {
-      console.log('open');
-      timer = null;
-      openGalleryMiniPopover(el);
-    }, 0);
-  });
-
-  el.addEventListener('mouseleave', () => {
-    console.log('leave');
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
+  this.addEventListener('contextmenu', e => {
+    if (!settings.galleryContextmenuPreview) return;
+    e.preventDefault();
+    openGalleryMiniPopover(this, gid);
   });
 };

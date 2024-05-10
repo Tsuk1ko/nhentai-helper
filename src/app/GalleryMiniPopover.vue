@@ -5,11 +5,20 @@
     :virtual-ref="virtualRef"
     virtual-triggering
     :placement="popoverPlacement"
-    trigger="click"
+    trigger="contextmenu"
     :width="popoverWidth"
+    :hide-after="0"
   >
-    <div v-if="gallery" class="gallery-mini-popover">
+    <div
+      v-if="gallery"
+      class="gallery-mini-popover"
+      :class="`lang-${settings.language}`"
+      @wheel.prevent
+    >
       <el-descriptions :title="title" :column="1">
+        <template #extra>
+          <el-button class="popover-close-btn" :icon="CloseBold" circle text @click="close" />
+        </template>
         <el-descriptions-item>
           <template #label>
             <span class="info-label bold">{{ t('meta.id') }}</span>
@@ -28,6 +37,7 @@
             class="info-tag info-tag--pointer"
             type="info"
             effect="dark"
+            disable-transitions
             @click="() => openTagUrl(tag.url)"
           >
             <span class="bold">{{ tag.name }}</span> | {{ formatNumber(tag.count || 0) }}
@@ -37,7 +47,7 @@
           <template #label>
             <span class="info-label bold">{{ t('meta.page') }}</span>
           </template>
-          <el-tag class="info-tag" type="info" effect="dark">
+          <el-tag class="info-tag" type="info" effect="dark" disable-transitions>
             <span class="bold">{{ gallery.num_pages }}</span>
           </el-tag>
         </el-descriptions-item>
@@ -48,26 +58,35 @@
           {{ new Date(gallery.upload_date * 1000).toLocaleString() }}
         </el-descriptions-item>
       </el-descriptions>
-      <el-scrollbar
+      <div
         v-if="pageThumbs.length"
-        :height="`${pageThumbScrollHeight}px`"
-        :style="{ margin: '8px -8px 0 -8px' }"
+        v-infinite-scroll="addPageThumbLine"
+        :infinite-scroll-distance="50"
+        class="scroll-container"
+        :style="{ height: `${pageThumbScrollHeight}px` }"
+        @wheel.capture.stop="handleScrollWheel"
       >
-        <div :style="{ padding: '0 8px' }">
+        <div class="scroll-container-inner">
           <el-row :gutter="8">
             <el-col v-for="{ url, height } in pageThumbs" :key="url" :span="pageThumbsColSpan">
-              <el-image :src="url" lazy :style="{ 'min-height': `${height}px` }" />
+              <el-image :src="url" :style="{ 'min-height': `${height}px` }" />
             </el-col>
           </el-row>
         </div>
-      </el-scrollbar>
+      </div>
     </div>
+    <div
+      v-else
+      v-loading="true"
+      :style="{ height: '640px', maxHeight: '90vh' }"
+      @wheel.prevent
+    ></div>
   </el-popover>
 </template>
 
 <script setup lang="ts">
 import { GM_openInTab } from '$';
-import { computed, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import {
   ElPopover,
   ElDescriptions,
@@ -77,14 +96,21 @@ import {
   ElRow,
   ElCol,
   ElImage,
-  ElScrollbar,
+  ElButton,
+  ElInfiniteScroll as vInfiniteScroll,
+  vLoading,
 } from 'element-plus';
+import { CloseBold } from '@element-plus/icons-vue';
 import { groupBy, map } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
-import { NHentaiImgExt, type NHentaiGallery, type NHentaiImage } from '@/utils/nhentai';
-// import { settings } from '@/utils/settings';
+import { NHentaiImgExt, getGallery, type NHentaiGallery, type NHentaiImage } from '@/utils/nhentai';
+import { settings } from '@/utils/settings';
+import logger from '@/utils/logger';
 
-const TAG_TYPES = ['tag', 'artist', 'language', 'category'] as const;
+const POPOVER_MAX_WIDTH = 720;
+const POPOVER_THUMB_MORE_COL_WIDTH = 640;
+
+const TAG_TYPES = ['parody', 'tag', 'artist', 'language', 'category'] as const;
 const getTagSortIndex = (type: string) => {
   const index = TAG_TYPES.findIndex(t => t === type);
   return index === -1 ? 999 : index;
@@ -94,98 +120,11 @@ const { t } = useI18n();
 
 const visible = ref(false);
 const virtualRef = ref<HTMLElement>();
-const popoverRef = ref<HTMLElement>();
+const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const popoverPlacement = ref<InstanceType<typeof ElPopover>['placement']>('right');
 const popoverWidth = ref(0);
 
-const gallery = ref<NHentaiGallery | null>({
-  id: 509067,
-  media_id: '2914229',
-  title: {
-    english: '[Nanahara Mitsuru] Ojisan ga mu shimmusume ni etchinakoto o oshieru hanashi joukan',
-    japanese:
-      '[\u4e03\u539f\u307f\u3064\u308b] \u30aa\u30b8\u30b5\u30f3\u304c\u7121\u77e5\u3063\u5a18\u306b\u30a8\u30c3\u30c1\u306a\u3053\u3068\u3092\u6559\u3048\u308b\u8a71\u30fb\u4e0a\u5dfb',
-    pretty: 'Ojisan ga mu shimmusume ni etchinakoto o oshieru hanashi joukan',
-  },
-  images: {
-    pages: [
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-      { t: 'j', w: 1280, h: 1810 },
-    ],
-    cover: { t: 'j', w: 350, h: 495 },
-    thumbnail: { t: 'j', w: 250, h: 354 },
-  },
-  scanlator: '',
-  upload_date: 1715319570,
-  tags: [
-    { id: 6346, type: 'language', name: 'japanese', url: '/language/japanese/', count: 266223 },
-    {
-      id: 10314,
-      type: 'tag',
-      name: 'schoolgirl uniform',
-      url: '/tag/schoolgirl-uniform/',
-      count: 73162,
-    },
-    { id: 13720, type: 'tag', name: 'nakadashi', url: '/tag/nakadashi/', count: 76751 },
-    { id: 19018, type: 'tag', name: 'dark skin', url: '/tag/dark-skin/', count: 35131 },
-    { id: 19440, type: 'tag', name: 'lolicon', url: '/tag/lolicon/', count: 92605 },
-    { id: 20525, type: 'tag', name: 'defloration', url: '/tag/defloration/', count: 30907 },
-    { id: 25663, type: 'tag', name: 'oppai loli', url: '/tag/oppai-loli/', count: 3249 },
-    { id: 29013, type: 'tag', name: 'dilf', url: '/tag/dilf/', count: 23714 },
-    { id: 31880, type: 'tag', name: 'bbm', url: '/tag/bbm/', count: 18899 },
-    { id: 33172, type: 'category', name: 'doujinshi', url: '/category/doujinshi/', count: 364351 },
-    {
-      id: 141668,
-      type: 'artist',
-      name: 'nanahara mitsuru',
-      url: '/artist/nanahara-mitsuru/',
-      count: 12,
-    },
-  ],
-  num_pages: 43,
-  num_favorites: 0,
-});
+const gallery = ref<NHentaiGallery | null>(null);
 
 const title = computed(() => {
   const t = gallery.value?.title;
@@ -203,12 +142,16 @@ const groupedTags = computed(() => {
 
 const galleryLink = computed(() => `https://nhentai.net/g/${gallery.value?.id}/`);
 
-const pageThumbs = computed(() => gallery.value?.images.pages.slice(0, 12).map(getThumbInfo) ?? []);
-const pageThumbsColSpan = computed(() => (popoverWidth.value >= 600 ? 6 : 8));
-const pageThumbWidth = computed(() => {
-  const colNum = popoverWidth.value >= 600 ? 4 : 3;
-  return (popoverWidth.value - 24 - (colNum - 1) * 8) / colNum;
-});
+const pageThumbs = ref<Array<{ url: string; height: number }>>([]);
+const pageThumbsColSpan = computed(() =>
+  popoverWidth.value >= POPOVER_THUMB_MORE_COL_WIDTH ? 6 : 8,
+);
+const pageThumbsColNum = computed(() =>
+  popoverWidth.value >= POPOVER_THUMB_MORE_COL_WIDTH ? 4 : 3,
+);
+const pageThumbWidth = computed(
+  () => (popoverWidth.value - 24 - (pageThumbsColNum.value - 1) * 8) / pageThumbsColNum.value,
+);
 const pageThumbScrollHeight = computed(() => Math.max(0, ...map(pageThumbs.value, 'height')) * 1.5);
 
 const getThumbInfo = ({ t, w, h }: NHentaiImage, i: number) => ({
@@ -227,7 +170,9 @@ const openTagUrl = (path?: string) => {
   GM_openInTab(`https://nhentai.net${path}`, { active: true, setParent: true });
 };
 
-const open = (el: HTMLElement) => {
+let loadingGid: string = '';
+
+const open = async (el: HTMLElement, gid: string) => {
   if (virtualRef.value === el) return;
   const rect = el.getBoundingClientRect();
   const bodyWidth = document.body.clientWidth;
@@ -235,11 +180,66 @@ const open = (el: HTMLElement) => {
   popoverPlacement.value = showRight ? 'right' : 'left';
   virtualRef.value = el;
   popoverWidth.value = Math.min(
-    600,
+    POPOVER_MAX_WIDTH,
     Math.round(showRight ? bodyWidth - rect.right : rect.left) - 16,
   );
   visible.value = true;
+  gallery.value = null;
+  pageThumbs.value = [];
+  try {
+    loadingGid = gid;
+    const loadedGallery = await getGallery(gid);
+    if (loadingGid !== gid) return;
+    gallery.value = loadedGallery;
+    pageThumbs.value = loadedGallery.images.pages.slice(0, 12).map(getThumbInfo);
+    await nextTick();
+    popoverRef.value?.popperRef?.popperInstanceRef?.update();
+  } catch (error) {
+    logger.error(error);
+  } finally {
+    if (loadingGid === gid) loadingGid = '';
+  }
 };
+
+const addPageThumbLine = () => {
+  const curLength = pageThumbs.value.length;
+  if (curLength >= gallery.value!.images.pages.length) return;
+  const curLines = Math.ceil(curLength / pageThumbsColNum.value);
+  pageThumbs.value.push(
+    ...gallery
+      .value!.images.pages.slice(curLength, (curLines + 1) * pageThumbsColNum.value)
+      .map((img, i) => getThumbInfo(img, curLength + i)),
+  );
+};
+
+const handleScrollWheel = (e: WheelEvent) => {
+  const { scrollTop, clientHeight, scrollHeight } = e.currentTarget as HTMLElement;
+  if (
+    (scrollTop + clientHeight === scrollHeight && e.deltaY > 0) ||
+    (scrollTop === 0 && e.deltaY < 0)
+  ) {
+    e.preventDefault();
+  }
+};
+
+const close = () => {
+  if (visible.value) visible.value = false;
+};
+
+watch(visible, val => {
+  if (val) {
+    window.addEventListener('scroll', close);
+    window.addEventListener('resize', close);
+  } else {
+    window.removeEventListener('scroll', close);
+    window.removeEventListener('resize', close);
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', close);
+  window.removeEventListener('resize', close);
+});
 
 defineExpose({ open });
 </script>
@@ -247,6 +247,20 @@ defineExpose({ open });
 <style lang="less" scoped>
 .bold {
   font-weight: bold;
+}
+
+.popover-close-btn {
+  transform: translate(4px, -4px);
+}
+
+.info-label {
+  display: inline-block;
+  .lang-zh & {
+    min-width: 30px;
+  }
+  .lang-en & {
+    min-width: 80px;
+  }
 }
 
 .info-tag-wrapper {
@@ -260,21 +274,67 @@ defineExpose({ open });
     cursor: pointer;
   }
 }
+
+.image-loading {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.scroll-container {
+  margin: 8px -8px 0 -8px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #0003;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  &-inner {
+    padding: 0 8px;
+  }
+}
 </style>
 
 <style lang="less">
 .gallery-mini-popover {
-  .el-descriptions__title {
-    text-align: left !important;
-  }
-  .el-descriptions__cell {
-    padding-bottom: 0 !important;
+  .el-descriptions {
+    &__header {
+      align-items: flex-start !important;
+    }
+    &__title {
+      text-align: left !important;
+    }
+    &__cell {
+      display: flex;
+      padding-bottom: 0 !important;
+    }
+    &__label {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    &__content {
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
   }
   .el-link {
     color: var(--el-link-text-color) !important;
-    &.el-link:hover {
+    &:hover {
       color: var(--el-link-hover-text-color) !important;
     }
+  }
+  .el-image {
+    width: 100%;
   }
 }
 </style>
