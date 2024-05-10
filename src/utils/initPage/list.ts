@@ -15,6 +15,7 @@ import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { IgnoreController } from '../ignoreController';
 import { mountLanguageFilter } from '../languageFilter';
+import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { dlQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
 
@@ -117,7 +118,6 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     },
   );
 
-  let gallery: NHentaiGalleryInfo | undefined;
   let skipDownloadedCheck = false;
 
   const startDownload = async (): Promise<void> => {
@@ -138,16 +138,16 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       progressDisplayController.lockBtn('Wait');
     }
 
-    if (!gallery) {
-      try {
-        gallery = await getGalleryInfo(gid);
-        galleryTitle = gallery.title;
-      } catch (error) {
-        logger.error(error);
-        progressDisplayController.error();
-        errorRetryConfirm(ErrorAction.GET_INFO, undefined, startDownload);
-        return;
-      }
+    let gallery: NHentaiGalleryInfo;
+
+    try {
+      gallery = await getGalleryInfo(gid);
+      galleryTitle = gallery.title;
+    } catch (error) {
+      logger.error(error);
+      progressDisplayController.error();
+      errorRetryConfirm(ErrorAction.GET_INFO, undefined, startDownload);
+      return;
     }
 
     if (!skipDownloadedCheck) {
@@ -166,7 +166,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
             info: {
               gallery: { title },
             },
-          }) => isSameTitle(title, gallery!.title),
+          }) => isSameTitle(title, gallery.title),
         ) &&
         !(await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true))
       ) {
@@ -179,4 +179,10 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   };
 
   downloadBtn.addEventListener('click', startDownload);
+
+  this.addEventListener('contextmenu', e => {
+    if (!settings.galleryContextmenuPreview) return;
+    e.preventDefault();
+    openGalleryMiniPopover(this, gid);
+  });
 };

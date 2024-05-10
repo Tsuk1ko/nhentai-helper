@@ -4,7 +4,7 @@
 
 [GitHub](https://github.com/Tsuk1ko/nhentai-helper)
 
-Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
+Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https://violentmonkey.github.io/). Not and will not support Greasemonkey.
 
 ## Installation
 
@@ -48,7 +48,7 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
     - Maximum number: The default is `3`, exceeding will become "various". Can be modify in settings. `0` means infinity.
     - Separator: The default is `, `. Can be modify in settings.
 - **Compression level**  
-  Accept a numer in `0-9`, default is `0`.  
+  Accept a number in `0-9`, default is `0`.  
   `0` means "no compression", `1` means "best speed", `9` means "best compression".  
    Actually, for manga, compression output size of `0` and `9` usually differ by less than **1%**.
 - **Filename length**  
@@ -61,6 +61,8 @@ Support Tampermonkey and Violentmonkey. Not and will not support Greasemonkey.
   Help you to click the "Show all" button on manga detail page automatically.
 - **Show ignore button**  
   Show an button that allow you to mark or unmark the manga as downloaded.
+- **Context menu preview**  
+  Able to preview information and thumbnails directly by right click a manga on manga list page.
 - **Judge downloaded manga by title**  
   You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
   Note that `Pretty` is not available in most mirror sites.

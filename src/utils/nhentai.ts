@@ -14,9 +14,10 @@ import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
 import { openAlert } from './dialog';
+import { OrderCache } from './orderCache';
 import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
 
-enum NHentaiImgExt {
+export enum NHentaiImgExt {
   j = 'jpg',
   p = 'png',
   g = 'gif',
@@ -30,7 +31,7 @@ const nHentaiImgExtReversed = invert(NHentaiImgExt) as Record<
 const getTypeFromExt = (ext: string): keyof typeof NHentaiImgExt | undefined =>
   nHentaiImgExtReversed[ext.toLowerCase()];
 
-interface NHentaiImage {
+export interface NHentaiImage {
   t: keyof typeof NHentaiImgExt;
   w?: number;
   h?: number;
@@ -202,9 +203,15 @@ const getCFNameArtists = (tags: NHentaiTag[]): string => {
   return artists.join(settings.filenameArtistsSeparator);
 };
 
-const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
+const galleryCache = new OrderCache<string, NHentaiGallery>(100);
+
+export const getGallery = async (gid: number | string): Promise<NHentaiGallery> => {
+  gid = String(gid);
+  const cached = galleryCache.get(gid);
+  if (cached) return cached;
   const gallery = IS_NHENTAI ? await getGalleryFromApi(gid) : await getGalleryFromWebpage(gid);
-  logger.log('gallery', gallery);
+  galleryCache.set(gid, gallery);
+  logger.devLog('gallery', gallery);
   return gallery;
 };
 

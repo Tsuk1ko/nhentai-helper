@@ -45,6 +45,7 @@ export default {
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
     titleReplacement: '标题替换',
+    galleryContextmenuPreview: '右击预览',
     history: {
       title: '下载历史',
       downloadedNumberTip: '你在这个站点上已经用 nHentai 助手下载了 {num} 个本子',
@@ -83,5 +84,16 @@ export default {
     title: '真的吗？',
     yes: '真的',
     no: '算了',
+  },
+  meta: {
+    id: 'ID',
+    parody: '模仿',
+    tag: '标签',
+    artist: '作者',
+    group: '团体',
+    language: '语言',
+    category: '分类',
+    page: '页数',
+    upload: '上传时间',
   },
 };

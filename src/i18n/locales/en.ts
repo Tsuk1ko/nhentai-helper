@@ -45,6 +45,7 @@ export default {
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
     titleReplacement: 'Title replacement',
+    galleryContextmenuPreview: 'Context menu preview',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',
@@ -87,5 +88,16 @@ export default {
     title: 'Are you sure?',
     yes: '', // empty will be default text 'Yes'
     no: '', // empty will be default text 'No'
+  },
+  meta: {
+    id: 'ID',
+    parody: 'Parodies',
+    tag: 'Tags',
+    artist: 'Artists',
+    group: 'Groups',
+    language: 'Languages',
+    category: 'Categories',
+    page: 'Pages',
+    upload: 'Upload Date',
   },
 };

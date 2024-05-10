@@ -2,7 +2,7 @@
 
 [GitHub](https://github.com/Tsuk1ko/nhentai-helper)
 
-支持 Tampermonkey 和 Violentmonkey，不支持也不会支持 Greasemonkey
+支持 [Tampermonkey](https://www.tampermonkey.net/) 和 [Violentmonkey](https://violentmonkey.github.io/)，不支持也不会支持 Greasemonkey
 
 ## 安装
 
@@ -60,6 +60,8 @@
   本子详情页自动帮你点击“Show all”按钮
 - **显示忽略按钮**  
   会显示一个忽略按钮，能让你手动标记或取消标记这个本子为已下载的
+- **右击预览**  
+  在本子列表页右击本子可以直接预览本子信息和内容缩略图
 - **用标题判断本子是否下载过**  
   你可以指定用来判断本子是否下载过所使用的标题，如果全不选则可以关闭提醒本子下载过的功能；需要注意 `简略` 在大部分镜像站是无效的
 - **添加元数据文件**  
