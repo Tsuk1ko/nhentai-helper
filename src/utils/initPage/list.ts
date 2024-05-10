@@ -192,7 +192,7 @@ const initHoverOpenPopup = (el: HTMLElement) => {
       console.log('open');
       timer = null;
       openGalleryMiniPopover(el);
-    }, 1000);
+    }, 0);
   });
 
   el.addEventListener('mouseleave', () => {

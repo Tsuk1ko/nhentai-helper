@@ -17,7 +17,7 @@ import { openAlert } from './dialog';
 import { OrderCache } from './orderCache';
 import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
 
-enum NHentaiImgExt {
+export enum NHentaiImgExt {
   j = 'jpg',
   p = 'png',
   g = 'gif',
@@ -31,7 +31,7 @@ const nHentaiImgExtReversed = invert(NHentaiImgExt) as Record<
 const getTypeFromExt = (ext: string): keyof typeof NHentaiImgExt | undefined =>
   nHentaiImgExtReversed[ext.toLowerCase()];
 
-interface NHentaiImage {
+export interface NHentaiImage {
   t: keyof typeof NHentaiImgExt;
   w?: number;
   h?: number;

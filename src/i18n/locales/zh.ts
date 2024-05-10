@@ -84,4 +84,13 @@ export default {
     yes: '真的',
     no: '算了',
   },
+  meta: {
+    id: 'ID',
+    tag: '标签',
+    artist: '作者',
+    language: '语言',
+    category: '分类',
+    page: '页数',
+    upload: '上传时间',
+  },
 };

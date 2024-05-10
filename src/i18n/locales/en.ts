@@ -88,4 +88,13 @@ export default {
     yes: '', // empty will be default text 'Yes'
     no: '', // empty will be default text 'No'
   },
+  meta: {
+    id: 'ID',
+    tag: 'Tags',
+    artist: 'Artists',
+    language: 'Languages',
+    category: 'Categories',
+    page: 'Pages',
+    upload: 'Upload Date',
+  },
 };
