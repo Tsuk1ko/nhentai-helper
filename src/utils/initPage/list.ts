@@ -42,6 +42,7 @@ export const initListPage = (): void => {
 const initShortcut = (): void => {
   // 左右键翻页
   $(document).on('keydown', event => {
+    if (document.activeElement?.tagName === 'INPUT') return;
     switch (event.key) {
       case 'ArrowLeft':
         $('.pagination .previous').trigger('click');
