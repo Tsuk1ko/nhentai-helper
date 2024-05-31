@@ -32,15 +32,19 @@
             <span class="info-label bold">{{ t(`meta.${type}`) }}</span>
           </template>
           <el-tag
-            v-for="tag in tags"
+            v-for="tag in limitTagLength(tags, 10)"
             :key="tag.id ?? tag.name"
-            class="info-tag info-tag--pointer"
+            class="info-tag"
+            :class="{ 'info-tag--pointer': !isLimitTag(tag) }"
             type="info"
             effect="dark"
             disable-transitions
             @click="() => openTagUrl(tag.url)"
           >
-            <span class="bold">{{ tag.name }}</span> | {{ formatNumber(tag.count || 0) }}
+            <template v-if="isLimitTag(tag)">+{{ tag.count }}</template>
+            <template v-else>
+              <span class="bold">{{ tag.name }}</span> | {{ formatNumber(tag.count || 0) }}
+            </template>
           </el-tag>
         </el-descriptions-item>
         <el-descriptions-item v-if="gallery.num_pages">
@@ -61,7 +65,7 @@
       <div
         v-if="pageThumbs.length"
         v-infinite-scroll="addPageThumbLine"
-        :infinite-scroll-distance="50"
+        :infinite-scroll-distance="100"
         class="scroll-container"
         :style="{ height: `${pageThumbScrollHeight}px` }"
         @wheel.capture.stop="handleScrollWheel"
@@ -78,7 +82,7 @@
     <div
       v-else
       v-loading="true"
-      :style="{ height: '640px', maxHeight: '90vh' }"
+      :style="{ height: '700px', maxHeight: '90vh' }"
       @wheel.prevent
     ></div>
   </el-popover>
@@ -103,7 +107,13 @@ import {
 import { CloseBold } from '@element-plus/icons-vue';
 import { groupBy, map } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
-import { NHentaiImgExt, getGallery, type NHentaiGallery, type NHentaiImage } from '@/utils/nhentai';
+import {
+  NHentaiImgExt,
+  type NHentaiTag,
+  getGallery,
+  type NHentaiGallery,
+  type NHentaiImage,
+} from '@/utils/nhentai';
 import { settings } from '@/utils/settings';
 import logger from '@/utils/logger';
 
@@ -154,9 +164,20 @@ const pageThumbWidth = computed(
 );
 const pageThumbScrollHeight = computed(() => Math.max(0, ...map(pageThumbs.value, 'height')) * 1.5);
 
+const limitTagLength = (tags: NHentaiTag[], maxLength: number) => {
+  const result = tags.slice(0, maxLength);
+  const larger = tags.length - result.length;
+  if (larger > 0) {
+    result.push({ type: '__limit__', name: '__limit__', count: larger });
+  }
+  return result;
+};
+
+const isLimitTag = (tag: NHentaiTag) => tag.type === '__limit__';
+
 const getThumbInfo = ({ t, w, h }: NHentaiImage, i: number) => ({
   url: `https://t3.nhentai.net/galleries/${gallery.value?.media_id}/${i + 1}t.${NHentaiImgExt[t]}`,
-  height: w && h ? Math.floor((pageThumbWidth.value * h) / w) : 0,
+  height: w && h ? Math.floor(pageThumbWidth.value * Math.min(h / w, 1.8)) : 0,
 });
 
 const formatNumber = (num: number) => {
@@ -282,6 +303,7 @@ defineExpose({ open });
 }
 
 .scroll-container {
+  min-height: 400px;
   margin: 8px -8px 0 -8px;
   overflow-y: auto;
 

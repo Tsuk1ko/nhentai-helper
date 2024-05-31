@@ -37,7 +37,7 @@ export interface NHentaiImage {
   h?: number;
 }
 
-interface NHentaiTag {
+export interface NHentaiTag {
   id?: number;
   type: string;
   name: string;
