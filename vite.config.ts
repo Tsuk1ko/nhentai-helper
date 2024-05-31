@@ -78,7 +78,7 @@ export default defineConfig(async ({ mode }) => ({
             }),
           ),
           'element-plus': cdn.unpkg('ElementPlus', 'dist/index.full.min.js'),
-          jquery: cdn.unpkg('jQuery', 'dist/jquery.slim.min.js'),
+          jquery: cdn.unpkg('jQuery', 'dist/jquery.min.js'),
         },
         externalResource: {
           'element-plus/dist/index.css': cdn.unpkg('element-plus-css'),
