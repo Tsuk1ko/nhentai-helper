@@ -88,6 +88,7 @@ export default {
   meta: {
     id: 'ID',
     parody: '模仿',
+    character: '角色',
     tag: '标签',
     artist: '作者',
     group: '团体',

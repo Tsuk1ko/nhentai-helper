@@ -110,7 +110,7 @@ import logger from '@/utils/logger';
 const POPOVER_MAX_WIDTH = 720;
 const POPOVER_THUMB_MORE_COL_WIDTH = 640;
 
-const TAG_TYPES = ['parody', 'tag', 'artist', 'language', 'category'] as const;
+const TAG_TYPES = ['parody', 'character', 'tag', 'artist', 'language', 'category'] as const;
 const getTagSortIndex = (type: string) => {
   const index = TAG_TYPES.findIndex(t => t === type);
   return index === -1 ? 999 : index;

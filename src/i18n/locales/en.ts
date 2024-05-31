@@ -92,6 +92,7 @@ export default {
   meta: {
     id: 'ID',
     parody: 'Parodies',
+    character: 'Characters',
     tag: 'Tags',
     artist: 'Artists',
     group: 'Groups',
