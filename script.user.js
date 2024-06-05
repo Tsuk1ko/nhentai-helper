@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.14.2
+// @version            3.14.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -57,7 +57,7 @@
     return value;
   };
   var require_main_001 = __commonJS({
-    "main-D3_8JEXS.js"(exports, module) {
+    "main-BgKCcKoF.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -13889,8 +13889,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
             "download": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "downloading" } }
           },
           "downloadAgainConfirm": ({ named }) => `<i>${named("title")}</i> is already downloaded${named("hasQueue") ? " or in queue" : ""}.<br>Do you want to download again?`,
-          "errorRetryConfirm": (ctx) => `Error occurred while ${getActionText(ctx)}, retry?`,
-          "errorRetryTip": (ctx) => `Error occurred while ${getActionText(ctx)}, retrying...`,
+          "errorRetryConfirm": ({ linked, named }) => `Error occurred while ${linked(`message.dialog.action.${named("action")}`)}, retry?`,
+          "errorRetryTip": ({ linked, named }) => `Error occurred while ${linked(`message.dialog.action.${named("action")}`)}, retrying...`,
           "downloadedTip": { "t": 0, "b": { "t": 2, "i": [{ "t": 3, "v": "<i>" }, { "t": 4, "k": "title" }, { "t": 3, "v": "</i> is already downloaded or in queue." }] } },
           "getMediaUrlTemplateFailed": { "t": 0, "b": { "t": 2, "i": [{ "t": 3, "v": 'Fail to get image download url. Please set "' }, { "t": 6, "k": { "t": 9, "v": "setting.customDownloadUrl" } }, { "t": 3, "v": '" manually, or open a github issue to report with current url.' }] } }
         },
@@ -13984,8 +13984,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
             "download": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "下载" } }
           },
           "downloadAgainConfirm": ({ named }) => `《${named("title")}》已下载过${named("hasQueue") ? "或在队列中" : ""}，你希望再次下载吗？`,
-          "errorRetryConfirm": (ctx) => `${getActionText(ctx)}发生错误，是否重试？`,
-          "errorRetryTip": (ctx) => `${getActionText(ctx)}发生错误，重试中……`,
+          "errorRetryConfirm": ({ linked, named }) => `${linked(`message.dialog.action.${named("action")}`)}发生错误，是否重试？`,
+          "errorRetryTip": ({ linked, named }) => `${linked(`message.dialog.action.${named("action")}`)}发生错误，重试中……`,
           "downloadedTip": { "t": 0, "b": { "t": 2, "i": [{ "t": 3, "v": "《" }, { "t": 4, "k": "title" }, { "t": 3, "v": "》已经下载过或在队列中" }] } },
           "getMediaUrlTemplateFailed": { "t": 0, "b": { "t": 2, "i": [{ "t": 3, "v": "获取图片下载地址失败，请手动设置“" }, { "t": 6, "k": { "t": 9, "v": "setting.customDownloadUrl" } }, { "t": 3, "v": "”，或前往 github issue 或脚本页面反馈并附带当前网址" }] } }
         },
@@ -14697,7 +14697,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       };
       const fetchMediaUrlTemplate = async () => {
         var _a, _b, _c;
-        const onlineViewUrl = ((_b = (_a = document.querySelector(".gallery a")) == null ? void 0 : _a.getAttribute("href")) == null ? void 0 : _b.concat("/1")) ?? ((_c = document.querySelector("a.gallerythumb")) == null ? void 0 : _c.getAttribute("href"));
+        const onlineViewUrl = ((_b = (_a = document.querySelector(".gallery a")) == null ? void 0 : _a.getAttribute("href")) == null ? void 0 : _b.replace(/\/+$/, "").concat("/1")) ?? ((_c = document.querySelector("a.gallerythumb")) == null ? void 0 : _c.getAttribute("href"));
         if (!onlineViewUrl) {
           throw new Error("get media url failed: cannot find a gallery");
         }
@@ -14921,6 +14921,7 @@ ${xml}`;
           if (info.error)
             return { abort: () => {
             }, promise: Promise.resolve() };
+          let urlGetterError;
           const usedCounterKeys = [];
           const urlGetter = customDownloadUrl ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t }) : IS_NHENTAI ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE || settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM ? () => {
             const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
@@ -14931,12 +14932,12 @@ ${xml}`;
               nHentaiDownloadHostCounter.add(counterKey);
             }
             return url;
-          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {
+          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch((e) => {
+            urlGetterError = e;
           });
-          if (!urlGetter) {
+          if (!urlGetter || urlGetterError) {
             info.error = true;
-            return { abort: () => {
-            }, promise: Promise.resolve() };
+            throw urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No url getter");
           }
           if (typeof urlGetter !== "function") {
             logger.log(`[${threadID}] ${urlGetter}`);
