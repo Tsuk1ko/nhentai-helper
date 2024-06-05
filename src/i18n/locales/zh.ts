@@ -1,5 +1,4 @@
 import type { MessageContext } from '@intlify/core-base';
-import { getActionText } from '../utils';
 
 export default {
   common: {
@@ -64,8 +63,10 @@ export default {
     },
     downloadAgainConfirm: ({ named }: MessageContext) =>
       `《${named('title')}》已下载过${named('hasQueue') ? '或在队列中' : ''}，你希望再次下载吗？`,
-    errorRetryConfirm: (ctx: MessageContext) => `${getActionText(ctx)}发生错误，是否重试？`,
-    errorRetryTip: (ctx: MessageContext) => `${getActionText(ctx)}发生错误，重试中……`,
+    errorRetryConfirm: ({ linked, named }: MessageContext) =>
+      `${linked(`message.dialog.action.${named('action')}`)}发生错误，是否重试？`,
+    errorRetryTip: ({ linked, named }: MessageContext) =>
+      `${linked(`message.dialog.action.${named('action')}`)}发生错误，重试中……`,
     downloadedTip: '《{title}》已经下载过或在队列中',
     getMediaUrlTemplateFailed:
       "获取图片下载地址失败，请手动设置“@:{'setting.customDownloadUrl'}”，或前往 github issue 或脚本页面反馈并附带当前网址",

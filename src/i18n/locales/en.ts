@@ -1,5 +1,4 @@
 import type { MessageContext } from '@intlify/core-base';
-import { getActionText } from '../utils';
 
 export default {
   common: {
@@ -66,10 +65,10 @@ export default {
       `<i>${named('title')}</i> is already downloaded${
         named('hasQueue') ? ' or in queue' : ''
       }.<br>Do you want to download again?`,
-    errorRetryConfirm: (ctx: MessageContext) =>
-      `Error occurred while ${getActionText(ctx)}, retry?`,
-    errorRetryTip: (ctx: MessageContext) =>
-      `Error occurred while ${getActionText(ctx)}, retrying...`,
+    errorRetryConfirm: ({ linked, named }: MessageContext) =>
+      `Error occurred while ${linked(`message.dialog.action.${named('action')}`)}, retry?`,
+    errorRetryTip: ({ linked, named }: MessageContext) =>
+      `Error occurred while ${linked(`message.dialog.action.${named('action')}`)}, retrying...`,
     downloadedTip: '<i>{title}</i> is already downloaded or in queue.',
     getMediaUrlTemplateFailed:
       'Fail to get image download url. Please set "@:{\'setting.customDownloadUrl\'}" manually, or open a github issue to report with current url.',

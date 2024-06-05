@@ -1,5 +1,4 @@
 import { castArray } from 'lodash-es';
-import type { MessageContext } from '@intlify/core-base';
 
 export const supportLanguage = new Set(['zh', 'en']);
 
@@ -11,6 +10,3 @@ export const defaultLocale = (() => {
   }
   return 'en';
 })();
-
-export const getActionText = ({ linked, named }: MessageContext): string =>
-  linked(`message.dialog.action.${named('action')}`);
