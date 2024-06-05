@@ -108,6 +108,8 @@ This script also support some nHentai mirror sites. See the script's `@match` an
 
 If the script does not run on some domains, you can add them to *User matches*. (Script editing - Settings - Includes/Excludes - User matches)
 
+Not all mirror sites are supported. The script only supports sites that use the same UI as the nHentai official site (page structure and element class names are basically the same).
+
 When you are on a mirror site, a prompt "A userscript wants to access a cross-origin resource" may pop up, please select "**Always allow domain**" or "**Always allow all domain**".
 
 ![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.en.png)
