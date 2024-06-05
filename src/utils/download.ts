@@ -73,28 +73,34 @@ export const downloadGalleryByInfo = async (
   > = async (page, threadID, { filenameLength, customDownloadUrl }) => {
     if (info.error) return { abort: () => {}, promise: Promise.resolve() };
 
+    let urlGetterError: any;
+
     const usedCounterKeys: string[] = [];
     const urlGetter = customDownloadUrl
       ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t })
       : IS_NHENTAI
-      ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE ||
-        settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM
-        ? () => {
-            const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
-            logger.log(`[${threadID}] ${url}`);
-            if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
-              const counterKey = new URL(url).host;
-              usedCounterKeys.push(counterKey);
-              nHentaiDownloadHostCounter.add(counterKey);
+        ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE ||
+          settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM
+          ? () => {
+              const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
+              logger.log(`[${threadID}] ${url}`);
+              if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+                const counterKey = new URL(url).host;
+                usedCounterKeys.push(counterKey);
+                nHentaiDownloadHostCounter.add(counterKey);
+              }
+              return url;
             }
-            return url;
-          }
-        : getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
-      : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(() => {});
+          : getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
+        : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(e => {
+            urlGetterError = e;
+          });
 
-    if (!urlGetter) {
+    if (!urlGetter || urlGetterError) {
       info.error = true;
-      return { abort: () => {}, promise: Promise.resolve() };
+      throw urlGetterError && urlGetterError instanceof Error
+        ? urlGetterError
+        : new Error('No url getter');
     }
 
     if (typeof urlGetter !== 'function') {

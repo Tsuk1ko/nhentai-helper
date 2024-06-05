@@ -271,7 +271,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
 
 const fetchMediaUrlTemplate = async () => {
   const onlineViewUrl =
-    document.querySelector('.gallery a')?.getAttribute('href')?.concat('/1') ??
+    document.querySelector('.gallery a')?.getAttribute('href')?.replace(/\/+$/, '').concat('/1') ??
     document.querySelector('a.gallerythumb')?.getAttribute('href');
   if (!onlineViewUrl) {
     throw new Error('get media url failed: cannot find a gallery');

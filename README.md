@@ -78,11 +78,14 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 - **nHentai download host**  
   Choose a host for downloading nHentai images. Only available on nHentai.
 - **Custom download URL**  
-  **WARNING: Please don't set this if you don't know what it does.**  
+  Generally, you don't need to provide this unless you have a special requirement or the script cannot automatically obtain the image URL on the mirror site.  
   Provide a URL containing the following placeholder:
   - `{{mid}}` - Media ID
   - `{{index}}` - Page index, starting from 1
   - `{{ext}}` - Image file extension
+
+  For example, if the image URL you find is like `https://example.com/galleries/123456/1.jpg`  
+  Then the custom download URL is usually `https://example.com/galleries/{{mid}}/{{index}}.{{ext}}`
 - **Compression "streamFiles"**  
   Enable this option will use less memory but some program might not support the generated zip file.  
   See [here](https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#streamfiles-option) for more information.
@@ -103,7 +106,7 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 
 This script also support some nHentai mirror sites. See the script's `@match` and `@include`.
 
-If the script does not run on some domains, you can add them to *User matches*.
+If the script does not run on some domains, you can add them to *User matches*. (Script editing - Settings - Includes/Excludes - User matches)
 
 When you are on a mirror site, a prompt "A userscript wants to access a cross-origin resource" may pop up, please select "**Always allow domain**" or "**Always allow all domain**".
 
@@ -111,7 +114,7 @@ When you are on a mirror site, a prompt "A userscript wants to access a cross-or
 
 ### Language filter
 
-You can select a language in the navigation bar to filter mangas.
+You can select a language in the navigation bar to filter manga.
 
 ![langFilter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/langFilter.png)
 
