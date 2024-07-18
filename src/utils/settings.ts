@@ -12,7 +12,7 @@ export const nHentaiDownloadHosts = [
   'i2.nhentai.net',
   'i3.nhentai.net',
   'i5.nhentai.net',
-  'i7.nhentai.net',
+  // 'i7.nhentai.net',
 ];
 
 export enum NHentaiDownloadHostSpecial {
