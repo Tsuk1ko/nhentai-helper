@@ -13,7 +13,6 @@ import {
 import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
-import { openAlert } from './dialog';
 import { OrderCache } from './orderCache';
 import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
 
