@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.14.4
+// @version            3.14.5
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -57,7 +57,7 @@
     return value;
   };
   var require_main_001 = __commonJS({
-    "main-DR2UIcj5.js"(exports, module) {
+    "main-Gq-gVH9Q.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -14096,21 +14096,6 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           text: t$3("dialog.errorRetryTip", { action })
         }).show();
       };
-      const openAlert = (i18nKey) => {
-        const n = new Noty({
-          layout: "center",
-          theme: "nest",
-          modal: true,
-          closeWith: [],
-          text: t$3(i18nKey),
-          buttons: [
-            Noty.button("OK", "btn btn-noty-blue btn-noty", () => {
-              n.close();
-            })
-          ]
-        });
-        n.show();
-      };
       var StreamSaver = { exports: {} };
       /*! streamsaver. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
       (function(module2) {
@@ -14466,15 +14451,6 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       };
       const getText = (url) => request(url).dataPromise;
       const fetchJSON = (url) => fetch(url).then((r) => r.json());
-      const checkHost = async (url) => {
-        const { origin } = new URL(url);
-        try {
-          await fetch(origin, { method: "HEAD", mode: "no-cors" });
-          return true;
-        } catch {
-          return false;
-        }
-      };
       class Counter {
         constructor(keys2) {
           __publicField(this, "countMap", {});
@@ -14713,18 +14689,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         return template2;
       };
       const getMediaUrlTemplate = async () => {
-        const cachedTemplate = _GM_getValue(MEDIA_URL_TEMPLATE_KEY);
-        if (cachedTemplate && await checkHost(cachedTemplate)) {
-          logger.log(`use cached media url template: ${cachedTemplate}`);
-          return cachedTemplate;
-        }
         try {
           const template2 = await fetchMediaUrlTemplate();
           logger.log(`use media url template: ${template2}`);
           return template2;
         } catch (error) {
-          openAlert("dialog.getMediaUrlTemplateFailed");
           logger.error(error);
+          const cachedTemplate = _GM_getValue(MEDIA_URL_TEMPLATE_KEY);
+          if (cachedTemplate) {
+            logger.warn(`try to use cached media url template: ${cachedTemplate}`);
+            return cachedTemplate;
+          }
           throw error;
         }
       };
