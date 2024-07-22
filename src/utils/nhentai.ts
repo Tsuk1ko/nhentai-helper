@@ -2,7 +2,7 @@
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
 import { filter, invert, map, once, sample } from 'lodash-es';
-import { checkHost, fetchJSON, getText } from './request';
+import { fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
 import {
   NHentaiDownloadHostSpecial,
@@ -293,19 +293,17 @@ const fetchMediaUrlTemplate = async () => {
 };
 
 const getMediaUrlTemplate = async () => {
-  const cachedTemplate = GM_getValue<string | undefined>(MEDIA_URL_TEMPLATE_KEY);
-  if (cachedTemplate && (await checkHost(cachedTemplate))) {
-    logger.log(`use cached media url template: ${cachedTemplate}`);
-    return cachedTemplate;
-  }
-
   try {
     const template = await fetchMediaUrlTemplate();
     logger.log(`use media url template: ${template}`);
     return template;
   } catch (error) {
-    openAlert('dialog.getMediaUrlTemplateFailed');
     logger.error(error);
+    const cachedTemplate = GM_getValue<string | undefined>(MEDIA_URL_TEMPLATE_KEY);
+    if (cachedTemplate) {
+      logger.warn(`try to use cached media url template: ${cachedTemplate}`);
+      return cachedTemplate;
+    }
     throw error;
   }
 };
