@@ -75,6 +75,10 @@ export default defineConfig(async ({ mode }) => ({
             await util.fn2dataUrl(() => {
               // @ts-expect-error
               window.Vue = Vue;
+              // #51 fix Violentmonkey `Date.now()`
+              if (!window.Date.now) {
+                window.Date.now = () => new Date().getTime();
+              }
             }),
           ),
           'element-plus': cdn.unpkg('ElementPlus', 'dist/index.full.min.js'),
