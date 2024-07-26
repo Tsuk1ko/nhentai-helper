@@ -1,4 +1,4 @@
-import { GM_getValue, monkeyWindow, unsafeWindow } from '$';
+import { GM_getValue, unsafeWindow } from '$';
 import { IS_DEV, IS_NHENTAI } from '@/const';
 
 const isNodeOrElement =
@@ -12,7 +12,6 @@ const isNodeOrElement =
 
 // 防 nhentai console 屏蔽
 if (IS_NHENTAI) {
-  if (IS_DEV) unsafeWindow.Date = monkeyWindow.Date;
   if (
     IS_DEV ||
     GM_getValue('prevent_console_clear', false) ||
