@@ -1,6 +1,5 @@
 import { reactive } from 'vue';
 import { EventEmitter } from 'eventemitter3';
-import { v4 as uuid } from 'uuid';
 import logger from './logger';
 import { removeAt } from './array';
 
@@ -31,7 +30,7 @@ export class AsyncQueue<T = any> {
 
   public push(fn: AsyncFunction, info: any): void {
     this.queue.push({
-      id: uuid(),
+      id: crypto.randomUUID(),
       running: false,
       fn,
       info,
