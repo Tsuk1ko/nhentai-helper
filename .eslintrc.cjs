@@ -80,6 +80,7 @@ module.exports = {
         varsIgnorePattern: 'Fragment|h',
       },
     ],
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
   },
   settings: {
     'import/resolver': {
