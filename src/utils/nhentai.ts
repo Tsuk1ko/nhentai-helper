@@ -14,7 +14,12 @@ import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
 import { OrderCache } from './orderCache';
-import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, MEDIA_URL_TEMPLATE_KEY } from '@/const';
+import {
+  IS_NHENTAI,
+  IS_PAGE_MANGA_DETAIL,
+  MEDIA_URL_TEMPLATE_KEY,
+  THUMB_MEDIA_URL_TEMPLATE_KEY,
+} from '@/const';
 
 export enum NHentaiImgExt {
   j = 'jpg',
@@ -106,28 +111,37 @@ const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
   return fetchJSON<NHentaiGallery>(url);
 };
 
+const fixGalleryObj = (gallery: NHentaiGallery, gid?: number | string) => {
+  // 有些镜像站有™大病，gallery 信息里的 id 是错误的，以地址为准
+  if (gid) gallery.id = Number(gid);
+  // 有些镜像站的图片列表是个 object，需要特殊处理
+  if (!Array.isArray(gallery.images.pages)) {
+    gallery.images.pages = Object.values(gallery.images.pages);
+  }
+  return gallery;
+};
+
 const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGallery> => {
   let doc = document;
 
   if (!IS_PAGE_MANGA_DETAIL) {
     const html = await getText(`/g/${gid}`);
-
-    // 有些站点 script 里有 gallery 信息
-    const match = /gallery(\(\{[\s\S]+\}\));/.exec(html)?.[1];
-    if (match) {
-      try {
-        // eslint-disable-next-line no-eval
-        const gallery: NHentaiGallery = eval(match);
-        // 有些镜像站有™大病，gallery 信息里的 id 是错误的，以地址为准
-        gallery.id = Number(gid);
-      } catch {
-        logger.warn('get gallery by eval failed');
-      }
-    }
-
     // 直接把 html 给 jq 解析的话会把里面的图片也给加载了，用 DOMParser 解析完再扔给 jq 就不会
     const parser = new DOMParser();
     doc = parser.parseFromString(html, 'text/html');
+  }
+
+  // 有些站点 script 里有 gallery 信息
+  const match = /gallery(\(\{[\s\S]+\}\));/.exec(doc.body.innerHTML)?.[1];
+  if (match) {
+    try {
+      // eslint-disable-next-line no-eval
+      const gallery: NHentaiGallery = eval(match);
+      logger.log('get gallery by script tag success');
+      return fixGalleryObj(gallery, gid);
+    } catch {
+      logger.warn('get gallery by script tag failed');
+    }
   }
 
   const $doc = $(doc.body);
@@ -140,13 +154,19 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
 
   $doc.find<HTMLImageElement>('#thumbnail-container img').each((i, img) => {
     const src = img.dataset.src ?? img.src;
+    const width = img.getAttribute('width');
+    const height = img.getAttribute('height');
     const match = /\/(\d+)\/(\d+)t?\.(\w+)/.exec(src);
     if (!match) return;
     const [, mid, index, ext] = match;
     if (!mediaId) mediaId = mid;
     const t = getTypeFromExt(ext);
     if (!t) return;
-    pages[Number(index) - 1] = { t };
+    pages[Number(index) - 1] = {
+      t,
+      w: width ? Number(width) : undefined,
+      h: height ? Number(height) : undefined,
+    };
   });
 
   if ((!english && !japanese) || !mediaId || !pages.length) {
@@ -154,9 +174,21 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   }
 
   const getTags = (type: string, elContains: string): NHentaiTag[] => {
-    const $names = $(`#tags .tag-container:contains(${elContains}) .tag > .name`);
-    const names = filter(Array.from($names).map(el => el.innerText.trim()));
-    return names.map((name): NHentaiTag => ({ type, name }));
+    const $tags = $doc.find(`#tags .tag-container:contains(${elContains}) .tag`);
+    return filter(
+      Array.from($tags).map((el): NHentaiTag | undefined => {
+        const name = el.querySelector<HTMLElement>('.name')?.innerText.trim();
+        const count = el.querySelector<HTMLElement>('.count')?.innerText.trim();
+        return name
+          ? {
+              type,
+              name,
+              url: el.getAttribute('href') || undefined,
+              count: count ? Number(count) : undefined,
+            }
+          : undefined;
+      }),
+    ) as NHentaiTag[];
   };
 
   const tags = [
@@ -169,7 +201,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     ...getTags('category', 'Categories'),
   ];
 
-  const uploadDateStr = $('#tags .tag-container:contains(Uploaded) time').attr('datetime');
+  const uploadDateStr = $doc.find('#tags .tag-container:contains(Uploaded) time').attr('datetime');
   const uploadDate = uploadDateStr ? new Date(uploadDateStr) : undefined;
 
   return {
@@ -229,12 +261,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     const gidFromUrl = /^\/g\/(\d+)/.exec(location.pathname)?.[1];
     const localGallery = unsafeWindow._gallery ?? unsafeWindow.gallery;
 
-    if (localGallery) {
-      // 有些镜像站有™大病，gallery 信息里的 id 是错误的，以地址为准
-      if (gidFromUrl) localGallery.id = Number(gidFromUrl);
-      return localGallery;
-    }
-
+    if (localGallery) return fixGalleryObj(localGallery, gidFromUrl);
     if (gidFromUrl) return getGallery(gidFromUrl);
 
     throw new Error('Cannot get gallery info.');
@@ -242,10 +269,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
 
   const { english, japanese, pretty } = title;
 
-  // 有些站点例如 nhentai.website 的 gallery 里面的图片列表是个 object，需要特殊处理
-  const infoPages = (Array.isArray(pages) ? pages : Object.values<NHentaiImage>(pages)).map(
-    ({ t, w, h }, i) => ({ i: i + 1, t: NHentaiImgExt[t], w, h }),
-  );
+  const infoPages = pages.map(({ t, w, h }, i) => ({ i: i + 1, t: NHentaiImgExt[t], w, h }));
 
   const info: NHentaiGalleryInfo = {
     gid: id,
@@ -291,14 +315,38 @@ const fetchMediaUrlTemplate = async () => {
   return template;
 };
 
-const getMediaUrlTemplate = async () => {
+const fetchThumbMediaUrlTemplate = async () => {
+  const detailUrl = document.querySelector('.gallery a')?.getAttribute('href');
+  if (!detailUrl) {
+    throw new Error('get detail url failed: cannot find a gallery');
+  }
+
+  logger.log(`fetching thumb media url template by ${detailUrl}`);
+
+  const detailHtml = await getText(detailUrl);
+  const $doc = loadHTML(detailHtml);
+  const $img = $doc.find('#thumbnail-container img');
+  const imgSrc = $img.attr('data-src') || $img.attr('src');
+  if (!imgSrc) {
+    throw new Error('get thumb media url failed: cannot find an image src');
+  }
+
+  const template = imgSrc
+    .replace(/\/\d+\//, '/{{mid}}/')
+    .replace(/\/\d+t\.[^/]+$/, '/{{filename}}');
+  GM_setValue(THUMB_MEDIA_URL_TEMPLATE_KEY, template);
+
+  return template;
+};
+
+const getMediaUrlTemplate = async (getter: () => Promise<string>, cacheKey: string) => {
   try {
-    const template = await fetchMediaUrlTemplate();
+    const template = await getter();
     logger.log(`use media url template: ${template}`);
     return template;
   } catch (error) {
     logger.error(error);
-    const cachedTemplate = GM_getValue<string | undefined>(MEDIA_URL_TEMPLATE_KEY);
+    const cachedTemplate = GM_getValue<string | undefined>(cacheKey);
     if (cachedTemplate) {
       logger.warn(`try to use cached media url template: ${cachedTemplate}`);
       return cachedTemplate;
@@ -307,7 +355,17 @@ const getMediaUrlTemplate = async () => {
   }
 };
 
-const getCompliedMediaUrlTemplate = once(async () => compileTemplate(await getMediaUrlTemplate()));
+const getCompliedMediaUrlTemplate = once(async () =>
+  compileTemplate(await getMediaUrlTemplate(fetchMediaUrlTemplate, MEDIA_URL_TEMPLATE_KEY)),
+);
+
+export const getCompliedThumbMediaUrlTemplate = once(async () =>
+  compileTemplate(
+    IS_NHENTAI
+      ? 'https://t3.nhentai.net/galleries/{{mid}}/{{filename}}'
+      : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY),
+  ),
+);
 
 const applyTitleReplacement = (title: string) => {
   if (!validTitleReplacement.value.length) return title;

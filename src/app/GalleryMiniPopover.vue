@@ -43,7 +43,8 @@
           >
             <template v-if="isLimitTag(tag)">+{{ tag.count }}</template>
             <template v-else>
-              <span class="bold">{{ tag.name }}</span> | {{ formatNumber(tag.count || 0) }}
+              <span class="bold">{{ tag.name }}</span
+              >{{ tag.count ? ` | ${formatNumber(tag.count)}` : undefined }}
             </template>
           </el-tag>
         </el-descriptions-item>
@@ -113,6 +114,7 @@ import {
   getGallery,
   type NHentaiGallery,
   type NHentaiImage,
+  getCompliedThumbMediaUrlTemplate,
 } from '@/utils/nhentai';
 import { settings } from '@/utils/settings';
 import logger from '@/utils/logger';
@@ -120,7 +122,15 @@ import logger from '@/utils/logger';
 const POPOVER_MAX_WIDTH = 720;
 const POPOVER_THUMB_MORE_COL_WIDTH = 640;
 
-const TAG_TYPES = ['parody', 'character', 'tag', 'artist', 'language', 'category'] as const;
+const TAG_TYPES = [
+  'parody',
+  'character',
+  'tag',
+  'artist',
+  'group',
+  'language',
+  'category',
+] as const;
 const getTagSortIndex = (type: string) => {
   const index = TAG_TYPES.findIndex(t => t === type);
   return index === -1 ? 999 : index;
@@ -150,7 +160,7 @@ const groupedTags = computed(() => {
     : [];
 });
 
-const galleryLink = computed(() => `https://nhentai.net/g/${gallery.value?.id}/`);
+const galleryLink = computed(() => `${location.origin}/g/${gallery.value?.id}/`);
 
 const pageThumbs = ref<Array<{ url: string; height: number }>>([]);
 const pageThumbsColSpan = computed(() =>
@@ -175,8 +185,12 @@ const limitTagLength = (tags: NHentaiTag[], maxLength: number) => {
 
 const isLimitTag = (tag: NHentaiTag) => tag.type === '__limit__';
 
+let thumbUrlTemplate: Awaited<ReturnType<typeof getCompliedThumbMediaUrlTemplate>>;
 const getThumbInfo = ({ t, w, h }: NHentaiImage, i: number) => ({
-  url: `https://t3.nhentai.net/galleries/${gallery.value?.media_id}/${i + 1}t.${NHentaiImgExt[t]}`,
+  url: thumbUrlTemplate({
+    mid: gallery.value?.media_id,
+    filename: `${i + 1}t.${NHentaiImgExt[t]}`,
+  }),
   height: w && h ? Math.floor(pageThumbWidth.value * Math.min(h / w, 1.8)) : 0,
 });
 
@@ -188,7 +202,7 @@ const formatNumber = (num: number) => {
 
 const openTagUrl = (path?: string) => {
   if (!path) return;
-  GM_openInTab(`https://nhentai.net${path}`, { active: true, setParent: true });
+  GM_openInTab(`${location.origin}${path}`, { active: true, setParent: true });
 };
 
 let loadingGid: string = '';
@@ -209,6 +223,7 @@ const open = async (el: HTMLElement, gid: string) => {
   pageThumbs.value = [];
   try {
     loadingGid = gid;
+    if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate();
     const loadedGallery = await getGallery(gid);
     if (loadingGid !== gid) return;
     gallery.value = loadedGallery;
