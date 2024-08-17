@@ -48,12 +48,17 @@ export const initDetailPage = async (): Promise<void> => {
     const gallery = await getGalleryInfo();
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
-      .filter(range => !Number.isNaN(parseInt(range)))
+      .filter(range => /^(?:\d+-?\d*|-\d+)$/.test(range))
       .map(range => {
         const [start, end] = range.split('-').map(num => parseInt(num));
-        if (typeof end === 'undefined') return page => page === start;
-        else if (Number.isNaN(end)) return page => page >= start;
-        else return page => start <= page && page <= end;
+        // -end
+        if (Number.isNaN(start)) return page => page <= end;
+        // start
+        if (end === undefined) return page => page === start;
+        // start-
+        if (Number.isNaN(end)) return page => page >= start;
+        // start-end
+        return page => start <= page && page <= end;
       });
 
     progressDisplayController.lockBtn();

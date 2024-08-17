@@ -81,7 +81,7 @@ export default {
     unignore: 'Ignore this',
   },
   input: {
-    downloadSpecifiedPages: 'Download specified pages (e.g. 1-10,12,14,18-)',
+    downloadSpecifiedPages: 'Download specified pages (e.g. -5,7-10,12,14,18-)',
   },
   confirmPopup: {
     title: 'Are you sure?',
