@@ -48,7 +48,7 @@ export const initDetailPage = async (): Promise<void> => {
     const gallery = await getGalleryInfo();
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
-      .filter(range => /^(?:\d+-?\d*|-\d+)$/.test(range))
+      .filter(range => /^\s*(?:\d+(?:\s*-\s*)?\d*|-\d+)\s*$/.test(range))
       .map(range => {
         const [start, end] = range.split('-').map(num => parseInt(num));
         // -end
