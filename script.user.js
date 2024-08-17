@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.14.7
+// @version            3.14.8
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -54,7 +54,7 @@
   };
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   var require_main_001 = __commonJS({
-    "main-DyMFlrCI.js"(exports, module) {
+    "main-CrEXcLy8.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -13766,7 +13766,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "unignore": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Ignore this" } }
         },
         "input": {
-          "downloadSpecifiedPages": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Download specified pages (e.g. 1-10,12,14,18-)" } }
+          "downloadSpecifiedPages": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Download specified pages (e.g. -5,7-10,12,14,18-)" } }
         },
         "confirmPopup": {
           "title": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Are you sure?" } },
@@ -13861,7 +13861,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "unignore": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "不再忽略" } }
         },
         "input": {
-          "downloadSpecifiedPages": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "下载指定页面（例：1-10,12,14,18-）" } }
+          "downloadSpecifiedPages": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "下载指定页面（例：-5,7-10,12,14,18-）" } }
         },
         "confirmPopup": {
           "title": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "真的吗？" } },
@@ -15021,11 +15021,12 @@ ${xml}`;
         downloadBtn.addEventListener("click", async () => {
           var _a;
           const gallery2 = await getGalleryInfo();
-          const rangeCheckers = pagesInput.value.split(",").filter((range) => !Number.isNaN(parseInt(range))).map((range) => {
+          const rangeCheckers = pagesInput.value.split(",").filter((range) => /^(?:\d+-?\d*|-\d+)$/.test(range)).map((range) => {
             const [start, end] = range.split("-").map((num) => parseInt(num));
-            if (typeof end === "undefined") return (page) => page === start;
-            else if (Number.isNaN(end)) return (page) => page >= start;
-            else return (page) => start <= page && page <= end;
+            if (Number.isNaN(start)) return (page) => page <= end;
+            if (end === void 0) return (page) => page === start;
+            if (Number.isNaN(end)) return (page) => page >= start;
+            return (page) => start <= page && page <= end;
           });
           progressDisplayController.lockBtn();
           try {
