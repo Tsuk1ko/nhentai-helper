@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.14.9
+// @version            3.14.10
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -54,7 +54,7 @@
   };
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   var require_main_001 = __commonJS({
-    "main-B4nlxh7M.js"(exports, module) {
+    "main-Cn9daJ_e.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -14613,6 +14613,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         textareaEl.innerHTML = "";
         return encodedText;
       };
+      const encodeXml = (text) => encodeHtml(text).replace(/&nbsp;/g, " ");
       const langMap = {
         chinese: "zh",
         english: "en",
@@ -14679,7 +14680,7 @@ ${xml}`;
         }
         createElement(name, value, attrs) {
           const el = this.doc.createElement(name);
-          if (!isNil(value)) el.innerHTML = encodeHtml(String(value));
+          if (!isNil(value)) el.innerHTML = encodeXml(String(value));
           if (attrs) {
             forEach(attrs, (v, k) => {
               if (!isNil(v)) el.setAttribute(k, String(v));
