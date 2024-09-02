@@ -7,3 +7,5 @@ export const encodeHtml = (text: string) => {
   textareaEl.innerHTML = '';
   return encodedText;
 };
+
+export const encodeXml = (text: string) => encodeHtml(text).replace(/&nbsp;/g, ' ');

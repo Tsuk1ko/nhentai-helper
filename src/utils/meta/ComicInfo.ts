@@ -1,7 +1,7 @@
 import { each, isNil, map } from 'lodash-es';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import { settings } from '../settings';
-import { encodeHtml } from '../coder';
+import { encodeXml } from '../coder';
 import type { MetaBuilder } from './MetaBuilder';
 
 const langMap: Record<string, string> = {
@@ -86,7 +86,7 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
 
   protected createElement(name: string, value?: any, attrs?: Record<string, any>) {
     const el = this.doc.createElement(name);
-    if (!isNil(value)) el.innerHTML = encodeHtml(String(value));
+    if (!isNil(value)) el.innerHTML = encodeXml(String(value));
     if (attrs) {
       each(attrs, (v, k) => {
         if (!isNil(v)) el.setAttribute(k, String(v));
