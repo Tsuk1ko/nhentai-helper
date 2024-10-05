@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.14.10
+// @version            3.15.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -17,11 +17,11 @@
 // @match              https://nhentai.xxx/*
 // @match              https://nhentai.to/*
 // @match              https://nhentai.website/*
-// @require            https://unpkg.com/vue@3.4.34/dist/vue.global.prod.js
+// @require            https://unpkg.com/vue@3.5.11/dist/vue.global.prod.js
 // @require            data:application/javascript,window.Vue%3DVue%2Cwindow.Date.now%7C%7C(window.Date.now%3D()%3D%3Enew%20Date().getTime())%3B
-// @require            https://unpkg.com/element-plus@2.7.8/dist/index.full.min.js
+// @require            https://unpkg.com/element-plus@2.8.4/dist/index.full.min.js
 // @require            https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
-// @resource           element-plus-css  https://unpkg.com/element-plus@2.7.8/dist/index.css
+// @resource           element-plus-css  https://unpkg.com/element-plus@2.8.4/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            i2.nhentai.net
@@ -41,7 +41,7 @@
 // @noframes
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(' .nhentai-helper-btn:disabled{cursor:wait}.gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.gallery:hover>.nhentai-helper-btn{opacity:1}.gallery .download-zip-btn{left:0}.gallery .ignore-btn{display:none;right:0}.gallery:hover .ignore-btn{display:block}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.gallery.downloaded .caption{color:#999}.noty_close_button{display:none}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons[data-v-af333a79]{float:left;position:absolute}.inline-item[data-v-af333a79]{display:inline-block}.inline-item[data-v-af333a79]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-af333a79]{margin-right:4px;-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}.el-select-dropdown{-webkit-user-select:none;user-select:none}.language-filter[data-v-8884ebe3]{padding-left:10px}.filter-select[data-v-8884ebe3]{width:140px;margin-right:-140px}.filter-select[data-v-8884ebe3] .el-input__inner{color:var(--el-input-text-color, var(--el-text-color-regular))!important;background:0 0!important}@media screen and (max-width: 644px){.language-filter[data-v-8884ebe3]{padding:10px 0}.filter-select[data-v-8884ebe3]{margin-right:0}}.bold[data-v-1316deb7]{font-weight:700}.popover-close-btn[data-v-1316deb7]{transform:translate(4px,-4px)}.info-label[data-v-1316deb7]{display:inline-block}.lang-zh .info-label[data-v-1316deb7]{min-width:30px}.lang-en .info-label[data-v-1316deb7]{min-width:80px}.info-tag-wrapper[data-v-1316deb7]{display:flex}.info-tag[data-v-1316deb7]{margin:2px;-webkit-user-select:none;user-select:none}.info-tag--pointer[data-v-1316deb7]{cursor:pointer}.image-loading[data-v-1316deb7]{width:100%;height:100%;background-color:#0009}.scroll-container[data-v-1316deb7]{min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-1316deb7]::-webkit-scrollbar{width:6px}.scroll-container[data-v-1316deb7]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-1316deb7]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-1316deb7]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%} ');
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(' .nhentai-helper-hidden{display:none!important}.nhentai-helper-btn:disabled{cursor:wait}.nhentai-helper-gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.nhentai-helper-gallery:hover>.nhentai-helper-btn{opacity:1}.nhentai-helper-gallery .nhentai-helper-btn{position:absolute;top:0;margin:3px;z-index:2}.nhentai-helper-gallery .download-zip-btn{left:0}.nhentai-helper-gallery .ignore-btn{display:none;right:0}.nhentai-helper-gallery:hover .ignore-btn{display:block}.nhentai-helper-gallery.downloaded .caption{color:#999}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.noty_close_button{display:none}body.nhentai-helper-nhentai_xxx .reader_outer{position:relative}body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn{margin-left:5px}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons[data-v-af333a79]{float:left;position:absolute}.inline-item[data-v-af333a79]{display:inline-block}.inline-item[data-v-af333a79]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-af333a79]{margin-right:4px;-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]){background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}.el-select-dropdown{-webkit-user-select:none;user-select:none}.language-filter[data-v-e2153767]{display:inline-flex;align-items:center;padding-left:10px;vertical-align:middle}.filter-select[data-v-e2153767]{width:140px;margin-right:-140px}.filter-select[data-v-e2153767] .el-input__inner{color:var(--el-input-text-color, var(--el-text-color-regular))!important;background:0 0!important}@media screen and (max-width: 644px){.language-filter[data-v-e2153767]{padding:10px 0}.filter-select[data-v-e2153767]{margin-right:0}}.bold[data-v-f7a715da]{font-weight:700}.popover-close-btn[data-v-f7a715da]{transform:translate(4px,-4px)}.info-label[data-v-f7a715da]{display:inline-block}.lang-zh .info-label[data-v-f7a715da]{min-width:30px}.lang-en .info-label[data-v-f7a715da]{min-width:80px}.info-tag-wrapper[data-v-f7a715da]{display:flex}.info-tag[data-v-f7a715da]{margin:2px;-webkit-user-select:none;user-select:none}.info-tag--pointer[data-v-f7a715da]{cursor:pointer}.image-loading[data-v-f7a715da]{width:100%;height:100%;background-color:#0009}.scroll-container[data-v-f7a715da]{min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-f7a715da]::-webkit-scrollbar{width:6px}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-f7a715da]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%} ');
 
 (function ($, vue, elementPlus) {
   'use strict';
@@ -54,7 +54,7 @@
   };
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   var require_main_001 = __commonJS({
-    "main-Cn9daJ_e.js"(exports, module) {
+    "main-W46GtFfS.js"(exports, module) {
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -62,15 +62,78 @@
       var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
       var _unsafeWindow = /* @__PURE__ */ (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
       var _monkeyWindow = /* @__PURE__ */ (() => window)();
+      const defaultSelector = {
+        // list
+        menuLeft: "ul.menu.left",
+        gallery: ".gallery",
+        galleryHref: ".gallery a",
+        galleryList: "#content",
+        galleryCover: "a.cover",
+        galleryCaption: ".caption",
+        pjaxTrigger: ".pagination a, .sort a",
+        pjaxTarget: "#content",
+        pjaxRemoveParam: ".pagination a",
+        paginationPrevious: ".pagination .previous",
+        paginationNext: ".pagination .next",
+        // gallery
+        showAllImagesButton: "#show-all-images-button",
+        thumbnailContainer: "#thumbnail-container",
+        thumbnailContainerImage: "#thumbnail-container img",
+        thumbnailHref: "a.gallerythumb",
+        englishTitle: "#info h1",
+        japaneseTitle: "#info h2",
+        tag: (text) => `#tags .tag-container:contains(${text}) .tag`,
+        tagName: ".name",
+        tagCount: ".count",
+        pagesTag: "#tags .tag-container:contains(Pages) .name",
+        uploadDateTag: "#tags .tag-container:contains(Uploaded) time",
+        infoButtons: "#info > .buttons",
+        // view
+        mediaImage: "#image-container img",
+        pageContainer: "#page-container"
+      };
+      const siteMap$1 = {
+        "nhentai.xxx": {
+          // list
+          menuLeft: "ul.hd_left",
+          gallery: ".gallery_item",
+          galleryHref: ".gallery_item a",
+          galleryList: ".main_wrap",
+          galleryCover: "a",
+          pjaxTrigger: ".pagination a, .sort_links a",
+          pjaxTarget: ".main_wrap",
+          paginationPrevious: ".pagination a:contains(Previous)",
+          paginationNext: ".pagination a:contains(Next)",
+          // gallery
+          showAllImagesButton: "#show_all",
+          thumbnailContainer: ".outer_thumbs",
+          thumbnailContainerImage: ".outer_thumbs img",
+          thumbnailHref: ".gt_th > a",
+          englishTitle: ".info h1",
+          japaneseTitle: ".info h2",
+          tag: (text) => `li.tags:contains(${text})`,
+          tagName: ".tag_name",
+          tagCount: ".tag_count",
+          pagesTag: ".tag_name.pages",
+          uploadDateTag: ".tags.uploaded",
+          infoButtons: ".info > .g_buttons",
+          // view
+          mediaImage: "#fimg",
+          pageContainer: ".reader_outer"
+        }
+      };
+      const selector = { ...defaultSelector, ...siteMap$1[location.hostname] };
       const WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1);
-      const { pathname, host } = location;
+      const { pathname, hostname } = location;
       const IS_PAGE_MANGA_DETAIL = /^\/g\/[0-9]+\/?(\?.*)?$/.test(pathname);
       const IS_PAGE_ONLINE_VIEW = /^\/g\/[0-9]+(\/list)?\/[0-9]+\/?(\?.*)?$/.test(pathname);
-      const IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && document.getElementsByClassName("gallery").length > 0;
-      const IS_NHENTAI = host === "nhentai.net";
-      const IS_NHENTAI_TO = host === "nhentai.to" || host === "nhentai.website";
-      const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${host}`;
-      const THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${host}`;
+      const IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && !!document.querySelector(selector.gallery);
+      const IS_NHENTAI = hostname === "nhentai.net";
+      const IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website";
+      const IS_NHENTAI_XXX = hostname === "nhentai.xxx";
+      const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI_XXX;
+      const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`;
+      const THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`;
       const isNodeOrElement = typeof Node === "function" ? (val) => val instanceof Node : (val) => val && typeof val === "object" && typeof val.nodeType === "number" && typeof val.nodeName === "string";
       if (IS_NHENTAI) {
         if (_GM_getValue("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG")) {
@@ -104,9 +167,9 @@
        * https://github.com/defunkt/jquery-pjax
        */
       (function($2) {
-        function fnPjax(selector, container, options) {
+        function fnPjax(selector2, container, options) {
           options = optionsFor(container, options);
-          return this.on("click.pjax", selector, function(event) {
+          return this.on("click.pjax", selector2, function(event) {
             var opts = options;
             if (!opts.container) {
               opts = $2.extend({}, options);
@@ -456,8 +519,8 @@
             return { container };
           }
         }
-        function findAll(elems, selector) {
-          return elems.filter(selector).add(elems.find(selector));
+        function findAll(elems, selector2) {
+          return elems.filter(selector2).add(elems.find(selector2));
         }
         function parseHTML(html) {
           return $2.parseHTML(html, document, true);
@@ -2853,14 +2916,9 @@
       zipQueue.emitter.on("finish", () => {
         if (settings.seriesMode) dlQueue.start().catch(logger.error);
       });
-      const _withScopeId = (n) => (vue.pushScopeId("data-v-83b954f2"), n = n(), vue.popScopeId(), n);
       const _hoisted_1$4 = ["title"];
-      const _hoisted_2$2 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ vue.createElementVNode("i", { class: "fa fa-times" }, null, -1));
-      const _hoisted_3$2 = [
-        _hoisted_2$2
-      ];
-      const _hoisted_4$2 = { class: "download-item__title" };
-      const _hoisted_5$2 = { class: "download-item__progress-text" };
+      const _hoisted_2$2 = { class: "download-item__title" };
+      const _hoisted_3$2 = { class: "download-item__progress-text" };
       const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
         __name: "DownloadItem",
         props: {
@@ -2902,13 +2960,15 @@
                 key: 0,
                 class: "download-item__cancel",
                 onClick: cancel
-              }, _hoisted_3$2)) : vue.createCommentVNode("", true),
-              vue.createElementVNode("div", _hoisted_4$2, vue.toDisplayString(title.value), 1),
+              }, _cache[0] || (_cache[0] = [
+                vue.createElementVNode("i", { class: "fa fa-times" }, null, -1)
+              ]))) : vue.createCommentVNode("", true),
+              vue.createElementVNode("div", _hoisted_2$2, vue.toDisplayString(title.value), 1),
               vue.createElementVNode("div", {
                 class: "download-item__progress",
                 style: vue.normalizeStyle({ width: `${progressWidth.value}%` })
               }, [
-                vue.createElementVNode("div", _hoisted_5$2, vue.toDisplayString(progressWidth.value) + "%", 1)
+                vue.createElementVNode("div", _hoisted_3$2, vue.toDisplayString(progressWidth.value) + "%", 1)
               ], 4)
             ], 10, _hoisted_1$4);
           };
@@ -3048,7 +3108,7 @@
       });
       var upload_default = upload_vue_vue_type_script_setup_true_lang_default;
       /*!
-        * shared v9.13.1
+        * shared v9.14.1
         * (c) 2024 kazuya kawaguchi
         * Released under the MIT License.
         */
@@ -3115,7 +3175,10 @@
         while (stack.length) {
           const { src: src2, des: des2 } = stack.pop();
           Object.keys(src2).forEach((key) => {
-            if (isNotObjectOrIsArray(src2[key]) || isNotObjectOrIsArray(des2[key])) {
+            if (isObject$3(src2[key]) && !isObject$3(des2[key])) {
+              des2[key] = Array.isArray(src2[key]) ? [] : {};
+            }
+            if (isNotObjectOrIsArray(des2[key]) || isNotObjectOrIsArray(src2[key])) {
               des2[key] = src2[key];
             } else {
               stack.push({ src: src2[key], des: des2[key] });
@@ -3124,7 +3187,7 @@
         }
       }
       /*!
-        * message-compiler v9.13.1
+        * message-compiler v9.14.1
         * (c) 2024 kazuya kawaguchi
         * Released under the MIT License.
         */
@@ -4674,7 +4737,7 @@
         }
       }
       /*!
-        * core-base v9.13.1
+        * core-base v9.14.1
         * (c) 2024 kazuya kawaguchi
         * Released under the MIT License.
         */
@@ -5380,7 +5443,7 @@
         }
         return follow;
       }
-      const VERSION$1 = "9.13.1";
+      const VERSION$1 = "9.14.1";
       const NOT_REOSLVED = -1;
       const DEFAULT_LOCALE = "en-US";
       const MISSING_RESOLVE_VALUE = "";
@@ -6051,11 +6114,11 @@
         initFeatureFlags$1();
       }
       /*!
-        * vue-i18n v9.13.1
+        * vue-i18n v9.14.1
         * (c) 2024 kazuya kawaguchi
         * Released under the MIT License.
         */
-      const VERSION = "9.13.1";
+      const VERSION = "9.14.1";
       function initFeatureFlags() {
         if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
           getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
@@ -11109,11 +11172,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                             disabled: !!vue.unref(writeableSettings).customDownloadUrl
                           }, {
                             default: vue.withCtx(() => [
-                              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(nHentaiDownloadHosts), (host2) => {
+                              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(nHentaiDownloadHosts), (host) => {
                                 return vue.openBlock(), vue.createBlock(vue.unref(elementPlus.ElOption), {
-                                  key: host2,
-                                  label: host2,
-                                  value: host2
+                                  key: host,
+                                  label: host,
+                                  value: host
                                 }, null, 8, ["label", "value"]);
                               }), 128)),
                               vue.createVNode(vue.unref(elementPlus.ElOption), {
@@ -11205,9 +11268,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                                     style: { "width": "100%" },
                                     onClick: addTitleReplacement
                                   }, {
-                                    default: vue.withCtx(() => [
+                                    default: vue.withCtx(() => _cache[27] || (_cache[27] = [
                                       vue.createTextVNode("+")
-                                    ]),
+                                    ])),
                                     _: 1
                                   })
                                 ]),
@@ -11348,12 +11411,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         };
       };
       const getShowAllBtn = () => new Promise((resolve, reject) => {
-        const $btn = $("#show-all-images-button");
+        const $btn = $(selector.showAllImagesButton);
         if ($btn.length > 0) {
           resolve($btn);
           return;
         }
-        const container = document.getElementById("thumbnail-container");
+        const container = document.querySelector(selector.thumbnailContainer);
         if (!container) {
           reject(new Error("Show all button not found"));
           return;
@@ -11363,7 +11426,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
             const btnContainer = addedNodes[0];
             if ((btnContainer == null ? void 0 : btnContainer.id) === "show-all-images-container") {
               self2.disconnect();
-              resolve($("#show-all-images-button"));
+              resolve($(selector.showAllImagesButton));
             }
           });
         }).observe(container, { childList: true });
@@ -14383,7 +14446,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         }
       };
       const getMediaDownloadUrl = (mid, filename) => `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`;
-      const getMediaDownloadUrlOnMirrorSite = async (mid, filename) => (await getCompliedMediaUrlTemplate())({ mid, filename });
+      const getMediaDownloadUrlOnMirrorSite = async (gid2, mid, filename) => (await getCompliedMediaUrlTemplate(gid2))({ mid, filename });
       const getGalleryFromApi = (gid2) => {
         const url = `https://nhentai.net/api/gallery/${gid2}`;
         return fetchJSON(url);
@@ -14414,15 +14477,15 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           }
         }
         const $doc = $(doc.body);
-        const english = $doc.find("#info h1").text();
-        const japanese = $doc.find("#info h2").text();
+        const english = $doc.find(selector.englishTitle).text();
+        const japanese = $doc.find(selector.japaneseTitle).text();
         const pages = [];
         let mediaId = "";
-        $doc.find("#thumbnail-container img").each((i, img) => {
+        $doc.find(selector.thumbnailContainerImage).each((i, img) => {
           const src = img.dataset.src ?? img.src;
           const width = img.getAttribute("width");
           const height = img.getAttribute("height");
-          const match2 = /\/(\d+)\/(\d+)t?\.(\w+)/.exec(src);
+          const match2 = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
           if (!match2) return;
           const [, mid, index, ext] = match2;
           if (!mediaId) mediaId = mid;
@@ -14438,12 +14501,13 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           throw new Error("Get gallery info error.");
         }
         const getTags = (type, elContains) => {
-          const $tags = $doc.find(`#tags .tag-container:contains(${elContains}) .tag`);
+          const $tags = $doc.find(selector.tag(elContains));
           return filter(
             Array.from($tags).map((el) => {
               var _a2, _b;
-              const name = (_a2 = el.querySelector(".name")) == null ? void 0 : _a2.innerText.trim();
-              const count = (_b = el.querySelector(".count")) == null ? void 0 : _b.innerText.trim();
+              if (!(el instanceof HTMLElement)) return void 0;
+              const name = (_a2 = el.querySelector(selector.tagName)) == null ? void 0 : _a2.innerText.trim();
+              const count = (_b = el.querySelector(selector.tagCount)) == null ? void 0 : _b.innerText.trim();
               return name ? {
                 type,
                 name,
@@ -14462,7 +14526,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           ...getTags("language", "Languages"),
           ...getTags("category", "Categories")
         ];
-        const uploadDateStr = $doc.find("#tags .tag-container:contains(Uploaded) time").attr("datetime");
+        const pageNum = Number($doc.find(selector.pagesTag).text() || 0);
+        if (pageNum > 0 && pageNum !== pages.length) {
+          const defaultPage = { t: "j" };
+          for (let i = pages.length; i < pageNum; i++) {
+            pages.push(defaultPage);
+          }
+        }
+        const uploadDateStr = $doc.find(selector.uploadDateTag).attr("datetime");
         const uploadDate = uploadDateStr ? new Date(uploadDateStr) : void 0;
         return {
           id: Number(gid),
@@ -14476,6 +14547,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
             pages
           },
           tags,
+          num_pages: pageNum || pages.length,
           upload_date: uploadDate && String(uploadDate) !== "Invalid Date" ? Math.floor(uploadDate.getTime() / 1e3) : void 0
         };
       };
@@ -14537,62 +14609,78 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         logger.log("info", info);
         return info;
       };
-      const fetchMediaUrlTemplate = async () => {
+      const fetchMediaUrlTemplate = async (gid2) => {
         var _a, _b, _c;
-        const onlineViewUrl = ((_b = (_a = document.querySelector(".gallery a")) == null ? void 0 : _a.getAttribute("href")) == null ? void 0 : _b.replace(/\/+$/, "").concat("/1")) ?? ((_c = document.querySelector("a.gallerythumb")) == null ? void 0 : _c.getAttribute("href"));
+        const onlineViewUrl = ((_b = (_a = document.querySelector(selector.galleryHref)) == null ? void 0 : _a.getAttribute("href")) == null ? void 0 : _b.replace(/\/+$/, "").replace(/\d+$/, gid2).concat("/1")) ?? ((_c = document.querySelector(selector.thumbnailHref)) == null ? void 0 : _c.getAttribute("href"));
         if (!onlineViewUrl) {
           throw new Error("get media url failed: cannot find a gallery");
         }
         logger.log(`fetching media url template by ${onlineViewUrl}`);
         const onlineViewHtml = await getText(onlineViewUrl);
         const $doc2 = loadHTML(onlineViewHtml);
-        const imgSrc = $doc2.find("#image-container img").attr("src");
+        const $img = $doc2.find(selector.mediaImage);
+        const imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc) {
           throw new Error("get media url failed: cannot find an image src");
         }
-        const template2 = imgSrc.replace(/\/\d+\//, "/{{mid}}/").replace(/\/\d+\.[^/]+$/, "/{{filename}}");
-        _GM_setValue(MEDIA_URL_TEMPLATE_KEY, template2);
+        const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, "/{{mid}}/{{filename}}");
+        if (!MEDIA_URL_TEMPLATE_MAY_CHANGE) _GM_setValue(MEDIA_URL_TEMPLATE_KEY, template2);
         return template2;
       };
-      const fetchThumbMediaUrlTemplate = async () => {
-        var _a;
-        const detailUrl = (_a = document.querySelector(".gallery a")) == null ? void 0 : _a.getAttribute("href");
+      const fetchThumbMediaUrlTemplate = async (gid2) => {
+        var _a, _b;
+        const detailUrl = (_b = (_a = document.querySelector(selector.galleryHref)) == null ? void 0 : _a.getAttribute("href")) == null ? void 0 : _b.replace(/\d+(\/)?$/, `${gid2}$1`);
         if (!detailUrl) {
           throw new Error("get detail url failed: cannot find a gallery");
         }
         logger.log(`fetching thumb media url template by ${detailUrl}`);
         const detailHtml = await getText(detailUrl);
         const $doc2 = loadHTML(detailHtml);
-        const $img = $doc2.find("#thumbnail-container img");
+        const $img = $doc2.find(selector.thumbnailContainerImage);
         const imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc) {
           throw new Error("get thumb media url failed: cannot find an image src");
         }
-        const template2 = imgSrc.replace(/\/\d+\//, "/{{mid}}/").replace(/\/\d+t\.[^/]+$/, "/{{filename}}");
+        const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, "/{{mid}}/{{filename}}");
         _GM_setValue(THUMB_MEDIA_URL_TEMPLATE_KEY, template2);
         return template2;
       };
-      const getMediaUrlTemplate = async (getter, cacheKey) => {
+      const mediaUrlTemplateGidCache = {};
+      const getMediaUrlTemplate = async (getter, cacheKey, gid2) => {
+        if (MEDIA_URL_TEMPLATE_MAY_CHANGE) {
+          if (!mediaUrlTemplateGidCache[cacheKey]) mediaUrlTemplateGidCache[cacheKey] = /* @__PURE__ */ new Map();
+          if (mediaUrlTemplateGidCache[cacheKey].has(gid2)) {
+            return mediaUrlTemplateGidCache[cacheKey].get(gid2);
+          }
+        }
         try {
-          const template2 = await getter();
+          const promise = getter(gid2);
+          if (MEDIA_URL_TEMPLATE_MAY_CHANGE && !mediaUrlTemplateGidCache[cacheKey].has(gid2)) {
+            mediaUrlTemplateGidCache[cacheKey].set(gid2, promise);
+          }
+          const template2 = await promise;
           logger.log(`use media url template: ${template2}`);
           return template2;
         } catch (error) {
           logger.error(error);
-          const cachedTemplate = _GM_getValue(cacheKey);
-          if (cachedTemplate) {
-            logger.warn(`try to use cached media url template: ${cachedTemplate}`);
-            return cachedTemplate;
+          if (MEDIA_URL_TEMPLATE_MAY_CHANGE) {
+            mediaUrlTemplateGidCache[cacheKey].delete(gid2);
+          } else {
+            const cachedTemplate = _GM_getValue(cacheKey);
+            if (cachedTemplate) {
+              logger.warn(`try to use cached media url template: ${cachedTemplate}`);
+              return cachedTemplate;
+            }
           }
           throw error;
         }
       };
-      const getCompliedMediaUrlTemplate = once(
-        async () => compileTemplate(await getMediaUrlTemplate(fetchMediaUrlTemplate, MEDIA_URL_TEMPLATE_KEY))
+      const getCompliedMediaUrlTemplate = (MEDIA_URL_TEMPLATE_MAY_CHANGE ? identity : once)(
+        async (gid2) => compileTemplate(await getMediaUrlTemplate(fetchMediaUrlTemplate, MEDIA_URL_TEMPLATE_KEY, gid2))
       );
-      const getCompliedThumbMediaUrlTemplate = once(
-        async () => compileTemplate(
-          IS_NHENTAI ? "https://t3.nhentai.net/galleries/{{mid}}/{{filename}}" : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY)
+      const getCompliedThumbMediaUrlTemplate = (MEDIA_URL_TEMPLATE_MAY_CHANGE ? identity : once)(
+        async (gid2) => compileTemplate(
+          IS_NHENTAI ? "https://t3.nhentai.net/galleries/{{mid}}/{{filename}}" : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY, gid2)
         )
       );
       const applyTitleReplacement = (title) => {
@@ -14793,7 +14881,11 @@ ${xml}`;
               nHentaiDownloadHostCounter.add(counterKey);
             }
             return url;
-          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch((e) => {
+          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(
+            String(info.gallery.gid),
+            mid,
+            `${page.i}.${page.t}`
+          ).catch((e) => {
             urlGetterError = e;
           });
           if (!urlGetter || urlGetterError) {
@@ -14904,6 +14996,15 @@ ${xml}`;
         }, info);
         dlQueue.start().catch(logger.error);
       };
+      const defaultClassName = {
+        greyButton: "btn btn-secondary"
+      };
+      const siteMap = {
+        "nhentai.xxx": {
+          greyButton: "mbtn grey"
+        }
+      };
+      const className = { ...defaultClassName, ...siteMap[location.hostname] };
       const { t: t$2 } = i18n.global;
       class ProgressDisplayController {
         constructor(enableHeadTxt = false, docTitle) {
@@ -14913,7 +15014,7 @@ ${xml}`;
           this.enableHeadTxt = enableHeadTxt;
           this.docTitle = docTitle;
           this.btnTxt = /* @__PURE__ */ core.h("span", { class: "download-zip-txt" }, this.defaultBtnText());
-          this.downloadBtn = /* @__PURE__ */ core.h("button", { class: "btn btn-secondary nhentai-helper-btn download-zip-btn" }, /* @__PURE__ */ core.h("i", { class: "fa fa-download" }), " ", this.btnTxt);
+          this.downloadBtn = /* @__PURE__ */ core.h("button", { class: `${className.greyButton} nhentai-helper-btn download-zip-btn` }, /* @__PURE__ */ core.h("i", { class: "fa fa-download" }), " ", this.btnTxt);
         }
         get compressingHeadText() {
           return this.enableHeadTxt ? `${t$2("button.compressing")} ${getDownloadExt()} ` : "";
@@ -14979,7 +15080,7 @@ ${xml}`;
           this.status = status;
           this.icon = /* @__PURE__ */ core.h("i", { class: this.iconClass });
           if (text) this.text = /* @__PURE__ */ core.h("span", null, this.btnText);
-          this.ignoreBtn = /* @__PURE__ */ core.h("button", { class: "btn btn-secondary nhentai-helper-btn ignore-btn" }, this.icon, " ", this.text);
+          this.ignoreBtn = /* @__PURE__ */ core.h("button", { class: `${className.greyButton} nhentai-helper-btn ignore-btn` }, this.icon, " ", this.text);
         }
         setStatus(status) {
           this.status = status;
@@ -15003,8 +15104,19 @@ ${xml}`;
       const initDetailPage = async () => {
         const progressDisplayController = new ProgressDisplayController(true, document.title);
         const { downloadBtn } = progressDisplayController;
-        const pagesInput = /* @__PURE__ */ core.h("input", { class: "pages-input", placeholder: t("input.downloadSpecifiedPages") });
-        $("#info > .buttons").append(downloadBtn).after(pagesInput);
+        const pagesInput = /* @__PURE__ */ core.h(
+          "input",
+          {
+            class: "pages-input",
+            placeholder: t("input.downloadSpecifiedPages"),
+            onKeydown: (e) => {
+              if (e.key === "Enter") {
+                downloadBtn.click();
+              }
+            }
+          }
+        );
+        $(selector.infoButtons).append(downloadBtn).after(pagesInput);
         let ignoreController;
         if (settings.showIgnoreButton) {
           const gallery2 = await getGalleryInfo();
@@ -15017,7 +15129,7 @@ ${xml}`;
             else markAsDownloaded(gallery2.gid, gallery2.title);
             ignoreController.setStatus(!ignore);
           });
-          $("#info > .buttons").append(ignoreBtn);
+          $(selector.infoButtons).append(ignoreBtn);
         }
         downloadBtn.addEventListener("click", async () => {
           var _a;
@@ -15139,12 +15251,12 @@ ${xml}`;
         else
           vue.nextTick(fn);
       }
+      const defaultWindow = isClient ? window : void 0;
       function unrefElement(elRef) {
         var _a;
         const plain = toValue(elRef);
         return (_a = plain == null ? void 0 : plain.$el) != null ? _a : plain;
       }
-      const defaultWindow = isClient ? window : void 0;
       function useEventListener(...args) {
         let target;
         let events2;
@@ -15281,8 +15393,10 @@ ${xml}`;
         );
         if (window2 && listenToStorageChanges) {
           tryOnMounted(() => {
-            useEventListener(window2, "storage", update);
-            useEventListener(window2, customStorageEventName, updateFromCustomEvent);
+            if (storage instanceof Storage)
+              useEventListener(window2, "storage", update);
+            else
+              useEventListener(window2, customStorageEventName, updateFromCustomEvent);
             if (initOnMounted)
               update();
           });
@@ -15291,13 +15405,14 @@ ${xml}`;
           update();
         function dispatchWriteEvent(oldValue, newValue) {
           if (window2) {
-            window2.dispatchEvent(new CustomEvent(customStorageEventName, {
-              detail: {
-                key,
-                oldValue,
-                newValue,
-                storageArea: storage
-              }
+            const payload = {
+              key,
+              oldValue,
+              newValue,
+              storageArea: storage
+            };
+            window2.dispatchEvent(storage instanceof Storage ? new StorageEvent("storage", payload) : new CustomEvent(customStorageEventName, {
+              detail: payload
             }));
           }
         }
@@ -15380,6 +15495,10 @@ ${xml}`;
             ["japanese", "2"],
             ["english", "19"],
             ["chinese", "10197"]
+          ] : IS_NHENTAI_XXX ? [
+            ["japanese", "2"],
+            ["english", "1"],
+            ["chinese", "3"]
           ] : [
             ["japanese", "6346"],
             ["english", "12227"],
@@ -15428,18 +15547,19 @@ ${xml}`;
           };
         }
       });
-      const LanguageFilter = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8884ebe3"]]);
+      const LanguageFilter = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e2153767"]]);
       const filterLanguage = (tags2, $node) => {
-        const getNode = $node ? (selector) => $node.find(selector) : (selector) => $(selector);
-        getNode(".gallery").removeClass("hidden");
+        const attrName = IS_NHENTAI_XXX ? "data-languages" : "data-tags";
+        const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
+        getNode(selector.gallery).removeClass("nhentai-helper-hidden");
         if (tags2.length) {
-          const notSelector = tags2.map((tag) => `:not([data-tags~=${tag}])`).join("");
-          getNode(`.gallery${notSelector}`).addClass("hidden");
+          const notSelector = tags2.map((tag) => `:not([${attrName}~=${tag}])`).join("");
+          getNode(`${selector.gallery}${notSelector}`).addClass("nhentai-helper-hidden");
         }
       };
       const mountLanguageFilter = () => {
         var _a;
-        const menuLeft = document.querySelector("ul.menu.left");
+        const menuLeft = document.querySelector(selector.menuLeft);
         if (!menuLeft) return {};
         const vnode = vue.h(LanguageFilter);
         vue.render(vnode, menuLeft);
@@ -15558,7 +15678,7 @@ ${xml}`;
             pageThumbs.value = [];
             try {
               loadingGid = gid2;
-              if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate();
+              if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid2);
               const loadedGallery = await getGallery(gid2);
               if (loadingGid !== gid2) return;
               gallery2.value = loadedGallery;
@@ -15761,7 +15881,7 @@ ${xml}`;
           };
         }
       });
-      const GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-1316deb7"]]);
+      const GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f7a715da"]]);
       const initApp = once(
         () => createAppAndMount(GalleryMiniPopover, (app) => {
           app.use(i18n);
@@ -15772,17 +15892,17 @@ ${xml}`;
         popup.open(el, gid2);
       };
       const initListPage = () => {
-        $(".gallery").each(initGallery);
+        $(selector.gallery).each(initGallery);
         const { filterLanguage: filterLanguage2 } = mountLanguageFilter();
         initShortcut();
         restoreDownloadQueue();
-        const contentEl = $("#content")[0];
+        const contentEl = document.querySelector(selector.galleryList);
         if (contentEl) {
           new MutationObserver((mutations) => {
             mutations.forEach(({ addedNodes }) => {
               addedNodes.forEach((node) => {
                 const $el = $(node);
-                $el.find(".gallery").each(initGallery);
+                $el.find(selector.gallery).each(initGallery);
                 filterLanguage2 == null ? void 0 : filterLanguage2($el);
               });
             });
@@ -15795,10 +15915,10 @@ ${xml}`;
           if (((_a = document.activeElement) == null ? void 0 : _a.tagName) === "INPUT") return;
           switch (event.key) {
             case "ArrowLeft":
-              $(".pagination .previous").trigger("click");
+              $(selector.paginationPrevious).trigger("click");
               break;
             case "ArrowRight":
-              $(".pagination .next").trigger("click");
+              $(selector.paginationNext).trigger("click");
               break;
           }
         });
@@ -15820,11 +15940,12 @@ ${xml}`;
         const $gallery = $(this);
         if ($gallery.attr("init")) return;
         $gallery.attr("init", "true");
-        const $a = $gallery.find("a.cover");
+        $gallery.addClass("nhentai-helper-gallery");
+        const $a = $gallery.find(selector.galleryCover);
         if (settings.openOnNewTab) $a.attr("target", "_blank");
         const gid2 = (_a = /\/g\/([0-9]+)/.exec($a.attr("href"))) == null ? void 0 : _a[1];
         if (!gid2) return;
-        const enTitle = $gallery.find(".caption").text().trim();
+        const enTitle = $gallery.find(selector.galleryCaption).text().trim();
         const progressDisplayController = new ProgressDisplayController();
         const { downloadBtn } = progressDisplayController;
         $gallery.append(downloadBtn);
@@ -15865,7 +15986,7 @@ ${xml}`;
             progressDisplayController.lockBtn("Wait");
           }
           if (!skipDownloadedCheck && await isDownloadedByGid(gid2)) {
-            const title = $gallery.find(".caption").text();
+            const title = $gallery.find(selector.galleryCaption).text();
             if (!await downloadAgainConfirm(title, true)) {
               progressDisplayController.reset();
               markGalleryDownloaded();
@@ -15930,26 +16051,27 @@ ${xml}`;
       };
       const initViewMode = () => {
         const style = new StyleInjector(
-          "#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:100vh}"
+          `${selector.mediaImage}{width:auto;max-width:calc(100vw - 20px);max-height:100vh}`
         );
         const viewModeText = ["[off]", "[on]"];
         let viewMode = _GM_getValue("online_view_mode", 0);
         applyOnlineViewStyle(!!viewMode, style);
         const btnText = /* @__PURE__ */ core.h("span", null, viewModeText[viewMode]);
-        const btn = /* @__PURE__ */ core.h("button", { id: "online-view-mode-btn", class: "btn btn-secondary" }, "100% view height ", btnText);
+        const btn = /* @__PURE__ */ core.h("button", { id: "online-view-mode-btn", class: className.greyButton }, "100% view height ", btnText);
         btn.addEventListener("click", () => {
           viewMode = 1 - viewMode;
           _GM_setValue("online_view_mode", viewMode);
           btnText.innerText = viewModeText[viewMode];
           applyOnlineViewStyle(!!viewMode, style);
         });
-        $("#page-container").prepend(btn);
+        $(selector.pageContainer).prepend(btn);
       };
       const applyOnlineViewStyle = (enable, style) => {
         if (enable) style.inject();
         else style.remove();
       };
       const initPage = () => {
+        $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`);
         if (IS_PAGE_MANGA_LIST) {
           initListPage();
           applyPjax();
@@ -15957,15 +16079,16 @@ ${xml}`;
         else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
       };
       const applyPjax = () => {
-        $(document).pjax(".pagination a, .sort a", {
-          container: "#content",
-          fragment: "#content",
+        $(document).pjax(selector.pjaxTrigger, {
+          container: selector.pjaxTarget,
+          fragment: selector.pjaxTarget,
           timeout: 1e4
         });
         $(document).on("pjax:end", () => {
-          $(".pagination a").each(function() {
+          $(selector.pjaxRemoveParam).each(function() {
             const $this = $(this);
             const href = $this.attr("href");
+            if (!href || href.startsWith("#")) return;
             const isPathname = href.startsWith("/");
             const url = isPathname ? new URL(href, location.origin) : new URL(href);
             url.searchParams.delete("_pjax");
