@@ -25,7 +25,15 @@ export const initDetailPage = async (): Promise<void> => {
 
   const { downloadBtn } = progressDisplayController;
   const pagesInput = (
-    <input class="pages-input" placeholder={t('input.downloadSpecifiedPages')} />
+    <input
+      class="pages-input"
+      placeholder={t('input.downloadSpecifiedPages')}
+      onKeydown={(e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          downloadBtn.click();
+        }
+      }}
+    />
   ) as HTMLInputElement;
   $(selector.infoButtons).append(downloadBtn).after(pagesInput);
 
