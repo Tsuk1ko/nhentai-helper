@@ -1,5 +1,6 @@
 import { h } from 'nano-jsx/lib/core';
 import { i18n } from '@/i18n';
+import { className } from '@/rules/className';
 
 const { t } = i18n.global;
 
@@ -15,7 +16,7 @@ export class IgnoreController {
     this.icon = <i class={this.iconClass} />;
     if (text) this.text = <span>{this.btnText}</span>;
     this.ignoreBtn = (
-      <button class="btn btn-secondary nhentai-helper-btn ignore-btn">
+      <button class={`${className.greyButton} nhentai-helper-btn ignore-btn`}>
         {this.icon} {this.text}
       </button>
     );

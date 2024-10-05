@@ -3,6 +3,8 @@ import $ from 'jquery';
 import { h } from 'nano-jsx/lib/core';
 import { StyleInjector } from '../styleInjector';
 import { IS_NHENTAI } from '@/const';
+import { selector } from '@/rules/selector';
+import { className } from '@/rules/className';
 
 export const initOnlineViewPage = (): void => {
   if (!IS_NHENTAI) initViewMode();
@@ -11,7 +13,7 @@ export const initOnlineViewPage = (): void => {
 /** 本子浏览模式 */
 const initViewMode = (): void => {
   const style = new StyleInjector(
-    '#image-container img{width:auto;max-width:calc(100vw - 20px);max-height:100vh}',
+    `${selector.mediaImage}{width:auto;max-width:calc(100vw - 20px);max-height:100vh}`,
   );
   const viewModeText = ['[off]', '[on]'];
   let viewMode = GM_getValue('online_view_mode', 0);
@@ -20,7 +22,7 @@ const initViewMode = (): void => {
 
   const btnText = <span>{viewModeText[viewMode]}</span>;
   const btn = (
-    <button id="online-view-mode-btn" class="btn btn-secondary">
+    <button id="online-view-mode-btn" class={className.greyButton}>
       100% view height {btnText}
     </button>
   );
@@ -32,7 +34,7 @@ const initViewMode = (): void => {
     applyOnlineViewStyle(!!viewMode, style);
   });
 
-  $('#page-container').prepend(btn);
+  $(selector.pageContainer).prepend(btn);
 };
 
 const applyOnlineViewStyle = (enable: boolean, style: StyleInjector): void => {

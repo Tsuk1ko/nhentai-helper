@@ -2,6 +2,7 @@ import { h } from 'nano-jsx/lib/core';
 import { getDownloadExt } from './common';
 import type { MangaDownloadInfo } from '@/typings';
 import { i18n } from '@/i18n';
+import { className } from '@/rules/className';
 
 const { t } = i18n.global;
 
@@ -16,7 +17,7 @@ export class ProgressDisplayController {
   ) {
     this.btnTxt = <span class="download-zip-txt">{this.defaultBtnText()}</span>;
     this.downloadBtn = (
-      <button class="btn btn-secondary nhentai-helper-btn download-zip-btn">
+      <button class={`${className.greyButton} nhentai-helper-btn download-zip-btn`}>
         <i class="fa fa-download"></i> {this.btnTxt}
       </button>
     );

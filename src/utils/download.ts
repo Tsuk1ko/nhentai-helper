@@ -92,7 +92,11 @@ export const downloadGalleryByInfo = async (
               return url;
             }
           : getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
-        : await getMediaDownloadUrlOnMirrorSite(mid, `${page.i}.${page.t}`).catch(e => {
+        : await getMediaDownloadUrlOnMirrorSite(
+            String(info.gallery.gid),
+            mid,
+            `${page.i}.${page.t}`,
+          ).catch(e => {
             urlGetterError = e;
           });
 

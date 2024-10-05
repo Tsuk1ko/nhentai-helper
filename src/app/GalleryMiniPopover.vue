@@ -223,7 +223,7 @@ const open = async (el: HTMLElement, gid: string) => {
   pageThumbs.value = [];
   try {
     loadingGid = gid;
-    if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate();
+    if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid);
     const loadedGallery = await getGallery(gid);
     if (loadingGid !== gid) return;
     gallery.value = loadedGallery;

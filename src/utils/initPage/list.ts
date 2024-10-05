@@ -18,20 +18,21 @@ import { mountLanguageFilter } from '../languageFilter';
 import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { dlQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
+import { selector } from '@/rules/selector';
 
 export const initListPage = (): void => {
-  $('.gallery').each(initGallery);
+  $(selector.gallery).each(initGallery);
   const { filterLanguage } = mountLanguageFilter();
   initShortcut();
   restoreDownloadQueue();
 
-  const contentEl = $('#content')[0];
+  const contentEl = document.querySelector(selector.galleryList);
   if (contentEl) {
     new MutationObserver(mutations => {
       mutations.forEach(({ addedNodes }) => {
         addedNodes.forEach(node => {
           const $el = $(node as HTMLElement);
-          $el.find('.gallery').each(initGallery);
+          $el.find(selector.gallery).each(initGallery);
           filterLanguage?.($el);
         });
       });
@@ -45,10 +46,10 @@ const initShortcut = (): void => {
     if (document.activeElement?.tagName === 'INPUT') return;
     switch (event.key) {
       case 'ArrowLeft':
-        $('.pagination .previous').trigger('click');
+        $(selector.paginationPrevious).trigger('click');
         break;
       case 'ArrowRight':
-        $('.pagination .next').trigger('click');
+        $(selector.paginationNext).trigger('click');
         break;
     }
   });
@@ -73,12 +74,13 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
 
   if ($gallery.attr('init')) return;
   $gallery.attr('init', 'true');
+  $gallery.addClass('nhentai-helper-gallery');
 
-  const $a = $gallery.find('a.cover');
+  const $a = $gallery.find(selector.galleryCover);
   if (settings.openOnNewTab) $a.attr('target', '_blank');
   const gid = /\/g\/([0-9]+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
-  const enTitle = $gallery.find('.caption').text().trim();
+  const enTitle = $gallery.find(selector.galleryCaption).text().trim();
 
   const progressDisplayController = new ProgressDisplayController();
   const { downloadBtn } = progressDisplayController;
@@ -127,7 +129,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     }
 
     if (!skipDownloadedCheck && (await isDownloadedByGid(gid))) {
-      const title = $gallery.find('.caption').text();
+      const title = $gallery.find(selector.galleryCaption).text();
       if (!(await downloadAgainConfirm(title, true))) {
         progressDisplayController.reset();
         markGalleryDownloaded();

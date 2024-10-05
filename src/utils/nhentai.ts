@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
-import { filter, invert, map, once, sample } from 'lodash-es';
+import { filter, identity, invert, map, once, sample } from 'lodash-es';
 import { fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
 import {
@@ -15,11 +15,13 @@ import { Counter } from './counter';
 import { loadHTML } from './html';
 import { OrderCache } from './orderCache';
 import {
+  MEDIA_URL_TEMPLATE_MAY_CHANGE,
   IS_NHENTAI,
   IS_PAGE_MANGA_DETAIL,
   MEDIA_URL_TEMPLATE_KEY,
   THUMB_MEDIA_URL_TEMPLATE_KEY,
 } from '@/const';
+import { selector } from '@/rules/selector';
 
 export enum NHentaiImgExt {
   j = 'jpg',
@@ -103,8 +105,8 @@ const getNHentaiDownloadHost = () => {
 export const getMediaDownloadUrl = (mid: string, filename: string) =>
   `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`;
 
-export const getMediaDownloadUrlOnMirrorSite = async (mid: string, filename: string) =>
-  (await getCompliedMediaUrlTemplate())({ mid, filename });
+export const getMediaDownloadUrlOnMirrorSite = async (gid: string, mid: string, filename: string) =>
+  (await getCompliedMediaUrlTemplate(gid))({ mid, filename });
 
 const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
   const url = `https://nhentai.net/api/gallery/${gid}`;
@@ -146,17 +148,17 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
 
   const $doc = $(doc.body);
 
-  const english = $doc.find('#info h1').text();
-  const japanese = $doc.find('#info h2').text();
+  const english = $doc.find(selector.englishTitle).text();
+  const japanese = $doc.find(selector.japaneseTitle).text();
 
   const pages: NHentaiImage[] = [];
   let mediaId = '';
 
-  $doc.find<HTMLImageElement>('#thumbnail-container img').each((i, img) => {
+  $doc.find<HTMLImageElement>(selector.thumbnailContainerImage).each((i, img) => {
     const src = img.dataset.src ?? img.src;
     const width = img.getAttribute('width');
     const height = img.getAttribute('height');
-    const match = /\/(\d+)\/(\d+)t?\.(\w+)/.exec(src);
+    const match = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
     if (!match) return;
     const [, mid, index, ext] = match;
     if (!mediaId) mediaId = mid;
@@ -174,11 +176,12 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   }
 
   const getTags = (type: string, elContains: string): NHentaiTag[] => {
-    const $tags = $doc.find(`#tags .tag-container:contains(${elContains}) .tag`);
+    const $tags = $doc.find(selector.tag(elContains));
     return filter(
       Array.from($tags).map((el): NHentaiTag | undefined => {
-        const name = el.querySelector<HTMLElement>('.name')?.innerText.trim();
-        const count = el.querySelector<HTMLElement>('.count')?.innerText.trim();
+        if (!(el instanceof HTMLElement)) return undefined;
+        const name = el.querySelector<HTMLElement>(selector.tagName)?.innerText.trim();
+        const count = el.querySelector<HTMLElement>(selector.tagCount)?.innerText.trim();
         return name
           ? {
               type,
@@ -201,7 +204,16 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     ...getTags('category', 'Categories'),
   ];
 
-  const uploadDateStr = $doc.find('#tags .tag-container:contains(Uploaded) time').attr('datetime');
+  // 自动用 jpg 补充页
+  const pageNum = Number($doc.find(selector.pagesTag).text() || 0);
+  if (pageNum > 0 && pageNum !== pages.length) {
+    const defaultPage: NHentaiImage = { t: 'j' };
+    for (let i = pages.length; i < pageNum; i++) {
+      pages.push(defaultPage);
+    }
+  }
+
+  const uploadDateStr = $doc.find(selector.uploadDateTag).attr('datetime');
   const uploadDate = uploadDateStr ? new Date(uploadDateStr) : undefined;
 
   return {
@@ -216,6 +228,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
       pages,
     },
     tags,
+    num_pages: pageNum || pages.length,
     upload_date:
       uploadDate && String(uploadDate) !== 'Invalid Date'
         ? Math.floor(uploadDate.getTime() / 1000)
@@ -292,10 +305,14 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
   return info;
 };
 
-const fetchMediaUrlTemplate = async () => {
+const fetchMediaUrlTemplate = async (gid: string) => {
   const onlineViewUrl =
-    document.querySelector('.gallery a')?.getAttribute('href')?.replace(/\/+$/, '').concat('/1') ??
-    document.querySelector('a.gallerythumb')?.getAttribute('href');
+    document
+      .querySelector(selector.galleryHref)
+      ?.getAttribute('href')
+      ?.replace(/\/+$/, '')
+      .replace(/\d+$/, gid)
+      .concat('/1') ?? document.querySelector(selector.thumbnailHref)?.getAttribute('href');
   if (!onlineViewUrl) {
     throw new Error('get media url failed: cannot find a gallery');
   }
@@ -304,19 +321,23 @@ const fetchMediaUrlTemplate = async () => {
 
   const onlineViewHtml = await getText(onlineViewUrl);
   const $doc = loadHTML(onlineViewHtml);
-  const imgSrc = $doc.find('#image-container img').attr('src');
+  const $img = $doc.find(selector.mediaImage);
+  const imgSrc = $img.attr('data-src') || $img.attr('src');
   if (!imgSrc) {
     throw new Error('get media url failed: cannot find an image src');
   }
 
-  const template = imgSrc.replace(/\/\d+\//, '/{{mid}}/').replace(/\/\d+\.[^/]+$/, '/{{filename}}');
-  GM_setValue(MEDIA_URL_TEMPLATE_KEY, template);
+  const template = imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, '/{{mid}}/{{filename}}');
+  if (!MEDIA_URL_TEMPLATE_MAY_CHANGE) GM_setValue(MEDIA_URL_TEMPLATE_KEY, template);
 
   return template;
 };
 
-const fetchThumbMediaUrlTemplate = async () => {
-  const detailUrl = document.querySelector('.gallery a')?.getAttribute('href');
+const fetchThumbMediaUrlTemplate = async (gid: string) => {
+  const detailUrl = document
+    .querySelector(selector.galleryHref)
+    ?.getAttribute('href')
+    ?.replace(/\d+(\/)?$/, `${gid}$1`);
   if (!detailUrl) {
     throw new Error('get detail url failed: cannot find a gallery');
   }
@@ -325,46 +346,66 @@ const fetchThumbMediaUrlTemplate = async () => {
 
   const detailHtml = await getText(detailUrl);
   const $doc = loadHTML(detailHtml);
-  const $img = $doc.find('#thumbnail-container img');
+  const $img = $doc.find(selector.thumbnailContainerImage);
   const imgSrc = $img.attr('data-src') || $img.attr('src');
   if (!imgSrc) {
     throw new Error('get thumb media url failed: cannot find an image src');
   }
 
-  const template = imgSrc
-    .replace(/\/\d+\//, '/{{mid}}/')
-    .replace(/\/\d+t\.[^/]+$/, '/{{filename}}');
+  const template = imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, '/{{mid}}/{{filename}}');
   GM_setValue(THUMB_MEDIA_URL_TEMPLATE_KEY, template);
 
   return template;
 };
 
-const getMediaUrlTemplate = async (getter: () => Promise<string>, cacheKey: string) => {
+const mediaUrlTemplateGidCache: Record<string, Map<string, Promise<string>>> = {};
+
+const getMediaUrlTemplate = async (
+  getter: (gid: string) => Promise<string>,
+  cacheKey: string,
+  gid: string,
+) => {
+  if (MEDIA_URL_TEMPLATE_MAY_CHANGE) {
+    if (!mediaUrlTemplateGidCache[cacheKey]) mediaUrlTemplateGidCache[cacheKey] = new Map();
+    if (mediaUrlTemplateGidCache[cacheKey].has(gid)) {
+      return mediaUrlTemplateGidCache[cacheKey].get(gid)!;
+    }
+  }
   try {
-    const template = await getter();
+    const promise = getter(gid);
+    if (MEDIA_URL_TEMPLATE_MAY_CHANGE && !mediaUrlTemplateGidCache[cacheKey].has(gid)) {
+      mediaUrlTemplateGidCache[cacheKey].set(gid, promise);
+    }
+    const template = await promise;
     logger.log(`use media url template: ${template}`);
     return template;
   } catch (error) {
     logger.error(error);
-    const cachedTemplate = GM_getValue<string | undefined>(cacheKey);
-    if (cachedTemplate) {
-      logger.warn(`try to use cached media url template: ${cachedTemplate}`);
-      return cachedTemplate;
+    if (MEDIA_URL_TEMPLATE_MAY_CHANGE) {
+      mediaUrlTemplateGidCache[cacheKey].delete(gid);
+    } else {
+      const cachedTemplate = GM_getValue<string | undefined>(cacheKey);
+      if (cachedTemplate) {
+        logger.warn(`try to use cached media url template: ${cachedTemplate}`);
+        return cachedTemplate;
+      }
     }
     throw error;
   }
 };
 
-const getCompliedMediaUrlTemplate = once(async () =>
-  compileTemplate(await getMediaUrlTemplate(fetchMediaUrlTemplate, MEDIA_URL_TEMPLATE_KEY)),
+const getCompliedMediaUrlTemplate = (MEDIA_URL_TEMPLATE_MAY_CHANGE ? identity : once)(
+  async (gid: string) =>
+    compileTemplate(await getMediaUrlTemplate(fetchMediaUrlTemplate, MEDIA_URL_TEMPLATE_KEY, gid)),
 );
 
-export const getCompliedThumbMediaUrlTemplate = once(async () =>
-  compileTemplate(
-    IS_NHENTAI
-      ? 'https://t3.nhentai.net/galleries/{{mid}}/{{filename}}'
-      : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY),
-  ),
+export const getCompliedThumbMediaUrlTemplate = (MEDIA_URL_TEMPLATE_MAY_CHANGE ? identity : once)(
+  async (gid: string) =>
+    compileTemplate(
+      IS_NHENTAI
+        ? 'https://t3.nhentai.net/galleries/{{mid}}/{{filename}}'
+        : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY, gid),
+    ),
 );
 
 const applyTitleReplacement = (title: string) => {

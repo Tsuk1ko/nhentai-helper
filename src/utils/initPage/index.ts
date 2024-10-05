@@ -5,8 +5,10 @@ import { initDetailPage } from './detail';
 import { initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
 import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
+import { selector } from '@/rules/selector';
 
 export const initPage = (): void => {
+  $('body').addClass(`nhentai-helper-${location.hostname.replace(/\./g, '_')}`);
   if (IS_PAGE_MANGA_LIST) {
     initListPage();
     applyPjax();
@@ -15,17 +17,18 @@ export const initPage = (): void => {
 };
 
 const applyPjax = (): void => {
-  $(document).pjax('.pagination a, .sort a', {
-    container: '#content',
-    fragment: '#content',
+  $(document).pjax(selector.pjaxTrigger, {
+    container: selector.pjaxTarget,
+    fragment: selector.pjaxTarget,
     timeout: 10000,
   });
 
   $(document).on('pjax:end', () => {
     // 防止翻页出现 pjax 参数
-    $('.pagination a').each(function () {
+    $(selector.pjaxRemoveParam).each(function () {
       const $this = $(this);
-      const href = $this.attr('href')!;
+      const href = $this.attr('href');
+      if (!href || href.startsWith('#')) return;
       const isPathname = href.startsWith('/');
       const url = isPathname ? new URL(href, location.origin) : new URL(href);
       url.searchParams.delete('_pjax');

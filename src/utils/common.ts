@@ -6,6 +6,7 @@ import { markRaw, reactive } from 'vue';
 import { settings } from './settings';
 import type { NHentaiGalleryInfo } from './nhentai';
 import type { MangaDownloadInfo } from '@/typings';
+import { selector } from '@/rules/selector';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -28,12 +29,12 @@ export const getCompressionOptions = (): JSZipGeneratorOptions => {
 
 export const getShowAllBtn = (): Promise<JQuery<HTMLElement>> =>
   new Promise((resolve, reject) => {
-    const $btn = $('#show-all-images-button');
+    const $btn = $(selector.showAllImagesButton);
     if ($btn.length > 0) {
       resolve($btn);
       return;
     }
-    const container = document.getElementById('thumbnail-container');
+    const container = document.querySelector(selector.thumbnailContainer);
     if (!container) {
       reject(new Error('Show all button not found'));
       return;
@@ -43,7 +44,7 @@ export const getShowAllBtn = (): Promise<JQuery<HTMLElement>> =>
         const btnContainer = addedNodes[0] as HTMLElement | undefined;
         if (btnContainer?.id === 'show-all-images-container') {
           self.disconnect();
-          resolve($('#show-all-images-button'));
+          resolve($(selector.showAllImagesButton));
         }
       });
     }).observe(container, { childList: true });

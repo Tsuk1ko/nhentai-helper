@@ -16,6 +16,7 @@ import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { IgnoreController } from '../ignoreController';
 import { i18n } from '@/i18n';
+import { selector } from '@/rules/selector';
 
 const { t } = i18n.global;
 
@@ -26,7 +27,7 @@ export const initDetailPage = async (): Promise<void> => {
   const pagesInput = (
     <input class="pages-input" placeholder={t('input.downloadSpecifiedPages')} />
   ) as HTMLInputElement;
-  $('#info > .buttons').append(downloadBtn).after(pagesInput);
+  $(selector.infoButtons).append(downloadBtn).after(pagesInput);
 
   let ignoreController: IgnoreController | undefined;
 
@@ -41,7 +42,7 @@ export const initDetailPage = async (): Promise<void> => {
       else markAsDownloaded(gallery.gid, gallery.title);
       ignoreController!.setStatus(!ignore);
     });
-    $('#info > .buttons').append(ignoreBtn);
+    $(selector.infoButtons).append(ignoreBtn);
   }
 
   downloadBtn.addEventListener('click', async () => {

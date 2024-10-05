@@ -23,7 +23,7 @@
 import { watch } from 'vue';
 import { ElSelect, ElOption } from 'element-plus';
 import { useSessionStorage } from '@vueuse/core';
-import { IS_NHENTAI_TO } from '@/const';
+import { IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
 import { filterLanguage } from '@/utils/languageFilter';
 import { i18n } from '@/i18n';
 
@@ -39,11 +39,17 @@ const options = IS_NHENTAI_TO
       ['english', '19'],
       ['chinese', '10197'],
     ]
-  : [
-      ['japanese', '6346'],
-      ['english', '12227'],
-      ['chinese', '29963'],
-    ];
+  : IS_NHENTAI_XXX
+    ? [
+        ['japanese', '2'],
+        ['english', '1'],
+        ['chinese', '3'],
+      ]
+    : [
+        ['japanese', '6346'],
+        ['english', '12227'],
+        ['chinese', '29963'],
+      ];
 
 watch(
   languageFilter,
@@ -62,7 +68,10 @@ defineExpose({
 
 <style lang="less" scoped>
 .language-filter {
+  display: inline-flex;
+  align-items: center;
   padding-left: 10px;
+  vertical-align: middle;
 }
 
 .filter-select {

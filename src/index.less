@@ -1,19 +1,29 @@
+.nhentai-helper-hidden {
+  display: none !important;
+}
+
 .nhentai-helper-btn {
   &:disabled {
     cursor: wait;
   }
-  .gallery > & {
+  .nhentai-helper-gallery > & {
     position: absolute;
     top: 0;
     min-width: 42px;
     opacity: 0.8;
   }
-  .gallery:hover > & {
+  .nhentai-helper-gallery:hover > & {
     opacity: 1;
   }
 }
 
-.gallery {
+.nhentai-helper-gallery {
+  .nhentai-helper-btn {
+    position: absolute;
+    top: 0;
+    margin: 3px;
+    z-index: 2;
+  }
   .download-zip-btn {
     left: 0;
   }
@@ -25,6 +35,9 @@
     .ignore-btn {
       display: block;
     }
+  }
+  &.downloaded .caption {
+    color: #999;
   }
 }
 
@@ -73,10 +86,16 @@
   margin-top: 5px;
 }
 
-.gallery.downloaded .caption {
-  color: #999;
-}
-
 .noty_close_button {
   display: none;
+}
+
+// nhentai.xxx
+body.nhentai-helper-nhentai_xxx {
+  .reader_outer {
+    position: relative;
+  }
+  .g_buttons .download-zip-btn {
+    margin-left: 5px;
+  }
 }
