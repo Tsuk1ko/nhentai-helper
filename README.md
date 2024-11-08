@@ -53,6 +53,9 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
    Actually, for manga, compression output size of `0` and `9` usually differ by less than **1%**.
 - **Filename length**  
   Zeros will be padded to the start of image filename when its length lower than the value you specified. This can avoid the sorting confusion caused by sorting only by string in some cases.
+- **Convert webp to**  
+  nHentai has started to use webp format images. If your image viewer or comic reader doesn't support webp format, you can set this to convert webp to jpg or png.  
+  This is enabled by default and converts to jpg at 85% quality.
 - **Auto cancel downloaded manga**  
   When you are going to download an already downloaded manga, it will be canceled automatically instead of pop-up a confirmation box.
 - **Auto retry when error occurs**  

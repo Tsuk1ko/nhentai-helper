@@ -11,6 +11,7 @@ import {
   nHentaiDownloadHostCounter,
   getMediaDownloadUrl,
   getMediaDownloadUrlOnMirrorSite,
+  NHentaiImgExt,
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
@@ -18,6 +19,7 @@ import { NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
 import { generateMetaFiles } from './meta';
+import { ImgConverter } from './imgConverter';
 import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
@@ -32,6 +34,8 @@ interface DownloadOptions {
 }
 
 type ZipFunction = () => Promise<void>;
+
+const imgConverter = new ImgConverter();
 
 export const downloadGalleryByInfo = async (
   info: MangaDownloadInfo,
@@ -63,6 +67,9 @@ export const downloadGalleryByInfo = async (
       zip.file(name, data);
     });
   }
+
+  // 提前固定变量避免下载中途改变
+  const { convertWebpTo, convertWebpQuality } = settings;
 
   const downloadTask: TaskFunction<
     NHentaiGalleryInfoPage,
@@ -120,7 +127,15 @@ export const downloadGalleryByInfo = async (
       promise: dataPromise
         .then(async data => {
           if (data) {
-            zip.file(`${String(page.i).padStart(filenameLength || 0, '0')}.${page.t}`, data);
+            const filename = String(page.i).padStart(filenameLength || 0, '0');
+            if (page.t === NHentaiImgExt.w && convertWebpTo) {
+              const { buffer, ext } = await imgConverter.convertWebpTo(
+                data,
+                convertWebpTo,
+                convertWebpQuality / 100,
+              );
+              zip.file(`${filename}.${ext}`, buffer);
+            } else zip.file(`${filename}.${page.t}`, data);
           }
           info.done++;
           progressDisplayController?.updateProgress();

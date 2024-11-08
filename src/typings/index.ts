@@ -21,3 +21,8 @@ export enum ErrorAction {
   GET_INFO = 'getInfo',
   DOWNLOAD = 'download',
 }
+
+export enum MIME {
+  JPG = 'image/jpeg',
+  PNG = 'image/png',
+}

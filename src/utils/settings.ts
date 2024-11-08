@@ -1,18 +1,18 @@
 import { GM_getValue, GM_setValue } from '$';
 import { toRaw, reactive, toRefs, watch, computed } from 'vue';
 import type { Ref } from 'vue';
-
 import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
 import { detect } from 'detect-browser';
 import logger from './logger';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
+import { MIME } from '@/typings';
 
 export const nHentaiDownloadHosts = [
   'i.nhentai.net',
-  'i2.nhentai.net',
+  // 'i2.nhentai.net',
   'i3.nhentai.net',
   'i5.nhentai.net',
-  // 'i7.nhentai.net',
+  'i7.nhentai.net',
 ];
 
 export enum NHentaiDownloadHostSpecial {
@@ -71,6 +71,10 @@ export interface Settings {
   titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
   /** 右键预览 */
   galleryContextmenuPreview: boolean;
+  /** 转换 webp 到其他格式 */
+  convertWebpTo: string;
+  /** 转换 webp 到其他格式的质量 */
+  convertWebpQuality: number;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -237,6 +241,16 @@ export const settingDefinitions: Readonly<{
     key: 'gallery_contextmenu_preview',
     default: false,
     validator: booleanValidator,
+  },
+  convertWebpTo: {
+    key: 'convert_webp_to',
+    default: MIME.JPG,
+    validator: val => [MIME.JPG, MIME.PNG, ''].includes(val),
+  },
+  convertWebpQuality: {
+    key: 'convert_webp_quality',
+    default: 85,
+    validator: val => 0 <= val && val <= 100,
   },
 };
 

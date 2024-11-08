@@ -27,6 +27,7 @@ export enum NHentaiImgExt {
   j = 'jpg',
   p = 'png',
   g = 'gif',
+  w = 'webp',
 }
 
 const nHentaiImgExtReversed = invert(NHentaiImgExt) as Record<

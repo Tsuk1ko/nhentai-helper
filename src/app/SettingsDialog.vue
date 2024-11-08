@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="show" :center="true" top="50px">
+  <el-dialog id="nhentai-helper-setting-dialog-outside" v-model="show" :center="true" top="50px">
     <template #header="{ titleId, titleClass }">
       <div class="nhentai-helper-setting-help-buttons no-sl">
         <el-button size="small" @click="openHelp">{{ t('setting.helpButton') }}</el-button>
@@ -81,6 +81,27 @@
             :disabled="settings.filenameLength === 'auto'"
           />
           <el-checkbox v-model="filenameLengthAuto" class="m-l-16" :label="t('common.auto')" />
+        </el-form-item>
+        <!-- 转换 webp -->
+        <el-form-item :label="t('setting.convertWebpTo')">
+          <el-radio-group v-model="settings.convertWebpTo">
+            <el-radio value="">{{ t('common.disabled') }}</el-radio>
+            <el-radio :value="MIME.JPG">jpg</el-radio>
+            <el-radio :value="MIME.PNG">png</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          v-if="settings.convertWebpTo === MIME.JPG"
+          :label="`└ ${t('setting.convertWebpQuality')} (0~100)`"
+        >
+          <el-input-number
+            v-model="settings.convertWebpQuality"
+            size="small"
+            :min="0"
+            :max="100"
+            :value-on-clear="settingDefinitions.convertWebpQuality.default"
+            :step-strictly="true"
+          />
         </el-form-item>
         <!-- 自动取消下载过的本子 -->
         <el-form-item :label="t('setting.autoCancelDownloadedManga')">
@@ -262,6 +283,8 @@ import {
   ElCollapseItem,
   ElTable,
   ElTableColumn,
+  ElRadio,
+  ElRadioGroup,
 } from 'element-plus';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
@@ -273,6 +296,7 @@ import {
   writeableSettings as settings,
   startWatchSettings,
 } from '@/utils/settings';
+import { MIME } from '@/typings';
 import type { ElMarks } from '@/typings';
 import {
   clearDownloadHistory,
@@ -411,6 +435,11 @@ defineExpose({ open });
 </style>
 
 <style lang="less">
+#nhentai-helper-setting-dialog-outside {
+  width: 80%;
+  max-width: 800px;
+}
+
 #nhentai-helper-setting-dialog {
   .asterisk-example::before {
     content: '*';

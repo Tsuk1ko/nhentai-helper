@@ -12,6 +12,7 @@ export default {
     none: '无',
     random: '随机',
     balance: '均衡',
+    disabled: '禁用',
     abbr: {
       english: '英',
       japanese: '日',
@@ -30,6 +31,8 @@ export default {
     separator: '分隔符',
     compressionLevel: '压缩等级',
     filenameLength: '文件名长度',
+    convertWebpTo: '转换 webp 为',
+    convertWebpQuality: '质量',
     autoCancelDownloadedManga: '自动取消下载过的本子',
     autoRetryWhenErrorOccurs: '发生错误时自动重试',
     autoShowAll: '自动显示全部',

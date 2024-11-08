@@ -12,6 +12,7 @@ export default {
     none: 'None',
     random: 'Random',
     balance: 'Balance',
+    disabled: 'Disabled',
     abbr: {
       english: 'EN',
       japanese: 'JP',
@@ -30,6 +31,8 @@ export default {
     separator: 'Separator',
     compressionLevel: 'Compression level',
     filenameLength: 'Filename length',
+    convertWebpTo: 'Convert webp to',
+    convertWebpQuality: 'Quality',
     autoCancelDownloadedManga: 'Auto cancel downloaded manga',
     autoRetryWhenErrorOccurs: 'Auto retry when error occurs',
     autoShowAll: 'Auto show all',
