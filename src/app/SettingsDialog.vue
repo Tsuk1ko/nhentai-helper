@@ -192,9 +192,13 @@
         <el-collapse>
           <el-collapse-item>
             <template #title>
-              <span style="color: var(--el-text-color-regular)">{{
-                t('setting.titleReplacement')
-              }}</span>
+              <span
+                style="
+                  color: var(--el-text-color-regular);
+                  font-size: var(--el-form-label-font-size);
+                "
+                >{{ t('setting.titleReplacement') }}</span
+              >
             </template>
             <el-table id="title-replacement-table" :data="settings.titleReplacement">
               <el-table-column label="From">
@@ -232,6 +236,28 @@
             </el-table>
           </el-collapse-item>
         </el-collapse>
+        <!-- 自定义文件名函数 -->
+        <el-form-item :label="t('setting.customFilenameFunction')">
+          <span class="monospace"
+            >function (filename<el-text type="info">: string</el-text>, gallery<el-text type="info"
+              >:
+              <el-link
+                type="primary"
+                href="https://github.com/Tsuk1ko/nhentai-helper/blob/2458629d5a85ad5a16e7594bbb55fa7e359b2ea9/src/utils/nhentai.ts#L56-L74"
+                target="_blank"
+                >NHentaiGallery</el-link
+              ></el-text
+            >) {</span
+          >
+          <el-input
+            v-model="settings.customFilenameFunction"
+            class="monospace"
+            type="textarea"
+            placeholder="return filename;"
+            :autosize="{ minRows: 1 }"
+          />
+          <span class="monospace">}</span>
+        </el-form-item>
       </el-form>
       <el-divider>{{ t('setting.history.title') }}</el-divider>
       <p class="no-sl">
@@ -285,6 +311,8 @@ import {
   ElTableColumn,
   ElRadio,
   ElRadioGroup,
+  ElLink,
+  ElText,
 } from 'element-plus';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
@@ -432,6 +460,17 @@ defineExpose({ open });
     user-select: none;
   }
 }
+
+.monospace {
+  font-family: monospace;
+  span& {
+    user-select: none;
+  }
+}
+
+.code-type {
+  color: var(--el-text-color-secondary);
+}
 </style>
 
 <style lang="less">
@@ -449,7 +488,8 @@ defineExpose({ open });
   label {
     font-weight: unset;
   }
-  input:not([type='file']):not([type='checkbox']) {
+  input:not([type='file']):not([type='checkbox']),
+  textarea {
     background: inherit;
     color: var(--el-input-text-color, var(--el-text-color-regular));
   }
@@ -467,6 +507,11 @@ defineExpose({ open });
       content: '*';
       color: var(--el-color-danger);
       margin-left: 4px;
+    }
+    &__content {
+      .el-link.is-underline:hover:after {
+        bottom: 8px;
+      }
     }
   }
   .el-divider__text {
@@ -491,6 +536,15 @@ defineExpose({ open });
   }
   .el-table__empty-block {
     display: none;
+  }
+  .el-link {
+    color: var(--el-link-text-color);
+    &:hover {
+      color: var(--el-link-hover-text-color);
+    }
+  }
+  .el-collapse-item__header {
+    font-family: inherit;
   }
 }
 

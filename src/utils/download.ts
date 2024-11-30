@@ -15,11 +15,12 @@ import {
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, request } from './request';
-import { NHentaiDownloadHostSpecial, settings } from './settings';
+import { customFilenameFunction, NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
 import { generateMetaFiles } from './meta';
 import { ImgConverter } from './imgConverter';
+import { removeIllegalFilenameChars } from './formatter';
 import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue, zipQueue } from '@/common/queue';
 import { ErrorAction } from '@/typings';
@@ -44,6 +45,16 @@ export const downloadGalleryByInfo = async (
   info.done = 0; // 发生错误重新下载需要进度置 0
 
   let { mid, pages, cfName } = info.gallery;
+
+  // 自定义文件名函数
+  if (customFilenameFunction.value) {
+    const result = customFilenameFunction.value(cfName, info.gallery.gallery);
+    if (typeof result !== 'string' || !result.trim()) {
+      throw new Error(`Custom filename function illegal result: ${result}`);
+    }
+    cfName = removeIllegalFilenameChars(result);
+  }
+
   if (rangeCheckers?.length) {
     pages = pages.filter(({ i }) => rangeCheckers.some(check => check(i)));
   }

@@ -37,7 +37,7 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
   Gallery page will be open on a new window by default, turn off it if you don't like it.
 - **Compression filename**  
   Default is `{{japanese}}.zip`. You can custom the naming of downloaded compression file, including the file extension, such as `{{english}}.cbz`.  
-  If the compressed filename contains illegal characters, they will be automatically replaced with spaces. You can also use the *Title replacement* setting to perform custom replacement.  
+  If the compressed file's name contains illegal characters, they will be automatically replaced with spaces. You can also use the *Title replacement* setting to perform custom replacement.  
   Available placeholders:  
   - `{{english}}` - English name of manga
   - `{{japanese}}` - Japanese name of manga
@@ -101,7 +101,13 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 - **Prevent console clearing**  
   Only available on nHentai official site. It is useful when you need to submit console log for debugging.
 - **Title replacement**  
-  Character replacement can be performed on the title in the compressed filename, and regular expressions are supported.
+  Character replacement can be performed on the title in the compressed file's name, and regular expressions are supported.
+- **Custom filename function**  
+  You can write a JavaScript function to customize the final compressed file's name.  
+  It must return a non empty string, otherwise the script will throw an error  
+  It accepts 2 parameters:
+  - `filename` - Original filename string, obtained by *Compression filename* and *Title replacement*
+  - `gallery` - nHentai gallery information object, [see definition](https://github.com/Tsuk1ko/nhentai-helper/blob/master/src/utils/nhentai.ts#L56-L74)
 
 ## Other features
 

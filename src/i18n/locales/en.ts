@@ -48,6 +48,7 @@ export default {
     metaFileTitleLanguage: 'Title language',
     titleReplacement: 'Title replacement',
     galleryContextmenuPreview: 'Context menu preview',
+    customFilenameFunction: 'Custom filename function',
     history: {
       title: 'Download History',
       downloadedNumberTip: 'You have downloaded {num} manga on this site using nHentai Helper.',

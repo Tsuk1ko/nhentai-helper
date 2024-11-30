@@ -7,3 +7,5 @@ export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
   second: '2-digit',
   hour12: false,
 });
+
+export const removeIllegalFilenameChars = (name: string) => name.replace(/[/\\:*?"<>|]/g, '');

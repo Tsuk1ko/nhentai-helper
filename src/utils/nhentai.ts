@@ -14,6 +14,7 @@ import logger from './logger';
 import { Counter } from './counter';
 import { loadHTML } from './html';
 import { OrderCache } from './orderCache';
+import { removeIllegalFilenameChars } from './formatter';
 import {
   MEDIA_URL_TEMPLATE_MAY_CHANGE,
   IS_NHENTAI,
@@ -88,6 +89,7 @@ export interface NHentaiGalleryInfo {
   cfName: string;
   tags: NHentaiTag[];
   uploadDate?: number;
+  gallery: NHentaiGallery;
 }
 
 export const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
@@ -261,15 +263,7 @@ export const getGallery = async (gid: number | string): Promise<NHentaiGallery> 
 };
 
 export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGalleryInfo> => {
-  const {
-    id,
-    media_id,
-    title,
-    images: { pages },
-    num_pages,
-    tags,
-    upload_date,
-  }: NHentaiGallery = await (async () => {
+  const gallery = await (async () => {
     if (gid) return getGallery(gid);
 
     const gidFromUrl = /^\/g\/(\d+)/.exec(location.pathname)?.[1];
@@ -281,6 +275,16 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     throw new Error('Cannot get gallery info.');
   })();
 
+  const {
+    id,
+    media_id,
+    title,
+    images: { pages },
+    num_pages,
+    tags,
+    upload_date,
+  } = gallery;
+
   const { english, japanese, pretty } = title;
 
   const infoPages = pages.map(({ t, w, h }, i) => ({ i: i + 1, t: NHentaiImgExt[t], w, h }));
@@ -290,16 +294,19 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     mid: media_id,
     title,
     pages: infoPages,
-    cfName: compileTemplate(settings.compressionFilename)({
-      english: applyTitleReplacement(english || japanese),
-      japanese: applyTitleReplacement(japanese || english),
-      pretty: applyTitleReplacement(pretty || english || japanese),
-      id,
-      pages: num_pages,
-      artist: getCFNameArtists(tags),
-    }).replace(/[/\\:*?"<>|]/g, ''),
+    cfName: removeIllegalFilenameChars(
+      compileTemplate(settings.compressionFilename)({
+        english: applyTitleReplacement(english || japanese),
+        japanese: applyTitleReplacement(japanese || english),
+        pretty: applyTitleReplacement(pretty || english || japanese),
+        id,
+        pages: num_pages,
+        artist: getCFNameArtists(tags),
+      }),
+    ),
     tags,
     uploadDate: upload_date,
+    gallery,
   };
   logger.log('info', info);
 

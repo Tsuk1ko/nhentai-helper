@@ -41,9 +41,11 @@ export const initListPage = (): void => {
 };
 
 const initShortcut = (): void => {
+  const ignoreActiveElTags = new Set(['INPUT', 'TEXTAREA']);
   // 左右键翻页
   $(document).on('keydown', event => {
-    if (document.activeElement?.tagName === 'INPUT') return;
+    const activeElTag = document.activeElement?.tagName || '';
+    if (ignoreActiveElTags.has(activeElTag)) return;
     switch (event.key) {
       case 'ArrowLeft':
         $(selector.paginationPrevious).trigger('click');

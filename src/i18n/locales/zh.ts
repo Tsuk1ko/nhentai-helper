@@ -48,6 +48,7 @@ export default {
     metaFileTitleLanguage: '标题语言',
     titleReplacement: '标题替换',
     galleryContextmenuPreview: '右击预览',
+    customFilenameFunction: '自定义文件名函数',
     history: {
       title: '下载历史',
       downloadedNumberTip: '你在这个站点上已经用 nHentai 助手下载了 {num} 个本子',

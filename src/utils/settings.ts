@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
 import { detect } from 'detect-browser';
 import logger from './logger';
+import type { NHentaiGallery } from './nhentai';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
 
@@ -75,6 +76,8 @@ export interface Settings {
   convertWebpTo: string;
   /** 转换 webp 到其他格式的质量 */
   convertWebpQuality: number;
+  /** 自定义文件名函数 */
+  customFilenameFunction: string;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -252,6 +255,11 @@ export const settingDefinitions: Readonly<{
     default: 85,
     validator: val => 0 <= val && val <= 100,
   },
+  customFilenameFunction: {
+    key: 'custom_title_function',
+    default: '',
+    validator: stringValidator,
+  },
 };
 
 const browserDetect = detect();
@@ -320,3 +328,16 @@ export const startWatchSettings = once(() => {
 export const validTitleReplacement = computed(() =>
   settings.titleReplacement.filter(item => item?.from),
 );
+
+export const customFilenameFunction = computed(() => {
+  if (!settings.customFilenameFunction.trim()) return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+    return new Function('filename', 'gallery', settings.customFilenameFunction) as (
+      title: string,
+      gallery: NHentaiGallery,
+    ) => unknown;
+  } catch {
+    return null;
+  }
+});
