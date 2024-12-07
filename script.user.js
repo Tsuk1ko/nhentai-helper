@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.17.0
+// @version            3.18.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -41,7 +41,7 @@
 // @noframes
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(' .nhentai-helper-hidden{display:none!important}.nhentai-helper-btn:disabled{cursor:wait}.nhentai-helper-gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.nhentai-helper-gallery:hover>.nhentai-helper-btn{opacity:1}.nhentai-helper-gallery .nhentai-helper-btn{position:absolute;top:0;margin:3px;z-index:2}.nhentai-helper-gallery .download-zip-btn{left:0}.nhentai-helper-gallery .ignore-btn{display:none;right:0}.nhentai-helper-gallery:hover .ignore-btn{display:block}.nhentai-helper-gallery.downloaded .caption{color:#999}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.noty_close_button{display:none}body.nhentai-helper-nhentai_xxx .reader_outer{position:relative}body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn{margin-left:5px}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons[data-v-77801b74]{float:left;position:absolute}.inline-item[data-v-77801b74]{display:inline-block}.inline-item[data-v-77801b74]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-77801b74]{margin-right:4px;-webkit-user-select:none;user-select:none}.monospace[data-v-77801b74]{font-family:monospace}span.monospace[data-v-77801b74]{-webkit-user-select:none;user-select:none}.code-type[data-v-77801b74]{color:var(--el-text-color-secondary)}#nhentai-helper-setting-dialog-outside{width:80%;max-width:800px}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]),#nhentai-helper-setting-dialog textarea{background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-form-item__content .el-link.is-underline:hover:after{bottom:8px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}#nhentai-helper-setting-dialog .el-link{color:var(--el-link-text-color)}#nhentai-helper-setting-dialog .el-link:hover{color:var(--el-link-hover-text-color)}#nhentai-helper-setting-dialog .el-collapse-item__header{font-family:inherit}.el-select-dropdown{-webkit-user-select:none;user-select:none}.language-filter[data-v-e2153767]{display:inline-flex;align-items:center;padding-left:10px;vertical-align:middle}.filter-select[data-v-e2153767]{width:140px;margin-right:-140px}.filter-select[data-v-e2153767] .el-input__inner{color:var(--el-input-text-color, var(--el-text-color-regular))!important;background:0 0!important}@media screen and (max-width: 644px){.language-filter[data-v-e2153767]{padding:10px 0}.filter-select[data-v-e2153767]{margin-right:0}}.bold[data-v-f7a715da]{font-weight:700}.popover-close-btn[data-v-f7a715da]{transform:translate(4px,-4px)}.info-label[data-v-f7a715da]{display:inline-block}.lang-zh .info-label[data-v-f7a715da]{min-width:30px}.lang-en .info-label[data-v-f7a715da]{min-width:80px}.info-tag-wrapper[data-v-f7a715da]{display:flex}.info-tag[data-v-f7a715da]{margin:2px;-webkit-user-select:none;user-select:none}.info-tag--pointer[data-v-f7a715da]{cursor:pointer}.image-loading[data-v-f7a715da]{width:100%;height:100%;background-color:#0009}.scroll-container[data-v-f7a715da]{min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-f7a715da]::-webkit-scrollbar{width:6px}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-f7a715da]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%} ');
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(' .nhentai-helper-hidden{display:none!important}.nhentai-helper-btn:disabled{cursor:wait}.nhentai-helper-gallery>.nhentai-helper-btn{position:absolute;top:0;min-width:42px;opacity:.8}.nhentai-helper-gallery:hover>.nhentai-helper-btn{opacity:1}.nhentai-helper-gallery .nhentai-helper-btn{position:absolute;top:0;margin:3px;z-index:2}.nhentai-helper-gallery .download-zip-btn{left:0}.nhentai-helper-gallery .ignore-btn{display:none;right:0}.nhentai-helper-gallery:hover .ignore-btn{display:block}.nhentai-helper-gallery.downloaded .caption{color:#999}#page-container{position:relative}@media screen and (max-width: 768px){#page-container{padding-top:40px}}#online-view-mode-btn{position:absolute;right:0;top:0;margin:0}.btn-noty-green{background-color:#66bb6a!important}.btn-noty-blue{background-color:#42a5f5!important}.btn-noty:hover{filter:brightness(1.15)}.noty_buttons{padding-top:0!important}.pages-input{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:inline-block;border-radius:3px;padding:0 .1em 0 1em;font-size:1em;width:100%;height:40px;border:0;vertical-align:top;margin-top:5px}.noty_close_button{display:none}body.nhentai-helper-nhentai_xxx .reader_outer{position:relative}body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn{margin-left:5px}.noty_layout_mixin,#noty_layout__top,#noty_layout__topLeft,#noty_layout__topCenter,#noty_layout__topRight,#noty_layout__bottom,#noty_layout__bottomLeft,#noty_layout__bottomCenter,#noty_layout__bottomRight,#noty_layout__center,#noty_layout__centerLeft,#noty_layout__centerRight{position:fixed;margin:0;padding:0;z-index:9999999;-webkit-transform:translateZ(0) scale(1,1);transform:translateZ(0) scale(1);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-font-smoothing:subpixel-antialiased;filter:blur(0);-webkit-filter:blur(0);max-width:90%}#noty_layout__top{top:0;left:5%;width:90%}#noty_layout__topLeft{top:20px;left:20px;width:325px}#noty_layout__topCenter{top:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__topRight{top:20px;right:20px;width:325px}#noty_layout__bottom{bottom:0;left:5%;width:90%}#noty_layout__bottomLeft{bottom:20px;left:20px;width:325px}#noty_layout__bottomCenter{bottom:5%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__bottomRight{bottom:20px;right:20px;width:325px}#noty_layout__center{top:50%;left:50%;width:325px;-webkit-transform:translate(-webkit-calc(-50% - .5px),-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translate(calc(-50% - .5px),calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerLeft{top:50%;left:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}#noty_layout__centerRight{top:50%;right:20px;width:325px;-webkit-transform:translate(0,-webkit-calc(-50% - .5px)) translateZ(0) scale(1,1);transform:translateY(calc(-50% - .5px)) translateZ(0) scale(1)}.noty_progressbar{display:none}.noty_has_timeout.noty_has_progressbar .noty_progressbar{display:block;position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#646464;opacity:.2;filter:alpha(opacity=10)}.noty_bar{-webkit-backface-visibility:hidden;-webkit-transform:translate(0,0) translateZ(0) scale(1,1);-ms-transform:translate(0,0) scale(1,1);transform:translate(0) scale(1);-webkit-font-smoothing:subpixel-antialiased;overflow:hidden}.noty_effects_open{opacity:0;-webkit-transform:translate(50%);-ms-transform:translate(50%);transform:translate(50%);-webkit-animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_in .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_effects_close{-webkit-animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);animation:noty_anim_out .5s cubic-bezier(.68,-.55,.265,1.55);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.noty_fix_effects_height{-webkit-animation:noty_anim_height 75ms ease-out;animation:noty_anim_height 75ms ease-out}.noty_close_with_click{cursor:pointer}.noty_close_button{position:absolute;top:2px;right:2px;font-weight:700;width:20px;height:20px;text-align:center;line-height:20px;background-color:#0000000d;border-radius:2px;cursor:pointer;-webkit-transition:all .2s ease-out;transition:all .2s ease-out}.noty_close_button:hover{background-color:#0000001a}.noty_modal{position:fixed;width:100%;height:100%;background-color:#000;z-index:10000;opacity:.3;left:0;top:0}.noty_modal.noty_modal_open{opacity:0;-webkit-animation:noty_modal_in .3s ease-out;animation:noty_modal_in .3s ease-out}.noty_modal.noty_modal_close{-webkit-animation:noty_modal_out .3s ease-out;animation:noty_modal_out .3s ease-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@-webkit-keyframes noty_modal_in{to{opacity:.3}}@keyframes noty_modal_in{to{opacity:.3}}@-webkit-keyframes noty_modal_out{to{opacity:0}}@keyframes noty_modal_out{to{opacity:0}}@-webkit-keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@keyframes noty_anim_in{to{-webkit-transform:translate(0);transform:translate(0);opacity:1}}@-webkit-keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@keyframes noty_anim_out{to{-webkit-transform:translate(50%);transform:translate(50%);opacity:0}}@-webkit-keyframes noty_anim_height{to{height:0}}@keyframes noty_anim_height{to{height:0}}.noty_theme__relax.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__relax.noty_bar .noty_body{padding:10px}.noty_theme__relax.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__relax.noty_type__alert,.noty_theme__relax.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__relax.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__relax.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__relax.noty_type__error{background-color:#ff8181;border:1px solid #e25353;color:#fff}.noty_theme__relax.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__relax.noty_type__info,.noty_theme__relax.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__relax.noty_type__info .noty_buttons,.noty_theme__relax.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__relax.noty_type__success{background-color:#bcf5bc;border:1px solid #7cdd77;color:#006400}.noty_theme__relax.noty_type__success .noty_buttons{border-color:#50c24e}.noty_theme__metroui.noty_bar{margin:4px 0;overflow:hidden;position:relative;box-shadow:#0000004c 0 0 5px}.noty_theme__metroui.noty_bar .noty_progressbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background-color:#000;opacity:.2;filter:alpha(opacity=20)}.noty_theme__metroui.noty_bar .noty_body{padding:1.25em;font-size:14px}.noty_theme__metroui.noty_bar .noty_buttons{padding:0 10px .5em}.noty_theme__metroui.noty_type__alert,.noty_theme__metroui.noty_type__notification{background-color:#fff;color:#1d1d1d}.noty_theme__metroui.noty_type__warning{background-color:#fa6800;color:#fff}.noty_theme__metroui.noty_type__error{background-color:#ce352c;color:#fff}.noty_theme__metroui.noty_type__info,.noty_theme__metroui.noty_type__information{background-color:#1ba1e2;color:#fff}.noty_theme__metroui.noty_type__success{background-color:#60a917;color:#fff}.noty_theme__mint.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__mint.noty_bar .noty_body{padding:10px;font-size:14px}.noty_theme__mint.noty_bar .noty_buttons{padding:10px}.noty_theme__mint.noty_type__alert,.noty_theme__mint.noty_type__notification{background-color:#fff;border-bottom:1px solid #D1D1D1;color:#2f2f2f}.noty_theme__mint.noty_type__warning{background-color:#ffae42;border-bottom:1px solid #E89F3C;color:#fff}.noty_theme__mint.noty_type__error{background-color:#de636f;border-bottom:1px solid #CA5A65;color:#fff}.noty_theme__mint.noty_type__info,.noty_theme__mint.noty_type__information{background-color:#7f7eff;border-bottom:1px solid #7473E8;color:#fff}.noty_theme__mint.noty_type__success{background-color:#afc765;border-bottom:1px solid #A0B55C;color:#fff}.noty_theme__sunset.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__sunset.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__sunset.noty_bar .noty_buttons{padding:10px}.noty_theme__sunset.noty_type__alert,.noty_theme__sunset.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__sunset.noty_type__alert .noty_progressbar,.noty_theme__sunset.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__sunset.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__sunset.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__sunset.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__sunset.noty_type__info,.noty_theme__sunset.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__sunset.noty_type__info .noty_progressbar,.noty_theme__sunset.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__sunset.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__bootstrap-v3.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:4px}.noty_theme__bootstrap-v3.noty_bar .noty_body{padding:15px}.noty_theme__bootstrap-v3.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v3.noty_bar .noty_close_button{font-size:21px;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.2;background:transparent}.noty_theme__bootstrap-v3.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.5}.noty_theme__bootstrap-v3.noty_type__alert,.noty_theme__bootstrap-v3.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v3.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v3.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v3.noty_type__info,.noty_theme__bootstrap-v3.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v3.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__bootstrap-v4.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;border-radius:.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_body{padding:.75rem 1.25rem}.noty_theme__bootstrap-v4.noty_bar .noty_buttons{padding:10px}.noty_theme__bootstrap-v4.noty_bar .noty_close_button{font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;filter:alpha(opacity=20);opacity:.5;background:transparent}.noty_theme__bootstrap-v4.noty_bar .noty_close_button:hover{background:transparent;text-decoration:none;cursor:pointer;filter:alpha(opacity=50);opacity:.75}.noty_theme__bootstrap-v4.noty_type__alert,.noty_theme__bootstrap-v4.noty_type__notification{background-color:#fff;color:inherit}.noty_theme__bootstrap-v4.noty_type__warning{background-color:#fcf8e3;color:#8a6d3b;border-color:#faebcc}.noty_theme__bootstrap-v4.noty_type__error{background-color:#f2dede;color:#a94442;border-color:#ebccd1}.noty_theme__bootstrap-v4.noty_type__info,.noty_theme__bootstrap-v4.noty_type__information{background-color:#d9edf7;color:#31708f;border-color:#bce8f1}.noty_theme__bootstrap-v4.noty_type__success{background-color:#dff0d8;color:#3c763d;border-color:#d6e9c6}.noty_theme__semanticui.noty_bar{margin:4px 0;overflow:hidden;position:relative;border:1px solid transparent;font-size:1em;border-radius:.28571429rem;box-shadow:0 0 0 1px #22242638 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_bar .noty_body{padding:1em 1.5em;line-height:1.4285em}.noty_theme__semanticui.noty_bar .noty_buttons{padding:10px}.noty_theme__semanticui.noty_type__alert,.noty_theme__semanticui.noty_type__notification{background-color:#f8f8f9;color:#000000de}.noty_theme__semanticui.noty_type__warning{background-color:#fffaf3;color:#573a08;box-shadow:0 0 0 1px #c9ba9b inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__error{background-color:#fff6f6;color:#9f3a38;box-shadow:0 0 0 1px #e0b4b4 inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__info,.noty_theme__semanticui.noty_type__information{background-color:#f8ffff;color:#276f86;box-shadow:0 0 0 1px #a9d5de inset,0 0 0 0 transparent}.noty_theme__semanticui.noty_type__success{background-color:#fcfff5;color:#2c662d;box-shadow:0 0 0 1px #a3c293 inset,0 0 0 0 transparent}.noty_theme__nest.noty_bar{margin:0 0 15px;overflow:hidden;border-radius:2px;position:relative;box-shadow:#00000019 5px 4px 10px}.noty_theme__nest.noty_bar .noty_body{padding:10px;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,.1)}.noty_theme__nest.noty_bar .noty_buttons{padding:10px}.noty_layout .noty_theme__nest.noty_bar{z-index:5}.noty_layout .noty_theme__nest.noty_bar:nth-child(2){position:absolute;top:0;margin-top:4px;margin-right:-4px;margin-left:4px;z-index:4;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(3){position:absolute;top:0;margin-top:8px;margin-right:-8px;margin-left:8px;z-index:3;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(4){position:absolute;top:0;margin-top:12px;margin-right:-12px;margin-left:12px;z-index:2;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(5){position:absolute;top:0;margin-top:16px;margin-right:-16px;margin-left:16px;z-index:1;width:100%}.noty_layout .noty_theme__nest.noty_bar:nth-child(n+6){position:absolute;top:0;margin-top:20px;margin-right:-20px;margin-left:20px;z-index:-1;width:100%}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(2),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(2){margin-top:4px;margin-left:-4px;margin-right:4px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(3),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(3){margin-top:8px;margin-left:-8px;margin-right:8px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(4),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(4){margin-top:12px;margin-left:-12px;margin-right:12px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(5),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(5){margin-top:16px;margin-left:-16px;margin-right:16px}#noty_layout__bottomLeft .noty_theme__nest.noty_bar:nth-child(n+6),#noty_layout__topLeft .noty_theme__nest.noty_bar:nth-child(n+6){margin-top:20px;margin-left:-20px;margin-right:20px}.noty_theme__nest.noty_type__alert,.noty_theme__nest.noty_type__notification{background-color:#073b4c;color:#fff}.noty_theme__nest.noty_type__alert .noty_progressbar,.noty_theme__nest.noty_type__notification .noty_progressbar{background-color:#fff}.noty_theme__nest.noty_type__warning{background-color:#ffd166;color:#fff}.noty_theme__nest.noty_type__error{background-color:#ef476f;color:#fff}.noty_theme__nest.noty_type__error .noty_progressbar{opacity:.4}.noty_theme__nest.noty_type__info,.noty_theme__nest.noty_type__information{background-color:#118ab2;color:#fff}.noty_theme__nest.noty_type__info .noty_progressbar,.noty_theme__nest.noty_type__information .noty_progressbar{opacity:.6}.noty_theme__nest.noty_type__success{background-color:#06d6a0;color:#fff}.noty_theme__light.noty_bar{margin:4px 0;overflow:hidden;border-radius:2px;position:relative}.noty_theme__light.noty_bar .noty_body{padding:10px}.noty_theme__light.noty_bar .noty_buttons{border-top:1px solid #e7e7e7;padding:5px 10px}.noty_theme__light.noty_type__alert,.noty_theme__light.noty_type__notification{background-color:#fff;border:1px solid #dedede;color:#444}.noty_theme__light.noty_type__warning{background-color:#ffeaa8;border:1px solid #FFC237;color:#826200}.noty_theme__light.noty_type__warning .noty_buttons{border-color:#dfaa30}.noty_theme__light.noty_type__error{background-color:#ed7000;border:1px solid #e25353;color:#fff}.noty_theme__light.noty_type__error .noty_buttons{border-color:#8b0000}.noty_theme__light.noty_type__info,.noty_theme__light.noty_type__information{background-color:#78c5e7;border:1px solid #3badd6;color:#fff}.noty_theme__light.noty_type__info .noty_buttons,.noty_theme__light.noty_type__information .noty_buttons{border-color:#0b90c4}.noty_theme__light.noty_type__success{background-color:#57c880;border:1px solid #7cdd77;color:#006400}.noty_theme__light.noty_type__success .noty_buttons{border-color:#50c24e}.download-item[data-v-83b954f2]{position:relative;white-space:nowrap;padding:2px;overflow:visible}.download-item--can-cancel[data-v-83b954f2]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-83b954f2]{cursor:pointer;position:absolute;top:0;right:-30px;color:#f44336;font-size:20px;line-height:30px;width:30px}.download-item__title[data-v-83b954f2]{overflow:hidden;text-overflow:ellipsis;text-align:left}.download-item__progress[data-v-83b954f2]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-83b954f2]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-83b954f2]{background-color:#00ff0080}.download-item__progress-text[data-v-83b954f2]{transform:scale(.8)}#download-panel[data-v-f37e74c3]{overflow-x:hidden;position:fixed;top:20vh;right:0;width:calc(50vw - 620px);max-width:300px;min-width:150px;max-height:60vh;background-color:#000000b3;z-index:100;font-size:12px;overflow-y:scroll}#download-panel[data-v-f37e74c3]::-webkit-scrollbar{width:6px;background-color:#000000b3}#download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb{background-color:#fff9}.nhentai-helper-setting-help-buttons[data-v-21445267]{float:left;position:absolute}.inline-item[data-v-21445267]{display:inline-block}.inline-item[data-v-21445267]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-21445267]{margin-right:4px;-webkit-user-select:none;user-select:none}.monospace[data-v-21445267]{font-family:monospace}span.monospace[data-v-21445267]{-webkit-user-select:none;user-select:none}.code-type[data-v-21445267]{color:var(--el-text-color-secondary)}#nhentai-helper-setting-dialog-outside{width:80%;max-width:800px}#nhentai-helper-setting-dialog .asterisk-example:before{content:"*";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]),#nhentai-helper-setting-dialog textarea{background:inherit;color:var(--el-input-text-color, var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:"*";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-form-item__content .el-link.is-underline:hover:after{bottom:8px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .no-sl,#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}#nhentai-helper-setting-dialog .el-link{color:var(--el-link-text-color)}#nhentai-helper-setting-dialog .el-link:hover{color:var(--el-link-hover-text-color)}#nhentai-helper-setting-dialog .el-collapse-item__header{font-family:inherit}.el-select-dropdown{-webkit-user-select:none;user-select:none}.language-filter[data-v-e2153767]{display:inline-flex;align-items:center;padding-left:10px;vertical-align:middle}.filter-select[data-v-e2153767]{width:140px;margin-right:-140px}.filter-select[data-v-e2153767] .el-input__inner{color:var(--el-input-text-color, var(--el-text-color-regular))!important;background:0 0!important}@media screen and (max-width: 644px){.language-filter[data-v-e2153767]{padding:10px 0}.filter-select[data-v-e2153767]{margin-right:0}}.bold[data-v-f7a715da]{font-weight:700}.popover-close-btn[data-v-f7a715da]{transform:translate(4px,-4px)}.info-label[data-v-f7a715da]{display:inline-block}.lang-zh .info-label[data-v-f7a715da]{min-width:30px}.lang-en .info-label[data-v-f7a715da]{min-width:80px}.info-tag-wrapper[data-v-f7a715da]{display:flex}.info-tag[data-v-f7a715da]{margin:2px;-webkit-user-select:none;user-select:none}.info-tag--pointer[data-v-f7a715da]{cursor:pointer}.image-loading[data-v-f7a715da]{width:100%;height:100%;background-color:#0009}.scroll-container[data-v-f7a715da]{min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-f7a715da]::-webkit-scrollbar{width:6px}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-f7a715da]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-f7a715da]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%} ');
 
 (function ($, vue, elementPlus) {
   'use strict';
@@ -61,7 +61,7 @@
   var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
   var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-CPWAP_j8.js"(exports, module) {
+    "main-B96J_KlT.js"(exports, module) {
       var _worker;
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
@@ -139,7 +139,7 @@
       const IS_NHENTAI = hostname === "nhentai.net";
       const IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website";
       const IS_NHENTAI_XXX = hostname === "nhentai.xxx";
-      const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI_XXX;
+      const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX;
       const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`;
       const THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`;
       const isNodeOrElement = typeof Node === "function" ? (val) => val instanceof Node : (val) => val && typeof val === "object" && typeof val.nodeType === "number" && typeof val.nodeName === "string";
@@ -1491,12 +1491,12 @@
       function stackHas(key) {
         return this.__data__.has(key);
       }
-      var LARGE_ARRAY_SIZE = 200;
+      var LARGE_ARRAY_SIZE$1 = 200;
       function stackSet(key, value) {
         var data = this.__data__;
         if (data instanceof ListCache) {
           var pairs = data.__data__;
-          if (!Map$1 || pairs.length < LARGE_ARRAY_SIZE - 1) {
+          if (!Map$1 || pairs.length < LARGE_ARRAY_SIZE$1 - 1) {
             pairs.push([key, value]);
             this.size = ++data.size;
             return this;
@@ -1974,6 +1974,35 @@
       function isArrayLikeObject(value) {
         return isObjectLike(value) && isArrayLike(value);
       }
+      var LARGE_ARRAY_SIZE = 200;
+      function baseDifference(array, values2, iteratee, comparator) {
+        var index = -1, includes = arrayIncludes, isCommon = true, length = array.length, result = [], valuesLength = values2.length;
+        if (!length) {
+          return result;
+        }
+        if (values2.length >= LARGE_ARRAY_SIZE) {
+          includes = cacheHas;
+          isCommon = false;
+          values2 = new SetCache(values2);
+        }
+        outer:
+          while (++index < length) {
+            var value = array[index], computed2 = value;
+            value = value !== 0 ? value : 0;
+            if (isCommon && computed2 === computed2) {
+              var valuesIndex = valuesLength;
+              while (valuesIndex--) {
+                if (values2[valuesIndex] === computed2) {
+                  continue outer;
+                }
+              }
+              result.push(value);
+            } else if (!includes(values2, computed2, comparator)) {
+              result.push(value);
+            }
+          }
+        return result;
+      }
       function last(array) {
         var length = array == null ? 0 : array.length;
         return length ? array[length - 1] : void 0;
@@ -2267,6 +2296,9 @@
         }
         return result;
       }
+      var without = baseRest(function(array, values2) {
+        return isArrayLikeObject(array) ? baseDifference(array, values2) : [];
+      });
       var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
       function getDefaultExportFromCjs(x) {
         return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -2722,16 +2754,27 @@
       })(MIME || {});
       const nHentaiDownloadHosts = [
         "i.nhentai.net",
-        // 'i2.nhentai.net',
+        "i2.nhentai.net",
         "i3.nhentai.net",
         "i5.nhentai.net",
         "i7.nhentai.net"
       ];
       var NHentaiDownloadHostSpecial = /* @__PURE__ */ ((NHentaiDownloadHostSpecial2) => {
+        NHentaiDownloadHostSpecial2["AUTO"] = "auto";
         NHentaiDownloadHostSpecial2["RANDOM"] = "random";
         NHentaiDownloadHostSpecial2["BALANCE"] = "balance";
         return NHentaiDownloadHostSpecial2;
       })(NHentaiDownloadHostSpecial || {});
+      const nHentaiDownloadHostSpecials = [
+        "auto",
+        "random",
+        "balance"
+        /* BALANCE */
+      ];
+      const availableNHentaiDownloadHost = /* @__PURE__ */ new Set([
+        ...nHentaiDownloadHostSpecials,
+        ...nHentaiDownloadHosts
+      ]);
       const booleanValidator = (val) => typeof val === "boolean";
       const stringValidator = (val) => typeof val === "string";
       const createNumberValidator = (min, max) => (val) => typeof val === "number" && min <= val && val <= max;
@@ -2846,8 +2889,8 @@
         },
         nHentaiDownloadHost: {
           key: "nHentai_media_host",
-          default: nHentaiDownloadHosts[0],
-          validator: (val) => val === "random" || val === "balance" || nHentaiDownloadHosts.includes(val)
+          default: "auto",
+          validator: (val) => availableNHentaiDownloadHost.has(val)
         },
         addMetaFile: {
           key: "add_meta_file",
@@ -2889,11 +2932,34 @@
       };
       const browserDetect = detect();
       const DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox");
-      const readSettings = () => mapValues(
-        settingDefinitions,
-        ({ key, default: defaultVal }) => _GM_getValue(key, typeof defaultVal === "function" ? defaultVal() : defaultVal)
-      );
-      const writeableSettings = vue.reactive(readSettings());
+      const readSettings = () => mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
+        const realDefault = typeof defaultVal === "function" ? defaultVal() : defaultVal;
+        const val = _GM_getValue(key, realDefault);
+        if (!validator(val)) return realDefault;
+        if (Array.isArray(val) && itemValidator) {
+          const validItems = val.filter(itemValidator);
+          if (val.length !== validItems.length) {
+            return realDefault;
+          }
+        }
+        return val;
+      });
+      const initSettings = () => {
+        const settings2 = readSettings();
+        {
+          const key = "_flag_nHentai_media_host_reset_20241207";
+          if (!_GM_getValue(key, false)) {
+            const def = settingDefinitions.nHentaiDownloadHost;
+            if (settings2.nHentaiDownloadHost !== def.default) {
+              settings2.nHentaiDownloadHost = def.default;
+              _GM_setValue(def.key, def.default);
+            }
+            _GM_setValue(key, true);
+          }
+        }
+        return settings2;
+      };
+      const writeableSettings = vue.reactive(initSettings());
       const settings = writeableSettings;
       if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) writeableSettings.streamDownload = false;
       const startWatchSettings = once(() => {
@@ -11270,21 +11336,20 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                             disabled: !!vue.unref(writeableSettings).customDownloadUrl
                           }, {
                             default: vue.withCtx(() => [
+                              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(nHentaiDownloadHostSpecials), (value) => {
+                                return vue.openBlock(), vue.createBlock(vue.unref(elementPlus.ElOption), {
+                                  key: value,
+                                  label: vue.unref(t2)(`setting.nHentaiDownloadHostOption.${value}`),
+                                  value
+                                }, null, 8, ["label", "value"]);
+                              }), 128)),
                               (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(nHentaiDownloadHosts), (host) => {
                                 return vue.openBlock(), vue.createBlock(vue.unref(elementPlus.ElOption), {
                                   key: host,
                                   label: host,
                                   value: host
                                 }, null, 8, ["label", "value"]);
-                              }), 128)),
-                              vue.createVNode(vue.unref(elementPlus.ElOption), {
-                                label: vue.unref(t2)("common.random"),
-                                value: "random"
-                              }, null, 8, ["label"]),
-                              vue.createVNode(vue.unref(elementPlus.ElOption), {
-                                label: vue.unref(t2)("common.balance"),
-                                value: "balance"
-                              }, null, 8, ["label"])
+                              }), 128))
                             ]),
                             _: 1
                           }, 8, ["modelValue", "disabled"])
@@ -11537,7 +11602,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           };
         }
       });
-      const SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-77801b74"]]);
+      const SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-21445267"]]);
       const compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
       const getDownloadExt = () => {
         const ext = last(settings.compressionFilename.split("."));
@@ -13905,8 +13970,6 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "pretty": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Pretty" } },
           "filter": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Filter" } },
           "none": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "None" } },
-          "random": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Random" } },
-          "balance": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Balance" } },
           "disabled": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Disabled" } },
           "abbr": {
             "english": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "EN" } },
@@ -13939,6 +14002,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "streamDownload": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Stream download" } },
           "preventConsoleClearing": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Prevent console clearing" } },
           "nHentaiDownloadHost": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "nHentai download host" } },
+          "nHentaiDownloadHostOption": {
+            "auto": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Auto (recommended)" } },
+            "random": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Random" } },
+            "balance": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Balance" } }
+          },
           "addMetaFile": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Add metadata file" } },
           "metaFileTitleLanguage": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Title language" } },
           "titleReplacement": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Title replacement" } },
@@ -14004,8 +14072,6 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "pretty": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "简略" } },
           "filter": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "过滤" } },
           "none": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "无" } },
-          "random": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "随机" } },
-          "balance": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "均衡" } },
           "disabled": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "禁用" } },
           "abbr": {
             "english": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "英" } },
@@ -14038,6 +14104,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           "streamDownload": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "流式下载" } },
           "preventConsoleClearing": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "阻止控制台清空" } },
           "nHentaiDownloadHost": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "nHentai 下载节点" } },
+          "nHentaiDownloadHostOption": {
+            "auto": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "自动（推荐）" } },
+            "random": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "随机" } },
+            "balance": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "均衡" } }
+          },
           "addMetaFile": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "添加元数据文件" } },
           "metaFileTitleLanguage": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "标题语言" } },
           "titleReplacement": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "标题替换" } },
@@ -14468,7 +14539,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         }
       }
       const isAbortError = (e) => e instanceof RequestAbortError;
-      const request = (urlGetter, responseType, retry = 3) => {
+      const request = (params) => {
+        const { url: urlGetter, responseType, retry = 3, on404 } = params;
         let abortFunc;
         const dataPromise = new Promise((resolve, reject) => {
           try {
@@ -14484,7 +14556,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                 } else {
                   logger.warn("Network error, retry", url, e);
                   setTimeout(() => {
-                    const { abort, dataPromise: dataPromise2 } = request(urlGetter, responseType, retry - 1);
+                    const { abort, dataPromise: dataPromise2 } = request({ ...params, retry: retry - 1 });
                     abortFunc = abort;
                     resolve(dataPromise2);
                   }, 1e3);
@@ -14495,9 +14567,13 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
                 if (status === 200) resolve(response);
                 else if (retry === 0) reject(r);
                 else {
+                  const additionRetry = status === 404 ? on404 == null ? void 0 : on404(r) : false;
                   logger.warn("Request error, retry", status, url, r);
                   setTimeout(() => {
-                    const { abort, dataPromise: dataPromise2 } = request(urlGetter, responseType, retry - 1);
+                    const { abort, dataPromise: dataPromise2 } = request({
+                      ...params,
+                      retry: retry - (additionRetry ? 0 : 1)
+                    });
                     abortFunc = abort;
                     resolve(dataPromise2);
                   }, 1e3);
@@ -14518,17 +14594,20 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
           dataPromise
         };
       };
-      const getText = (url) => request(url).dataPromise;
+      const getText = (url) => request({ url }).dataPromise;
       const fetchJSON = (url) => fetch(url).then((r) => r.json());
       class Counter {
         constructor(keys2) {
-          __publicField(this, "countMap", {});
+          __publicField(this, "key");
+          __publicField(this, "countMap");
           __publicField(this, "countKeys");
+          __publicField(this, "blackList", /* @__PURE__ */ new Set());
           if (!keys2.length) throw new Error("Counter no key");
           this.countKeys = [...keys2];
-          this.countKeys.forEach((key) => {
-            this.countMap[key] = 0;
-          });
+          this.reset();
+        }
+        get availableKeys() {
+          return without(this.countKeys, ...this.blackList);
         }
         add(key) {
           this.countMap[key]++;
@@ -14536,8 +14615,26 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
         del(key) {
           this.countMap[key]--;
         }
-        getMin() {
-          return minBy(this.countKeys, (key) => this.countMap[key]);
+        ban(key) {
+          this.blackList.add(key);
+          return this.availableKeys.length > 0;
+        }
+        getMin(key) {
+          this.updateKey(key);
+          return minBy(this.availableKeys, (key2) => this.countMap[key2]);
+        }
+        getRandom(key) {
+          this.updateKey(key);
+          return sample(this.availableKeys);
+        }
+        updateKey(key) {
+          if (this.key === key) return;
+          this.key = key;
+          this.reset();
+        }
+        reset() {
+          this.countMap = Object.fromEntries(this.countKeys.map((key) => [key, 0]));
+          this.blackList.clear();
         }
       }
       const loadHTML = (html) => {
@@ -14585,18 +14682,18 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       const nHentaiImgExtReversed = invert(NHentaiImgExt);
       const getTypeFromExt = (ext) => nHentaiImgExtReversed[ext.toLowerCase()];
       const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
-      const getNHentaiDownloadHost = () => {
+      const getNHentaiDownloadHost = (mid) => {
         switch (settings.nHentaiDownloadHost) {
           case NHentaiDownloadHostSpecial.RANDOM:
-            return sample(nHentaiDownloadHosts);
+            return nHentaiDownloadHostCounter.getRandom(mid);
           case NHentaiDownloadHostSpecial.BALANCE:
-            return nHentaiDownloadHostCounter.getMin();
+            return nHentaiDownloadHostCounter.getMin(mid);
           default:
             return settings.nHentaiDownloadHost;
         }
       };
-      const getMediaDownloadUrl = (mid, filename) => `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`;
-      const getMediaDownloadUrlOnMirrorSite = async (gid2, mid, filename) => (await getCompliedMediaUrlTemplate(gid2))({ mid, filename });
+      const getMediaDownloadUrl = (mid, filename) => `https://${getNHentaiDownloadHost(mid)}/galleries/${mid}/${filename}`;
+      const getMediaDownloadUrlByWebpage = async (gid2, mid, filename) => (await getCompliedMediaUrlTemplate(gid2))({ mid, filename });
       const getGalleryFromApi = (gid2) => {
         const url = `https://nhentai.net/api/gallery/${gid2}`;
         return fetchJSON(url);
@@ -15080,32 +15177,49 @@ ${xml}`;
         const downloadTask = async (page, threadID, { filenameLength, customDownloadUrl }) => {
           if (info.error) return { abort: () => {
           }, promise: Promise.resolve() };
-          let urlGetterError;
+          const useCounter = IS_NHENTAI && (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE || settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM);
           const usedCounterKeys = [];
-          const urlGetter = customDownloadUrl ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t }) : IS_NHENTAI ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE || settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM ? () => {
-            const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
-            logger.log(`[${threadID}] ${url}`);
-            if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
-              const counterKey = new URL(url).host;
-              usedCounterKeys.push(counterKey);
-              nHentaiDownloadHostCounter.add(counterKey);
+          let urlGetterError;
+          const urlGetter = await (async () => {
+            if (customDownloadUrl) {
+              return compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t });
             }
-            return url;
-          } : getMediaDownloadUrl(mid, `${page.i}.${page.t}`) : await getMediaDownloadUrlOnMirrorSite(
-            String(info.gallery.gid),
-            mid,
-            `${page.i}.${page.t}`
-          ).catch((e) => {
+            const filename = `${page.i}.${page.t}`;
+            if (IS_NHENTAI && settings.nHentaiDownloadHost !== NHentaiDownloadHostSpecial.AUTO) {
+              if (useCounter) {
+                return () => {
+                  const url = getMediaDownloadUrl(mid, filename);
+                  logger.log(`[${threadID}] ${url}`);
+                  if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+                    const counterKey = new URL(url).host;
+                    usedCounterKeys.push(counterKey);
+                    nHentaiDownloadHostCounter.add(counterKey);
+                  }
+                  return url;
+                };
+              }
+              return getMediaDownloadUrl(mid, filename);
+            }
+            return getMediaDownloadUrlByWebpage(String(info.gallery.gid), mid, filename);
+          })().catch((e) => {
             urlGetterError = e;
           });
           if (!urlGetter || urlGetterError) {
             info.error = true;
-            throw urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No url getter");
+            throw urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No available url");
           }
           if (typeof urlGetter !== "function") {
             logger.log(`[${threadID}] ${urlGetter}`);
           }
-          const { abort: abort2, dataPromise } = request(urlGetter, "arraybuffer");
+          const { abort: abort2, dataPromise } = request({
+            url: urlGetter,
+            responseType: "arraybuffer",
+            on404: useCounter ? (e) => {
+              const counterKey = new URL(e.finalUrl).host;
+              logger.warn(`[${threadID}] ban ${counterKey} because 404`);
+              return nHentaiDownloadHostCounter.ban(counterKey);
+            } : void 0
+          });
           return {
             abort: () => {
               logger.log(`[${threadID}] abort`);
