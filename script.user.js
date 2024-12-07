@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.18.0
+// @version            3.18.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -24,8 +24,10 @@
 // @resource           element-plus-css  https://unpkg.com/element-plus@2.8.4/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
+// @connect            i1.nhentai.net
 // @connect            i2.nhentai.net
 // @connect            i3.nhentai.net
+// @connect            i4.nhentai.net
 // @connect            i5.nhentai.net
 // @connect            i7.nhentai.net
 // @connect            *
@@ -61,7 +63,7 @@
   var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
   var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-B96J_KlT.js"(exports, module) {
+    "main-Ct52_9OQ.js"(exports, module) {
       var _worker;
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_openInTab = /* @__PURE__ */ (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
@@ -2754,8 +2756,10 @@
       })(MIME || {});
       const nHentaiDownloadHosts = [
         "i.nhentai.net",
+        "i1.nhentai.net",
         "i2.nhentai.net",
         "i3.nhentai.net",
+        "i4.nhentai.net",
         "i5.nhentai.net",
         "i7.nhentai.net"
       ];
