@@ -10,8 +10,10 @@ import { MIME } from '@/typings';
 
 export const nHentaiDownloadHosts = [
   'i.nhentai.net',
+  'i1.nhentai.net',
   'i2.nhentai.net',
   'i3.nhentai.net',
+  'i4.nhentai.net',
   'i5.nhentai.net',
   'i7.nhentai.net',
 ];
