@@ -29,7 +29,7 @@ export const IS_NHENTAI_TO = hostname === 'nhentai.to' || hostname === 'nhentai.
 /** nhentai.xxx */
 export const IS_NHENTAI_XXX = hostname === 'nhentai.xxx';
 
-export const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI_XXX;
+export const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX;
 
 export const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`;
 

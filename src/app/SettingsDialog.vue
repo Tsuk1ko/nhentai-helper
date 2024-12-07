@@ -155,13 +155,17 @@
             :disabled="!!settings.customDownloadUrl"
           >
             <el-option
+              v-for="value in nHentaiDownloadHostSpecials"
+              :key="value"
+              :label="t(`setting.nHentaiDownloadHostOption.${value}`)"
+              :value="value"
+            />
+            <el-option
               v-for="host in nHentaiDownloadHosts"
               :key="host"
               :label="host"
               :value="host"
             />
-            <el-option :label="t('common.random')" value="random" />
-            <el-option :label="t('common.balance')" value="balance" />
           </el-select>
         </el-form-item>
         <!-- 自定义下载地址 -->
@@ -320,6 +324,7 @@ import ConfirmPopup from '@/components/ConfirmPopup.vue';
 import {
   DISABLE_STREAM_DOWNLOAD,
   nHentaiDownloadHosts,
+  nHentaiDownloadHostSpecials,
   settingDefinitions,
   writeableSettings as settings,
   startWatchSettings,

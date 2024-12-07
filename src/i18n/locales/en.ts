@@ -10,8 +10,6 @@ export default {
     pretty: 'Pretty',
     filter: 'Filter',
     none: 'None',
-    random: 'Random',
-    balance: 'Balance',
     disabled: 'Disabled',
     abbr: {
       english: 'EN',
@@ -44,6 +42,11 @@ export default {
     streamDownload: 'Stream download',
     preventConsoleClearing: 'Prevent console clearing',
     nHentaiDownloadHost: 'nHentai download host',
+    nHentaiDownloadHostOption: {
+      auto: 'Auto (recommended)',
+      random: 'Random',
+      balance: 'Balance',
+    },
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
     titleReplacement: 'Title replacement',

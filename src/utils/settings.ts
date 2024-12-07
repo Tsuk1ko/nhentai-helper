@@ -10,16 +10,28 @@ import { MIME } from '@/typings';
 
 export const nHentaiDownloadHosts = [
   'i.nhentai.net',
-  // 'i2.nhentai.net',
+  'i2.nhentai.net',
   'i3.nhentai.net',
   'i5.nhentai.net',
   'i7.nhentai.net',
 ];
 
 export enum NHentaiDownloadHostSpecial {
+  AUTO = 'auto',
   RANDOM = 'random',
   BALANCE = 'balance',
 }
+
+export const nHentaiDownloadHostSpecials = [
+  NHentaiDownloadHostSpecial.AUTO,
+  NHentaiDownloadHostSpecial.RANDOM,
+  NHentaiDownloadHostSpecial.BALANCE,
+];
+
+const availableNHentaiDownloadHost = new Set([
+  ...nHentaiDownloadHostSpecials,
+  ...nHentaiDownloadHosts,
+]);
 
 export interface Settings {
   /** 语言 */
@@ -213,11 +225,8 @@ export const settingDefinitions: Readonly<{
   },
   nHentaiDownloadHost: {
     key: 'nHentai_media_host',
-    default: nHentaiDownloadHosts[0],
-    validator: val =>
-      val === NHentaiDownloadHostSpecial.RANDOM ||
-      val === NHentaiDownloadHostSpecial.BALANCE ||
-      nHentaiDownloadHosts.includes(val),
+    default: NHentaiDownloadHostSpecial.AUTO,
+    validator: val => availableNHentaiDownloadHost.has(val),
   },
   addMetaFile: {
     key: 'add_meta_file',
@@ -268,11 +277,37 @@ export const DISABLE_STREAM_DOWNLOAD =
   !!browserDetect && (browserDetect.name === 'safari' || browserDetect.name === 'firefox');
 
 const readSettings = (): Settings =>
-  mapValues(settingDefinitions, ({ key, default: defaultVal }) =>
-    GM_getValue<any>(key, typeof defaultVal === 'function' ? defaultVal() : defaultVal),
-  );
+  mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
+    const realDefault = typeof defaultVal === 'function' ? defaultVal() : defaultVal;
+    const val = GM_getValue<any>(key, realDefault);
+    if (!validator(val)) return realDefault;
+    if (Array.isArray(val) && itemValidator) {
+      const validItems = val.filter(itemValidator);
+      if (val.length !== validItems.length) {
+        return realDefault;
+      }
+    }
+    return val;
+  });
 
-export const writeableSettings: Settings = reactive(readSettings());
+const initSettings = (): Settings => {
+  const settings = readSettings();
+  // reset nHentai media host setting to auto
+  {
+    const key = '_flag_nHentai_media_host_reset_20241207';
+    if (!GM_getValue<boolean>(key, false)) {
+      const def = settingDefinitions.nHentaiDownloadHost;
+      if (settings.nHentaiDownloadHost !== def.default) {
+        settings.nHentaiDownloadHost = def.default;
+        GM_setValue(def.key, def.default);
+      }
+      GM_setValue(key, true);
+    }
+  }
+  return settings;
+};
+
+export const writeableSettings: Settings = reactive(initSettings());
 
 export const settings = writeableSettings as Readonly<Settings>;
 

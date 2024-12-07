@@ -10,7 +10,7 @@ import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
 import {
   nHentaiDownloadHostCounter,
   getMediaDownloadUrl,
-  getMediaDownloadUrlOnMirrorSite,
+  getMediaDownloadUrlByWebpage,
   NHentaiImgExt,
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
@@ -91,45 +91,65 @@ export const downloadGalleryByInfo = async (
   > = async (page, threadID, { filenameLength, customDownloadUrl }) => {
     if (info.error) return { abort: () => {}, promise: Promise.resolve() };
 
-    let urlGetterError: any;
-
+    const useCounter =
+      IS_NHENTAI &&
+      (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE ||
+        settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM);
     const usedCounterKeys: string[] = [];
-    const urlGetter = customDownloadUrl
-      ? compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t })
-      : IS_NHENTAI
-        ? settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE ||
-          settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.RANDOM
-          ? () => {
-              const url = getMediaDownloadUrl(mid, `${page.i}.${page.t}`);
-              logger.log(`[${threadID}] ${url}`);
-              if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
-                const counterKey = new URL(url).host;
-                usedCounterKeys.push(counterKey);
-                nHentaiDownloadHostCounter.add(counterKey);
-              }
-              return url;
+
+    let urlGetterError: any;
+    const urlGetter = await (async () => {
+      if (customDownloadUrl) {
+        return compileTemplate(customDownloadUrl)({ mid, index: page.i, ext: page.t });
+      }
+
+      const filename = `${page.i}.${page.t}`;
+
+      if (IS_NHENTAI && settings.nHentaiDownloadHost !== NHentaiDownloadHostSpecial.AUTO) {
+        if (useCounter) {
+          return () => {
+            const url = getMediaDownloadUrl(mid, filename);
+            logger.log(`[${threadID}] ${url}`);
+            if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+              const counterKey = new URL(url).host;
+              usedCounterKeys.push(counterKey);
+              nHentaiDownloadHostCounter.add(counterKey);
             }
-          : getMediaDownloadUrl(mid, `${page.i}.${page.t}`)
-        : await getMediaDownloadUrlOnMirrorSite(
-            String(info.gallery.gid),
-            mid,
-            `${page.i}.${page.t}`,
-          ).catch(e => {
-            urlGetterError = e;
-          });
+            return url;
+          };
+        }
+
+        return getMediaDownloadUrl(mid, filename);
+      }
+
+      return getMediaDownloadUrlByWebpage(String(info.gallery.gid), mid, filename);
+    })().catch(e => {
+      urlGetterError = e;
+    });
 
     if (!urlGetter || urlGetterError) {
       info.error = true;
       throw urlGetterError && urlGetterError instanceof Error
         ? urlGetterError
-        : new Error('No url getter');
+        : new Error('No available url');
     }
 
     if (typeof urlGetter !== 'function') {
       logger.log(`[${threadID}] ${urlGetter}`);
     }
 
-    const { abort, dataPromise } = request(urlGetter, 'arraybuffer');
+    const { abort, dataPromise } = request({
+      url: urlGetter,
+      responseType: 'arraybuffer',
+      on404: useCounter
+        ? e => {
+            const counterKey = new URL(e.finalUrl).host;
+            logger.warn(`[${threadID}] ban ${counterKey} because 404`);
+            return nHentaiDownloadHostCounter.ban(counterKey);
+          }
+        : undefined,
+    });
+
     return {
       abort: () => {
         logger.log(`[${threadID}] abort`);

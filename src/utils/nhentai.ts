@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
-import { filter, identity, invert, map, once, sample } from 'lodash-es';
+import { filter, identity, invert, map, once } from 'lodash-es';
 import { fetchJSON, getText } from './request';
 import { compileTemplate } from './common';
 import {
@@ -94,21 +94,21 @@ export interface NHentaiGalleryInfo {
 
 export const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
 
-const getNHentaiDownloadHost = () => {
+const getNHentaiDownloadHost = (mid: string) => {
   switch (settings.nHentaiDownloadHost) {
     case NHentaiDownloadHostSpecial.RANDOM:
-      return sample(nHentaiDownloadHosts);
+      return nHentaiDownloadHostCounter.getRandom(mid);
     case NHentaiDownloadHostSpecial.BALANCE:
-      return nHentaiDownloadHostCounter.getMin();
+      return nHentaiDownloadHostCounter.getMin(mid);
     default:
       return settings.nHentaiDownloadHost;
   }
 };
 
 export const getMediaDownloadUrl = (mid: string, filename: string) =>
-  `https://${getNHentaiDownloadHost()}/galleries/${mid}/${filename}`;
+  `https://${getNHentaiDownloadHost(mid)}/galleries/${mid}/${filename}`;
 
-export const getMediaDownloadUrlOnMirrorSite = async (gid: string, mid: string, filename: string) =>
+export const getMediaDownloadUrlByWebpage = async (gid: string, mid: string, filename: string) =>
   (await getCompliedMediaUrlTemplate(gid))({ mid, filename });
 
 const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {

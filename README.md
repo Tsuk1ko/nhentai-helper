@@ -79,7 +79,8 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 ### Advance Settings
 
 - **nHentai download host**  
-  Choose a host for downloading nHentai images. Only available on nHentai.
+  Choose a host for downloading nHentai images. Only available on nHentai.  
+  Currently, nHentai CDNs are not fully synchronized, so it is recommended to use "Auto".
 - **Custom download URL**  
   Generally, you don't need to provide this unless you have a special requirement or the script cannot automatically obtain the image URL on the mirror site.  
   Provide a URL containing the following placeholder:

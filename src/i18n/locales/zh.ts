@@ -10,8 +10,6 @@ export default {
     pretty: '简略',
     filter: '过滤',
     none: '无',
-    random: '随机',
-    balance: '均衡',
     disabled: '禁用',
     abbr: {
       english: '英',
@@ -44,6 +42,11 @@ export default {
     streamDownload: '流式下载',
     preventConsoleClearing: '阻止控制台清空',
     nHentaiDownloadHost: 'nHentai 下载节点',
+    nHentaiDownloadHostOption: {
+      auto: '自动（推荐）',
+      random: '随机',
+      balance: '均衡',
+    },
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
     titleReplacement: '标题替换',
