@@ -8,4 +8,6 @@ export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
   hour12: false,
 });
 
+export const numberFormatter = new Intl.NumberFormat();
+
 export const removeIllegalFilenameChars = (name: string) => name.replace(/[/\\:*?"<>|]/g, '');

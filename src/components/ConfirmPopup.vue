@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { ElPopconfirm } from 'element-plus';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'petite-vue-i18n';
 
 const emit = defineEmits(['confirm']);
 const { t } = useI18n();

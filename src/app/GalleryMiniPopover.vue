@@ -107,7 +107,7 @@ import {
 } from 'element-plus';
 import { CloseBold } from '@element-plus/icons-vue';
 import { groupBy, map } from 'lodash-es';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'petite-vue-i18n';
 import {
   NHentaiImgExt,
   type NHentaiTag,

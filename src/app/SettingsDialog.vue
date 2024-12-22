@@ -267,7 +267,9 @@
       <p class="no-sl">
         {{
           t('setting.history.downloadedNumberTip', {
-            num: Number.isNaN(downloadedNum) ? downloadedNum : n(downloadedNum),
+            num: Number.isNaN(downloadedNum)
+              ? downloadedNum
+              : numberFormatter.format(downloadedNum),
           })
         }}
       </p>
@@ -319,7 +321,7 @@ import {
   ElText,
 } from 'element-plus';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'petite-vue-i18n';
 import ConfirmPopup from '@/components/ConfirmPopup.vue';
 import {
   DISABLE_STREAM_DOWNLOAD,
@@ -340,6 +342,7 @@ import {
 import { pickAndReadFile } from '@/utils/file';
 import { showMessage } from '@/utils/elementPlus';
 import { IS_NHENTAI } from '@/const';
+import { numberFormatter } from '@/utils/formatter';
 
 startWatchSettings();
 
@@ -359,7 +362,7 @@ const compressionLevelMarks: ElMarks = {
   9: '9',
 };
 
-const { t, n, locale } = useI18n();
+const { t, locale } = useI18n();
 
 const show = ref(false);
 const downloadedNum = ref(NaN);
@@ -482,6 +485,9 @@ defineExpose({ open });
 #nhentai-helper-setting-dialog-outside {
   width: 80%;
   max-width: 800px;
+  .no-sl {
+    user-select: none;
+  }
 }
 
 #nhentai-helper-setting-dialog {
@@ -529,7 +535,6 @@ defineExpose({ open });
   .m-b-32 {
     margin-bottom: 32px;
   }
-  .no-sl,
   .el-form-item__label {
     user-select: none;
   }

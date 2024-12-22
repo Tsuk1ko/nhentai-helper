@@ -14,9 +14,7 @@ declare module '*?worker-dev' {
 }
 
 declare module '$' {
-  import type { MonkeyWindow } from 'vite-plugin-monkey/dist/client';
   export * from 'vite-plugin-monkey/dist/client';
-  export const monkeyWindow: MonkeyWindow & GlobalThis;
 }
 
 declare interface Window extends GlobalThis {

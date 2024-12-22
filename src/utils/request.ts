@@ -1,4 +1,4 @@
-import type { GmXhrRequest } from '$';
+import type { GmXmlhttpRequestOption } from '$';
 import { GM_xmlhttpRequest } from '$';
 import logger from './logger';
 
@@ -26,7 +26,7 @@ export const request = <T extends GmResponseType = 'text'>(params: {
   responseType?: T;
   retry?: number;
   /** Return `true` when there are available hosts */
-  on404?: (...args: Parameters<NonNullable<GmXhrRequest<any, T>['onload']>>) => boolean;
+  on404?: (...args: Parameters<NonNullable<GmXmlhttpRequestOption<any, T>['onload']>>) => boolean;
 }): { abort: () => void; dataPromise: Promise<GmResponseTypeMap[T]> } => {
   const { url: urlGetter, responseType, retry = 3, on404 } = params;
   let abortFunc: (() => void) | undefined;
