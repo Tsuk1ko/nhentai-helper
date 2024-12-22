@@ -1,7 +1,7 @@
 import { wrap, type Remote, transfer, proxy, releaseProxy } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipMetadata } from 'jszip';
 import { removeAt } from './array';
-import { IS_DEV, WORKER_THREAD_NUM } from '@/const';
+import { WORKER_THREAD_NUM } from '@/const';
 import JSZipWorker from '@/workers/jszip?worker&inline';
 import type { DisposableJSZip, JSZipFile } from '@/workers/jszip';
 
@@ -20,12 +20,6 @@ const getTransferableData = (files: JSZipFile[]): Transferable[] =>
     .map(({ data }) => data)
     .filter((data): data is Exclude<JSZipFile['data'], string> => typeof data !== 'string');
 
-const getDevWorker = async (): Promise<Worker> => {
-  const code = (await import('@/workers/jszip?worker-dev')).default;
-  const url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
-  return new Worker(url);
-};
-
 class JSZipWorkerPool {
   private readonly pool: PoolMember[] = [];
   private readonly waitingQueue: Array<(value: PoolMember) => void> = [];
@@ -40,8 +34,7 @@ class JSZipWorkerPool {
   }
 
   private async createWorker(): Promise<RemoteDisposableJSZip> {
-    const worker = IS_DEV ? await getDevWorker() : new JSZipWorker();
-    return wrap<typeof DisposableJSZip>(worker);
+    return wrap<typeof DisposableJSZip>(new JSZipWorker());
   }
 
   private waitIdleWorker(): Promise<PoolMember> {

@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import monkey, { cdn, util } from 'vite-plugin-monkey';
 import copy from 'rollup-plugin-copy';
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import fixDevWorkerPlugin from './plugins/fixDevWorkerPlugin';
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => ({
@@ -23,6 +24,7 @@ export default defineConfig(async ({ mode }) => ({
     },
   },
   plugins: [
+    fixDevWorkerPlugin(),
     vue(),
     vueI18nPlugin({
       module: 'petite-vue-i18n',
