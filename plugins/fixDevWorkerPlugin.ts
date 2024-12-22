@@ -14,7 +14,7 @@ export default function fixDevWorkerPlugin(): Plugin {
       entryPoints: [path],
       bundle: true,
       write: false,
-      minify: true,
+      minifyWhitespace: true,
       legalComments: 'none',
     });
     contextMap.set(path, newCtx);

@@ -16,7 +16,13 @@ export default defineConfig(async ({ mode }) => ({
     open: true,
   },
   build: {
+    minify: true,
     cssMinify: true,
+  },
+  esbuild: {
+    legalComments: 'none' as const,
+    minifyWhitespace: false,
+    minifyIdentifiers: false,
   },
   resolve: {
     alias: {
