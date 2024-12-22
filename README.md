@@ -56,6 +56,9 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 - **Convert webp to**  
   nHentai has started to use webp format images. If your image viewer or comic reader doesn't support webp format, you can set this to convert webp to jpg or png.  
   This is enabled by default and converts to jpg at 85% quality.
+- **Remove ads pages**  
+  Try to detect and remove ads pages. The principle is to detect whether there is an advertising QR code on the page. Regular URL such as fanbox will not be removed.  
+  Main code comes from [hymbz/ComicReadScript](https://github.com/hymbz/ComicReadScript), thanks for such a great project. The relevant code is open source under [AGPL-3.0](https://github.com/hymbz/ComicReadScript/blob/master/LICENSE).
 - **Auto cancel downloaded manga**  
   When you are going to download an already downloaded manga, it will be canceled automatically instead of pop-up a confirmation box.
 - **Auto retry when error occurs**  

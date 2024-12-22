@@ -31,6 +31,7 @@ export default {
     filenameLength: 'Filename length',
     convertWebpTo: 'Convert webp to',
     convertWebpQuality: 'Quality',
+    removeAdPage: 'Remove ads pages',
     autoCancelDownloadedManga: 'Auto cancel downloaded manga',
     autoRetryWhenErrorOccurs: 'Auto retry when error occurs',
     autoShowAll: 'Auto show all',

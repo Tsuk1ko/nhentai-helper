@@ -103,6 +103,10 @@
             :step-strictly="true"
           />
         </el-form-item>
+        <!-- 移除广告页 -->
+        <el-form-item :label="t('setting.removeAdPage')">
+          <el-switch v-model="settings.removeAdPage" />
+        </el-form-item>
         <!-- 自动取消下载过的本子 -->
         <el-form-item :label="t('setting.autoCancelDownloadedManga')">
           <el-switch v-model="settings.autoCancelDownloadedManga" />

@@ -25,6 +25,7 @@
     "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
     "jquery-pjax": "^2.0.1",
+    "jsqr": "^1.4.0",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "localforage-setitems": "^1.4.0",

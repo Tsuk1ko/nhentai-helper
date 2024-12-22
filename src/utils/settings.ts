@@ -92,6 +92,8 @@ export interface Settings {
   convertWebpQuality: number;
   /** 自定义文件名函数 */
   customFilenameFunction: string;
+  /** 移除广告页 */
+  removeAdPage: boolean;
 }
 
 type SettingValidator = (val: any) => boolean;
@@ -270,6 +272,11 @@ export const settingDefinitions: Readonly<{
     key: 'custom_title_function',
     default: '',
     validator: stringValidator,
+  },
+  removeAdPage: {
+    key: 'remove_ad_page',
+    default: false,
+    validator: booleanValidator,
   },
 };
 

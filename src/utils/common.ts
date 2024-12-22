@@ -1,12 +1,12 @@
 import { GM_addStyle, GM_getResourceText } from '$';
 import $ from 'jquery';
 import { last, template } from 'lodash-es';
-import type { JSZipGeneratorOptions } from 'jszip';
 import { markRaw, reactive } from 'vue';
 import { settings } from './settings';
 import type { NHentaiGalleryInfo } from './nhentai';
 import type { MangaDownloadInfo } from '@/typings';
 import { selector } from '@/rules/selector';
+import type { JSZipGeneratorOptionsCustom } from '@/workers/jszip';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -19,8 +19,9 @@ export const getDownloadExt = (): string => {
   return 'zip';
 };
 
-export const getCompressionOptions = (): JSZipGeneratorOptions => {
+export const getCompressionOptions = (): JSZipGeneratorOptionsCustom => {
   return {
+    removeAdPage: settings.removeAdPage,
     streamFiles: settings.compressionStreamFiles,
     compression: settings.compressionLevel > 0 ? 'DEFLATE' : 'STORE',
     compressionOptions: { level: settings.compressionLevel },

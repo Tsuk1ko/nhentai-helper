@@ -31,6 +31,7 @@ export default {
     filenameLength: '文件名长度',
     convertWebpTo: '转换 webp 为',
     convertWebpQuality: '质量',
+    removeAdPage: '移除广告页',
     autoCancelDownloadedManga: '自动取消下载过的本子',
     autoRetryWhenErrorOccurs: '发生错误时自动重试',
     autoShowAll: '自动显示全部',

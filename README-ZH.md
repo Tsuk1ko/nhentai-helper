@@ -55,6 +55,9 @@
 - **转换 webp 为**  
   nHentai 已经陆续开始启用 webp 格式的图片，若你的图片查看器或漫画阅读器不支持 webp 格式，则可以设置该项将 webp 转换为 jpg 或 png  
   该设置项默认开启，默认转换为 85% 质量的 jpg
+- **移除广告页**  
+  尝试检测并移除广告页，原理是检测页面上是否存在广告二维码，正常网址的二维码例如 fanbox 不会被判定为广告  
+  主要代码来自 [hymbz/ComicReadScript](https://github.com/hymbz/ComicReadScript)，感谢如此出色的项目，相关代码以 [AGPL-3.0](https://github.com/hymbz/ComicReadScript/blob/master/LICENSE) 开源
 - **自动取消下载过的本子**  
   当你下载了一个之前下载过的**同名**本子时将会自动取消下载，而不是弹出选择对话框
 - **发生错误时自动重试**  

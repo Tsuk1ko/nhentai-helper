@@ -1,6 +1,7 @@
 import type { JSZipGeneratorOptions, JSZipObject, OnUpdateCallback } from 'jszip';
 import JSZip from 'jszip';
 import { expose, transfer } from 'comlink';
+import { getAdPage, isAdImg } from './utils/detectAd';
 
 export interface JSZipFile {
   name: string;
@@ -15,8 +16,13 @@ export interface JSZipUnzipParams<T extends JSZipOutputType> {
   type: T;
 }
 
+export interface JSZipGeneratorOptionsCustom extends JSZipGeneratorOptions {
+  removeAdPage?: boolean;
+}
+
 class DisposableJSZip {
   private readonly zip = new JSZip();
+  private readonly adRemoved = false;
 
   public file({ name, data }: JSZipFile): void {
     this.zip.file(name, data);
@@ -35,18 +41,20 @@ class DisposableJSZip {
   }
 
   public async generateAsync(
-    options?: JSZipGeneratorOptions,
+    options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
   ): Promise<Uint8Array> {
+    if (options?.removeAdPage) await this.removeAd();
     const data = await this.zip.generateAsync({ ...options, type: 'uint8array' }, onUpdate);
     return transfer(data, [data.buffer]);
   }
 
-  public generateStream(
-    options?: JSZipGeneratorOptions,
+  public async generateStream(
+    options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
     onEnd?: () => void,
-  ): { zipStream: ReadableStream<Uint8Array> } {
+  ): Promise<{ zipStream: ReadableStream<Uint8Array> }> {
+    if (options?.removeAdPage) await this.removeAd();
     const stream = this.zip.generateInternalStream({ ...options, type: 'uint8array' });
     const zipStream = new ReadableStream<Uint8Array>({
       start: controller => {
@@ -68,6 +76,41 @@ class DisposableJSZip {
       },
     });
     return transfer({ zipStream }, [zipStream as any]);
+  }
+
+  private async removeAd() {
+    if (this.adRemoved) return;
+
+    const imgFiles: Array<{
+      i: number;
+      obj: JSZipObject;
+    }> = [];
+    Object.values(this.zip.files).forEach(obj => {
+      const i = parseInt(obj.name);
+      if (Number.isNaN(i)) return;
+      imgFiles.push({ i, obj });
+    });
+    imgFiles.sort((a, b) => a.i - b.i);
+
+    try {
+      const adList = await getAdPage(imgFiles, async ({ obj }) =>
+        isAdImg(await (obj as any)._data),
+      );
+
+      if (!adList.size) {
+        console.log('[nhentai-helper] no ad pages detected');
+        return;
+      }
+
+      const adPages = [...adList.values()].map(i => imgFiles[i].obj);
+      console.log('[nhentai-helper] ad pages detected:', ...adPages.map(obj => obj.name));
+
+      adPages.forEach(obj => {
+        this.zip.remove(obj.name);
+      });
+    } catch (error) {
+      console.error('[nhentai-helper] remove ad page', error);
+    }
   }
 }
 
