@@ -2,8 +2,6 @@ import { context } from 'esbuild';
 import type { BuildContext } from 'esbuild';
 import type { Plugin } from 'vite';
 
-const regexp = /\?worker&inline$/;
-
 export default function fixDevWorkerPlugin(): Plugin {
   const contextMap = new Map<string, BuildContext>();
 
@@ -23,8 +21,9 @@ export default function fixDevWorkerPlugin(): Plugin {
 
   return {
     name: 'fix-dev-worker',
+    apply: 'serve',
     async transform(code, id) {
-      if (this.environment.config.command !== 'serve' || !regexp.test(id)) {
+      if (!id.endsWith('?worker&inline')) {
         return;
       }
 
@@ -38,10 +37,6 @@ export default function fixDevWorkerPlugin(): Plugin {
       );
     },
     async buildEnd() {
-      if (this.environment.config.command !== 'serve') {
-        return;
-      }
-
       await Promise.all(Array.from(contextMap.values()).map(ctx => ctx.dispose()));
       contextMap.clear();
     },
