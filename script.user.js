@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.19.1
+// @version            3.19.2
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -36,6 +36,7 @@
 // @grant              GM_getValue
 // @grant              GM_openInTab
 // @grant              GM_registerMenuCommand
+// @grant              GM_setClipboard
 // @grant              GM_setValue
 // @grant              GM_xmlhttpRequest
 // @grant              unsafeWindow
@@ -1054,58 +1055,59 @@ span.monospace[data-v-542f0ba0] {
     margin-right: 0;
   }
 }
-.bold[data-v-92b53433] {
+.bold[data-v-22c5eb74] {
   font-weight: 700;
 }
-.popover-close-btn[data-v-92b53433] {
-  transform: translate(4px, -4px);
-}
-.info-label[data-v-92b53433] {
+.info-label[data-v-22c5eb74] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-92b53433] {
+.lang-zh .info-label[data-v-22c5eb74] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-92b53433] {
+.lang-en .info-label[data-v-22c5eb74] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-92b53433] {
+.info-tag-wrapper[data-v-22c5eb74] {
   display: flex;
 }
-.info-tag[data-v-92b53433] {
+.info-tag[data-v-22c5eb74] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-92b53433] {
+.info-tag--pointer[data-v-22c5eb74] {
   cursor: pointer;
 }
-.image-loading[data-v-92b53433] {
+.image-loading[data-v-22c5eb74] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-92b53433] {
+.scroll-container[data-v-22c5eb74] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
 }
-.scroll-container[data-v-92b53433]::-webkit-scrollbar {
+.scroll-container[data-v-22c5eb74]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-92b53433]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-22c5eb74]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-92b53433]::-webkit-scrollbar-track {
+.scroll-container[data-v-22c5eb74]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-92b53433] {
+.scroll-container-inner[data-v-22c5eb74] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
   align-items: flex-start !important;
+}
+.gallery-mini-popover .el-descriptions__extra {
+  height: 0;
+  white-space: nowrap;
 }
 .gallery-mini-popover .el-descriptions__title {
   text-align: left !important;
@@ -1130,6 +1132,10 @@ span.monospace[data-v-542f0ba0] {
 }
 .gallery-mini-popover .el-image {
   width: 100%;
+}
+.popover-transition {
+  transition: var(--el-transition-all);
+  transition-duration: .2s;
 } `);
 
 (function ($, vue, elementPlus) {
@@ -1147,8 +1153,8 @@ span.monospace[data-v-542f0ba0] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-BUyde_qS.js"(exports, module) {
-      var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
+    "main-BCk4UXIM.js"(exports, module) {
+      var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
         menuLeft: "ul.menu.left",
@@ -4603,7 +4609,7 @@ function print() { __p += __j.call(arguments, '') }
       function resolveWithKeyValue(obj, path) {
         return isObject$3(obj) ? obj[path] : null;
       }
-      const VERSION$1 = "10.0.5", NOT_REOSLVED = -1, DEFAULT_LOCALE = "en-US", capitalize = (str) => `${str.charAt(0).toLocaleUpperCase()}${str.substr(1)}`;
+      const VERSION$1 = "11.0.1", NOT_REOSLVED = -1, DEFAULT_LOCALE = "en-US", capitalize = (str) => `${str.charAt(0).toLocaleUpperCase()}${str.substr(1)}`;
       function getDefaultLinkedModifiers() {
         return {
           upper: (val, type) => type === "text" && isString(val) ? val.toUpperCase() : type === "vnode" && isObject$3(val) && "__v_isVNode" in val ? val.children.toUpperCase() : val,
@@ -4837,7 +4843,7 @@ function print() { __p += __j.call(arguments, '') }
         return context.processor && (ctxOptions.processor = context.processor), options.list && (ctxOptions.list = options.list), options.named && (ctxOptions.named = options.named), isNumber(options.plural) && (ctxOptions.pluralIndex = options.plural), ctxOptions;
       }
       initFeatureFlags$2();
-      const VERSION = "10.0.5";
+      const VERSION = "11.0.1";
       function initFeatureFlags$1() {
         typeof __INTLIFY_PROD_DEVTOOLS__ != "boolean" && (getGlobalThis$1().__INTLIFY_PROD_DEVTOOLS__ = !1);
       }
@@ -5102,7 +5108,7 @@ function print() { __p += __j.call(arguments, '') }
         };
       }
       const I18nInjectionKey = /* @__PURE__ */ makeSymbol("global-vue-i18n");
-      function createI18n(options = {}, VueI18nLegacy) {
+      function createI18n(options = {}) {
         const __globalInjection = isBoolean(options.globalInjection) ? options.globalInjection : !0, __instances = /* @__PURE__ */ new Map(), [globalScope, __global] = createGlobal(options), symbol = /* @__PURE__ */ makeSymbol("");
         function __getInstance(component) {
           return __instances.get(component) || null;
@@ -5170,7 +5176,7 @@ function print() { __p += __j.call(arguments, '') }
         }
         return composer;
       }
-      function createGlobal(options, legacyMode, VueI18nLegacy) {
+      function createGlobal(options, legacyMode) {
         const scope = vue.effectScope(), obj = scope.run(() => createComposer(options));
         if (obj == null)
           throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
@@ -10240,6 +10246,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           filter: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Filter" } },
           none: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "None" } },
           disabled: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Disabled" } },
+          copy: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copy" } },
+          copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copied" } },
           abbr: {
             english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "EN" } },
             japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "JP" } },
@@ -10342,6 +10350,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           filter: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "过滤" } },
           none: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "无" } },
           disabled: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "禁用" } },
+          copy: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "复制" } },
+          copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已复制" } },
           abbr: {
             english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "英" } },
             japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "日" } },
@@ -11713,7 +11723,7 @@ ${this.serializer.serializeToString(this.doc)}`;
           ], getTagSortIndex = (type) => {
             const index = TAG_TYPES.findIndex((t22) => t22 === type);
             return index === -1 ? 999 : index;
-          }, { t: t2 } = useI18n(), visible = vue.ref(!1), virtualRef = vue.ref(), popoverRef = vue.ref(), popoverPlacement = vue.ref("right"), popoverWidth = vue.ref(0), gallery2 = vue.ref(null), title = vue.computed(() => {
+          }, { t: t2 } = useI18n(), visible = vue.ref(!1), virtualRef = vue.ref(), popoverRef = vue.ref(), popoverPlacement = vue.ref("right"), popoverWidth = vue.ref(0), popoverTransition = vue.ref(!1), gallery2 = vue.ref(null), title = vue.computed(() => {
             var _a;
             const t22 = (_a = gallery2.value) == null ? void 0 : _a.title;
             return t22 ? t22.japanese || t22.english || t22.pretty : "";
@@ -11754,10 +11764,12 @@ ${this.serializer.serializeToString(this.doc)}`;
             var _a, _b, _c;
             if (virtualRef.value === el) return;
             const rect = el.getBoundingClientRect(), bodyWidth = document.body.clientWidth, showRight = rect.left + rect.right <= bodyWidth;
-            popoverPlacement.value = showRight ? "right" : "left", virtualRef.value = el, popoverWidth.value = Math.min(
+            virtualRef.value = el, popoverPlacement.value = showRight ? "right" : "left", popoverTransition.value = !1, popoverWidth.value = Math.min(
               POPOVER_MAX_WIDTH,
               Math.round(showRight ? bodyWidth - rect.right : rect.left) - 16
-            ), visible.value = !0, gallery2.value = null, pageThumbs.value = [];
+            ), visible.value = !0, gallery2.value = null, setTimeout(() => {
+              gallery2.value || (popoverTransition.value = !0);
+            }), pageThumbs.value = [];
             try {
               loadingGid = gid2, thumbUrlTemplate || (thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid2));
               const loadedGallery = await getGallery(gid2);
@@ -11780,6 +11792,14 @@ ${this.serializer.serializeToString(this.doc)}`;
             (scrollTop + clientHeight === scrollHeight && e.deltaY > 0 || scrollTop === 0 && e.deltaY < 0) && e.preventDefault();
           }, close = () => {
             visible.value && (visible.value = !1);
+          }, copyTitle = () => {
+            _GM_setClipboard(title.value, "text", () => {
+              showMessage({
+                type: "success",
+                message: t2("common.copied"),
+                duration: 2e3
+              });
+            });
           };
           return vue.watch(visible, (val) => {
             val ? (window.addEventListener("scroll", close), window.addEventListener("resize", close)) : (window.removeEventListener("scroll", close), window.removeEventListener("resize", close));
@@ -11790,6 +11810,7 @@ ${this.serializer.serializeToString(this.doc)}`;
             ref: popoverRef,
             visible: visible.value,
             "onUpdate:visible": _cache[2] || (_cache[2] = ($event) => visible.value = $event),
+            "popper-class": popoverTransition.value ? "popover-transition" : "",
             "virtual-ref": virtualRef.value,
             "virtual-triggering": "",
             placement: popoverPlacement.value,
@@ -11810,10 +11831,21 @@ ${this.serializer.serializeToString(this.doc)}`;
                 }, {
                   extra: vue.withCtx(() => [
                     vue.createVNode(vue.unref(elementPlus.ElButton), {
-                      class: "popover-close-btn",
+                      text: "",
+                      size: "small",
+                      onClick: copyTitle
+                    }, {
+                      default: vue.withCtx(() => [
+                        vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("common.copy")), 1)
+                      ]),
+                      _: 1
+                    }),
+                    vue.createVNode(vue.unref(elementPlus.ElButton), {
                       icon: vue.unref(close_bold_default),
                       circle: "",
                       text: "",
+                      size: "small",
+                      style: { "margin-left": "4px" },
                       onClick: close
                     }, null, 8, ["icon"])
                   ]),
@@ -11933,9 +11965,9 @@ ${this.serializer.serializeToString(this.doc)}`;
               ])
             ]),
             _: 1
-          }, 8, ["visible", "virtual-ref", "placement", "width"]));
+          }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
         }
-      }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-92b53433"]]), initApp = once(
+      }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-22c5eb74"]]), initApp = once(
         () => createAppAndMount(GalleryMiniPopover, (app) => {
           app.use(i18n);
         })
