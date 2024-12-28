@@ -11,6 +11,8 @@ export default {
     filter: '过滤',
     none: '无',
     disabled: '禁用',
+    copy: '复制',
+    copied: '已复制',
     abbr: {
       english: '英',
       japanese: '日',

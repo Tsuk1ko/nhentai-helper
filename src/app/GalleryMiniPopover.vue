@@ -2,6 +2,7 @@
   <el-popover
     ref="popoverRef"
     v-model:visible="visible"
+    :popper-class="popoverTransition ? 'popover-transition' : ''"
     :virtual-ref="virtualRef"
     virtual-triggering
     :placement="popoverPlacement"
@@ -17,7 +18,15 @@
     >
       <el-descriptions :title="title" :column="1">
         <template #extra>
-          <el-button class="popover-close-btn" :icon="CloseBold" circle text @click="close" />
+          <el-button text size="small" @click="copyTitle">{{ t('common.copy') }}</el-button>
+          <el-button
+            :icon="CloseBold"
+            circle
+            text
+            size="small"
+            style="margin-left: 4px"
+            @click="close"
+          />
         </template>
         <el-descriptions-item>
           <template #label>
@@ -90,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { GM_openInTab } from '$';
+import { GM_openInTab, GM_setClipboard } from '$';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import {
   ElPopover,
@@ -118,6 +127,7 @@ import {
 } from '@/utils/nhentai';
 import { settings } from '@/utils/settings';
 import logger from '@/utils/logger';
+import { showMessage } from '@/utils/elementPlus';
 
 const POPOVER_MAX_WIDTH = 720;
 const POPOVER_THUMB_MORE_COL_WIDTH = 640;
@@ -143,6 +153,7 @@ const virtualRef = ref<HTMLElement>();
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const popoverPlacement = ref<InstanceType<typeof ElPopover>['placement']>('right');
 const popoverWidth = ref(0);
+const popoverTransition = ref(false);
 
 const gallery = ref<NHentaiGallery | null>(null);
 
@@ -212,14 +223,18 @@ const open = async (el: HTMLElement, gid: string) => {
   const rect = el.getBoundingClientRect();
   const bodyWidth = document.body.clientWidth;
   const showRight = rect.left + rect.right <= bodyWidth;
-  popoverPlacement.value = showRight ? 'right' : 'left';
   virtualRef.value = el;
+  popoverPlacement.value = showRight ? 'right' : 'left';
+  popoverTransition.value = false;
   popoverWidth.value = Math.min(
     POPOVER_MAX_WIDTH,
     Math.round(showRight ? bodyWidth - rect.right : rect.left) - 16,
   );
   visible.value = true;
   gallery.value = null;
+  setTimeout(() => {
+    if (!gallery.value) popoverTransition.value = true;
+  });
   pageThumbs.value = [];
   try {
     loadingGid = gid;
@@ -262,6 +277,16 @@ const close = () => {
   if (visible.value) visible.value = false;
 };
 
+const copyTitle = () => {
+  GM_setClipboard(title.value, 'text', () => {
+    showMessage({
+      type: 'success',
+      message: t('common.copied'),
+      duration: 2000,
+    });
+  });
+};
+
 watch(visible, val => {
   if (val) {
     window.addEventListener('scroll', close);
@@ -283,10 +308,6 @@ defineExpose({ open });
 <style lang="less" scoped>
 .bold {
   font-weight: bold;
-}
-
-.popover-close-btn {
-  transform: translate(4px, -4px);
 }
 
 .info-label {
@@ -348,6 +369,10 @@ defineExpose({ open });
     &__header {
       align-items: flex-start !important;
     }
+    &__extra {
+      height: 0;
+      white-space: nowrap;
+    }
     &__title {
       text-align: left !important;
     }
@@ -373,5 +398,10 @@ defineExpose({ open });
   .el-image {
     width: 100%;
   }
+}
+
+.popover-transition {
+  transition: var(--el-transition-all);
+  transition-duration: 0.2s;
 }
 </style>

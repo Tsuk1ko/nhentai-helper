@@ -11,6 +11,8 @@ export default {
     filter: 'Filter',
     none: 'None',
     disabled: 'Disabled',
+    copy: 'Copy',
+    copied: 'Copied',
     abbr: {
       english: 'EN',
       japanese: 'JP',
