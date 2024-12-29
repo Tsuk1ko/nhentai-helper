@@ -251,7 +251,7 @@
               >:
               <el-link
                 type="primary"
-                href="https://github.com/Tsuk1ko/nhentai-helper/blob/2458629d5a85ad5a16e7594bbb55fa7e359b2ea9/src/utils/nhentai.ts#L56-L74"
+                href="https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75"
                 target="_blank"
                 >NHentaiGallery</el-link
               ></el-text

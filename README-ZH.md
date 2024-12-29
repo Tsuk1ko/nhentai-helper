@@ -108,7 +108,7 @@
   该函数必须返回一个非空字符串，否则脚本会抛出错误  
   该函数接受两个参数
   - `filename` - 原始文件名字符串，由 *压缩文件名* 和 *标题替换* 作用得到
-  - `gallery` - 本子信息对象，[查看定义](https://github.com/Tsuk1ko/nhentai-helper/blob/master/src/utils/nhentai.ts#L56-L74)
+  - `gallery` - 本子信息对象，[查看定义](https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75)
 
 ## 其他功能
 

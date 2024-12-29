@@ -111,7 +111,7 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
   It must return a non empty string, otherwise the script will throw an error  
   It accepts 2 parameters:
   - `filename` - Original filename string, obtained by *Compression filename* and *Title replacement*
-  - `gallery` - nHentai gallery information object, [see definition](https://github.com/Tsuk1ko/nhentai-helper/blob/master/src/utils/nhentai.ts#L56-L74)
+  - `gallery` - nHentai gallery information object, [see definition](https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75)
 
 ## Other features
 
