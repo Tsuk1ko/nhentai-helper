@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.19.2
+// @version            3.19.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -935,29 +935,29 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
 #download-panel[data-v-f37e74c3]::-webkit-scrollbar-thumb {
   background-color: #fff9;
 }
-.nhentai-helper-setting-help-buttons[data-v-542f0ba0] {
+.nhentai-helper-setting-help-buttons[data-v-b1ccce6d] {
   float: left;
   position: absolute;
 }
-.inline-item[data-v-542f0ba0] {
+.inline-item[data-v-b1ccce6d] {
   display: inline-block;
 }
-.inline-item[data-v-542f0ba0]:not(:last-of-type) {
+.inline-item[data-v-b1ccce6d]:not(:last-of-type) {
   margin-right: 8px;
 }
-.inline-item__name[data-v-542f0ba0] {
+.inline-item__name[data-v-b1ccce6d] {
   margin-right: 4px;
   -webkit-user-select: none;
   user-select: none;
 }
-.monospace[data-v-542f0ba0] {
+.monospace[data-v-b1ccce6d] {
   font-family: monospace;
 }
-span.monospace[data-v-542f0ba0] {
+span.monospace[data-v-b1ccce6d] {
   -webkit-user-select: none;
   user-select: none;
 }
-.code-type[data-v-542f0ba0] {
+.code-type[data-v-b1ccce6d] {
   color: var(--el-text-color-secondary);
 }
 #nhentai-helper-setting-dialog-outside {
@@ -1153,7 +1153,7 @@ span.monospace[data-v-542f0ba0] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-BCk4UXIM.js"(exports, module) {
+    "main-CNRJj44X.js"(exports, module) {
       var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
@@ -6834,13 +6834,13 @@ function print() { __p += __j.call(arguments, '') }
               reject(lastError || event.target);
             };
             function requestOnError(evt) {
-              var request2 = evt.target || this;
-              lastError = request2.error || request2.transaction.error, reject(lastError);
+              var request = evt.target || this;
+              lastError = request.error || request.transaction.error, reject(lastError);
             }
             forEachItem(items, keyFn, valueFn, function(key, value) {
               value === null && (value = void 0);
-              var request2 = store.put(value, key);
-              request2.onerror = requestOnError;
+              var request = store.put(value, key);
+              request.onerror = requestOnError;
             });
           });
         });
@@ -8309,7 +8309,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                               _cache[36] || (_cache[36] = vue.createTextVNode(": ")),
                               vue.createVNode(vue.unref(elementPlus.ElLink), {
                                 type: "primary",
-                                href: "https://github.com/Tsuk1ko/nhentai-helper/blob/2458629d5a85ad5a16e7594bbb55fa7e359b2ea9/src/utils/nhentai.ts#L56-L74",
+                                href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
                                 target: "_blank"
                               }, {
                                 default: vue.withCtx(() => _cache[35] || (_cache[35] = [
@@ -8390,7 +8390,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
             _: 1
           }, 8, ["modelValue"]));
         }
-      }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-542f0ba0"]]), compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g }), getDownloadExt = () => {
+      }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b1ccce6d"]]), compileTemplate = (tpl) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g }), getDownloadExt = () => {
         const ext = last(settings.compressionFilename.split("."));
         return ext ? ext.toLowerCase() : "zip";
       }, getCompressionOptions = () => ({
@@ -10694,18 +10694,18 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           super(`Request abort ${url}`);
         }
       }
-      const isAbortError = (e) => e instanceof RequestAbortError, request = (params) => {
-        const { url: urlGetter, responseType, retry = 3, on404 } = params;
+      const isAbortError = (e) => e instanceof RequestAbortError, requestArrayBufferGm = (params) => {
+        const { url: urlGetter, retry = 3, on404 } = params;
         let abortFunc;
         const dataPromise = new Promise((resolve, reject) => {
           try {
             const url = typeof urlGetter == "function" ? urlGetter() : urlGetter, req = _GM_xmlhttpRequest({
               method: "GET",
               url,
-              responseType,
+              responseType: "arraybuffer",
               onerror: (e) => {
                 retry === 0 ? (logger.error("Network error", url, e), reject(e)) : (logger.warn("Network error, retry", url, e), setTimeout(() => {
-                  const { abort, dataPromise: dataPromise2 } = request({ ...params, retry: retry - 1 });
+                  const { abort, dataPromise: dataPromise2 } = requestArrayBufferGm({ ...params, retry: retry - 1 });
                   abortFunc = abort, resolve(dataPromise2);
                 }, 1e3));
               },
@@ -10714,9 +10714,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                 if (status === 200) resolve(response);
                 else if (retry === 0) reject(r);
                 else {
-                  const additionRetry = status === 404 ? on404 == null ? void 0 : on404(r) : !1;
+                  const additionRetry = status === 404 ? on404 == null ? void 0 : on404(r.finalUrl) : !1;
                   logger.warn("Request error, retry", status, url, r), setTimeout(() => {
-                    const { abort, dataPromise: dataPromise2 } = request({
+                    const { abort, dataPromise: dataPromise2 } = requestArrayBufferGm({
                       ...params,
                       retry: retry - (additionRetry ? 0 : 1)
                     });
@@ -10736,7 +10736,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           abort: () => abortFunc == null ? void 0 : abortFunc(),
           dataPromise
         };
-      }, getText = (url) => request({ url }).dataPromise, fetchJSON = (url) => fetch(url).then((r) => r.json());
+      }, fetchText = (url) => fetch(url).then((r) => r.text()), fetchJSON = (url) => fetch(url).then((r) => r.json());
       class Counter {
         constructor(keys2) {
           __publicField(this, "key");
@@ -10819,7 +10819,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         var _a;
         let doc = document;
         if (!IS_PAGE_MANGA_DETAIL) {
-          const html = await getText(`/g/${gid}`);
+          const html = await fetchText(`/g/${gid}`);
           doc = new DOMParser().parseFromString(html, "text/html");
         }
         const match = (_a = /gallery(\(\{[\s\S]+\}\));/.exec(doc.body.innerHTML)) == null ? void 0 : _a[1];
@@ -10946,7 +10946,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         if (!onlineViewUrl)
           throw new Error("get media url failed: cannot find a gallery");
         logger.log(`fetching media url template by ${onlineViewUrl}`);
-        const onlineViewHtml = await getText(onlineViewUrl), $img = loadHTML(onlineViewHtml).find(selector.mediaImage), imgSrc = $img.attr("data-src") || $img.attr("src");
+        const onlineViewHtml = await fetchText(onlineViewUrl), $img = loadHTML(onlineViewHtml).find(selector.mediaImage), imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc)
           throw new Error("get media url failed: cannot find an image src");
         const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, "/{{mid}}/{{filename}}");
@@ -10957,7 +10957,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         if (!detailUrl)
           throw new Error("get detail url failed: cannot find a gallery");
         logger.log(`fetching thumb media url template by ${detailUrl}`);
-        const detailHtml = await getText(detailUrl), $img = loadHTML(detailHtml).find(selector.thumbnailContainerImage), imgSrc = $img.attr("data-src") || $img.attr("src");
+        const detailHtml = await fetchText(detailUrl), $img = loadHTML(detailHtml).find(selector.thumbnailContainerImage), imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc)
           throw new Error("get thumb media url failed: cannot find an image src");
         const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, "/{{mid}}/{{filename}}");
@@ -11194,11 +11194,10 @@ ${this.serializer.serializeToString(this.doc)}`;
           if (!urlGetter || urlGetterError)
             throw info.error = !0, urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No available url");
           typeof urlGetter != "function" && logger.log(`[${threadID}] ${urlGetter}`);
-          const { abort: abort2, dataPromise } = request({
+          const { abort: abort2, dataPromise } = requestArrayBufferGm({
             url: urlGetter,
-            responseType: "arraybuffer",
-            on404: useCounter ? (e) => {
-              const counterKey = new URL(e.finalUrl).host;
+            on404: useCounter ? (url) => {
+              const counterKey = new URL(url).host;
               return logger.warn(`[${threadID}] ban ${counterKey} because 404`), nHentaiDownloadHostCounter.ban(counterKey);
             } : void 0
           });
