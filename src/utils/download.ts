@@ -14,7 +14,7 @@ import {
   NHentaiImgExt,
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
-import { isAbortError, request } from './request';
+import { isAbortError, requestArrayBufferGm, requestArrayBufferFetch } from './request';
 import { customFilenameFunction, NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
@@ -138,12 +138,11 @@ export const downloadGalleryByInfo = async (
       logger.log(`[${threadID}] ${urlGetter}`);
     }
 
-    const { abort, dataPromise } = request({
+    const { abort, dataPromise } = requestArrayBufferGm({
       url: urlGetter,
-      responseType: 'arraybuffer',
       on404: useCounter
-        ? e => {
-            const counterKey = new URL(e.finalUrl).host;
+        ? url => {
+            const counterKey = new URL(url).host;
             logger.warn(`[${threadID}] ban ${counterKey} because 404`);
             return nHentaiDownloadHostCounter.ban(counterKey);
           }

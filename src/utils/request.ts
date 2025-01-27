@@ -1,17 +1,6 @@
-import type { GmXmlhttpRequestOption } from '$';
 import { GM_xmlhttpRequest } from '$';
+import { sleep } from './common';
 import logger from './logger';
-
-interface GmResponseTypeMap {
-  text: string;
-  json: any;
-  arraybuffer: ArrayBuffer;
-  blob: Blob;
-  document: Document;
-  stream: ReadableStream<Uint8Array>;
-}
-
-type GmResponseType = keyof GmResponseTypeMap;
 
 class RequestAbortError extends Error {
   public constructor(url: string) {
@@ -21,22 +10,21 @@ class RequestAbortError extends Error {
 
 export const isAbortError = (e: any): e is RequestAbortError => e instanceof RequestAbortError;
 
-export const request = <T extends GmResponseType = 'text'>(params: {
+export const requestArrayBufferGm = (params: {
   url: string | (() => string);
-  responseType?: T;
   retry?: number;
   /** Return `true` when there are available hosts */
-  on404?: (...args: Parameters<NonNullable<GmXmlhttpRequestOption<any, T>['onload']>>) => boolean;
-}): { abort: () => void; dataPromise: Promise<GmResponseTypeMap[T]> } => {
-  const { url: urlGetter, responseType, retry = 3, on404 } = params;
+  on404?: (url: string) => boolean;
+}): { abort: () => void; dataPromise: Promise<ArrayBuffer> } => {
+  const { url: urlGetter, retry = 3, on404 } = params;
   let abortFunc: (() => void) | undefined;
-  const dataPromise = new Promise((resolve, reject) => {
+  const dataPromise = new Promise<ArrayBuffer>((resolve, reject) => {
     try {
       const url = typeof urlGetter === 'function' ? urlGetter() : urlGetter;
       const req = GM_xmlhttpRequest({
         method: 'GET',
         url,
-        responseType,
+        responseType: 'arraybuffer',
         onerror: e => {
           if (retry === 0) {
             logger.error('Network error', url, e);
@@ -44,7 +32,7 @@ export const request = <T extends GmResponseType = 'text'>(params: {
           } else {
             logger.warn('Network error, retry', url, e);
             setTimeout(() => {
-              const { abort, dataPromise } = request({ ...params, retry: retry - 1 });
+              const { abort, dataPromise } = requestArrayBufferGm({ ...params, retry: retry - 1 });
               abortFunc = abort;
               resolve(dataPromise);
             }, 1000);
@@ -55,10 +43,10 @@ export const request = <T extends GmResponseType = 'text'>(params: {
           if (status === 200) resolve(response);
           else if (retry === 0) reject(r);
           else {
-            const additionRetry = status === 404 ? on404?.(r) : false;
+            const additionRetry = status === 404 ? on404?.(r.finalUrl) : false;
             logger.warn('Request error, retry', status, url, r);
             setTimeout(() => {
-              const { abort, dataPromise } = request({
+              const { abort, dataPromise } = requestArrayBufferGm({
                 ...params,
                 retry: retry - (additionRetry ? 0 : 1),
               });
@@ -83,9 +71,51 @@ export const request = <T extends GmResponseType = 'text'>(params: {
   };
 };
 
-export const getJSON = <D = any>(url: string): Promise<D> =>
-  request({ url, responseType: 'json' }).dataPromise;
+export const requestArrayBufferFetch = ({
+  url: urlGetter,
+  retry = 3,
+  on404,
+}: {
+  url: string | (() => string);
+  retry?: number;
+  /** Return `true` when there are available hosts */
+  on404?: (url: string) => boolean;
+}): { abort: () => void; dataPromise: Promise<ArrayBuffer> } => {
+  const controller = new AbortController();
 
-export const getText = (url: string): Promise<string> => request({ url }).dataPromise;
+  const doFetch = async (retry: number): Promise<ArrayBuffer> => {
+    const url = typeof urlGetter === 'function' ? urlGetter() : urlGetter;
+    try {
+      const r = await fetch(url, { credentials: 'include', signal: controller.signal });
+      const { status } = r;
+      // eslint-disable-next-line @typescript-eslint/return-await
+      if (status === 200) return r.arrayBuffer();
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      if (retry === 0) throw r;
+      const additionRetry = status === 404 ? on404?.(r.url) : false;
+      logger.warn('Request error, retry', status, url, r);
+      await sleep(1000);
+      // eslint-disable-next-line @typescript-eslint/return-await
+      return doFetch(retry - (additionRetry ? 0 : 1));
+    } catch (e) {
+      if (retry === 0) {
+        logger.error('Network error', url, e);
+        throw e;
+      }
+      logger.warn('Network error, retry', url, e);
+      await sleep(1000);
+      return doFetch(retry - 1);
+    }
+  };
+
+  return {
+    abort: () => {
+      controller.abort();
+    },
+    dataPromise: doFetch(retry),
+  };
+};
+
+export const fetchText = (url: string): Promise<string> => fetch(url).then(r => r.text());
 
 export const fetchJSON = <D = any>(url: string): Promise<D> => fetch(url).then(r => r.json());

@@ -2,7 +2,7 @@
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
 import { filter, identity, invert, map, once } from 'lodash-es';
-import { fetchJSON, getText } from './request';
+import { fetchJSON, fetchText } from './request';
 import { compileTemplate } from './common';
 import {
   NHentaiDownloadHostSpecial,
@@ -130,7 +130,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   let doc = document;
 
   if (!IS_PAGE_MANGA_DETAIL) {
-    const html = await getText(`/g/${gid}`);
+    const html = await fetchText(`/g/${gid}`);
     // 直接把 html 给 jq 解析的话会把里面的图片也给加载了，用 DOMParser 解析完再扔给 jq 就不会
     const parser = new DOMParser();
     doc = parser.parseFromString(html, 'text/html');
@@ -327,7 +327,7 @@ const fetchMediaUrlTemplate = async (gid: string) => {
 
   logger.log(`fetching media url template by ${onlineViewUrl}`);
 
-  const onlineViewHtml = await getText(onlineViewUrl);
+  const onlineViewHtml = await fetchText(onlineViewUrl);
   const $doc = loadHTML(onlineViewHtml);
   const $img = $doc.find(selector.mediaImage);
   const imgSrc = $img.attr('data-src') || $img.attr('src');
@@ -352,7 +352,7 @@ const fetchThumbMediaUrlTemplate = async (gid: string) => {
 
   logger.log(`fetching thumb media url template by ${detailUrl}`);
 
-  const detailHtml = await getText(detailUrl);
+  const detailHtml = await fetchText(detailUrl);
   const $doc = loadHTML(detailHtml);
   const $img = $doc.find(selector.thumbnailContainerImage);
   const imgSrc = $img.attr('data-src') || $img.attr('src');
