@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.19.3
+// @version            3.19.4
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -1153,7 +1153,7 @@ span.monospace[data-v-b1ccce6d] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-CNRJj44X.js"(exports, module) {
+    "main-BOFuSiLe.js"(exports, module) {
       var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
@@ -8424,6 +8424,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           error: !1
         };
         return needReactive ? (vue.markRaw(info.gallery), vue.reactive(info)) : info;
+      }, tryParseJSON = (str) => {
+        if (typeof str == "string")
+          try {
+            return JSON.parse(str);
+          } catch {
+          }
       };
       var noty$1 = { exports: {} };
       var noty = noty$1.exports, hasRequiredNoty;
@@ -10816,7 +10822,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         const url = `https://nhentai.net/api/gallery/${gid2}`;
         return fetchJSON(url);
       }, fixGalleryObj = (gallery2, gid2) => (gid2 && (gallery2.id = Number(gid2)), Array.isArray(gallery2.images.pages) || (gallery2.images.pages = Object.values(gallery2.images.pages)), gallery2), getGalleryFromWebpage = async (gid) => {
-        var _a;
+        var _a, _b;
         let doc = document;
         if (!IS_PAGE_MANGA_DETAIL) {
           const html = await fetchText(`/g/${gid}`);
@@ -10832,26 +10838,39 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           }
         const $doc = $(doc.body), english = $doc.find(selector.englishTitle).text(), japanese = $doc.find(selector.japaneseTitle).text(), pages = [];
         let mediaId = "";
-        if ($doc.find(selector.thumbnailContainerImage).each((i, img) => {
-          const src = img.dataset.src ?? img.src, width = img.getAttribute("width"), height = img.getAttribute("height"), match2 = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
-          if (!match2) return;
-          const [, mid, index, ext] = match2;
-          mediaId || (mediaId = mid);
-          const t2 = getTypeFromExt(ext);
-          t2 && (pages[Number(index) - 1] = {
-            t: t2,
-            w: width ? Number(width) : void 0,
-            h: height ? Number(height) : void 0
+        const xxxPageMatch = tryParseJSON((_b = /'({"fl":{"1":"[^']+)'/.exec(doc.body.innerHTML)) == null ? void 0 : _b[1]);
+        if (xxxPageMatch) {
+          const img = $doc.find(selector.thumbnailContainerImage)[0], src = img.dataset.src ?? img.src, match2 = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
+          match2 && (mediaId = match2[1]), forEach(xxxPageMatch.fl, (data, index) => {
+            const [type, width, height] = data.split(",");
+            pages[Number(index) - 1] = {
+              t: type,
+              w: width ? Number(width) : void 0,
+              h: height ? Number(height) : void 0
+            };
           });
-        }), !english && !japanese || !mediaId || !pages.length)
+        } else
+          $doc.find(selector.thumbnailContainerImage).each((i, img) => {
+            const src = img.dataset.src ?? img.src, width = img.getAttribute("width"), height = img.getAttribute("height"), match2 = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
+            if (!match2) return;
+            const [, mid, index, ext] = match2;
+            mediaId || (mediaId = mid);
+            const t2 = getTypeFromExt(ext);
+            t2 && (pages[Number(index) - 1] = {
+              t: t2,
+              w: width ? Number(width) : void 0,
+              h: height ? Number(height) : void 0
+            });
+          });
+        if (!english && !japanese || !mediaId || !pages.length)
           throw new Error("Get gallery info error.");
         const getTags = (type, elContains) => {
           const $tags = $doc.find(selector.tag(elContains));
           return filter(
             Array.from($tags).map((el) => {
-              var _a2, _b;
+              var _a2, _b2;
               if (!(el instanceof HTMLElement)) return;
-              const name = (_a2 = el.querySelector(selector.tagName)) == null ? void 0 : _a2.innerText.trim(), count = (_b = el.querySelector(selector.tagCount)) == null ? void 0 : _b.innerText.trim();
+              const name = (_a2 = el.querySelector(selector.tagName)) == null ? void 0 : _a2.innerText.trim(), count = (_b2 = el.querySelector(selector.tagCount)) == null ? void 0 : _b2.innerText.trim();
               return name ? {
                 type,
                 name,
