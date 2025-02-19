@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
-import { filter, identity, invert, map, once } from 'lodash-es';
+import { each, filter, identity, invert, map, once } from 'lodash-es';
 import { fetchJSON, fetchText } from './request';
-import { compileTemplate } from './common';
+import { compileTemplate, tryParseJSON } from './common';
 import {
   NHentaiDownloadHostSpecial,
   nHentaiDownloadHosts,
@@ -157,22 +157,41 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   const pages: NHentaiImage[] = [];
   let mediaId = '';
 
-  $doc.find<HTMLImageElement>(selector.thumbnailContainerImage).each((i, img) => {
+  const xxxPageMatch = tryParseJSON<{
+    fl: Record<string, string>;
+    th: Record<string, string>;
+  }>(/'({"fl":{"1":"[^']+)'/.exec(doc.body.innerHTML)?.[1]);
+  if (xxxPageMatch) {
+    const img = $doc.find<HTMLImageElement>(selector.thumbnailContainerImage)[0];
     const src = img.dataset.src ?? img.src;
-    const width = img.getAttribute('width');
-    const height = img.getAttribute('height');
     const match = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
-    if (!match) return;
-    const [, mid, index, ext] = match;
-    if (!mediaId) mediaId = mid;
-    const t = getTypeFromExt(ext);
-    if (!t) return;
-    pages[Number(index) - 1] = {
-      t,
-      w: width ? Number(width) : undefined,
-      h: height ? Number(height) : undefined,
-    };
-  });
+    if (match) mediaId = match[1];
+    each(xxxPageMatch.fl, (data, index) => {
+      const [type, width, height] = data.split(',');
+      pages[Number(index) - 1] = {
+        t: type as any,
+        w: width ? Number(width) : undefined,
+        h: height ? Number(height) : undefined,
+      };
+    });
+  } else {
+    $doc.find<HTMLImageElement>(selector.thumbnailContainerImage).each((i, img) => {
+      const src = img.dataset.src ?? img.src;
+      const width = img.getAttribute('width');
+      const height = img.getAttribute('height');
+      const match = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
+      if (!match) return;
+      const [, mid, index, ext] = match;
+      if (!mediaId) mediaId = mid;
+      const t = getTypeFromExt(ext);
+      if (!t) return;
+      pages[Number(index) - 1] = {
+        t,
+        w: width ? Number(width) : undefined,
+        h: height ? Number(height) : undefined,
+      };
+    });
+  }
 
   if ((!english && !japanese) || !mediaId || !pages.length) {
     throw new Error('Get gallery info error.');

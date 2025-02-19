@@ -71,3 +71,10 @@ export const createMangaDownloadInfo = (
 
 export const addResourceStyle = (name: string): ReturnType<typeof GM_addStyle> =>
   GM_addStyle(GM_getResourceText(name));
+
+export const tryParseJSON = <T = unknown>(str: unknown): T | undefined => {
+  if (typeof str !== 'string') return;
+  try {
+    return JSON.parse(str);
+  } catch {}
+};
