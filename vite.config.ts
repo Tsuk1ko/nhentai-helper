@@ -28,6 +28,8 @@ export default defineConfig(async ({ mode }) => ({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      // fix: qr-scanner use dynamic import
+      'qr-scanner': 'qr-scanner/qr-scanner.legacy.min.js',
     },
   },
   plugins: [
