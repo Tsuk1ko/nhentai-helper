@@ -51,17 +51,19 @@ const options = IS_NHENTAI_TO
         ['chinese', '29963'],
       ];
 
+const optionsMap: Record<string, string> = Object.fromEntries(options);
+
 watch(
   languageFilter,
   val => {
-    filterLanguage(val);
+    filterLanguage(optionsMap, val);
   },
   { deep: true, immediate: true },
 );
 
 defineExpose({
-  filterLanguage: ($node?: Parameters<typeof filterLanguage>['1']) => {
-    filterLanguage(languageFilter.value, $node);
+  filterLanguage: ($node?: Parameters<typeof filterLanguage>['2']) => {
+    filterLanguage(optionsMap, languageFilter.value, $node);
   },
 });
 </script>
