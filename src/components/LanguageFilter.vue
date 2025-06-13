@@ -9,7 +9,7 @@
       :placeholder="t('common.filter')"
     >
       <el-option
-        v-for="[key, val] in options"
+        v-for="[key, val] in filterOptions"
         :key="key"
         :label="t(`common.abbr.${key}`)"
         :value="val"
@@ -23,8 +23,8 @@
 import { watch } from 'vue';
 import { ElSelect, ElOption } from 'element-plus';
 import { useSessionStorage } from '@vueuse/core';
-import { IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
-import { filterLanguage } from '@/utils/languageFilter';
+import type { JQElement } from '@/utils/languageFilter';
+import { filterLanguage, filterOptions } from '@/utils/languageFilter';
 import { i18n } from '@/i18n';
 
 const { t } = i18n.global;
@@ -33,37 +33,17 @@ const languageFilter = useSessionStorage<string[]>('languageFilter', [], {
   listenToStorageChanges: false,
 });
 
-const options = IS_NHENTAI_TO
-  ? [
-      ['japanese', '2'],
-      ['english', '19'],
-      ['chinese', '10197'],
-    ]
-  : IS_NHENTAI_XXX
-    ? [
-        ['japanese', '2'],
-        ['english', '1'],
-        ['chinese', '3'],
-      ]
-    : [
-        ['japanese', '6346'],
-        ['english', '12227'],
-        ['chinese', '29963'],
-      ];
-
-const optionsMap: Record<string, string> = Object.fromEntries(options);
-
 watch(
   languageFilter,
   val => {
-    filterLanguage(optionsMap, val);
+    filterLanguage(val);
   },
   { deep: true, immediate: true },
 );
 
 defineExpose({
-  filterLanguage: ($node?: Parameters<typeof filterLanguage>['2']) => {
-    filterLanguage(optionsMap, languageFilter.value, $node);
+  filterLanguage: ($node?: JQElement) => {
+    filterLanguage(languageFilter.value, $node);
   },
 });
 </script>
