@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.20.0
+// @version            3.20.2
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -1033,25 +1033,25 @@ span.monospace[data-v-b1ccce6d] {
   -webkit-user-select: none;
   user-select: none;
 }
-.language-filter[data-v-e2153767] {
+.language-filter[data-v-5d918f9c] {
   display: inline-flex;
   align-items: center;
   padding-left: 10px;
   vertical-align: middle;
 }
-.filter-select[data-v-e2153767] {
+.filter-select[data-v-5d918f9c] {
   width: 140px;
   margin-right: -140px;
 }
-.filter-select[data-v-e2153767] .el-input__inner {
+.filter-select[data-v-5d918f9c] .el-input__inner {
   color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
   background: 0 0 !important;
 }
 @media screen and (max-width: 644px) {
-  .language-filter[data-v-e2153767] {
+  .language-filter[data-v-5d918f9c] {
     padding: 10px 0;
   }
-  .filter-select[data-v-e2153767] {
+  .filter-select[data-v-5d918f9c] {
     margin-right: 0;
   }
 }
@@ -1153,7 +1153,7 @@ span.monospace[data-v-b1ccce6d] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-xfhdUKOa.js"(exports, module) {
+    "main-BFdQiSf6.js"(exports, module) {
       var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
@@ -11773,19 +11773,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         setup(__props, { expose: __expose }) {
           const { t: t2 } = i18n.global, languageFilter = useSessionStorage("languageFilter", [], {
             listenToStorageChanges: false
-          }), options = IS_NHENTAI_TO ? [
-            ["japanese", "2"],
-            ["english", "19"],
-            ["chinese", "10197"]
-          ] : IS_NHENTAI_XXX ? [
-            ["japanese", "2"],
-            ["english", "1"],
-            ["chinese", "3"]
-          ] : [
-            ["japanese", "6346"],
-            ["english", "12227"],
-            ["chinese", "29963"]
-          ];
+          });
           return vue.watch(
             languageFilter,
             (val) => {
@@ -11807,7 +11795,7 @@ ${this.serializer.serializeToString(this.doc)}`;
               placeholder: vue.unref(t2)("common.filter")
             }, {
               default: vue.withCtx(() => [
-                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(options), ([key, val]) => (vue.openBlock(), vue.createBlock(vue.unref(elementPlus.ElOption), {
+                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(filterOptions), ([key, val]) => (vue.openBlock(), vue.createBlock(vue.unref(elementPlus.ElOption), {
                   key,
                   label: vue.unref(t2)(`common.abbr.${key}`),
                   value: val
@@ -11822,12 +11810,33 @@ ${this.serializer.serializeToString(this.doc)}`;
             }, 8, ["modelValue", "placeholder"])
           ]));
         }
-      }), LanguageFilter = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e2153767"]]), filterLanguage = (tags2, $node) => {
-        const attrName = IS_NHENTAI_XXX ? "data-languages" : "data-tags", getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
-        if (getNode(selector.gallery).removeClass("nhentai-helper-hidden"), tags2.length) {
-          const notSelector = tags2.map((tag) => `:not([${attrName}~=${tag}])`).join("");
-          getNode(`${selector.gallery}${notSelector}`).addClass("nhentai-helper-hidden");
-        }
+      }), LanguageFilter = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-5d918f9c"]]), filterOptions = IS_NHENTAI_TO ? [
+        ["japanese", "2"],
+        ["english", "19"],
+        ["chinese", "10197"]
+      ] : IS_NHENTAI_XXX ? [
+        ["japanese", "2"],
+        ["english", "1"],
+        ["chinese", "3"]
+      ] : [
+        ["japanese", "6346"],
+        ["english", "12227"],
+        ["chinese", "29963"]
+      ], filterOptionsMap = Object.fromEntries(filterOptions), allLangTags = Object.values(filterOptionsMap), detectRegMap = Object.entries({
+        english: /\[english\]|translation\]/i,
+        chinese: /\[chinese\]|中国翻訳|漢化\]/i
+      }), handleMissingDataTags = ($gallery) => {
+        $gallery.each(function() {
+          var _a;
+          const title = $(this).find(selector.galleryCaption).text(), lang = ((_a = detectRegMap.find(([, reg]) => reg.test(title))) == null ? void 0 : _a[0]) || "japanese", tag = filterOptionsMap[lang];
+          if (tag) {
+            const curTags = this.dataset.tags;
+            this.dataset.tags = `${curTags ? `${curTags} ` : ""}${tag}`;
+          }
+        });
+      }, filterLanguage = (tags2, $node) => {
+        const attrName = IS_NHENTAI_XXX ? "data-languages" : "data-tags", getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2), getNotSelector = (tags22) => tags22.map((tag) => `:not([${attrName}~=${tag}])`).join("");
+        getNode(selector.gallery).removeClass("nhentai-helper-hidden"), handleMissingDataTags(getNode(`${selector.gallery}${getNotSelector(allLangTags)}`)), tags2.length && getNode(`${selector.gallery}${getNotSelector(tags2)}`).addClass("nhentai-helper-hidden");
       }, mountLanguageFilter = () => {
         var _a;
         const menuLeft = document.querySelector(selector.menuLeft);
