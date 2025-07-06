@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.20.2
+// @version            3.20.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -1153,7 +1153,7 @@ span.monospace[data-v-b1ccce6d] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-BFdQiSf6.js"(exports, module) {
+    "main-BZLRSbpf.js"(exports, module) {
       var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
@@ -1203,7 +1203,7 @@ span.monospace[data-v-b1ccce6d] {
           thumbnailHref: ".gt_th > a",
           englishTitle: ".info h1",
           japaneseTitle: ".info h2",
-          tag: (text) => `li.tags:contains(${text})`,
+          tag: (text) => `li.tags:contains(${text}) .tag_btn`,
           tagName: ".tag_name",
           tagCount: ".tag_count",
           pagesTag: ".tag_name.pages",
@@ -10944,12 +10944,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
             Array.from($tags).map((el) => {
               var _a2, _b2;
               if (!(el instanceof HTMLElement)) return;
-              const name = (_a2 = el.querySelector(selector.tagName)) == null ? void 0 : _a2.innerText.trim(), count = (_b2 = el.querySelector(selector.tagCount)) == null ? void 0 : _b2.innerText.trim();
+              const name = (_a2 = el.querySelector(selector.tagName)) == null ? void 0 : _a2.innerText.trim(), countStr = (_b2 = el.querySelector(selector.tagCount)) == null ? void 0 : _b2.innerText.trim(), count = countStr ? parseInt(countStr) * (countStr.match(/k$/i) ? 1e3 : 1) : void 0;
               return name ? {
                 type,
                 name,
                 url: el.getAttribute("href") || void 0,
-                count: count ? Number(count) : void 0
+                count
               } : void 0;
             })
           );
