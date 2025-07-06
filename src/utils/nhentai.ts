@@ -203,13 +203,16 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
       Array.from($tags).map((el): NHentaiTag | undefined => {
         if (!(el instanceof HTMLElement)) return undefined;
         const name = el.querySelector<HTMLElement>(selector.tagName)?.innerText.trim();
-        const count = el.querySelector<HTMLElement>(selector.tagCount)?.innerText.trim();
+        const countStr = el.querySelector<HTMLElement>(selector.tagCount)?.innerText.trim();
+        const count = countStr
+          ? parseInt(countStr) * (countStr.match(/k$/i) ? 1000 : 1)
+          : undefined;
         return name
           ? {
               type,
               name,
               url: el.getAttribute('href') || undefined,
-              count: count ? Number(count) : undefined,
+              count,
             }
           : undefined;
       }),

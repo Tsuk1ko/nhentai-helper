@@ -50,7 +50,7 @@ const siteMap: Record<string, Partial<SelectorRule>> = {
     thumbnailHref: '.gt_th > a',
     englishTitle: '.info h1',
     japaneseTitle: '.info h2',
-    tag: (text: string) => `li.tags:contains(${text})`,
+    tag: (text: string) => `li.tags:contains(${text}) .tag_btn`,
     tagName: '.tag_name',
     tagCount: '.tag_count',
     pagesTag: '.tag_name.pages',
