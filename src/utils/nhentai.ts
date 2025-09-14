@@ -15,6 +15,7 @@ import { Counter } from './counter';
 import { loadHTML } from './html';
 import { OrderCache } from './orderCache';
 import { removeIllegalFilenameChars } from './formatter';
+import { ensureProtocol } from './url';
 import {
   MEDIA_URL_TEMPLATE_MAY_CHANGE,
   IS_NHENTAI,
@@ -357,7 +358,9 @@ const fetchMediaUrlTemplate = async (gid: string) => {
     throw new Error('get media url failed: cannot find an image src');
   }
 
-  const template = imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, '/{{mid}}/{{filename}}');
+  const template = ensureProtocol(
+    imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, '/{{mid}}/{{filename}}'),
+  );
   if (!MEDIA_URL_TEMPLATE_MAY_CHANGE) GM_setValue(MEDIA_URL_TEMPLATE_KEY, template);
 
   return template;
@@ -382,7 +385,9 @@ const fetchThumbMediaUrlTemplate = async (gid: string) => {
     throw new Error('get thumb media url failed: cannot find an image src');
   }
 
-  const template = imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, '/{{mid}}/{{filename}}');
+  const template = ensureProtocol(
+    imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, '/{{mid}}/{{filename}}'),
+  );
   GM_setValue(THUMB_MEDIA_URL_TEMPLATE_KEY, template);
 
   return template;

@@ -14,7 +14,7 @@ import {
   NHentaiImgExt,
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
-import { isAbortError, requestArrayBufferGm, requestArrayBufferFetch } from './request';
+import { isAbortError, requestArrayBufferGm } from './request';
 import { customFilenameFunction, NHentaiDownloadHostSpecial, settings } from './settings';
 import { errorRetryConfirm } from './dialog';
 import { markAsDownloaded } from './downloadHistory';
@@ -227,7 +227,10 @@ export const downloadGalleryByInfo = async (
       const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
       await zipStream.pipeTo(fileStream);
     } else {
-      const data = await zip.generateAsync(getCompressionOptions(), onCompressionUpdate);
+      const data = (await zip.generateAsync(
+        getCompressionOptions(),
+        onCompressionUpdate,
+      )) as Uint8Array<ArrayBuffer>;
       saveAs(new File([data], cfName, { type: 'application/zip' }));
     }
 
