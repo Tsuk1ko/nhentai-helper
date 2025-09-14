@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.20.3
+// @version            3.20.4
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -17,11 +17,11 @@
 // @match              https://nhentai.xxx/*
 // @match              https://nhentai.to/*
 // @match              https://nhentai.website/*
-// @require            https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js
+// @require            https://unpkg.com/vue@3.5.21/dist/vue.global.prod.js
 // @require            data:application/javascript,window.Vue%3DVue%2Cwindow.Date.now%7C%7C(window.Date.now%3D()%3D%3Enew%20Date().getTime())%3B
-// @require            https://unpkg.com/element-plus@2.9.1/dist/index.full.min.js
+// @require            https://unpkg.com/element-plus@2.11.2/dist/index.full.min.js
 // @require            https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
-// @resource           element-plus-css  https://unpkg.com/element-plus@2.9.1/dist/index.css
+// @resource           element-plus-css  https://unpkg.com/element-plus@2.11.2/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            i1.nhentai.net
@@ -1153,7 +1153,7 @@ span.monospace[data-v-b1ccce6d] {
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key != "symbol" ? key + "" : key, value), __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
   var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj)), __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value), __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
   var require_main_001 = __commonJS({
-    "main-BZLRSbpf.js"(exports, module) {
+    "main-Yvs29ng6.js"(exports, module) {
       var _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
       const defaultSelector = {
         // list
@@ -3358,9 +3358,9 @@ function print() { __p += __j.call(arguments, '') }
               key: 0,
               class: "download-item__cancel",
               onClick: cancel
-            }, _cache[0] || (_cache[0] = [
+            }, [..._cache[0] || (_cache[0] = [
               vue.createElementVNode("i", { class: "fa fa-times" }, null, -1)
-            ]))) : vue.createCommentVNode("", true),
+            ])])) : vue.createCommentVNode("", true),
             vue.createElementVNode("div", _hoisted_2$2, vue.toDisplayString(title.value), 1),
             vue.createElementVNode("div", {
               class: "download-item__progress",
@@ -3413,7 +3413,7 @@ function print() { __p += __j.call(arguments, '') }
           }, null, 8, ["zip-list", "dl-list"])) : vue.createCommentVNode("", true);
         }
       });
-      var close_bold_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ vue.defineComponent({
+      var _sfc_main55 = /* @__PURE__ */ vue.defineComponent({
         name: "CloseBold",
         __name: "close-bold",
         setup(__props) {
@@ -3423,11 +3423,11 @@ function print() { __p += __j.call(arguments, '') }
           }, [
             vue.createElementVNode("path", {
               fill: "currentColor",
-              d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+              d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496"
             })
           ]));
         }
-      }), close_bold_default = close_bold_vue_vue_type_script_setup_true_lang_default, delete_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ vue.defineComponent({
+      }), close_bold_default = _sfc_main55, _sfc_main80 = /* @__PURE__ */ vue.defineComponent({
         name: "Delete",
         __name: "delete",
         setup(__props) {
@@ -3441,7 +3441,7 @@ function print() { __p += __j.call(arguments, '') }
             })
           ]));
         }
-      }), delete_default = delete_vue_vue_type_script_setup_true_lang_default, download_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ vue.defineComponent({
+      }), delete_default = _sfc_main80, _sfc_main91 = /* @__PURE__ */ vue.defineComponent({
         name: "Download",
         __name: "download",
         setup(__props) {
@@ -3455,7 +3455,7 @@ function print() { __p += __j.call(arguments, '') }
             })
           ]));
         }
-      }), download_default = download_vue_vue_type_script_setup_true_lang_default, upload_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ vue.defineComponent({
+      }), download_default = _sfc_main91, _sfc_main275 = /* @__PURE__ */ vue.defineComponent({
         name: "Upload",
         __name: "upload",
         setup(__props) {
@@ -3469,7 +3469,7 @@ function print() { __p += __j.call(arguments, '') }
             })
           ]));
         }
-      }), upload_default = upload_vue_vue_type_script_setup_true_lang_default;
+      }), upload_default = _sfc_main275;
       const inBrowser = typeof window < "u", makeSymbol = (name, shareable = false) => shareable ? Symbol.for(name) : Symbol(name), generateFormatCacheKey = (locale, key, source) => friendlyJSONstringify({ l: locale, k: key, s: source }), friendlyJSONstringify = (json) => JSON.stringify(json).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029").replace(/\u0027/g, "\\u0027"), isNumber = (val) => typeof val == "number" && isFinite(val), isRegExp = (val) => toTypeString(val) === "[object RegExp]", isEmptyObject = (val) => isPlainObject(val) && Object.keys(val).length === 0, assign = Object.assign, _create$1 = Object.create, create$1 = (obj = null) => _create$1(obj);
       let _globalThis$1;
       const getGlobalThis$1 = () => _globalThis$1 || (_globalThis$1 = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : typeof global < "u" ? global : create$1());
@@ -8017,17 +8017,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                             vue.createVNode(vue.unref(elementPlus.ElRadio), {
                               value: vue.unref(MIME).JPG
                             }, {
-                              default: vue.withCtx(() => _cache[31] || (_cache[31] = [
-                                vue.createTextVNode("jpg")
-                              ])),
+                              default: vue.withCtx(() => [..._cache[31] || (_cache[31] = [
+                                vue.createTextVNode("jpg", -1)
+                              ])]),
                               _: 1
                             }, 8, ["value"]),
                             vue.createVNode(vue.unref(elementPlus.ElRadio), {
                               value: vue.unref(MIME).PNG
                             }, {
-                              default: vue.withCtx(() => _cache[32] || (_cache[32] = [
-                                vue.createTextVNode("png")
-                              ])),
+                              default: vue.withCtx(() => [..._cache[32] || (_cache[32] = [
+                                vue.createTextVNode("png", -1)
+                              ])]),
                               _: 1
                             }, 8, ["value"])
                           ]),
@@ -8297,9 +8297,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                                   style: { width: "100%" },
                                   onClick: addTitleReplacement
                                 }, {
-                                  default: vue.withCtx(() => _cache[33] || (_cache[33] = [
-                                    vue.createTextVNode("+")
-                                  ])),
+                                  default: vue.withCtx(() => [..._cache[33] || (_cache[33] = [
+                                    vue.createTextVNode("+", -1)
+                                  ])]),
                                   _: 1
                                 })
                               ]),
@@ -8353,8 +8353,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                                           icon: vue.unref(delete_default)
                                         }, null, 8, ["icon"])
                                       ]),
-                                      _: 2
-                                    }, 1032, ["onConfirm"])
+                                      _: 1
+                                    }, 8, ["onConfirm"])
                                   ]),
                                   _: 1
                                 })
@@ -8372,31 +8372,31 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                     }, {
                       default: vue.withCtx(() => [
                         vue.createElementVNode("span", _hoisted_12, [
-                          _cache[37] || (_cache[37] = vue.createTextVNode("function (filename")),
+                          _cache[37] || (_cache[37] = vue.createTextVNode("function (filename", -1)),
                           vue.createVNode(vue.unref(elementPlus.ElText), { type: "info" }, {
-                            default: vue.withCtx(() => _cache[34] || (_cache[34] = [
-                              vue.createTextVNode(": string")
-                            ])),
+                            default: vue.withCtx(() => [..._cache[34] || (_cache[34] = [
+                              vue.createTextVNode(": string", -1)
+                            ])]),
                             _: 1
                           }),
-                          _cache[38] || (_cache[38] = vue.createTextVNode(", gallery")),
+                          _cache[38] || (_cache[38] = vue.createTextVNode(", gallery", -1)),
                           vue.createVNode(vue.unref(elementPlus.ElText), { type: "info" }, {
                             default: vue.withCtx(() => [
-                              _cache[36] || (_cache[36] = vue.createTextVNode(": ")),
+                              _cache[36] || (_cache[36] = vue.createTextVNode(": ", -1)),
                               vue.createVNode(vue.unref(elementPlus.ElLink), {
                                 type: "primary",
                                 href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
                                 target: "_blank"
                               }, {
-                                default: vue.withCtx(() => _cache[35] || (_cache[35] = [
-                                  vue.createTextVNode("NHentaiGallery")
-                                ])),
+                                default: vue.withCtx(() => [..._cache[35] || (_cache[35] = [
+                                  vue.createTextVNode("NHentaiGallery", -1)
+                                ])]),
                                 _: 1
                               })
                             ]),
                             _: 1
                           }),
-                          _cache[39] || (_cache[39] = vue.createTextVNode(") {"))
+                          _cache[39] || (_cache[39] = vue.createTextVNode(") {", -1))
                         ]),
                         vue.createVNode(vue.unref(elementPlus.ElInput), {
                           modelValue: vue.unref(writeableSettings).customFilenameFunction,
@@ -10882,6 +10882,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           super.clear(), this.order = [];
         }
       }
+      const PROTOCOL_REGEXP = /^https?:\/\//, ensureProtocol = (url) => PROTOCOL_REGEXP.test(url) ? url : url.startsWith("//") ? `${location.protocol}${url}` : `${location.protocol}//${url}`;
       var NHentaiImgExt = /* @__PURE__ */ ((NHentaiImgExt2) => (NHentaiImgExt2.j = "jpg", NHentaiImgExt2.p = "png", NHentaiImgExt2.g = "gif", NHentaiImgExt2.w = "webp", NHentaiImgExt2))(NHentaiImgExt || {});
       const nHentaiImgExtReversed = invert(NHentaiImgExt), getTypeFromExt = (ext) => nHentaiImgExtReversed[ext.toLowerCase()], nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts), getNHentaiDownloadHost = (mid) => {
         switch (settings.nHentaiDownloadHost) {
@@ -11042,7 +11043,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         const onlineViewHtml = await fetchText(onlineViewUrl), $img = loadHTML(onlineViewHtml).find(selector.mediaImage), imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc)
           throw new Error("get media url failed: cannot find an image src");
-        const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, "/{{mid}}/{{filename}}");
+        const template2 = ensureProtocol(
+          imgSrc.replace(/\/[0-9a-z]+\/\d+\.[^/]+$/i, "/{{mid}}/{{filename}}")
+        );
         return MEDIA_URL_TEMPLATE_MAY_CHANGE || _GM_setValue(MEDIA_URL_TEMPLATE_KEY, template2), template2;
       }, fetchThumbMediaUrlTemplate = async (gid2) => {
         var _a, _b;
@@ -11053,7 +11056,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         const detailHtml = await fetchText(detailUrl), $img = loadHTML(detailHtml).find(selector.thumbnailContainerImage), imgSrc = $img.attr("data-src") || $img.attr("src");
         if (!imgSrc)
           throw new Error("get thumb media url failed: cannot find an image src");
-        const template2 = imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, "/{{mid}}/{{filename}}");
+        const template2 = ensureProtocol(
+          imgSrc.replace(/\/[0-9a-z]+\/\d+t\.[^/]+$/i, "/{{mid}}/{{filename}}")
+        );
         return _GM_setValue(THUMB_MEDIA_URL_TEMPLATE_KEY, template2), template2;
       }, mediaUrlTemplateGidCache = {}, getMediaUrlTemplate = async (getter, cacheKey, gid2) => {
         if (MEDIA_URL_TEMPLATE_MAY_CHANGE && (mediaUrlTemplateGidCache[cacheKey] || (mediaUrlTemplateGidCache[cacheKey] = /* @__PURE__ */ new Map()), mediaUrlTemplateGidCache[cacheKey].has(gid2)))
@@ -11338,7 +11343,10 @@ ${this.serializer.serializeToString(this.doc)}`;
               const fileStream = StreamSaverExports.createWriteStream(cfName);
               await (await zip.generateStream(getCompressionOptions(), onCompressionUpdate)).pipeTo(fileStream);
             } else {
-              const data = await zip.generateAsync(getCompressionOptions(), onCompressionUpdate);
+              const data = await zip.generateAsync(
+                getCompressionOptions(),
+                onCompressionUpdate
+              );
               FileSaver_minExports.saveAs(new File([data], cfName, { type: "application/zip" }));
             }
             logger.log("completed", cfName), progressDisplayController == null || progressDisplayController.complete(), progressDisplayController == null || progressDisplayController.unbindInfo();
@@ -11693,7 +11701,7 @@ ${this.serializer.serializeToString(this.doc)}`;
           return data;
         const rawInit = vue.toValue(defaults2), type = guessSerializerType(rawInit), serializer = (_a = options.serializer) != null ? _a : StorageSerializers[type], { pause: pauseWatch, resume: resumeWatch } = watchPausable(
           data,
-          () => write(data.value),
+          (newValue) => write(newValue),
           { flush, deep, eventFilter }
         );
         vue.watch(keyComputed, () => update(), { flush });
@@ -11750,7 +11758,8 @@ ${this.serializer.serializeToString(this.doc)}`;
             if (!(event && event.key !== keyComputed.value)) {
               pauseWatch();
               try {
-                (event == null ? void 0 : event.newValue) !== serializer.write(data.value) && (data.value = read(event));
+                const serializedData = serializer.write(data.value);
+                (event === void 0 || (event == null ? void 0 : event.newValue) !== serializedData) && (data.value = read(event));
               } catch (e) {
                 onError(e);
               } finally {
