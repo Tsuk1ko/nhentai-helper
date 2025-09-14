@@ -13,14 +13,14 @@
     "postversion": "tpv"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.3.1",
+    "@element-plus/icons-vue": "^2.3.2",
     "@intlify/core-base": "^11.0.0-rc.1",
     "@intlify/unplugin-vue-i18n": "^6.0.2",
     "@vitejs/plugin-vue": "^5.2.1",
-    "@vueuse/core": "^13.2.0",
+    "@vueuse/core": "^13.9.0",
     "comlink": "^4.4.2",
     "detect-browser": "^5.3.0",
-    "element-plus": "^2.9.1",
+    "element-plus": "^2.11.2",
     "eventemitter3": "^5.0.1",
     "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
@@ -35,7 +35,7 @@
     "petite-vue-i18n": "^11.0.1",
     "qr-scanner": "^1.4.2",
     "streamsaver": "^2.0.6",
-    "vue": "^3.5.13"
+    "vue": "^3.5.21"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
