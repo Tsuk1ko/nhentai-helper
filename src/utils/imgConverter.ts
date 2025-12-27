@@ -1,8 +1,8 @@
 import type { Remote } from 'comlink';
 import { wrap } from 'comlink';
-import ImgConverterWorker from '@/workers/imgConverter?worker&inline';
-import type { ImgConverterExpose } from '@/workers/imgConverter';
 import { MIME } from '@/typings';
+import type { ImgConverterExpose } from '@/workers/imgConverter';
+import ImgConverterWorker from '@/workers/imgConverter?worker&inline';
 
 const mimeToExt: Record<string, string | undefined> = {
   [MIME.JPG]: 'jpg',
@@ -12,7 +12,7 @@ const mimeToExt: Record<string, string | undefined> = {
 export class ImgConverter {
   #worker?: Promise<Remote<ImgConverterExpose>>;
 
-  public async convertWebpTo(...args: Parameters<ImgConverterExpose['convertWebpTo']>) {
+  async convertWebpTo(...args: Parameters<ImgConverterExpose['convertWebpTo']>) {
     const worker = await this.getWorker();
     const { buffer, type } = await worker.convertWebpTo(...args);
     return {

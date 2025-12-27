@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import { h } from 'nano-jsx/lib/core';
+import { i18n } from '@/i18n';
+import { selector } from '@/rules/selector';
 import { createMangaDownloadInfo, getShowAllBtn } from '../common';
 import { downloadAgainConfirm } from '../dialog';
 import type { RangeChecker } from '../download';
@@ -10,13 +11,11 @@ import {
   markAsDownloaded,
   unmarkAsDownloaded,
 } from '../downloadHistory';
+import { IgnoreController } from '../ignoreController';
 import logger from '../logger';
 import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
-import { IgnoreController } from '../ignoreController';
-import { i18n } from '@/i18n';
-import { selector } from '@/rules/selector';
 
 const { t } = i18n.global;
 
@@ -57,17 +56,18 @@ export const initDetailPage = async (): Promise<void> => {
     const gallery = await getGalleryInfo();
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
+      // eslint-disable-next-line regexp/no-super-linear-backtracking
       .filter(range => /^\s*(?:\d+(?:\s*-\s*)?\d*|-\d+)\s*$/.test(range))
       .map(range => {
         const [start, end] = range.split('-').map(num => parseInt(num));
         // -end
-        if (Number.isNaN(start)) return page => page <= end;
+        if (Number.isNaN(start)) return page => page <= end!;
         // start
         if (end === undefined) return page => page === start;
         // start-
-        if (Number.isNaN(end)) return page => page >= start;
+        if (Number.isNaN(end)) return page => page >= start!;
         // start-end
-        return page => start <= page && page <= end;
+        return page => start! <= page && page <= end;
       });
 
     progressDisplayController.lockBtn();

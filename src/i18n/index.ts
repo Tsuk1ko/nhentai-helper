@@ -1,8 +1,8 @@
-import { createI18n, registerMessageResolver } from 'petite-vue-i18n';
 import { resolveValue } from '@intlify/core-base';
+import { createI18n, registerMessageResolver } from 'petite-vue-i18n';
+import { settings } from '@/utils/settings';
 import en from './locales/en';
 import zh from './locales/zh';
-import { settings } from '@/utils/settings';
 
 type MessageSchema = typeof en;
 

@@ -6,7 +6,7 @@ export const defaultLocale = (() => {
   const languages = castArray(navigator.languages || navigator.language);
   for (const language of languages) {
     const lang = language.split('-')[0];
-    if (supportLanguage.has(lang)) return lang;
+    if (lang && supportLanguage.has(lang)) return lang;
   }
   return 'en';
 })();

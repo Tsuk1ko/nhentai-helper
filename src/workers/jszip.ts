@@ -1,6 +1,6 @@
+import { expose, transfer } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipObject, OnUpdateCallback } from 'jszip';
 import JSZip from 'jszip';
-import { expose, transfer } from 'comlink';
 import { getAdPage, isAdImg } from './utils/detectAd';
 
 export interface JSZipFile {
@@ -24,23 +24,22 @@ class DisposableJSZip {
   private readonly zip = new JSZip();
   private readonly adRemoved = false;
 
-  public file({ name, data }: JSZipFile): void {
+  file({ name, data }: JSZipFile): void {
     this.zip.file(name, data);
   }
 
-  public files(files: JSZipFile[]): void {
+  files(files: JSZipFile[]): void {
     files.forEach(({ name, data }) => {
       this.zip.file(name, data);
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  public async unzipFile<T extends JSZipOutputType>({ data, path, type }: JSZipUnzipParams<T>) {
+  async unzipFile<T extends JSZipOutputType>({ data, path, type }: JSZipUnzipParams<T>) {
     const zip = await JSZip.loadAsync(data);
-    return zip.file(path)?.async(type);
+    return zip.file(path)?.async<any>(type);
   }
 
-  public async generateAsync(
+  async generateAsync(
     options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
   ): Promise<Uint8Array> {
@@ -49,7 +48,7 @@ class DisposableJSZip {
     return transfer(data, [data.buffer]);
   }
 
-  public async generateStream(
+  async generateStream(
     options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
     onEnd?: () => void,
@@ -102,7 +101,7 @@ class DisposableJSZip {
         return;
       }
 
-      const adPages = [...adList.values()].map(i => imgFiles[i].obj);
+      const adPages = [...adList.values()].map(i => imgFiles[i]!.obj);
       console.log('[nhentai-helper] ad pages detected:', ...adPages.map(obj => obj.name));
 
       adPages.forEach(obj => {

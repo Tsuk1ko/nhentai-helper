@@ -1,12 +1,12 @@
 {
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["vite.config.ts", "plugins/*.ts"],
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
     "composite": true,
+    "noEmit": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "strictNullChecks": true
-  },
-  "include": ["vite.config.ts", "plugins/*.ts"]
+    "moduleResolution": "Bundler",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "types": ["node"]
+  }
 }

@@ -1,7 +1,7 @@
 import { each, isNil, map } from 'lodash-es';
+import { encodeXml } from '../coder';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import { settings } from '../settings';
-import { encodeXml } from '../coder';
 import type { MetaBuilder } from './MetaBuilder';
 
 const langMap: Record<string, string> = {
@@ -14,7 +14,7 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
   protected serializer = new XMLSerializer();
   protected doc = document.implementation.createDocument(null, 'ComicInfo');
 
-  public constructor(info: NHentaiGalleryInfo) {
+  constructor(info: NHentaiGalleryInfo) {
     this.setRootNS();
     this.appendElement(
       'Title',
@@ -70,13 +70,13 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
     this.root.append(pagesEl);
   }
 
-  public build(): string {
-    const xml = this.serializer.serializeToString(this.doc);
-    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
-  }
-
   protected get root() {
     return this.doc.documentElement;
+  }
+
+  build(): string {
+    const xml = this.serializer.serializeToString(this.doc);
+    return `<?xml version="1.0" encoding="utf-8"?>\n${xml}`;
   }
 
   protected setRootNS() {

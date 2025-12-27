@@ -1,4 +1,7 @@
 import $ from 'jquery';
+import { dlQueue } from '@/common/queue';
+import { selector } from '@/rules/selector';
+import { ErrorAction } from '@/typings';
 import { downloadAgainConfirm, errorRetryConfirm } from '../dialog';
 import { addDownloadGalleryTask } from '../download';
 import {
@@ -8,17 +11,14 @@ import {
   markAsDownloaded,
   unmarkAsDownloaded,
 } from '../downloadHistory';
+import { openGalleryMiniPopover } from '../galleryMiniPopover';
+import { IgnoreController } from '../ignoreController';
+import { mountLanguageFilter } from '../languageFilter';
 import logger from '../logger';
 import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
-import { IgnoreController } from '../ignoreController';
-import { mountLanguageFilter } from '../languageFilter';
-import { openGalleryMiniPopover } from '../galleryMiniPopover';
-import { dlQueue } from '@/common/queue';
-import { ErrorAction } from '@/typings';
-import { selector } from '@/rules/selector';
 
 export const initListPage = (): void => {
   $(selector.gallery).each(initGallery);
@@ -80,7 +80,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
 
   const $a = $gallery.find(selector.galleryCover);
   if (settings.openOnNewTab) $a.attr('target', '_blank');
-  const gid = /\/g\/([0-9]+)/.exec($a.attr('href')!)?.[1];
+  const gid = /\/g\/(\d+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
 

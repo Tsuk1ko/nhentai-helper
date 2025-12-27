@@ -1,6 +1,6 @@
 import { unsafeWindow } from '$';
-import logger from '../logger';
 import { IS_DEV } from '@/const';
+import logger from '../logger';
 
 if (IS_DEV && !unsafeWindow.Date.now) {
   logger.log('fix Date.now');

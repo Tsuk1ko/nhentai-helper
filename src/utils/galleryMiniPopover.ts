@@ -1,7 +1,7 @@
 import { once } from 'lodash-es';
-import { createAppAndMount } from './app';
 import GalleryMiniPopover from '@/app/GalleryMiniPopover.vue';
 import { i18n } from '@/i18n';
+import { createAppAndMount } from './app';
 
 const initApp = once(() =>
   createAppAndMount(GalleryMiniPopover, app => {

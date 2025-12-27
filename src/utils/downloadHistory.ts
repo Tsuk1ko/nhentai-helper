@@ -16,7 +16,7 @@ class DownloadHistory {
   private readonly store: typeof localforage;
   private readonly ready: Promise<boolean>;
 
-  public constructor(private readonly name: string) {
+  constructor(private readonly name: string) {
     this.store = localforage.createInstance({
       name: 'nhentai_helper',
       storeName: name,
@@ -30,7 +30,7 @@ class DownloadHistory {
       });
   }
 
-  public async add(key: string): Promise<void> {
+  async add(key: string): Promise<void> {
     if (!(await this.ready)) return;
     try {
       await this.store.setItem(key, true);
@@ -40,7 +40,7 @@ class DownloadHistory {
     }
   }
 
-  public async del(key: string): Promise<void> {
+  async del(key: string): Promise<void> {
     if (!(await this.ready)) return;
     try {
       await this.store.removeItem(key);
@@ -50,7 +50,7 @@ class DownloadHistory {
     }
   }
 
-  public async has(key: string): Promise<boolean> {
+  async has(key: string): Promise<boolean> {
     if (!(await this.ready)) return false;
     try {
       return (await this.store.getItem<boolean>(key)) === true;
@@ -60,12 +60,12 @@ class DownloadHistory {
     return false;
   }
 
-  public async size(): Promise<number> {
+  async size(): Promise<number> {
     if (!(await this.ready)) return NaN;
     return this.store.length();
   }
 
-  public async import(keys: string[]): Promise<void> {
+  async import(keys: string[]): Promise<void> {
     if (!(await this.ready)) throw new Error(`store ${this.name} cannot ready`);
     try {
       await this.store.setItems(keys.map(gid => ({ key: gid, value: true })));
@@ -74,12 +74,12 @@ class DownloadHistory {
     }
   }
 
-  public async export(): Promise<string[]> {
+  async export(): Promise<string[]> {
     if (!(await this.ready)) throw new Error(`store ${this.name} cannot ready`);
     return this.store.keys();
   }
 
-  public async clear(): Promise<void> {
+  async clear(): Promise<void> {
     if (!(await this.ready)) return;
     await this.store.clear();
   }
@@ -175,7 +175,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
       compression: 'DEFLATE',
       compressionOptions: { level: 9 },
     });
-    const timeStr = dateTimeFormatter.format(Date.now()).replace(/[^\d]/g, '');
+    const timeStr = dateTimeFormatter.format(Date.now()).replace(/\D/g, '');
     const filename = `nhentai-helper-download-history-${timeStr}.zip`;
     saveAs(new File([data], filename, { type: 'application/zip' }));
     logger.log('export download history', filename);

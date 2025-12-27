@@ -6,7 +6,7 @@ export class Counter {
   private readonly countKeys: string[];
   private readonly blackList = new Set<string>();
 
-  public constructor(keys: string[]) {
+  constructor(keys: string[]) {
     if (!keys.length) throw new Error('Counter no key');
     this.countKeys = [...keys];
     this.reset();
@@ -16,25 +16,25 @@ export class Counter {
     return without(this.countKeys, ...this.blackList);
   }
 
-  public add(key: string) {
+  add(key: string) {
     this.countMap[key]++;
   }
 
-  public del(key: string) {
+  del(key: string) {
     this.countMap[key]--;
   }
 
-  public ban(key: string) {
+  ban(key: string) {
     this.blackList.add(key);
     return this.availableKeys.length > 0;
   }
 
-  public getMin(key?: string) {
+  getMin(key?: string) {
     this.updateKey(key);
     return minBy(this.availableKeys, key => this.countMap[key])!;
   }
 
-  public getRandom(key?: string) {
+  getRandom(key?: string) {
     this.updateKey(key);
     return sample(this.availableKeys);
   }

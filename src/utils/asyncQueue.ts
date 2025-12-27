@@ -1,7 +1,7 @@
-import { reactive } from 'vue';
 import { EventEmitter } from 'eventemitter3';
-import logger from './logger';
+import { reactive } from 'vue';
 import { removeAt } from './array';
+import logger from './logger';
 
 type AsyncFunction = () => Promise<void>;
 
@@ -13,22 +13,23 @@ interface AsyncQueueItem<T = any> {
 }
 
 export class AsyncQueue<T = any> {
-  public readonly queue = reactive<Array<AsyncQueueItem<T>>>([]);
-  public readonly emitter = new EventEmitter<{ finish: [] }>();
-  public canSingleStart = (): boolean => true;
+  readonly queue = reactive<Array<AsyncQueueItem<T>>>([]);
+  readonly emitter = new EventEmitter<{ finish: [] }>();
   private singleRunning = false;
 
-  public constructor(private readonly thread = 1) {}
+  constructor(private readonly thread = 1) {}
+
+  get length(): number {
+    return this.queue.length;
+  }
 
   private get runningThreadNum(): number {
     return this.queue.filter(({ running }) => running).length;
   }
 
-  public get length(): number {
-    return this.queue.length;
-  }
+  canSingleStart = (): boolean => true;
 
-  public push(fn: AsyncFunction, info: any): void {
+  push(fn: AsyncFunction, info: any): void {
     this.queue.push({
       id: crypto.randomUUID(),
       running: false,
@@ -37,7 +38,7 @@ export class AsyncQueue<T = any> {
     });
   }
 
-  public async start(): Promise<void> {
+  async start(): Promise<void> {
     if (this.thread <= 1) {
       if (this.singleRunning || this.queue.length === 0) return;
       this.singleRunning = true;
@@ -46,7 +47,7 @@ export class AsyncQueue<T = any> {
           this.singleRunning = false;
           return;
         }
-        await this.queue[0].fn();
+        await this.queue[0]!.fn();
         this.queue.shift();
       } while (this.queue.length > 0);
       this.singleRunning = false;
@@ -56,7 +57,7 @@ export class AsyncQueue<T = any> {
       if (running >= this.thread || this.queue.length === running) return;
       const idleItems = this.queue.filter(({ running }) => !running);
       for (let i = 0; i < Math.min(idleItems.length, this.thread - running); i++) {
-        const item = idleItems[i];
+        const item = idleItems[i]!;
         item.running = true;
         item
           .fn()
@@ -73,12 +74,12 @@ export class AsyncQueue<T = any> {
     }
   }
 
-  public async skipFromError(): Promise<void> {
+  async skipFromError(): Promise<void> {
     this.queue.shift();
     await this.restartFromError();
   }
 
-  public async restartFromError(): Promise<void> {
+  async restartFromError(): Promise<void> {
     this.singleRunning = false;
     await this.start();
   }

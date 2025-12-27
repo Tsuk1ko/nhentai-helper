@@ -1,8 +1,8 @@
 import type { Options } from 'noty';
 import Noty from 'noty';
-import { settings } from './settings';
 import { i18n } from '@/i18n';
 import type { ErrorAction } from '@/typings';
+import { settings } from './settings';
 
 const { t } = i18n.global;
 
@@ -38,7 +38,11 @@ export const downloadAgainConfirm = async (title: string, hasQueue = false): Pro
   });
 };
 
-export const errorRetryConfirm = (action: ErrorAction, noCb?: Function, yesCb?: Function): void => {
+export const errorRetryConfirm = (
+  action: ErrorAction,
+  noCb?: () => void,
+  yesCb?: () => void,
+): void => {
   if (settings.autoRetryWhenErrorOccurs) {
     errorRetryTip(action);
     yesCb?.();

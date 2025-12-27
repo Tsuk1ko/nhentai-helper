@@ -22,7 +22,7 @@ interface EzeInfoJson {
 export class EzeInfoJsonBuilder implements MetaBuilder {
   protected data!: EzeInfoJson;
 
-  public constructor(info: NHentaiGalleryInfo) {
+  constructor(info: NHentaiGalleryInfo) {
     const date = info.uploadDate ? new Date(info.uploadDate * 1000) : undefined;
 
     this.data = {
@@ -51,7 +51,7 @@ export class EzeInfoJsonBuilder implements MetaBuilder {
     };
   }
 
-  public build(): string {
+  build(): string {
     return JSON.stringify(this.data);
   }
 

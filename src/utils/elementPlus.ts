@@ -1,5 +1,6 @@
 import { monkeyWindow } from '$';
-import { ElMessage, type MessageHandler, type MessageOptions } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import type { MessageHandler, MessageOptions } from 'element-plus';
 
 export const showMessage = (params: MessageOptions): MessageHandler =>
   ElMessage({ ...params, appendTo: monkeyWindow.document.body });

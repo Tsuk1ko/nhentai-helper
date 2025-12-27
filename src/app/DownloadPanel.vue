@@ -4,8 +4,8 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
+import { dlQueue, zipQueue } from '@/common/queue';
 import DownloadList from '@/components/DownloadList.vue';
-import { zipQueue, dlQueue } from '@/common/queue';
 
 const { title } = document;
 

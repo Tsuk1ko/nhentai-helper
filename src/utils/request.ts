@@ -3,7 +3,7 @@ import { sleep } from './common';
 import logger from './logger';
 
 class RequestAbortError extends Error {
-  public constructor(url: string) {
+  constructor(url: string) {
     super(`Request abort ${url}`);
   }
 }
@@ -88,14 +88,11 @@ export const requestArrayBufferFetch = ({
     try {
       const r = await fetch(url, { credentials: 'include', signal: controller.signal });
       const { status } = r;
-      // eslint-disable-next-line @typescript-eslint/return-await
       if (status === 200) return r.arrayBuffer();
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
       if (retry === 0) throw r;
       const additionRetry = status === 404 ? on404?.(r.url) : false;
       logger.warn('Request error, retry', status, url, r);
       await sleep(1000);
-      // eslint-disable-next-line @typescript-eslint/return-await
       return doFetch(retry - (additionRetry ? 0 : 1));
     } catch (e) {
       if (retry === 0) {

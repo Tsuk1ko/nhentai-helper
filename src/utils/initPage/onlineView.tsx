@@ -1,10 +1,9 @@
 import { GM_getValue, GM_setValue } from '$';
 import $ from 'jquery';
-import { h } from 'nano-jsx/lib/core';
-import { StyleInjector } from '../styleInjector';
 import { IS_NHENTAI } from '@/const';
-import { selector } from '@/rules/selector';
 import { className } from '@/rules/className';
+import { selector } from '@/rules/selector';
+import { StyleInjector } from '../styleInjector';
 
 export const initOnlineViewPage = (): void => {
   if (!IS_NHENTAI) initViewMode();
@@ -30,7 +29,7 @@ const initViewMode = (): void => {
   btn.addEventListener('click', () => {
     viewMode = 1 - viewMode;
     GM_setValue('online_view_mode', viewMode);
-    btnText.innerText = viewModeText[viewMode];
+    btnText.textContent = viewModeText[viewMode]!;
     applyOnlineViewStyle(!!viewMode, style);
   });
 

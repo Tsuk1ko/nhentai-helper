@@ -6,10 +6,10 @@ import { GM_registerMenuCommand } from '$';
 import { once } from 'lodash-es';
 import DownloadPanel from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
-import { initPage } from './utils/initPage';
 import { IS_SETTINGS_DIALOG_DEV } from './const';
 import { i18n } from './i18n';
 import { createAppAndMount } from './utils/app';
+import { initPage } from './utils/initPage';
 
 const initSettingsDialogApp = once(() =>
   createAppAndMount(SettingsDialog, app => {

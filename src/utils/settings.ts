@@ -1,12 +1,12 @@
 import { GM_getValue, GM_setValue } from '$';
-import { toRaw, reactive, toRefs, watch, computed } from 'vue';
-import type { Ref } from 'vue';
-import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
 import { detect } from 'detect-browser';
-import logger from './logger';
-import type { NHentaiGallery } from './nhentai';
+import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
+import { computed, reactive, toRaw, toRefs, watch } from 'vue';
+import type { Ref } from 'vue';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
+import logger from './logger';
+import type { NHentaiGallery } from './nhentai';
 
 export const nHentaiDownloadHosts = [
   'i.nhentai.net',
@@ -266,7 +266,7 @@ export const settingDefinitions: Readonly<{
   convertWebpQuality: {
     key: 'convert_webp_quality',
     default: 85,
-    validator: val => 0 <= val && val <= 100,
+    validator: val => val >= 0 && val <= 100,
   },
   customFilenameFunction: {
     key: 'custom_title_function',
@@ -376,7 +376,7 @@ export const validTitleReplacement = computed(() =>
 export const customFilenameFunction = computed(() => {
   if (!settings.customFilenameFunction.trim()) return null;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+    // eslint-disable-next-line no-new-func
     return new Function('filename', 'gallery', settings.customFilenameFunction) as (
       title: string,
       gallery: NHentaiGallery,

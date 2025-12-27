@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /**
  * The code comes from: https://github.com/hymbz/ComicReadScript
  *
@@ -17,7 +18,6 @@ self.Image =
   self.HTMLCanvasElement =
   // @ts-expect-error
   self.SVGImageElement =
-    // eslint-disable-next-line @typescript-eslint/no-extraneous-class
     class Placeholder {};
 
 const qrEngine = QrScanner.createQrEngine();

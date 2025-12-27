@@ -20,8 +20,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { MangaDownloadInfo } from '@/typings';
 import { dlQueue } from '@/common/queue';
+import type { MangaDownloadInfo } from '@/typings';
 import { removeAt } from '@/utils/array';
 
 const props = defineProps<{
@@ -48,7 +48,7 @@ const progressWidth = computed(() => {
 const canCancel = computed(() => !props.item.compressing);
 
 const cancel = () => {
-  const { info } = props.index === 0 ? dlQueue.queue[0] : removeAt(dlQueue.queue, props.index)!;
+  const { info } = props.index === 0 ? dlQueue.queue[0]! : removeAt(dlQueue.queue, props.index)!;
   info?.cancel?.();
 };
 </script>

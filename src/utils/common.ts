@@ -2,16 +2,16 @@ import { GM_addStyle, GM_getResourceText } from '$';
 import $ from 'jquery';
 import { last, template } from 'lodash-es';
 import { markRaw, reactive } from 'vue';
-import { settings } from './settings';
-import type { NHentaiGalleryInfo } from './nhentai';
-import type { MangaDownloadInfo } from '@/typings';
 import { selector } from '@/rules/selector';
+import type { MangaDownloadInfo } from '@/typings';
 import type { JSZipGeneratorOptionsCustom } from '@/workers/jszip';
+import type { NHentaiGalleryInfo } from './nhentai';
+import { settings } from './settings';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const compileTemplate = (tpl: string) => template(tpl, { interpolate: /{{([\s\S]+?)}}/g });
+export const compileTemplate = (tpl: string) =>
+  template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g });
 
 export const getDownloadExt = (): string => {
   const ext = last(settings.compressionFilename.split('.'));

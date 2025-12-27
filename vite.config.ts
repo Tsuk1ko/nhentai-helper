@@ -1,10 +1,10 @@
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import monkey, { cdn, util } from 'vite-plugin-monkey';
-import copy from 'rollup-plugin-copy';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import vue from '@vitejs/plugin-vue';
+import copy from 'rollup-plugin-copy';
+import { defineConfig } from 'vite';
+import monkey, { cdn, util } from 'vite-plugin-monkey';
 import fixDevWorkerPlugin from './plugins/fixDevWorkerPlugin';
 import minifyWorkerPlugin from './plugins/minifyWorkerPlugin';
 
@@ -63,7 +63,7 @@ export default defineConfig(async ({ mode }) => ({
           'https://nhentai.website/*',
           ...(mode === 'development' ? ['https://nhelper.lolicon.app/dev.html'] : []),
         ],
-        include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./,
+        include: /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai\d*\./,
         connect: [
           'nhentai.net',
           'i.nhentai.net',
@@ -85,11 +85,13 @@ export default defineConfig(async ({ mode }) => ({
         metaFileName: true,
         externalGlobals: {
           vue: cdn.unpkg('Vue', 'dist/vue.global.prod.js').concat(
-            await util.fn2dataUrl(() => {
+            await util.dataUrl(() => {
               // @ts-expect-error
               window.Vue = Vue;
               // #51 fix Violentmonkey `Date.now()`
+              // @ts-expect-error
               if (!window.Date.now) {
+                // @ts-expect-error
                 window.Date.now = () => new Date().getTime();
               }
             }),

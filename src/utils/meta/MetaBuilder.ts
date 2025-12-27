@@ -1,7 +1,7 @@
 import type { NHentaiGalleryInfo } from '../nhentai';
 
 export declare class MetaBuilder {
-  public constructor(info: NHentaiGalleryInfo);
+  constructor(info: NHentaiGalleryInfo);
 
-  public build(): string;
+  build(): string;
 }

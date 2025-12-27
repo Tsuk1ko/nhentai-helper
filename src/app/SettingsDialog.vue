@@ -4,7 +4,7 @@
       <div class="nhentai-helper-setting-help-buttons no-sl">
         <el-button size="small" @click="openHelp">{{ t('setting.helpButton') }}</el-button>
       </div>
-      <span :id="titleId" :class="[titleClass, 'no-sl']">{{ t('setting.title') }}</span>
+      <span :id="titleId" class="no-sl" :class="[titleClass]">{{ t('setting.title') }}</span>
     </template>
     <div id="nhentai-helper-setting-dialog">
       <div class="asterisk-example no-sl" style="margin-bottom: 18px">
@@ -299,42 +299,35 @@
 </template>
 
 <script setup lang="ts">
+import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { GM_openInTab } from '$';
-import { computed, ref, watch } from 'vue';
 import {
-  ElDialog,
   ElButton,
-  ElForm,
-  ElFormItem,
-  ElOption,
-  ElSelect,
-  ElSlider,
-  ElInput,
-  ElInputNumber,
-  ElSwitch,
   ElCheckbox,
   ElCheckboxGroup,
-  ElDivider,
   ElCollapse,
   ElCollapseItem,
-  ElTable,
-  ElTableColumn,
+  ElDialog,
+  ElDivider,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElInputNumber,
+  ElLink,
+  ElOption,
   ElRadio,
   ElRadioGroup,
-  ElLink,
+  ElSelect,
+  ElSlider,
+  ElSwitch,
+  ElTable,
+  ElTableColumn,
   ElText,
 } from 'element-plus';
-import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { useI18n } from 'petite-vue-i18n';
+import { computed, ref, watch } from 'vue';
 import ConfirmPopup from '@/components/ConfirmPopup.vue';
-import {
-  DISABLE_STREAM_DOWNLOAD,
-  nHentaiDownloadHosts,
-  nHentaiDownloadHostSpecials,
-  settingDefinitions,
-  writeableSettings as settings,
-  startWatchSettings,
-} from '@/utils/settings';
+import { IS_NHENTAI } from '@/const';
 import { MIME } from '@/typings';
 import type { ElMarks } from '@/typings';
 import {
@@ -343,10 +336,17 @@ import {
   getDownloadNumber,
   importDownloadHistory,
 } from '@/utils/downloadHistory';
-import { pickAndReadFile } from '@/utils/file';
 import { showMessage } from '@/utils/elementPlus';
-import { IS_NHENTAI } from '@/const';
+import { pickAndReadFile } from '@/utils/file';
 import { numberFormatter } from '@/utils/formatter';
+import {
+  DISABLE_STREAM_DOWNLOAD,
+  nHentaiDownloadHosts,
+  nHentaiDownloadHostSpecials,
+  settingDefinitions,
+  writeableSettings as settings,
+  startWatchSettings,
+} from '@/utils/settings';
 
 startWatchSettings();
 

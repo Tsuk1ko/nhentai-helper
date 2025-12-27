@@ -1,25 +1,11 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "target": "ES6",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "useDefineForClassFields": true,
-    "strict": true,
-    "jsx": "react",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "isolatedModules": false,
-    "esModuleInterop": true,
-    "lib": ["ESNext", "DOM", "WebWorker"],
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "paths": {
-      "@/*": ["src/*"]
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
     }
-  },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }

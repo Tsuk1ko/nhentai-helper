@@ -1,12 +1,8 @@
 /// <reference types="vite/client" />
+/// <reference types="nano-jsx" />
+/// <reference types="@types/jquery.pjax" />
 
 type GlobalThis = typeof globalThis;
-
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue';
-  const component: DefineComponent<{}, {}, any>;
-  export default component;
-}
 
 declare module '*?worker-dev' {
   const code: string;
@@ -25,8 +21,8 @@ declare interface Window extends GlobalThis {
   _gallery?: import('./utils/nhentai').NHentaiGallery;
   /** on nhentai.net */
   _n_app?: {
-    install_lazy_loader: Function;
-    install_blacklisting: Function;
+    install_lazy_loader: () => void;
+    install_blacklisting: () => void;
   };
 }
 

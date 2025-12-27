@@ -20,12 +20,12 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
-import { ElSelect, ElOption } from 'element-plus';
 import { useSessionStorage } from '@vueuse/core';
+import { ElOption, ElSelect } from 'element-plus';
+import { watch } from 'vue';
+import { i18n } from '@/i18n';
 import type { JQElement } from '@/utils/languageFilter';
 import { filterLanguage, filterOptions } from '@/utils/languageFilter';
-import { i18n } from '@/i18n';
 
 const { t } = i18n.global;
 

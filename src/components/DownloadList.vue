@@ -6,8 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import DownloadItem from './DownloadItem.vue';
 import type { MangaDownloadInfo } from '@/typings';
+import DownloadItem from './DownloadItem.vue';
 
 defineProps<{
   zipList: MangaDownloadInfo[];

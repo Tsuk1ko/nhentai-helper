@@ -1,37 +1,37 @@
 import { saveAs } from 'file-saver';
 import { createWriteStream } from 'streamsaver';
+import { dlQueue, zipQueue } from '@/common/queue';
+import { IS_NHENTAI } from '@/const';
+import type { MangaDownloadInfo } from '@/typings';
+import { ErrorAction } from '@/typings';
 import { compileTemplate, createMangaDownloadInfo, getCompressionOptions } from './common';
+import { errorRetryConfirm } from './dialog';
+import { markAsDownloaded } from './downloadHistory';
+import { removeIllegalFilenameChars } from './formatter';
+import { ImgConverter } from './imgConverter';
 import type { OnUpdateCallback } from './jszip';
 import { JSZip } from './jszip';
 import logger from './logger';
+import { generateMetaFiles } from './meta';
 import type { TaskFunction } from './multiThread';
 import { MultiThread } from './multiThread';
 import type { NHentaiGalleryInfo, NHentaiGalleryInfoPage } from './nhentai';
 import {
-  nHentaiDownloadHostCounter,
   getMediaDownloadUrl,
   getMediaDownloadUrlByWebpage,
+  nHentaiDownloadHostCounter,
   NHentaiImgExt,
 } from './nhentai';
 import type { ProgressDisplayController } from './progressController';
 import { isAbortError, requestArrayBufferGm } from './request';
 import { customFilenameFunction, NHentaiDownloadHostSpecial, settings } from './settings';
-import { errorRetryConfirm } from './dialog';
-import { markAsDownloaded } from './downloadHistory';
-import { generateMetaFiles } from './meta';
-import { ImgConverter } from './imgConverter';
-import { removeIllegalFilenameChars } from './formatter';
-import type { MangaDownloadInfo } from '@/typings';
-import { dlQueue, zipQueue } from '@/common/queue';
-import { ErrorAction } from '@/typings';
-import { IS_NHENTAI } from '@/const';
 
 export type RangeChecker = (i: number) => boolean;
 
 interface DownloadOptions {
   progressDisplayController?: ProgressDisplayController;
   rangeCheckers?: RangeChecker[];
-  markGalleryDownloaded?: Function;
+  markGalleryDownloaded?: () => void;
 }
 
 type ZipFunction = () => Promise<void>;

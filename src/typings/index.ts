@@ -7,7 +7,7 @@ export interface MangaDownloadInfo {
   compressing: boolean;
   compressingPercent: string;
   error: boolean;
-  cancel?: Function;
+  cancel?: () => void;
 }
 
 export interface ElMark {

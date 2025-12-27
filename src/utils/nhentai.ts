@@ -1,29 +1,28 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
 import $ from 'jquery';
 import { each, filter, identity, invert, map, once } from 'lodash-es';
-import { fetchJSON, fetchText } from './request';
-import { compileTemplate, tryParseJSON } from './common';
 import {
-  NHentaiDownloadHostSpecial,
-  nHentaiDownloadHosts,
-  settings,
-  validTitleReplacement,
-} from './settings';
-import logger from './logger';
-import { Counter } from './counter';
-import { loadHTML } from './html';
-import { OrderCache } from './orderCache';
-import { removeIllegalFilenameChars } from './formatter';
-import { ensureProtocol } from './url';
-import {
-  MEDIA_URL_TEMPLATE_MAY_CHANGE,
   IS_NHENTAI,
   IS_PAGE_MANGA_DETAIL,
   MEDIA_URL_TEMPLATE_KEY,
+  MEDIA_URL_TEMPLATE_MAY_CHANGE,
   THUMB_MEDIA_URL_TEMPLATE_KEY,
 } from '@/const';
 import { selector } from '@/rules/selector';
+import { compileTemplate, tryParseJSON } from './common';
+import { Counter } from './counter';
+import { removeIllegalFilenameChars } from './formatter';
+import { loadHTML } from './html';
+import logger from './logger';
+import { OrderCache } from './orderCache';
+import { fetchJSON, fetchText } from './request';
+import {
+  nHentaiDownloadHosts,
+  NHentaiDownloadHostSpecial,
+  settings,
+  validTitleReplacement,
+} from './settings';
+import { ensureProtocol } from './url';
 
 export enum NHentaiImgExt {
   j = 'jpg',
@@ -142,7 +141,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   if (match) {
     try {
       // eslint-disable-next-line no-eval
-      const gallery: NHentaiGallery = eval(match);
+      const gallery: NHentaiGallery = (0, eval)(match);
       logger.log('get gallery by script tag success');
       return fixGalleryObj(gallery, gid);
     } catch {
@@ -161,12 +160,12 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
   const xxxPageMatch = tryParseJSON<{
     fl: Record<string, string>;
     th: Record<string, string>;
-  }>(/'({"fl":{"1":"[^']+)'/.exec(doc.body.innerHTML)?.[1]);
+  }>(/'(\{"fl":\{"1":"[^']+)'/.exec(doc.body.innerHTML)?.[1]);
   if (xxxPageMatch) {
-    const img = $doc.find<HTMLImageElement>(selector.thumbnailContainerImage)[0];
+    const img = $doc.find<HTMLImageElement>(selector.thumbnailContainerImage)[0]!;
     const src = img.dataset.src ?? img.src;
-    const match = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
-    if (match) mediaId = match[1];
+    const match = /\/([0-9a-z]+)\/\d+t?\.[^/]+$/i.exec(src);
+    if (match) mediaId = match[1]!;
     each(xxxPageMatch.fl, (data, index) => {
       const [type, width, height] = data.split(',');
       pages[Number(index) - 1] = {
@@ -183,8 +182,8 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
       const match = /\/([0-9a-z]+)\/(\d+)t?\.([^/]+)$/i.exec(src);
       if (!match) return;
       const [, mid, index, ext] = match;
-      if (!mediaId) mediaId = mid;
-      const t = getTypeFromExt(ext);
+      if (!mediaId) mediaId = mid!;
+      const t = getTypeFromExt(ext!);
       if (!t) return;
       pages[Number(index) - 1] = {
         t,
@@ -203,8 +202,8 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     return filter(
       Array.from($tags).map((el): NHentaiTag | undefined => {
         if (!(el instanceof HTMLElement)) return undefined;
-        const name = el.querySelector<HTMLElement>(selector.tagName)?.innerText.trim();
-        const countStr = el.querySelector<HTMLElement>(selector.tagCount)?.innerText.trim();
+        const name = el.querySelector<HTMLElement>(selector.tagName)?.textContent.trim();
+        const countStr = el.querySelector<HTMLElement>(selector.tagCount)?.textContent.trim();
         const count = countStr
           ? parseInt(countStr) * (countStr.match(/k$/i) ? 1000 : 1)
           : undefined;
@@ -408,8 +407,8 @@ const getMediaUrlTemplate = async (
   }
   try {
     const promise = getter(gid);
-    if (MEDIA_URL_TEMPLATE_MAY_CHANGE && !mediaUrlTemplateGidCache[cacheKey].has(gid)) {
-      mediaUrlTemplateGidCache[cacheKey].set(gid, promise);
+    if (MEDIA_URL_TEMPLATE_MAY_CHANGE && !mediaUrlTemplateGidCache[cacheKey]!.has(gid)) {
+      mediaUrlTemplateGidCache[cacheKey]!.set(gid, promise);
     }
     const template = await promise;
     logger.log(`use media url template: ${template}`);
@@ -417,7 +416,7 @@ const getMediaUrlTemplate = async (
   } catch (error) {
     logger.error(error);
     if (MEDIA_URL_TEMPLATE_MAY_CHANGE) {
-      mediaUrlTemplateGidCache[cacheKey].delete(gid);
+      mediaUrlTemplateGidCache[cacheKey]!.delete(gid);
     } else {
       const cachedTemplate = GM_getValue<string | undefined>(cacheKey);
       if (cachedTemplate) {

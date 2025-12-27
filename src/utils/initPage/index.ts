@@ -1,11 +1,11 @@
 import { unsafeWindow } from '$';
 import $ from 'jquery';
+import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
+import { selector } from '@/rules/selector';
 import logger from '../logger';
 import { initDetailPage } from './detail';
 import { initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
-import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
-import { selector } from '@/rules/selector';
 
 export const initPage = (): void => {
   $('body').addClass(`nhentai-helper-${location.hostname.replace(/\./g, '_')}`);
@@ -40,7 +40,6 @@ const applyPjax = (): void => {
 };
 
 const applyLazyLoad = (): void => {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _n_app } = unsafeWindow;
   if (_n_app) {
     _n_app.install_lazy_loader();

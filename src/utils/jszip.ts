@@ -1,9 +1,10 @@
-import { wrap, type Remote, transfer, proxy, releaseProxy } from 'comlink';
+import { proxy, releaseProxy, transfer, wrap } from 'comlink';
+import type { Remote } from 'comlink';
 import type { JSZipGeneratorOptions, JSZipMetadata } from 'jszip';
-import { removeAt } from './array';
 import { WORKER_THREAD_NUM } from '@/const';
-import JSZipWorker from '@/workers/jszip?worker&inline';
 import type { DisposableJSZip, JSZipFile } from '@/workers/jszip';
+import JSZipWorker from '@/workers/jszip?worker&inline';
+import { removeAt } from './array';
 
 type RemoteDisposableJSZip = Remote<typeof DisposableJSZip>;
 
@@ -24,7 +25,7 @@ class JSZipWorkerPool {
   private readonly pool: PoolMember[] = [];
   private readonly waitingQueue: Array<(value: PoolMember) => void> = [];
 
-  public constructor() {
+  constructor() {
     for (let id = 0; id < WORKER_THREAD_NUM; id++) {
       this.pool.push({
         id,
@@ -32,6 +33,64 @@ class JSZipWorkerPool {
       });
     }
   }
+
+  async generateAsync(
+    files: JSZipFile[],
+    options?: JSZipGeneratorOptions,
+    onUpdate?: OnUpdateCallback,
+  ): Promise<Uint8Array> {
+    const worker = await this.acquireWorker();
+    const zip = await new worker.JSZip();
+    try {
+      await zip.files(transfer(files, getTransferableData(files)));
+      return await zip.generateAsync(
+        options,
+        proxy((metaData: JSZipMetadata) => {
+          if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
+        }),
+      );
+    } finally {
+      zip[releaseProxy]();
+      this.releaseWorker(worker);
+    }
+  }
+
+  async generateStream(
+    files: JSZipFile[],
+    options?: JSZipGeneratorOptions,
+    onUpdate?: OnUpdateCallback,
+  ): Promise<ReadableStream<Uint8Array>> {
+    const worker = await this.acquireWorker();
+    const zip = await new worker.JSZip();
+    try {
+      await zip.files(transfer(files, getTransferableData(files)));
+      const { zipStream } = await zip.generateStream(
+        options,
+        proxy((metaData: JSZipMetadata) => {
+          if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
+        }),
+      );
+      return zipStream;
+    } finally {
+      zip[releaseProxy]();
+      this.releaseWorker(worker);
+    }
+  }
+
+  unzipFile: DisposableJSZip['unzipFile'] = async params => {
+    const worker = await this.acquireWorker();
+    const zip = await new worker.JSZip();
+    const clean = (): void => {
+      zip[releaseProxy]();
+      this.releaseWorker(worker);
+    };
+    try {
+      return (await zip.unzipFile(transfer(params, [params.data]))) as any;
+    } catch (error) {
+      clean();
+      throw error;
+    }
+  };
 
   private async createWorker(): Promise<RemoteDisposableJSZip> {
     return wrap<typeof DisposableJSZip>(new JSZipWorker());
@@ -57,64 +116,6 @@ class JSZipWorkerPool {
     const emit = removeAt(this.waitingQueue, 0)!;
     emit(worker);
   }
-
-  public async generateAsync(
-    files: JSZipFile[],
-    options?: JSZipGeneratorOptions,
-    onUpdate?: OnUpdateCallback,
-  ): Promise<Uint8Array> {
-    const worker = await this.acquireWorker();
-    const zip = await new worker.JSZip();
-    try {
-      await zip.files(transfer(files, getTransferableData(files)));
-      return await zip.generateAsync(
-        options,
-        proxy((metaData: JSZipMetadata) => {
-          if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
-        }),
-      );
-    } finally {
-      zip[releaseProxy]();
-      this.releaseWorker(worker);
-    }
-  }
-
-  public async generateStream(
-    files: JSZipFile[],
-    options?: JSZipGeneratorOptions,
-    onUpdate?: OnUpdateCallback,
-  ): Promise<ReadableStream<Uint8Array>> {
-    const worker = await this.acquireWorker();
-    const zip = await new worker.JSZip();
-    try {
-      await zip.files(transfer(files, getTransferableData(files)));
-      const { zipStream } = await zip.generateStream(
-        options,
-        proxy((metaData: JSZipMetadata) => {
-          if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
-        }),
-      );
-      return zipStream;
-    } finally {
-      zip[releaseProxy]();
-      this.releaseWorker(worker);
-    }
-  }
-
-  public unzipFile: DisposableJSZip['unzipFile'] = async params => {
-    const worker = await this.acquireWorker();
-    const zip = await new worker.JSZip();
-    const clean = (): void => {
-      zip[releaseProxy]();
-      this.releaseWorker(worker);
-    };
-    try {
-      return (await zip.unzipFile(transfer(params, [params.data]))) as any;
-    } catch (error) {
-      clean();
-      throw error;
-    }
-  };
 }
 
 const jszipPool = new JSZipWorkerPool();
@@ -122,20 +123,19 @@ const jszipPool = new JSZipWorkerPool();
 export class JSZip {
   private files: JSZipFile[] = [];
 
-  public file(name: JSZipFile['name'], data: JSZipFile['data']): void {
+  static unzipFile: DisposableJSZip['unzipFile'] = params => jszipPool.unzipFile(params);
+
+  file(name: JSZipFile['name'], data: JSZipFile['data']): void {
     this.files.push({ name, data });
   }
 
-  public generateAsync(
-    options?: JSZipGeneratorOptions,
-    onUpdate?: OnUpdateCallback,
-  ): Promise<Uint8Array> {
+  generateAsync(options?: JSZipGeneratorOptions, onUpdate?: OnUpdateCallback): Promise<Uint8Array> {
     const { files } = this;
     this.files = [];
     return jszipPool.generateAsync(files, options, onUpdate);
   }
 
-  public generateStream(
+  generateStream(
     options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
   ): Promise<ReadableStream<Uint8Array>> {
@@ -143,6 +143,4 @@ export class JSZip {
     this.files = [];
     return jszipPool.generateStream(files, options, onUpdate);
   }
-
-  public static unzipFile: DisposableJSZip['unzipFile'] = params => jszipPool.unzipFile(params);
 }

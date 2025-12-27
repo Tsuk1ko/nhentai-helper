@@ -11,10 +11,10 @@ export const WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1);
 const { pathname, hostname } = location;
 
 /** 在本子详情页 */
-export const IS_PAGE_MANGA_DETAIL = /^\/g\/[0-9]+\/?(\?.*)?$/.test(pathname);
+export const IS_PAGE_MANGA_DETAIL = /^\/g\/\d+\/?(?:\?.*)?$/.test(pathname);
 
 /** 在本子在线浏览页 */
-export const IS_PAGE_ONLINE_VIEW = /^\/g\/[0-9]+(\/list)?\/[0-9]+\/?(\?.*)?$/.test(pathname);
+export const IS_PAGE_ONLINE_VIEW = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/.test(pathname);
 
 /** 在本子列表页 */
 export const IS_PAGE_MANGA_LIST =

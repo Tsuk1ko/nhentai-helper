@@ -4,22 +4,24 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "!*"
+      - '!*'
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Build
-        run: yarn build
+        run: bun run build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
       - name: Release
@@ -46,7 +48,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     concurrency:
-      group: "pages"
+      group: 'pages'
       cancel-in-progress: true
     permissions:
       pages: write

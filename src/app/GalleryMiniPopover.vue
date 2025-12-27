@@ -99,35 +99,29 @@
 </template>
 
 <script setup lang="ts">
+import { CloseBold } from '@element-plus/icons-vue';
 import { GM_openInTab, GM_setClipboard } from '$';
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import {
-  ElPopover,
+  ElButton,
+  ElCol,
   ElDescriptions,
   ElDescriptionsItem,
-  ElTag,
-  ElLink,
-  ElRow,
-  ElCol,
   ElImage,
-  ElButton,
+  ElLink,
+  ElPopover,
+  ElRow,
+  ElTag,
   ElInfiniteScroll as vInfiniteScroll,
   vLoading,
 } from 'element-plus';
-import { CloseBold } from '@element-plus/icons-vue';
 import { groupBy, map } from 'lodash-es';
 import { useI18n } from 'petite-vue-i18n';
-import {
-  NHentaiImgExt,
-  type NHentaiTag,
-  getGallery,
-  type NHentaiGallery,
-  type NHentaiImage,
-  getCompliedThumbMediaUrlTemplate,
-} from '@/utils/nhentai';
-import { settings } from '@/utils/settings';
-import logger from '@/utils/logger';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { showMessage } from '@/utils/elementPlus';
+import logger from '@/utils/logger';
+import { getCompliedThumbMediaUrlTemplate, getGallery, NHentaiImgExt } from '@/utils/nhentai';
+import type { NHentaiGallery, NHentaiImage, NHentaiTag } from '@/utils/nhentai';
+import { settings } from '@/utils/settings';
 
 const POPOVER_MAX_WIDTH = 720;
 const POPOVER_THUMB_MORE_COL_WIDTH = 640;

@@ -1,7 +1,8 @@
-import { transformWithEsbuild, type Plugin } from 'vite';
+import { transformWithEsbuild } from 'vite';
+import type { Plugin } from 'vite';
 
 const jsContentReg =
-  /const jsContent = (".*");\n +const blob = typeof self !== "undefined" && self\.Blob && new Blob\(\[/;
+  /const jsContent = ('.*');\nconst blob = typeof self !== "undefined" && self\.Blob && new Blob\(\[/;
 
 export default function minifyWorkerPlugin(): Plugin {
   return {
@@ -18,7 +19,8 @@ export default function minifyWorkerPlugin(): Plugin {
 
       if (!jsContent) throw new Error('cannot find js content');
 
-      const ret = await transformWithEsbuild(JSON.parse(jsContent), id, {
+      // eslint-disable-next-line no-eval
+      const ret = await transformWithEsbuild((0, eval)(jsContent), id, {
         charset: 'utf8',
         loader: 'js',
         minify: true,

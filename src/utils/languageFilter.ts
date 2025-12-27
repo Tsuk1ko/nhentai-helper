@@ -1,12 +1,12 @@
 import $ from 'jquery';
 import { h, render } from 'vue';
 import LanguageFilter from '@/components/LanguageFilter.vue';
-import { selector } from '@/rules/selector';
 import { IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
+import { selector } from '@/rules/selector';
 
 export type JQElement = JQuery<HTMLElement>;
 
-export const filterOptions = IS_NHENTAI_TO
+export const filterOptions: Array<[string, string]> = IS_NHENTAI_TO
   ? [
       ['japanese', '2'],
       ['english', '19'],

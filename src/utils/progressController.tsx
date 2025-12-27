@@ -1,17 +1,16 @@
-import { h } from 'nano-jsx/lib/core';
-import { getDownloadExt } from './common';
-import type { MangaDownloadInfo } from '@/typings';
 import { i18n } from '@/i18n';
 import { className } from '@/rules/className';
+import type { MangaDownloadInfo } from '@/typings';
+import { getDownloadExt } from './common';
 
 const { t } = i18n.global;
 
 export class ProgressDisplayController {
-  public readonly downloadBtn: HTMLElement;
+  readonly downloadBtn: HTMLElement;
   private readonly btnTxt: HTMLElement;
   private info?: MangaDownloadInfo;
 
-  public constructor(
+  constructor(
     private readonly enableHeadTxt: boolean = false,
     private readonly docTitle?: string,
   ) {
@@ -31,57 +30,57 @@ export class ProgressDisplayController {
     return this.enableHeadTxt ? `${t('button.downloading')} ${getDownloadExt()} ` : '';
   }
 
-  private defaultBtnText(suffix?: string): string {
-    if (!this.enableHeadTxt) return suffix ?? '';
-    return `${t('button.download')} ${getDownloadExt()}${suffix ? ` ${suffix}` : ''}`;
-  }
-
-  public bindInfo(info: MangaDownloadInfo): void {
+  bindInfo(info: MangaDownloadInfo): void {
     this.info = info;
   }
 
-  public unbindInfo(): void {
+  unbindInfo(): void {
     this.info = undefined;
   }
 
-  public lockBtn(text?: string): void {
+  lockBtn(text?: string): void {
     this.downloadBtn.setAttribute('disabled', 'disabled');
-    if (text) this.btnTxt.innerText = text;
+    if (text) this.btnTxt.textContent = text;
   }
 
-  public releaseBtn(): void {
+  releaseBtn(): void {
     this.downloadBtn.removeAttribute('disabled');
   }
 
-  public complete(): void {
+  complete(): void {
     this.setDocTitle('✓');
-    this.btnTxt.innerText = this.defaultBtnText('✓');
+    this.btnTxt.textContent = this.defaultBtnText('✓');
     this.releaseBtn();
   }
 
-  public reset(): void {
+  reset(): void {
     this.setDocTitle();
-    this.btnTxt.innerText = this.defaultBtnText();
+    this.btnTxt.textContent = this.defaultBtnText();
     this.releaseBtn();
   }
 
-  public error(): void {
+  error(): void {
     this.releaseBtn();
-    this.btnTxt.innerText = 'Error';
+    this.btnTxt.textContent = 'Error';
     this.setDocTitle('×');
   }
 
-  public updateProgress(): void {
+  updateProgress(): void {
     if (!this.info) return;
     const { done, compressing, compressingPercent } = this.info;
     if (compressing) {
       this.setDocTitle(`${compressingPercent}%`);
-      this.btnTxt.innerText = `${this.compressingHeadText}${compressingPercent}%`;
+      this.btnTxt.textContent = `${this.compressingHeadText}${compressingPercent}%`;
     } else {
       const total = this.info.gallery.pages.length;
       this.setDocTitle(`${done}/${total}`);
-      this.btnTxt.innerText = `${this.downloadingHeadText}${done}/${total}`;
+      this.btnTxt.textContent = `${this.downloadingHeadText}${done}/${total}`;
     }
+  }
+
+  private defaultBtnText(suffix?: string): string {
+    if (!this.enableHeadTxt) return suffix ?? '';
+    return `${t('button.download')} ${getDownloadExt()}${suffix ? ` ${suffix}` : ''}`;
   }
 
   private setDocTitle(prefix?: string | number): void {

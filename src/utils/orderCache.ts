@@ -1,11 +1,11 @@
 export class OrderCache<T = any, U = any> extends Map<T, U> {
   private order: T[] = [];
 
-  public constructor(private readonly maxSize: number) {
+  constructor(private readonly maxSize: number) {
     super();
   }
 
-  public set(key: T, value: U) {
+  set(key: T, value: U) {
     if (!super.has(key)) {
       if (super.size + 1 > this.maxSize) {
         const delKey = this.order.shift();
@@ -16,7 +16,7 @@ export class OrderCache<T = any, U = any> extends Map<T, U> {
     return super.set(key, value);
   }
 
-  public delete(key: T): boolean {
+  delete(key: T): boolean {
     const has = super.delete(key);
     if (has) {
       this.order.splice(
@@ -27,7 +27,7 @@ export class OrderCache<T = any, U = any> extends Map<T, U> {
     return has;
   }
 
-  public clear(): void {
+  clear(): void {
     super.clear();
     this.order = [];
   }
