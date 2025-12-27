@@ -12,6 +12,8 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 
 [Via Sleazy Fork](https://sleazyfork.org/scripts/375992) (no login required)
 
+[Via GitHub Release](https://github.com/Tsuk1ko/nhentai-helper/releases/latest/download/script.user.js)
+
 [Via GitHub Pages](https://nhelper.lolicon.app/script.user.js)
 
 ## Main features
