@@ -22,6 +22,8 @@ self.Image =
 
 const qrEngine = QrScanner.createQrEngine();
 
+(QrScanner as any)._postWorkerMessage(qrEngine, 'inversionMode', 'both');
+
 const canvas = new OffscreenCanvas(0, 0) as any as HTMLCanvasElement;
 // @ts-expect-error
 canvas._getContext = canvas.getContext;
