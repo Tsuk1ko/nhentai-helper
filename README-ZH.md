@@ -10,6 +10,8 @@
 
 [从 Sleazy Fork 安装](https://sleazyfork.org/scripts/375992)（不需要登录）
 
+[从 GitHub Release 安装](https://github.com/Tsuk1ko/nhentai-helper/releases/latest/download/script.user.js)
+
 [从 GitHub Pages 安装](https://nhelper.lolicon.app/script.user.js)
 
 ## 主要功能
