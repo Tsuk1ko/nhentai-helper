@@ -12,16 +12,16 @@
 // @icon               https://icon.horse/icon/nhentai.net
 // @homepageURL        https://github.com/Tsuk1ko/nhentai-helper
 // @supportURL         https://github.com/Tsuk1ko/nhentai-helper/issues
-// @include            /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai[0-9]*\./
+// @include            /^https:\/\/([^/]*\.)?(nya|dog|cat|bug|qq|fox|ee|yy)hentai\d*\./
 // @match              https://nhentai.net/*
 // @match              https://nhentai.xxx/*
 // @match              https://nhentai.to/*
 // @match              https://nhentai.website/*
-// @require            https://unpkg.com/vue@3.5.21/dist/vue.global.prod.js
+// @require            https://unpkg.com/vue@3.5.26/dist/vue.global.prod.js
 // @require            data:application/javascript,window.Vue%3DVue%2Cwindow.Date.now%7C%7C(window.Date.now%3D()%3D%3Enew%20Date().getTime())%3B
-// @require            https://unpkg.com/element-plus@2.11.2/dist/index.full.min.js
+// @require            https://unpkg.com/element-plus@2.13.0/dist/index.full.min.js
 // @require            https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
-// @resource           element-plus-css  https://unpkg.com/element-plus@2.11.2/dist/index.css
+// @resource           element-plus-css  https://unpkg.com/element-plus@2.13.0/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            i1.nhentai.net
