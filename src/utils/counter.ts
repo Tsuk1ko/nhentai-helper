@@ -1,4 +1,4 @@
-import { minBy, sample, without } from 'lodash-es';
+import { minBy, sample, without } from 'es-toolkit';
 
 export class Counter {
   private key: string | undefined;
@@ -17,11 +17,11 @@ export class Counter {
   }
 
   add(key: string) {
-    this.countMap[key]++;
+    this.countMap[key]!++;
   }
 
   del(key: string) {
-    this.countMap[key]--;
+    this.countMap[key]!--;
   }
 
   ban(key: string) {
@@ -31,7 +31,7 @@ export class Counter {
 
   getMin(key?: string) {
     this.updateKey(key);
-    return minBy(this.availableKeys, key => this.countMap[key])!;
+    return minBy(this.availableKeys, key => this.countMap[key]!)!;
   }
 
   getRandom(key?: string) {

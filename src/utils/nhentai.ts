@@ -1,6 +1,6 @@
 import { GM_getValue, GM_setValue, unsafeWindow } from '$';
+import { identity, invert, once } from 'es-toolkit';
 import $ from 'jquery';
-import { each, filter, identity, invert, map, once } from 'lodash-es';
 import {
   IS_NHENTAI,
   IS_PAGE_MANGA_DETAIL,
@@ -9,6 +9,7 @@ import {
   THUMB_MEDIA_URL_TEMPLATE_KEY,
 } from '@/const';
 import { selector } from '@/rules/selector';
+import { filterNotNil, objectEach } from './array';
 import { compileTemplate, tryParseJSON } from './common';
 import { Counter } from './counter';
 import { removeIllegalFilenameChars } from './formatter';
@@ -166,7 +167,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     const src = img.dataset.src ?? img.src;
     const match = /\/([0-9a-z]+)\/\d+t?\.[^/]+$/i.exec(src);
     if (match) mediaId = match[1]!;
-    each(xxxPageMatch.fl, (data, index) => {
+    objectEach(xxxPageMatch.fl, (data, index) => {
       const [type, width, height] = data.split(',');
       pages[Number(index) - 1] = {
         t: type as any,
@@ -199,7 +200,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
 
   const getTags = (type: string, elContains: string): NHentaiTag[] => {
     const $tags = $doc.find(selector.tag(elContains));
-    return filter(
+    return filterNotNil(
       Array.from($tags).map((el): NHentaiTag | undefined => {
         if (!(el instanceof HTMLElement)) return undefined;
         const name = el.querySelector<HTMLElement>(selector.tagName)?.textContent.trim();
@@ -216,7 +217,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
             }
           : undefined;
       }),
-    ) as NHentaiTag[];
+    );
   };
 
   const tags = [
@@ -262,10 +263,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
 };
 
 const getCFNameArtists = (tags: NHentaiTag[]): string => {
-  const artists = map(
-    tags.filter(({ name, type }) => type === 'artist' && name),
-    'name',
-  );
+  const artists = tags.filter(({ name, type }) => type === 'artist' && name).map(t => t.name);
   if (!artists.length) return 'none';
   const maxNum = settings.filenameMaxArtistsNumber;
   if (maxNum && artists.length > maxNum) return 'various';

@@ -3,7 +3,7 @@ import './index.less';
 import 'noty/lib/noty.css';
 import 'element-plus/dist/index.css';
 import { GM_registerMenuCommand } from '$';
-import { once } from 'lodash-es';
+import { once } from 'es-toolkit';
 import DownloadPanel from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { IS_SETTINGS_DIALOG_DEV } from './const';

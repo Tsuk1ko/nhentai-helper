@@ -1,4 +1,5 @@
-import { each, isNil, map } from 'lodash-es';
+import { isNil } from 'es-toolkit';
+import { objectEach } from '../array';
 import { encodeXml } from '../coder';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import { settings } from '../settings';
@@ -38,12 +39,12 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
 
     const artistTags = getTags('artist');
     if (artistTags.length) {
-      this.appendElement('Writer', map(artistTags, 'name').join(', '));
+      this.appendElement('Writer', artistTags.map(t => t.name).join(', '));
     }
 
     const tags = getTags('tag');
     if (tags.length) {
-      this.appendElement('Tags', map(tags, 'name').join(', '));
+      this.appendElement('Tags', tags.map(t => t.name).join(', '));
     }
 
     this.appendElement('Web', `${location.origin}/g/${info.gid}`);
@@ -59,7 +60,7 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
 
     const characterTags = getTags('character');
     if (characterTags.length) {
-      this.appendElement('Characters', map(characterTags, 'name').join(', '));
+      this.appendElement('Characters', characterTags.map(t => t.name).join(', '));
     }
 
     const pagesEl = this.createElement('Pages');
@@ -88,7 +89,7 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
     const el = this.doc.createElement(name);
     if (!isNil(value)) el.innerHTML = encodeXml(String(value));
     if (attrs) {
-      each(attrs, (v, k) => {
+      objectEach(attrs, (v, k) => {
         if (!isNil(v)) el.setAttribute(k, String(v));
       });
     }

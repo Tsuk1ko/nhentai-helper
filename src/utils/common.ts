@@ -1,6 +1,7 @@
 import { GM_addStyle, GM_getResourceText } from '$';
+import { last } from 'es-toolkit';
+import { template } from 'es-toolkit/compat';
 import $ from 'jquery';
-import { last, template } from 'lodash-es';
 import { markRaw, reactive } from 'vue';
 import { selector } from '@/rules/selector';
 import type { MangaDownloadInfo } from '@/typings';
@@ -10,7 +11,7 @@ import { settings } from './settings';
 
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
-export const compileTemplate = (tpl: string) =>
+export const compileTemplate = (tpl: string): ((data?: object) => string) =>
   template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g });
 
 export const getDownloadExt = (): string => {

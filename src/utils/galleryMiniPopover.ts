@@ -1,4 +1,4 @@
-import { once } from 'lodash-es';
+import { once } from 'es-toolkit';
 import GalleryMiniPopover from '@/app/GalleryMiniPopover.vue';
 import { i18n } from '@/i18n';
 import { createAppAndMount } from './app';

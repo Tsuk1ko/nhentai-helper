@@ -1,4 +1,4 @@
-import { groupBy, map, mapValues } from 'lodash-es';
+import { groupBy, mapValues } from 'es-toolkit';
 import type { NHentaiGalleryInfo } from '../nhentai';
 import type { MetaBuilder } from './MetaBuilder';
 
@@ -31,7 +31,10 @@ export class EzeInfoJsonBuilder implements MetaBuilder {
         title_title_original: info.title.japanese,
         link: `${location.origin}/g/${info.gid}`,
         category: info.tags.find(({ type }) => type === 'category')?.name,
-        tags: mapValues(groupBy(info.tags, 'type'), tags => map(tags, 'name')),
+        tags: mapValues(
+          groupBy(info.tags, t => t.type),
+          tags => tags.map(t => t.name),
+        ),
         ...this.getLanguageInfo(info),
         upload_date: date
           ? [

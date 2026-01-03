@@ -114,7 +114,7 @@ import {
   ElInfiniteScroll as vInfiniteScroll,
   vLoading,
 } from 'element-plus';
-import { groupBy, map } from 'lodash-es';
+import { groupBy } from 'es-toolkit';
 import { useI18n } from 'petite-vue-i18n';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { showMessage } from '@/utils/elementPlus';
@@ -159,7 +159,7 @@ const title = computed(() => {
 const groupedTags = computed(() => {
   const tags = gallery.value?.tags;
   return tags
-    ? Object.entries(groupBy(tags, 'type')).sort(
+    ? Object.entries(groupBy(tags, t => t.type)).sort(
         ([a], [b]) => getTagSortIndex(a) - getTagSortIndex(b),
       )
     : [];
@@ -177,7 +177,9 @@ const pageThumbsColNum = computed(() =>
 const pageThumbWidth = computed(
   () => (popoverWidth.value - 24 - (pageThumbsColNum.value - 1) * 8) / pageThumbsColNum.value,
 );
-const pageThumbScrollHeight = computed(() => Math.max(0, ...map(pageThumbs.value, 'height')) * 1.5);
+const pageThumbScrollHeight = computed(
+  () => Math.max(0, ...pageThumbs.value.map(t => t.height)) * 1.5,
+);
 
 const limitTagLength = (tags: NHentaiTag[], maxLength: number) => {
   const result = tags.slice(0, maxLength);

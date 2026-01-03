@@ -1,10 +1,11 @@
 import { GM_getValue, GM_setValue } from '$';
 import { detect } from 'detect-browser';
-import { each, intersection, isEqual, mapValues, once } from 'lodash-es';
+import { intersection, isEqual, mapValues, once } from 'es-toolkit';
 import { computed, reactive, toRaw, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
+import { objectEach } from './array';
 import logger from './logger';
 import type { NHentaiGallery } from './nhentai';
 
@@ -324,7 +325,7 @@ if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) writeableSettings.stream
 
 export const startWatchSettings = once(() => {
   const settingRefs = toRefs(writeableSettings);
-  each(settingRefs, (ref, key) => {
+  objectEach(settingRefs, (ref, key) => {
     const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
     let valChanged = false;
     const saveValue = (val: any) => {

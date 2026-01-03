@@ -1,4 +1,4 @@
-import { castArray } from 'lodash-es';
+import { castArray } from 'es-toolkit/compat';
 
 export const supportLanguage = new Set(['zh', 'en']);
 

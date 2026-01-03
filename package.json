@@ -23,6 +23,7 @@
     "comlink": "^4.4.2",
     "detect-browser": "^5.3.0",
     "element-plus": "^2.13.0",
+    "es-toolkit": "^1.43.0",
     "eventemitter3": "^5.0.1",
     "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
