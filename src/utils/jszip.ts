@@ -38,7 +38,7 @@ class JSZipWorkerPool {
     files: JSZipFile[],
     options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     const worker = await this.acquireWorker();
     const zip = await new worker.JSZip();
     try {
@@ -59,7 +59,7 @@ class JSZipWorkerPool {
     files: JSZipFile[],
     options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const worker = await this.acquireWorker();
     const zip = await new worker.JSZip();
     try {
@@ -70,7 +70,7 @@ class JSZipWorkerPool {
           if (metaData.currentFile) onUpdate?.({ workerId: worker.id, ...metaData });
         }),
       );
-      return zipStream;
+      return zipStream as ReadableStream<Uint8Array<ArrayBuffer>>;
     } finally {
       zip[releaseProxy]();
       this.releaseWorker(worker);
@@ -129,7 +129,10 @@ export class JSZip {
     this.files.push({ name, data });
   }
 
-  generateAsync(options?: JSZipGeneratorOptions, onUpdate?: OnUpdateCallback): Promise<Uint8Array> {
+  generateAsync(
+    options?: JSZipGeneratorOptions,
+    onUpdate?: OnUpdateCallback,
+  ): Promise<Uint8Array<ArrayBuffer>> {
     const { files } = this;
     this.files = [];
     return jszipPool.generateAsync(files, options, onUpdate);
@@ -138,7 +141,7 @@ export class JSZip {
   generateStream(
     options?: JSZipGeneratorOptions,
     onUpdate?: OnUpdateCallback,
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const { files } = this;
     this.files = [];
     return jszipPool.generateStream(files, options, onUpdate);

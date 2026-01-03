@@ -227,10 +227,7 @@ export const downloadGalleryByInfo = async (
       const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
       await zipStream.pipeTo(fileStream);
     } else {
-      const data = (await zip.generateAsync(
-        getCompressionOptions(),
-        onCompressionUpdate,
-      )) as Uint8Array<ArrayBuffer>;
+      const data = await zip.generateAsync(getCompressionOptions(), onCompressionUpdate);
       saveAs(new File([data], cfName, { type: 'application/zip' }));
     }
 

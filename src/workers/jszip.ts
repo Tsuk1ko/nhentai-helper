@@ -42,20 +42,20 @@ class DisposableJSZip {
   async generateAsync(
     options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     if (options?.removeAdPage) await this.removeAd();
     const data = await this.zip.generateAsync({ ...options, type: 'uint8array' }, onUpdate);
-    return transfer(data, [data.buffer]);
+    return transfer(data, [data.buffer]) as Uint8Array<ArrayBuffer>;
   }
 
   async generateStream(
     options?: JSZipGeneratorOptionsCustom,
     onUpdate?: OnUpdateCallback,
     onEnd?: () => void,
-  ): Promise<{ zipStream: ReadableStream<Uint8Array> }> {
+  ): Promise<{ zipStream: ReadableStream<Uint8Array<ArrayBuffer>> }> {
     if (options?.removeAdPage) await this.removeAd();
     const stream = this.zip.generateInternalStream({ ...options, type: 'uint8array' });
-    const zipStream = new ReadableStream<Uint8Array>({
+    const zipStream = new ReadableStream<Uint8Array<ArrayBuffer>>({
       start: controller => {
         stream.on('error', e => {
           controller.error(e);
@@ -68,13 +68,13 @@ class DisposableJSZip {
           });
         });
         stream.on('data', (data, metaData) => {
-          controller.enqueue(data);
+          controller.enqueue(data as Uint8Array<ArrayBuffer>);
           onUpdate?.(metaData);
         });
         stream.resume();
       },
     });
-    return transfer({ zipStream }, [zipStream as any]);
+    return transfer({ zipStream }, [zipStream]);
   }
 
   private async removeAd() {
