@@ -22,6 +22,7 @@
   - 支持 pjax，翻页不会中断本子下载
   - 下载队列功能
   - 下载过的本子标题会置灰
+  - 标记上次下载过的最新位置
 
 ![preview1](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview1.png)
 
