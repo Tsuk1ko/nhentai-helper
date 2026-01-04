@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import localforage from 'localforage';
-import { extendPrototype } from 'localforage-setitems';
 import md5 from 'md5';
+import { IDB_NAME } from '@/const';
 import { dateTimeFormatter } from './formatter';
 import { JSZip } from './jszip';
 import logger from './logger';
@@ -10,15 +10,13 @@ import { settings } from './settings';
 
 type Title = Partial<NHentaiGallery['title']>;
 
-extendPrototype(localforage);
-
 class DownloadHistory {
   private readonly store: typeof localforage;
   private readonly ready: Promise<boolean>;
 
   constructor(private readonly name: string) {
     this.store = localforage.createInstance({
-      name: 'nhentai_helper',
+      name: IDB_NAME,
       storeName: name,
     });
     this.ready = this.store

@@ -110,4 +110,7 @@ export default {
     page: 'Pages',
     upload: 'Upload Date',
   },
+  tip: {
+    lastDownloadPosition: 'Last download position',
+  },
 };
