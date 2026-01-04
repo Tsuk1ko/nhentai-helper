@@ -34,3 +34,5 @@ export const MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX;
 export const MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`;
 
 export const THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`;
+
+export const IDB_NAME = 'nhentai_helper';

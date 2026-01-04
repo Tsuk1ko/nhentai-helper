@@ -14,6 +14,7 @@ import {
 import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { IgnoreController } from '../ignoreController';
 import { mountLanguageFilter } from '../languageFilter';
+import { initLastDownload, updateLastDownload } from '../lastDownload';
 import logger from '../logger';
 import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
@@ -24,6 +25,7 @@ export const initListPage = (): void => {
   $(selector.gallery).each(initGallery);
   const { filterLanguage } = mountLanguageFilter();
   initShortcut();
+  initLastDownload();
   restoreDownloadQueue();
 
   const contentEl = document.querySelector(selector.galleryList);
@@ -181,6 +183,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     }
 
     addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded });
+    updateLastDownload(gid);
   };
 
   downloadBtn.addEventListener('click', startDownload);

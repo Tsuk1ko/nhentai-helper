@@ -108,4 +108,7 @@ export default {
     page: '页数',
     upload: '上传时间',
   },
+  tip: {
+    lastDownloadedPosition: '上次下载位置',
+  },
 };

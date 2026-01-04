@@ -24,6 +24,7 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
   - Add pjax support. Changing pages will not interrupt downloads.
   - Download queue support.
   - The caption of downloaded manga will be marked with grey color.
+  - Mark the last downloaded position in the manga list.
 
 ![preview1](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/preview1.png)
 

@@ -4,12 +4,16 @@ import 'noty/lib/noty.css';
 import 'element-plus/dist/index.css';
 import { GM_registerMenuCommand } from '$';
 import { once } from 'es-toolkit';
+import localforage from 'localforage';
+import { extendPrototype } from 'localforage-setitems';
 import DownloadPanel from './app/DownloadPanel.vue';
 import SettingsDialog from './app/SettingsDialog.vue';
 import { IS_SETTINGS_DIALOG_DEV } from './const';
 import { i18n } from './i18n';
 import { createAppAndMount } from './utils/app';
 import { initPage } from './utils/initPage';
+
+extendPrototype(localforage);
 
 const initSettingsDialogApp = once(() =>
   createAppAndMount(SettingsDialog, app => {
