@@ -111,6 +111,6 @@ export default {
     upload: 'Upload Date',
   },
   tip: {
-    lastDownloadPosition: 'Last download position',
+    lastDownloadedPosition: 'Last download position',
   },
 };

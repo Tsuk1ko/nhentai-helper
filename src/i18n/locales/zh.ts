@@ -109,6 +109,6 @@ export default {
     upload: '上传时间',
   },
   tip: {
-    lastDownloadPosition: '上次下载位置',
+    lastDownloadedPosition: '上次下载位置',
   },
 };

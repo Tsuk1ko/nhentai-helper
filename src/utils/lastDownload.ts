@@ -25,12 +25,12 @@ export const initLastDownload = async () => {
     if (!gid) return;
     latestGid = gid;
     GM_addStyle(
-      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-download-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
+      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
     );
     watch(
       () =>
         GM_addStyle(
-          `:root{--nh-helper-text-last-download-position:"${i18n.global.t('tip.lastDownloadPosition')}"}`,
+          `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t('tip.lastDownloadedPosition')}"}`,
         ),
       (_, oldEl) => {
         oldEl?.remove();
