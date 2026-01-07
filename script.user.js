@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.22.0
+// @version            3.22.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -11228,7 +11228,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, updateLastDownload = async (gid) => {
     gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
   }, initListPage = () => {
-    $(selector.gallery).each(initGallery);
+    initGalleries();
     const { filterLanguage: filterLanguage2 } = mountLanguageFilter();
     initShortcut(), initLastDownload(), restoreDownloadQueue();
     const contentEl = document.querySelector(selector.galleryList);
@@ -11240,6 +11240,8 @@ ${this.serializer.serializeToString(this.doc)}`;
         });
       });
     }).observe(contentEl, { childList: true });
+  }, initGalleries = () => {
+    $(selector.gallery).each(initGallery);
   }, initShortcut = () => {
     const ignoreActiveElTags = /* @__PURE__ */ new Set(["INPUT", "TEXTAREA"]);
     $(document).on("keydown", (event) => {
@@ -11362,7 +11364,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, applyOnlineViewStyle = (enable, style) => {
     enable ? style.inject() : style.remove();
   }, initPage = () => {
-    $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? initDetailPage().catch(logger.error) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage();
+    $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage();
   }, applyPjax = () => {
     $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
