@@ -3,13 +3,14 @@ import { fileURLToPath } from 'node:url';
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
 import copy from 'rollup-plugin-copy';
+import type { UserConfigFnPromise } from 'vite';
 import { defineConfig } from 'vite';
 import monkey, { cdn, util } from 'vite-plugin-monkey';
 import fixDevWorkerPlugin from './plugins/fixDevWorkerPlugin';
 import minifyWorkerPlugin from './plugins/minifyWorkerPlugin';
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => ({
+const config: UserConfigFnPromise = async ({ mode }) => ({
   server: {
     open: false,
   },
@@ -21,15 +22,14 @@ export default defineConfig(async ({ mode }) => ({
     cssMinify: true,
   },
   esbuild: {
-    legalComments: 'none' as const,
+    legalComments: 'none',
     minifyWhitespace: false,
     minifyIdentifiers: false,
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      // fix: qr-scanner use dynamic import
-      'qr-scanner': 'qr-scanner/qr-scanner.legacy.min.js',
+      'qr-scanner': resolve(__dirname, 'node_modules/qr-scanner/qr-scanner.legacy.min.js'),
     },
   },
   plugins: [
@@ -109,4 +109,6 @@ export default defineConfig(async ({ mode }) => ({
       hook: 'writeBundle',
     }),
   ],
-}));
+});
+
+export default defineConfig(config);
