@@ -97,12 +97,16 @@ export interface Settings {
   removeAdPage: boolean;
 }
 
+interface SettingsDefault {
+  filenameLength: number;
+}
+
 type SettingValidator = (val: any) => boolean;
 type SettingFormatter<T> = (val: T) => T;
 
-interface SettingDefinition<T> {
+interface SettingDefinition<T = any, D = any> {
   key: string;
-  default: T extends any[] | Record<any, any> ? () => T : T;
+  default: D extends any[] | Record<any, any> ? () => D : D;
   validator: SettingValidator;
   itemValidator?: SettingValidator;
   formatter?: SettingFormatter<T>;
@@ -121,7 +125,12 @@ const availableMetaFiles = ['ComicInfoXml', 'EzeInfoJson'];
 const availableMetaFileTitleLanguage = new Set(['english', 'japanese']);
 
 export const settingDefinitions: Readonly<{
-  [key in keyof Settings]: Readonly<SettingDefinition<Settings[key]>>;
+  [key in keyof Settings]: Readonly<
+    SettingDefinition<
+      Settings[key],
+      key extends keyof SettingsDefault ? SettingsDefault[key] : Settings[key]
+    >
+  >;
 }> = {
   language: {
     key: 'language',
@@ -326,7 +335,7 @@ if (DISABLE_STREAM_DOWNLOAD && settings.streamDownload) writeableSettings.stream
 export const startWatchSettings = once(() => {
   const settingRefs = toRefs(writeableSettings);
   objectEach(settingRefs, (ref, key) => {
-    const cur = settingDefinitions[key as keyof Settings] as SettingDefinition<any>;
+    const cur = settingDefinitions[key as keyof Settings] as SettingDefinition;
     let valChanged = false;
     const saveValue = (val: any) => {
       logger.log('update setting', cur.key, toRaw(val));
