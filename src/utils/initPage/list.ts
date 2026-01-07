@@ -22,7 +22,7 @@ import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 
 export const initListPage = (): void => {
-  $(selector.gallery).each(initGallery);
+  initGalleries();
   const { filterLanguage } = mountLanguageFilter();
   initShortcut();
   initLastDownload();
@@ -40,6 +40,10 @@ export const initListPage = (): void => {
       });
     }).observe(contentEl, { childList: true });
   }
+};
+
+export const initGalleries = () => {
+  $(selector.gallery).each(initGallery);
 };
 
 const initShortcut = (): void => {

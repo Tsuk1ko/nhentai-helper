@@ -4,7 +4,7 @@ import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@
 import { selector } from '@/rules/selector';
 import logger from '../logger';
 import { initDetailPage } from './detail';
-import { initListPage } from './list';
+import { initGalleries, initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
 
 export const initPage = (): void => {
@@ -12,8 +12,10 @@ export const initPage = (): void => {
   if (IS_PAGE_MANGA_LIST) {
     initListPage();
     applyPjax();
-  } else if (IS_PAGE_MANGA_DETAIL) initDetailPage().catch(logger.error);
-  else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
+  } else if (IS_PAGE_MANGA_DETAIL) {
+    initDetailPage().catch(logger.error);
+    initGalleries();
+  } else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
 };
 
 const applyPjax = (): void => {
