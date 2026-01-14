@@ -16,6 +16,10 @@ import { IgnoreController } from '../ignoreController';
 import { mountLanguageFilter } from '../languageFilter';
 import { initLastDownload, updateLastDownload } from '../lastDownload';
 import logger from '../logger';
+import {
+  boardcastMarkDownloadedUpdate,
+  initListenMarkDownloadedUpdateForGalleries,
+} from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
@@ -44,6 +48,7 @@ export const initListPage = (): void => {
 
 export const initGalleries = () => {
   $(selector.gallery).each(initGallery);
+  initListenMarkDownloadedUpdateForGalleries();
 };
 
 const initShortcut = (): void => {
@@ -88,6 +93,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   if (settings.openOnNewTab) $a.attr('target', '_blank');
   const gid = /\/g\/(\d+)/.exec($a.attr('href')!)?.[1];
   if (!gid) return;
+  this.dataset.gid = gid;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
 
   const progressDisplayController = new ProgressDisplayController();
@@ -97,19 +103,20 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   let ignoreController: IgnoreController | undefined;
   let galleryTitle: NHentaiGallery['title'] | undefined;
 
-  const markGalleryDownloaded = (): void => {
-    $gallery.addClass('downloaded');
-    ignoreController?.setStatus(true);
+  const markGalleryDownloaded = (isDownloaded: boolean, needBoardcast = true): void => {
+    if (isDownloaded) $gallery.addClass('downloaded');
+    else $gallery.removeClass('downloaded');
+    ignoreController?.setStatus(isDownloaded);
+    if (needBoardcast) boardcastMarkDownloadedUpdate(gid, isDownloaded);
   };
-  const unmarkGalleryDownloaded = (): void => {
-    $gallery.removeClass('downloaded');
-    ignoreController?.setStatus(false);
-  };
+
+  // @ts-ignore
+  this._markGalleryDownloaded = markGalleryDownloaded;
 
   void Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
     ([gidDownloaded, titleDownloaded]) => {
       const downloaded = gidDownloaded || titleDownloaded;
-      if (downloaded) markGalleryDownloaded();
+      if (downloaded) markGalleryDownloaded(downloaded);
 
       if (settings.showIgnoreButton) {
         ignoreController = new IgnoreController(false, downloaded);
@@ -117,10 +124,10 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
         ignoreBtn.addEventListener('click', () => {
           const ignore = ignoreController!.getStatus();
           if (ignore) {
-            unmarkGalleryDownloaded();
+            markGalleryDownloaded(false);
             unmarkAsDownloaded(gid, galleryTitle);
           } else {
-            markGalleryDownloaded();
+            markGalleryDownloaded(true);
             markAsDownloaded(gid, galleryTitle);
           }
         });
@@ -140,7 +147,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       const title = $gallery.find(selector.galleryCaption).text();
       if (!(await downloadAgainConfirm(title, true))) {
         progressDisplayController.reset();
-        markGalleryDownloaded();
+        markGalleryDownloaded(true);
         return;
       }
       skipDownloadedCheck = true;
@@ -168,7 +175,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       ) {
         progressDisplayController.reset();
         markAsDownloaded(gid, gallery.title);
-        markGalleryDownloaded();
+        markGalleryDownloaded(true);
         return;
       }
       if (
@@ -186,7 +193,10 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
       }
     }
 
-    addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded });
+    addDownloadGalleryTask(gallery, {
+      progressDisplayController,
+      markGalleryDownloaded: () => markGalleryDownloaded(true),
+    });
     updateLastDownload(gid);
   };
 

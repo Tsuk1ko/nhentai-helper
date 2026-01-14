@@ -1,3 +1,4 @@
+import { once } from 'es-toolkit';
 import $ from 'jquery';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
@@ -13,6 +14,7 @@ import {
 } from '../downloadHistory';
 import { IgnoreController } from '../ignoreController';
 import logger from '../logger';
+import { boardcastMarkDownloadedUpdate, onMarkDownloadedUpdate } from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
@@ -36,10 +38,17 @@ export const initDetailPage = async (): Promise<void> => {
   ) as HTMLInputElement;
   $(selector.infoButtons).append(downloadBtn).after(pagesInput);
 
+  const getGallery = once(() => getGalleryInfo());
+
   let ignoreController: IgnoreController | undefined;
 
+  const markGalleryDownloaded = async (isDownloaded: boolean, needBoardcast = true) => {
+    ignoreController?.setStatus(isDownloaded);
+    if (needBoardcast) boardcastMarkDownloadedUpdate((await getGallery()).gid, isDownloaded);
+  };
+
   if (settings.showIgnoreButton) {
-    const gallery = await getGalleryInfo();
+    const gallery = await getGallery();
     const isDownloaded = await isDownloadedByGid(gallery.gid);
     ignoreController = new IgnoreController(true, isDownloaded);
     const { ignoreBtn } = ignoreController;
@@ -47,13 +56,16 @@ export const initDetailPage = async (): Promise<void> => {
       const ignore = ignoreController!.getStatus();
       if (ignore) unmarkAsDownloaded(gallery.gid, gallery.title);
       else markAsDownloaded(gallery.gid, gallery.title);
-      ignoreController!.setStatus(!ignore);
+      markGalleryDownloaded(!ignore);
     });
     $(selector.infoButtons).append(ignoreBtn);
+    onMarkDownloadedUpdate((gid, value) => {
+      if (gid === gallery.gid) markGalleryDownloaded(value, false);
+    });
   }
 
   downloadBtn.addEventListener('click', async () => {
-    const gallery = await getGalleryInfo();
+    const gallery = await getGallery();
     const rangeCheckers: RangeChecker[] = pagesInput.value
       .split(',')
       // eslint-disable-next-line regexp/no-super-linear-backtracking
@@ -81,7 +93,7 @@ export const initDetailPage = async (): Promise<void> => {
       ) {
         progressDisplayController.reset();
         markAsDownloaded(gallery.gid, gallery.title);
-        ignoreController?.setStatus(true);
+        markGalleryDownloaded(true);
         return;
       }
 
@@ -92,7 +104,7 @@ export const initDetailPage = async (): Promise<void> => {
         })
       )?.();
       markAsDownloaded(gallery.gid, gallery.title);
-      ignoreController?.setStatus(true);
+      markGalleryDownloaded(true);
     } catch (error) {
       progressDisplayController.error();
       logger.error(error);
