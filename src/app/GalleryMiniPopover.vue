@@ -32,7 +32,7 @@
           <template #label>
             <span class="info-label bold">{{ t('meta.id') }}</span>
           </template>
-          <el-link type="primary" target="_blank" :underline="false" :href="galleryLink">{{
+          <el-link type="primary" target="_blank" underline="never" :href="galleryLink">{{
             gallery.id
           }}</el-link>
         </el-descriptions-item>
