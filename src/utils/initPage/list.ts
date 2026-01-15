@@ -13,7 +13,6 @@ import {
 } from '../downloadHistory';
 import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { IgnoreController } from '../ignoreController';
-import { mountLanguageFilter } from '../languageFilter';
 import { initLastDownload, updateLastDownload } from '../lastDownload';
 import logger from '../logger';
 import {
@@ -24,10 +23,11 @@ import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
+import { mountTagsFilter } from '../tagsFilter';
 
 export const initListPage = (): void => {
   initGalleries();
-  const { filterLanguage } = mountLanguageFilter();
+  const { doFilterTags } = mountTagsFilter();
   initShortcut();
   initLastDownload();
   restoreDownloadQueue();
@@ -39,7 +39,7 @@ export const initListPage = (): void => {
         addedNodes.forEach(node => {
           const $el = $(node as HTMLElement);
           $el.find(selector.gallery).each(initGallery);
-          filterLanguage?.($el);
+          doFilterTags?.($el);
         });
       });
     }).observe(contentEl, { childList: true });
