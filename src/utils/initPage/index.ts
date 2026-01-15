@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
 import { selector } from '@/rules/selector';
 import logger from '../logger';
+import { applyDownloadedTitleColor } from '../settings';
 import { initDetailPage } from './detail';
 import { initGalleries, initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
@@ -16,6 +17,7 @@ export const initPage = (): void => {
     initDetailPage().catch(logger.error);
     initGalleries();
   } else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
+  applyDownloadedTitleColor();
 };
 
 const applyPjax = (): void => {

@@ -1,8 +1,8 @@
 import { GM_addStyle } from '$';
 import { once } from 'es-toolkit';
 import localforage from 'localforage';
-import { watch } from 'vue';
 import { IDB_NAME } from '@/const';
+import { useStyle } from '@/hooks/useStyle';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
 import logger from './logger';
@@ -27,15 +27,9 @@ export const initLastDownload = async () => {
     GM_addStyle(
       `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
     );
-    watch(
+    useStyle(
       () =>
-        GM_addStyle(
-          `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t('tip.lastDownloadedPosition')}"}`,
-        ),
-      (_, oldEl) => {
-        oldEl?.remove();
-      },
-      { immediate: true },
+        `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t('tip.lastDownloadedPosition')}"}`,
     );
   } catch (error) {
     logger.error(error);

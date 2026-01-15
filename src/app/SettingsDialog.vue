@@ -133,6 +133,25 @@
           <el-checkbox v-model="settings.judgeDownloadedByJapanese" :label="t('common.japanese')" />
           <el-checkbox v-model="settings.judgeDownloadedByPretty" :label="t('common.pretty')" />
         </el-form-item>
+        <!-- 已下载本子的标题颜色 -->
+        <el-form-item :label="t('setting.downloadedTitleColor')">
+          <el-color-picker
+            v-model="settings.downloadedTitleColor"
+            show-alpha
+            clearable
+            color-format="rgb"
+            :value-on-clear="settingDefinitions.downloadedTitleColor.default"
+            @active-change="handleDownloadedTitleColorPreviewChange"
+            @change="handleDownloadedTitleColorPreviewChange"
+          />
+          <div
+            class="downloaded-title-color-preview"
+            :class="CAPTION_CLASS"
+            :style="{ color: downloadedTitleColorPreview }"
+          >
+            {{ settings.downloadedTitleColor }}
+          </div>
+        </el-form-item>
         <!-- 添加元数据文件 -->
         <el-form-item :label="t('setting.addMetaFile')">
           <el-checkbox-group v-model="settings.addMetaFile">
@@ -307,6 +326,7 @@ import {
   ElCheckboxGroup,
   ElCollapse,
   ElCollapseItem,
+  ElColorPicker,
   ElDialog,
   ElDivider,
   ElForm,
@@ -328,6 +348,7 @@ import { useI18n } from 'petite-vue-i18n';
 import { computed, ref, watch } from 'vue';
 import ConfirmPopup from '@/components/ConfirmPopup.vue';
 import { IS_NHENTAI } from '@/const';
+import { selector } from '@/rules/selector';
 import { MIME } from '@/typings';
 import type { ElMarks } from '@/typings';
 import {
@@ -349,6 +370,8 @@ import {
 } from '@/utils/settings';
 
 startWatchSettings();
+
+const CAPTION_CLASS = selector.galleryCaption.replace('.', '');
 
 const threadNumMarks: ElMarks = {
   1: '1',
@@ -446,6 +469,12 @@ const delTitleReplacement = (index: number) => {
   settings.titleReplacement.splice(index, 1);
 };
 
+const downloadedTitleColorPreview = ref(settings.downloadedTitleColor);
+
+const handleDownloadedTitleColorPreviewChange = (val: string | null) => {
+  downloadedTitleColorPreview.value = val || settings.downloadedTitleColor;
+};
+
 watch(
   () => settings.language,
   val => {
@@ -482,6 +511,17 @@ defineExpose({ open });
 
 .code-type {
   color: var(--el-text-color-secondary);
+}
+
+.downloaded-title-color-preview {
+  position: relative !important;
+  width: unset !important;
+  height: unset !important;
+  inset: unset !important;
+  border-radius: 0 !important;
+  margin-left: 8px !important;
+  padding: 4px 16px !important;
+  user-select: none !important;
 }
 </style>
 

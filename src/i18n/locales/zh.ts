@@ -67,6 +67,7 @@ export default {
       clear: '清空',
       importTip: '提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录',
     },
+    downloadedTitleColor: '已下载本子的标题颜色',
   },
   dialog: {
     yes: '是的',
