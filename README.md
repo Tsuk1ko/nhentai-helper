@@ -75,6 +75,8 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 - **Judge downloaded manga by title**  
   You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
   Note that `Pretty` is not available in most mirror sites.
+- **Downloaded title color**  
+  Customize the text color of downloaded manga titles.
 - **Add metadata file**  
   These metadata files are currently supported:
   - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))

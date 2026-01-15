@@ -67,6 +67,7 @@ export default {
       clear: 'Clear',
       importTip: 'Tip: Import will not clear the existing history, but merges with it.',
     },
+    downloadedTitleColor: 'Downloaded title color',
   },
   dialog: {
     yes: 'YES',

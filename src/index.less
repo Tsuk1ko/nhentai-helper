@@ -37,7 +37,7 @@
     }
   }
   &.downloaded .caption {
-    color: #999;
+    color: var(--nh-helper-downloaded-title-color, #999);
   }
 }
 
@@ -97,5 +97,12 @@ body.nhentai-helper-nhentai_xxx {
   }
   .g_buttons .download-zip-btn {
     margin-left: 5px;
+  }
+}
+
+.el-color-picker-panel {
+  .el-input__inner {
+    background-color: inherit !important;
+    color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
   }
 }

@@ -3,6 +3,7 @@ import { detect } from 'detect-browser';
 import { intersection, isEqual, mapValues, once } from 'es-toolkit';
 import { computed, reactive, toRaw, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
+import { useStyle } from '@/hooks/useStyle';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
 import { objectEach } from './array';
@@ -95,6 +96,8 @@ export interface Settings {
   customFilenameFunction: string;
   /** 移除广告页 */
   removeAdPage: boolean;
+  /** 已下载本子的标题颜色 */
+  downloadedTitleColor: string;
 }
 
 interface SettingsDefault {
@@ -288,6 +291,11 @@ export const settingDefinitions: Readonly<{
     default: false,
     validator: booleanValidator,
   },
+  downloadedTitleColor: {
+    key: 'downloaded_title_color',
+    default: 'rgb(153, 153, 153)',
+    validator: stringValidator,
+  },
 };
 
 const browserDetect = detect();
@@ -395,3 +403,6 @@ export const customFilenameFunction = computed(() => {
     return null;
   }
 });
+
+export const applyDownloadedTitleColor = () =>
+  useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`);
