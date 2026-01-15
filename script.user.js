@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.22.1
+// @version            3.23.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -126,30 +126,41 @@
 #download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb {
   background-color: #fff9;
 }
-.nhentai-helper-setting-help-buttons[data-v-6607043c] {
+.nhentai-helper-setting-help-buttons[data-v-fee158ae] {
   float: left;
   position: absolute;
 }
-.inline-item[data-v-6607043c] {
+.inline-item[data-v-fee158ae] {
   display: inline-block;
 }
-.inline-item[data-v-6607043c]:not(:last-of-type) {
+.inline-item[data-v-fee158ae]:not(:last-of-type) {
   margin-right: 8px;
 }
-.inline-item__name[data-v-6607043c] {
+.inline-item__name[data-v-fee158ae] {
   margin-right: 4px;
   -webkit-user-select: none;
   user-select: none;
 }
-.monospace[data-v-6607043c] {
+.monospace[data-v-fee158ae] {
   font-family: monospace;
 }
-span.monospace[data-v-6607043c] {
+span.monospace[data-v-fee158ae] {
   -webkit-user-select: none;
   user-select: none;
 }
-.code-type[data-v-6607043c] {
+.code-type[data-v-fee158ae] {
   color: var(--el-text-color-secondary);
+}
+.downloaded-title-color-preview[data-v-fee158ae] {
+  position: relative !important;
+  width: unset !important;
+  height: unset !important;
+  inset: unset !important;
+  border-radius: 0 !important;
+  margin-left: 8px !important;
+  padding: 4px 16px !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
 }
 #nhentai-helper-setting-dialog-outside {
   width: 80%;
@@ -224,51 +235,51 @@ span.monospace[data-v-6607043c] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-dd5d44a0] {
+.bold[data-v-eb8a3d7f] {
   font-weight: 700;
 }
-.info-label[data-v-dd5d44a0] {
+.info-label[data-v-eb8a3d7f] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-dd5d44a0] {
+.lang-zh .info-label[data-v-eb8a3d7f] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-dd5d44a0] {
+.lang-en .info-label[data-v-eb8a3d7f] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-dd5d44a0] {
+.info-tag-wrapper[data-v-eb8a3d7f] {
   display: flex;
 }
-.info-tag[data-v-dd5d44a0] {
+.info-tag[data-v-eb8a3d7f] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-dd5d44a0] {
+.info-tag--pointer[data-v-eb8a3d7f] {
   cursor: pointer;
 }
-.image-loading[data-v-dd5d44a0] {
+.image-loading[data-v-eb8a3d7f] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-dd5d44a0] {
+.scroll-container[data-v-eb8a3d7f] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
 }
-.scroll-container[data-v-dd5d44a0]::-webkit-scrollbar {
+.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-dd5d44a0]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-dd5d44a0]::-webkit-scrollbar-track {
+.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-dd5d44a0] {
+.scroll-container-inner[data-v-eb8a3d7f] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -306,25 +317,33 @@ span.monospace[data-v-6607043c] {
   transition: var(--el-transition-all);
   transition-duration: .2s;
 }
-.language-filter[data-v-a4501d38] {
+.tags-filter[data-v-6beab283] {
   display: inline-flex;
   align-items: center;
   padding-left: 10px;
   vertical-align: middle;
 }
-.filter-select[data-v-a4501d38] {
+.filter-option[data-v-6beab283] {
+  text-align: center;
+}
+.filter-option-group[data-v-6beab283] .el-select-group__title {
+  text-align: left;
+  padding: 0 12px;
+  line-height: 24px;
+}
+.filter-select[data-v-6beab283] {
   width: 140px;
   margin-right: -140px;
 }
-.filter-select[data-v-a4501d38] .el-input__inner {
+.filter-select[data-v-6beab283] .el-input__inner {
   color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
   background: 0 0 !important;
 }
 @media screen and (max-width: 644px) {
-  .language-filter[data-v-a4501d38] {
+  .tags-filter[data-v-6beab283] {
     padding: 10px 0;
   }
-  .filter-select[data-v-a4501d38] {
+  .filter-select[data-v-6beab283] {
     margin-right: 0;
   }
 } `);
@@ -745,7 +764,7 @@ span.monospace[data-v-6607043c] {
   display: block;
 }
 .nhentai-helper-gallery.downloaded .caption {
-  color: #999;
+  color: var(--nh-helper-downloaded-title-color, #999);
 }
 #page-container {
   position: relative;
@@ -794,6 +813,10 @@ body.nhentai-helper-nhentai_xxx .reader_outer {
 }
 body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   margin-left: 5px;
+}
+.el-color-picker-panel .el-input__inner {
+  background-color: inherit !important;
+  color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
 }`;
   importCSS(indexLess);
   const notyCss = `.noty_layout_mixin,
@@ -1549,6 +1572,14 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   importCSS(notyCss);
   const cssLoader = (e) => _GM_addStyle(_GM_getResourceText(e));
   cssLoader("element-plus-css");
+  function compact(arr) {
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      item && result.push(item);
+    }
+    return result;
+  }
   function difference(firstArr, secondArr) {
     const secondSet = new Set(secondArr);
     return firstArr.filter((item) => !secondSet.has(item));
@@ -3648,6 +3679,12 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
       output.push("0");
     return output;
   }
+  const useStyle = (style) => Vue.watchEffect(() => {
+    const styleEl = _GM_addStyle(Vue.toValue(style));
+    Vue.onWatcherCleanup(() => {
+      styleEl.remove();
+    });
+  });
   function castArray(value) {
     return arguments.length === 0 ? [] : Array.isArray(value) ? value : [value];
   }
@@ -3941,6 +3978,11 @@ ${source}
       key: "remove_ad_page",
       default: false,
       validator: booleanValidator
+    },
+    downloadedTitleColor: {
+      key: "downloaded_title_color",
+      default: "rgb(153, 153, 153)",
+      validator: stringValidator
     }
   }, browserDetect = detect(), DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox"), readSettings = () => mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
     const realDefault = typeof defaultVal == "function" ? defaultVal() : defaultVal, val = _GM_getValue(key, realDefault);
@@ -4007,7 +4049,7 @@ ${source}
     } catch {
       return null;
     }
-  }), dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
+  }), applyDownloadedTitleColor = () => useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`), dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
   dlQueue.canSingleStart = () => !(settings.seriesMode && zipQueue.length);
   zipQueue.emitter.on("finish", () => {
     settings.seriesMode && dlQueue.start().catch(logger.error);
@@ -7203,7 +7245,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     __name: "SettingsDialog",
     setup(__props, { expose: __expose }) {
       startWatchSettings();
-      const threadNumMarks = {
+      const CAPTION_CLASS = selector.galleryCaption.replace(".", ""), threadNumMarks = {
         1: "1",
         4: "4",
         8: "8",
@@ -7258,6 +7300,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         writeableSettings.titleReplacement.push({ from: "", to: "", regexp: false });
       }, delTitleReplacement = (index) => {
         writeableSettings.titleReplacement.splice(index, 1);
+      }, downloadedTitleColorPreview = Vue.ref(writeableSettings.downloadedTitleColor), handleDownloadedTitleColorPreviewChange = (val) => {
+        downloadedTitleColorPreview.value = val || writeableSettings.downloadedTitleColor;
       };
       return Vue.watch(
         () => writeableSettings.language,
@@ -7267,7 +7311,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       ), __expose({ open: open2 }), (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElDialog), {
         id: "nhentai-helper-setting-dialog-outside",
         modelValue: show.value,
-        "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => show.value = $event),
+        "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => show.value = $event),
         center: true,
         top: "50px"
       }, {
@@ -7440,7 +7484,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).JPG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[31] || (_cache[31] = [
+                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
                             Vue.createTextVNode("jpg", -1)
                           ])]),
                           _: 1
@@ -7448,7 +7492,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).PNG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
+                          default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
                             Vue.createTextVNode("png", -1)
                           ])]),
                           _: 1
@@ -7566,12 +7610,33 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   _: 1
                 }, 8, ["label"]),
                 Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+                  label: Vue.unref(t2)("setting.downloadedTitleColor")
+                }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createVNode(Vue.unref(elementPlus.ElColorPicker), {
+                      modelValue: Vue.unref(writeableSettings).downloadedTitleColor,
+                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => Vue.unref(writeableSettings).downloadedTitleColor = $event),
+                      "show-alpha": "",
+                      clearable: "",
+                      "color-format": "rgb",
+                      "value-on-clear": Vue.unref(settingDefinitions).downloadedTitleColor.default,
+                      onActiveChange: handleDownloadedTitleColorPreviewChange,
+                      onChange: handleDownloadedTitleColorPreviewChange
+                    }, null, 8, ["modelValue", "value-on-clear"]),
+                    Vue.createElementVNode("div", {
+                      class: Vue.normalizeClass(["downloaded-title-color-preview", Vue.unref(CAPTION_CLASS)]),
+                      style: Vue.normalizeStyle({ color: downloadedTitleColorPreview.value })
+                    }, Vue.toDisplayString(Vue.unref(writeableSettings).downloadedTitleColor), 7)
+                  ]),
+                  _: 1
+                }, 8, ["label"]),
+                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
                   label: Vue.unref(t2)("setting.addMetaFile")
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckboxGroup), {
                       modelValue: Vue.unref(writeableSettings).addMetaFile,
-                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
+                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
                     }, {
                       default: Vue.withCtx(() => [
                         Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
@@ -7595,7 +7660,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
                       modelValue: Vue.unref(writeableSettings).metaFileTitleLanguage,
-                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
+                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
                     }, {
                       default: Vue.withCtx(() => [
                         Vue.createVNode(Vue.unref(elementPlus.ElOption), {
@@ -7625,7 +7690,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
                       modelValue: Vue.unref(writeableSettings).nHentaiDownloadHost,
-                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
+                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
                       disabled: !!Vue.unref(writeableSettings).customDownloadUrl
                     }, {
                       default: Vue.withCtx(() => [
@@ -7651,7 +7716,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customDownloadUrl,
-                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
+                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7662,7 +7727,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
-                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
+                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7673,7 +7738,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).seriesMode,
-                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
+                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7684,7 +7749,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).streamDownload,
-                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
+                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
                       disabled: Vue.unref(DISABLE_STREAM_DOWNLOAD)
                     }, null, 8, ["modelValue", "disabled"])
                   ]),
@@ -7698,7 +7763,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).preventConsoleClearing,
-                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => Vue.unref(writeableSettings).preventConsoleClearing = $event)
+                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).preventConsoleClearing = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7720,7 +7785,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                               style: { width: "100%" },
                               onClick: addTitleReplacement
                             }, {
-                              default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
+                              default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
                                 Vue.createTextVNode("+", -1)
                               ])]),
                               _: 1
@@ -7795,23 +7860,23 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createElementVNode("span", _hoisted_12, [
-                      _cache[37] || (_cache[37] = Vue.createTextVNode("function (filename", -1)),
+                      _cache[38] || (_cache[38] = Vue.createTextVNode("function (filename", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
-                        default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
+                        default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
                           Vue.createTextVNode(": string", -1)
                         ])]),
                         _: 1
                       }),
-                      _cache[38] || (_cache[38] = Vue.createTextVNode(", gallery", -1)),
+                      _cache[39] || (_cache[39] = Vue.createTextVNode(", gallery", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
                         default: Vue.withCtx(() => [
-                          _cache[36] || (_cache[36] = Vue.createTextVNode(": ", -1)),
+                          _cache[37] || (_cache[37] = Vue.createTextVNode(": ", -1)),
                           Vue.createVNode(Vue.unref(elementPlus.ElLink), {
                             type: "primary",
                             href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
                             target: "_blank"
                           }, {
-                            default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
+                            default: Vue.withCtx(() => [..._cache[36] || (_cache[36] = [
                               Vue.createTextVNode("NHentaiGallery", -1)
                             ])]),
                             _: 1
@@ -7819,17 +7884,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         ]),
                         _: 1
                       }),
-                      _cache[39] || (_cache[39] = Vue.createTextVNode(") {", -1))
+                      _cache[40] || (_cache[40] = Vue.createTextVNode(") {", -1))
                     ]),
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customFilenameFunction,
-                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
+                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
                       class: "monospace",
                       type: "textarea",
                       placeholder: "return filename;",
                       autosize: { minRows: 1 }
                     }, null, 8, ["modelValue"]),
-                    _cache[40] || (_cache[40] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
+                    _cache[41] || (_cache[41] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
                   ]),
                   _: 1
                 }, 8, ["label"])
@@ -7889,23 +7954,27 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         _: 1
       }, 8, ["modelValue"]));
     }
-  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6607043c"]]), resource$1 = {
+  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-fee158ae"]]), resource$1 = {
     common: {
       settings: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Settings" } },
       auto: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Auto" } },
       english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "English" } },
       japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Japanese" } },
       chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Chinese" } },
+      uncensored: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Uncensored" } },
       pretty: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Pretty" } },
       filter: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Filter" } },
       none: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "None" } },
       disabled: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Disabled" } },
       copy: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copy" } },
       copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copied" } },
+      language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Language" } },
+      other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Other" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "EN" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "JP" } },
-        chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "CN" } }
+        chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "CN" } },
+        uncensored: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Uncensored" } }
       }
     },
     setting: {
@@ -7951,7 +8020,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         export: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Export" } },
         clear: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Clear" } },
         importTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tip: Import will not clear the existing history, but merges with it." } }
-      }
+      },
+      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Downloaded title color" } }
     },
     dialog: {
       yes: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "YES" } },
@@ -8003,16 +8073,20 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "英文" } },
       japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "日文" } },
       chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "中文" } },
+      uncensored: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "无修正" } },
       pretty: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "简略" } },
       filter: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "过滤" } },
       none: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "无" } },
       disabled: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "禁用" } },
       copy: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "复制" } },
       copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已复制" } },
+      language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "语言" } },
+      other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "其他" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "英" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "日" } },
-        chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "中" } }
+        chinese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "中" } },
+        uncensored: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "无修" } }
       }
     },
     setting: {
@@ -8058,7 +8132,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         export: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "导出" } },
         clear: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "清空" } },
         importTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录" } }
-      }
+      },
+      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已下载本子的标题颜色" } }
     },
     dialog: {
       yes: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "是的" } },
@@ -10534,7 +10609,20 @@ ${this.serializer.serializeToString(this.doc)}`;
       this.icon.className = this.iconClass, this.text && (this.text.textContent = this.btnText);
     }
   }
-  const { t: t$1 } = i18n.global;
+  const bc = new BroadcastChannel("nhentai-helper-mark-update"), onMarkDownloadedUpdate = (callback) => {
+    bc.addEventListener("message", (event) => {
+      const { gid, value } = event.data;
+      callback(gid, value);
+    });
+  }, initListenMarkDownloadedUpdateForGalleries = once(() => {
+    onMarkDownloadedUpdate((gid, value) => {
+      $(`${selector.gallery}[data-gid="${gid}"]`).each(function() {
+        this._markGalleryDownloaded?.(value, false);
+      });
+    });
+  }), boardcastMarkDownloadedUpdate = (gid, value) => {
+    bc.postMessage({ gid: Number(gid), value });
+  }, { t: t$1 } = i18n.global;
   class ProgressDisplayController {
     constructor(enableHeadTxt = false, docTitle) {
       this.enableHeadTxt = enableHeadTxt, this.docTitle = docTitle, this.btnTxt = /* @__PURE__ */ createNode("span", { class: "download-zip-txt", children: this.defaultBtnText() }), this.downloadBtn = /* @__PURE__ */ createNode("button", { class: `${className.greyButton} nhentai-helper-btn download-zip-btn`, children: [
@@ -10602,31 +10690,37 @@ ${this.serializer.serializeToString(this.doc)}`;
       }
     );
     $(selector.infoButtons).append(downloadBtn).after(pagesInput);
+    const getGallery2 = once(() => getGalleryInfo());
     let ignoreController;
+    const markGalleryDownloaded = async (isDownloaded, needBoardcast = true) => {
+      ignoreController?.setStatus(isDownloaded), needBoardcast && boardcastMarkDownloadedUpdate((await getGallery2()).gid, isDownloaded);
+    };
     if (settings.showIgnoreButton) {
-      const gallery = await getGalleryInfo(), isDownloaded = await isDownloadedByGid(gallery.gid);
+      const gallery = await getGallery2(), isDownloaded = await isDownloadedByGid(gallery.gid);
       ignoreController = new IgnoreController(true, isDownloaded);
       const { ignoreBtn } = ignoreController;
       ignoreBtn.addEventListener("click", () => {
         const ignore = ignoreController.getStatus();
-        ignore ? unmarkAsDownloaded(gallery.gid, gallery.title) : markAsDownloaded(gallery.gid, gallery.title), ignoreController.setStatus(!ignore);
-      }), $(selector.infoButtons).append(ignoreBtn);
+        ignore ? unmarkAsDownloaded(gallery.gid, gallery.title) : markAsDownloaded(gallery.gid, gallery.title), markGalleryDownloaded(!ignore);
+      }), $(selector.infoButtons).append(ignoreBtn), onMarkDownloadedUpdate((gid, value) => {
+        gid === gallery.gid && markGalleryDownloaded(value, false);
+      });
     }
     downloadBtn.addEventListener("click", async () => {
-      const gallery = await getGalleryInfo(), rangeCheckers = pagesInput.value.split(",").filter((range) => /^\s*(?:\d+(?:\s*-\s*)?\d*|-\d+)\s*$/.test(range)).map((range) => {
+      const gallery = await getGallery2(), rangeCheckers = pagesInput.value.split(",").filter((range) => /^\s*(?:\d+(?:\s*-\s*)?\d*|-\d+)\s*$/.test(range)).map((range) => {
         const [start, end] = range.split("-").map((num) => parseInt(num));
         return Number.isNaN(start) ? (page) => page <= end : end === void 0 ? (page) => page === start : Number.isNaN(end) ? (page) => page >= start : (page) => start <= page && page <= end;
       });
       progressDisplayController.lockBtn();
       try {
         if ((await isDownloadedByGid(gallery.gid) || await isDownloadedByTitle(gallery.title)) && !await downloadAgainConfirm(gallery.title.japanese || gallery.title.english)) {
-          progressDisplayController.reset(), markAsDownloaded(gallery.gid, gallery.title), ignoreController?.setStatus(!0);
+          progressDisplayController.reset(), markAsDownloaded(gallery.gid, gallery.title), markGalleryDownloaded(!0);
           return;
         }
         await (await downloadGalleryByInfo(createMangaDownloadInfo(gallery), {
           progressDisplayController,
           rangeCheckers
-        }))?.(), markAsDownloaded(gallery.gid, gallery.title), ignoreController?.setStatus(!0);
+        }))?.(), markAsDownloaded(gallery.gid, gallery.title), markGalleryDownloaded(!0);
       } catch (error) {
         progressDisplayController.error(), logger.error(error);
       }
@@ -10775,7 +10869,7 @@ ${this.serializer.serializeToString(this.doc)}`;
                     Vue.createVNode(Vue.unref(elementPlus.ElLink), {
                       type: "primary",
                       target: "_blank",
-                      underline: false,
+                      underline: "never",
                       href: galleryLink.value
                     }, {
                       default: Vue.withCtx(() => [
@@ -10884,12 +10978,34 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-dd5d44a0"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-eb8a3d7f"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
   ), openGalleryMiniPopover = (el, gid) => {
     initApp().open(el, gid);
+  }, store = localforage.createInstance({
+    name: IDB_NAME,
+    storeName: "last_download"
+  }), getKey = once(() => {
+    const url = new URL(location.href);
+    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+  });
+  let latestGid = 0;
+  const initLastDownload = async () => {
+    try {
+      const gid = await store.getItem(getKey());
+      if (!gid) return;
+      latestGid = gid, _GM_addStyle(
+        `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`
+      ), useStyle(
+        () => `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t("tip.lastDownloadedPosition")}"}`
+      );
+    } catch (error) {
+      logger.error(error);
+    }
+  }, updateLastDownload = async (gid) => {
+    gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
   }, isClient = typeof window < "u" && typeof document < "u";
   typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
   const toString = Object.prototype.toString, isObject = (val) => toString.call(val) === "[object Object]", noop = () => {
@@ -11126,26 +11242,26 @@ ${this.serializer.serializeToString(this.doc)}`;
     const { window: window$1 = defaultWindow } = options;
     return useStorage(key, initialValue, window$1?.sessionStorage, options);
   }
-  const _hoisted_1 = { class: "language-filter" }, _sfc_main = /* @__PURE__ */ Vue.defineComponent({
-    __name: "LanguageFilter",
+  const _hoisted_1 = { class: "tags-filter" }, _sfc_main = /* @__PURE__ */ Vue.defineComponent({
+    __name: "TagsFilter",
     setup(__props, { expose: __expose }) {
-      const { t: t2 } = i18n.global, languageFilter = useSessionStorage("languageFilter", [], {
+      const { t: t2 } = i18n.global, filterTagsKeys = useSessionStorage("filterTagsKeys", [], {
         listenToStorageChanges: false
-      });
+      }), filterTags = Vue.computed(() => compact(filterTagsKeys.value.map((key) => filterTagsMap[key])));
       return Vue.watch(
-        languageFilter,
+        filterTags,
         (val) => {
-          filterLanguage(val);
+          doFilterTags(val);
         },
         { deep: true, immediate: true }
       ), __expose({
         filterLanguage: ($node) => {
-          filterLanguage(languageFilter.value, $node);
+          doFilterTags(filterTags.value, $node);
         }
       }), (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("li", _hoisted_1, [
         Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
-          modelValue: Vue.unref(languageFilter),
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.isRef(languageFilter) ? languageFilter.value = $event : null),
+          modelValue: Vue.unref(filterTagsKeys),
+          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.isRef(filterTagsKeys) ? filterTagsKeys.value = $event : null),
           class: "filter-select",
           multiple: "",
           "collapse-tags": "",
@@ -11153,95 +11269,129 @@ ${this.serializer.serializeToString(this.doc)}`;
           placeholder: Vue.unref(t2)("common.filter")
         }, {
           default: Vue.withCtx(() => [
-            (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(filterOptions), ([key, val]) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
-              key,
-              label: Vue.unref(t2)(`common.abbr.${key}`),
-              value: val
+            (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(filterTagsKeysGrouped), (tags, group) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOptionGroup), {
+              key: group,
+              class: "filter-option-group",
+              label: Vue.unref(t2)(`common.${group}`)
             }, {
               default: Vue.withCtx(() => [
-                Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)(`common.${key}`)), 1)
+                (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(tags, (tag) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
+                  key: tag,
+                  class: "filter-option",
+                  label: Vue.unref(t2)(`common.abbr.${tag}`),
+                  value: tag
+                }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)(`common.${tag}`)), 1)
+                  ]),
+                  _: 2
+                }, 1032, ["label", "value"]))), 128))
               ]),
               _: 2
-            }, 1032, ["label", "value"]))), 128))
+            }, 1032, ["label"]))), 128))
           ]),
           _: 1
         }, 8, ["modelValue", "placeholder"])
       ]));
     }
-  }), LanguageFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-a4501d38"]]), filterOptions = IS_NHENTAI_TO ? [
-    ["japanese", "2"],
-    ["english", "19"],
-    ["chinese", "10197"]
-  ] : IS_NHENTAI_XXX ? [
-    ["japanese", "2"],
-    ["english", "1"],
-    ["chinese", "3"]
-  ] : [
-    ["japanese", "6346"],
-    ["english", "12227"],
-    ["chinese", "29963"]
-  ], filterOptionsMap = Object.fromEntries(filterOptions), allLangTags = Object.values(filterOptionsMap), detectRegMap = Object.entries({
+  }), TagsFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6beab283"]]), filterTagsMap = IS_NHENTAI_TO ? {
+    japanese: {
+      type: "language",
+      value: "2"
+    },
+    english: {
+      type: "language",
+      value: "19"
+    },
+    chinese: {
+      type: "language",
+      value: "10197"
+    }
+  } : IS_NHENTAI_XXX ? {
+    japanese: {
+      type: "language",
+      value: "2"
+    },
+    english: {
+      type: "language",
+      value: "1"
+    },
+    chinese: {
+      type: "language",
+      value: "3"
+    }
+  } : {
+    japanese: {
+      type: "language",
+      value: "6346"
+    },
+    english: {
+      type: "language",
+      value: "12227"
+    },
+    chinese: {
+      type: "language",
+      value: "29963"
+    },
+    uncensored: {
+      type: "other",
+      value: "8693"
+    }
+  }, filterTagsKeysGrouped = groupBy(
+    Object.keys(filterTagsMap),
+    (key) => filterTagsMap[key].type
+  ), allLangTags = Object.values(filterTagsMap).filter(
+    (item) => item.type === "language"
+    /* LANGUAGE */
+  ), langDetectRegMap = Object.entries({
     english: /\[english\]|translation\]/i,
     chinese: /\[chinese\]|中国翻訳|漢化\]/i
   }), handleMissingDataTags = ($gallery) => {
     $gallery.each(function() {
-      const title = $(this).find(selector.galleryCaption).text(), lang = detectRegMap.find(([, reg]) => reg.test(title))?.[0] || "japanese", tag = filterOptionsMap[lang];
+      const title = $(this).find(selector.galleryCaption).text(), lang = langDetectRegMap.find(([, reg]) => reg.test(title))?.[0] || "japanese", tag = filterTagsMap[lang];
       if (tag) {
         const curTags = this.dataset.tags;
-        this.dataset.tags = `${curTags ? `${curTags} ` : ""}${tag}`;
+        this.dataset.tags = `${curTags ? `${curTags} ` : ""}${tag.value}`;
       }
     });
-  }, filterLanguage = (tags, $node) => {
-    const attrName = IS_NHENTAI_XXX ? "data-languages" : "data-tags", getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2), getNotSelector = (tags2) => tags2.map((tag) => `:not([${attrName}~=${tag}])`).join("");
-    getNode(selector.gallery).removeClass("nhentai-helper-hidden"), handleMissingDataTags(getNode(`${selector.gallery}${getNotSelector(allLangTags)}`)), tags.length && getNode(`${selector.gallery}${getNotSelector(tags)}`).addClass("nhentai-helper-hidden");
-  }, mountLanguageFilter = () => {
+  }, TAG_ATTR_NAME = IS_NHENTAI_XXX ? "data-languages" : "data-tags", HIDDEN_CLASS = "nhentai-helper-hidden", getNotTagSelector = (items) => items.map((item) => `:not([${TAG_ATTR_NAME}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
+    const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
+    getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(getNode(`${selector.gallery}${getNotTagSelector(allLangTags)}`));
+    const { [
+      "language"
+      /* LANGUAGE */
+    ]: langTags, [
+      "other"
+      /* OTHER */
+    ]: otherTags } = groupBy(
+      tags,
+      (tag) => tag.type
+    );
+    langTags?.length && getNode(`${selector.gallery}${getNotTagSelector(tags)}`).addClass(HIDDEN_CLASS), otherTags?.forEach((tag) => {
+      getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`).addClass(
+        HIDDEN_CLASS
+      );
+    });
+  }, mountTagsFilter = () => {
     const menuLeft = document.querySelector(selector.menuLeft);
     if (!menuLeft) return {};
-    const vnode = Vue.h(LanguageFilter);
+    const vnode = Vue.h(TagsFilter);
     return Vue.render(vnode, menuLeft), vnode.component?.exposed ?? {};
-  }, store = localforage.createInstance({
-    name: IDB_NAME,
-    storeName: "last_download"
-  }), getKey = once(() => {
-    const url = new URL(location.href);
-    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
-  });
-  let latestGid = 0;
-  const initLastDownload = async () => {
-    try {
-      const gid = await store.getItem(getKey());
-      if (!gid) return;
-      latestGid = gid, _GM_addStyle(
-        `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`
-      ), Vue.watch(
-        () => _GM_addStyle(
-          `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t("tip.lastDownloadedPosition")}"}`
-        ),
-        (_, oldEl) => {
-          oldEl?.remove();
-        },
-        { immediate: !0 }
-      );
-    } catch (error) {
-      logger.error(error);
-    }
-  }, updateLastDownload = async (gid) => {
-    gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
   }, initListPage = () => {
     initGalleries();
-    const { filterLanguage: filterLanguage2 } = mountLanguageFilter();
+    const { doFilterTags: doFilterTags2 } = mountTagsFilter();
     initShortcut(), initLastDownload(), restoreDownloadQueue();
     const contentEl = document.querySelector(selector.galleryList);
     contentEl && new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes }) => {
         addedNodes.forEach((node) => {
           const $el = $(node);
-          $el.find(selector.gallery).each(initGallery), filterLanguage2?.($el);
+          $el.find(selector.gallery).each(initGallery), doFilterTags2?.($el);
         });
       });
     }).observe(contentEl, { childList: true });
   }, initGalleries = () => {
-    $(selector.gallery).each(initGallery);
+    $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
   }, initShortcut = () => {
     const ignoreActiveElTags = /* @__PURE__ */ new Set(["INPUT", "TEXTAREA"]);
     $(document).on("keydown", (event) => {
@@ -11274,22 +11424,21 @@ ${this.serializer.serializeToString(this.doc)}`;
     settings.openOnNewTab && $a.attr("target", "_blank");
     const gid = /\/g\/(\d+)/.exec($a.attr("href"))?.[1];
     if (!gid) return;
+    this.dataset.gid = gid;
     const enTitle = $gallery.find(selector.galleryCaption).text().trim(), progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
     let ignoreController, galleryTitle;
-    const markGalleryDownloaded = () => {
-      $gallery.addClass("downloaded"), ignoreController?.setStatus(true);
-    }, unmarkGalleryDownloaded = () => {
-      $gallery.removeClass("downloaded"), ignoreController?.setStatus(false);
+    const markGalleryDownloaded = (isDownloaded, needBoardcast = true) => {
+      isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBoardcast && boardcastMarkDownloadedUpdate(gid, isDownloaded);
     };
-    Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
+    this._markGalleryDownloaded = markGalleryDownloaded, Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
       ([gidDownloaded, titleDownloaded]) => {
         const downloaded = gidDownloaded || titleDownloaded;
-        if (downloaded && markGalleryDownloaded(), settings.showIgnoreButton) {
+        if (downloaded && markGalleryDownloaded(downloaded), settings.showIgnoreButton) {
           ignoreController = new IgnoreController(false, downloaded);
           const { ignoreBtn } = ignoreController;
           ignoreBtn.addEventListener("click", () => {
-            ignoreController.getStatus() ? (unmarkGalleryDownloaded(), unmarkAsDownloaded(gid, galleryTitle)) : (markGalleryDownloaded(), markAsDownloaded(gid, galleryTitle));
+            ignoreController.getStatus() ? (markGalleryDownloaded(false), unmarkAsDownloaded(gid, galleryTitle)) : (markGalleryDownloaded(true), markAsDownloaded(gid, galleryTitle));
           }), $gallery.append(ignoreBtn);
         }
       }
@@ -11299,7 +11448,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       if (settings.autoCancelDownloadedManga || progressDisplayController.lockBtn("Wait"), !skipDownloadedCheck && await isDownloadedByGid(gid)) {
         const title = $gallery.find(selector.galleryCaption).text();
         if (!await downloadAgainConfirm(title, true)) {
-          progressDisplayController.reset(), markGalleryDownloaded();
+          progressDisplayController.reset(), markGalleryDownloaded(true);
           return;
         }
         skipDownloadedCheck = true;
@@ -11314,7 +11463,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       }
       if (!skipDownloadedCheck) {
         if (await isDownloadedByTitle(gallery.title) && !await downloadAgainConfirm(gallery.title.japanese || gallery.title.english, true)) {
-          progressDisplayController.reset(), markAsDownloaded(gid, gallery.title), markGalleryDownloaded();
+          progressDisplayController.reset(), markAsDownloaded(gid, gallery.title), markGalleryDownloaded(true);
           return;
         }
         if (dlQueue.queue.some(
@@ -11328,7 +11477,10 @@ ${this.serializer.serializeToString(this.doc)}`;
           return;
         }
       }
-      addDownloadGalleryTask(gallery, { progressDisplayController, markGalleryDownloaded }), updateLastDownload(gid);
+      addDownloadGalleryTask(gallery, {
+        progressDisplayController,
+        markGalleryDownloaded: () => markGalleryDownloaded(!0)
+      }), updateLastDownload(gid);
     };
     downloadBtn.addEventListener("click", startDownload), this.addEventListener("contextmenu", (e) => {
       settings.galleryContextmenuPreview && (e.preventDefault(), openGalleryMiniPopover(this, gid));
@@ -11364,7 +11516,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, applyOnlineViewStyle = (enable, style) => {
     enable ? style.inject() : style.remove();
   }, initPage = () => {
-    $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage();
+    $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
   }, applyPjax = () => {
     $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
