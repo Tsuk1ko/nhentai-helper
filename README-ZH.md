@@ -129,11 +129,11 @@
 
 ![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.zh.png)
 
-### 语言过滤
+### 筛选
 
-你可以在导航栏中选择一个语言来过滤本子
+你可以在导航栏的此处进行筛选，语言之间为“或”，其他为“且”
 
-![langFilter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/langFilter.png)
+![filter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/filter.zh.png)
 
 ### 100% 视图高度
 

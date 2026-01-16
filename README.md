@@ -132,11 +132,11 @@ When you are on a mirror site, a prompt "A userscript wants to access a cross-or
 
 ![connect](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/connect.en.png)
 
-### Language filter
+### Filter
 
-You can select a language in the navigation bar to filter manga.
+You can filter here in the navigation bar. Languages use 'OR' logic, while other filters use 'AND' logic.
 
-![langFilter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/langFilter.png)
+![filter](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/filter.en.png)
 
 ### 100% view height
 
