@@ -117,6 +117,7 @@ import {
 import { groupBy } from 'es-toolkit';
 import { useI18n } from 'petite-vue-i18n';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { IS_NHENTAI_XXX } from '@/const';
 import { showMessage } from '@/utils/elementPlus';
 import logger from '@/utils/logger';
 import { getCompliedThumbMediaUrlTemplate, getGallery, NHentaiImgExt } from '@/utils/nhentai';
@@ -196,7 +197,7 @@ let thumbUrlTemplate: Awaited<ReturnType<typeof getCompliedThumbMediaUrlTemplate
 const getThumbInfo = ({ t, w, h }: NHentaiImage, i: number) => ({
   url: thumbUrlTemplate({
     mid: gallery.value?.media_id,
-    filename: `${i + 1}t.${NHentaiImgExt[t]}`,
+    filename: `${i + 1}t.${IS_NHENTAI_XXX ? 'jpg' : NHentaiImgExt[t]}`,
   }),
   height: w && h ? Math.floor(pageThumbWidth.value * Math.min(h / w, 1.8)) : 0,
 });
