@@ -53,7 +53,7 @@ watch(
 );
 
 defineExpose({
-  filterLanguage: ($node?: JQElement) => {
+  doFilterTags: ($node?: JQElement) => {
     doFilterTags(filterTags.value, $node);
   },
 });
