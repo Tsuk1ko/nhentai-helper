@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.23.0
+// @version            3.23.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -317,33 +317,33 @@ span.monospace[data-v-fee158ae] {
   transition: var(--el-transition-all);
   transition-duration: .2s;
 }
-.tags-filter[data-v-6beab283] {
+.tags-filter[data-v-4057e360] {
   display: inline-flex;
   align-items: center;
   padding-left: 10px;
   vertical-align: middle;
 }
-.filter-option[data-v-6beab283] {
+.filter-option[data-v-4057e360] {
   text-align: center;
 }
-.filter-option-group[data-v-6beab283] .el-select-group__title {
+.filter-option-group[data-v-4057e360] .el-select-group__title {
   text-align: left;
   padding: 0 12px;
   line-height: 24px;
 }
-.filter-select[data-v-6beab283] {
+.filter-select[data-v-4057e360] {
   width: 140px;
   margin-right: -140px;
 }
-.filter-select[data-v-6beab283] .el-input__inner {
+.filter-select[data-v-4057e360] .el-input__inner {
   color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
   background: 0 0 !important;
 }
 @media screen and (max-width: 644px) {
-  .tags-filter[data-v-6beab283] {
+  .tags-filter[data-v-4057e360] {
     padding: 10px 0;
   }
-  .filter-select[data-v-6beab283] {
+  .filter-select[data-v-4057e360] {
     margin-right: 0;
   }
 } `);
@@ -11255,7 +11255,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         },
         { deep: true, immediate: true }
       ), __expose({
-        filterLanguage: ($node) => {
+        doFilterTags: ($node) => {
           doFilterTags(filterTags.value, $node);
         }
       }), (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("li", _hoisted_1, [
@@ -11294,7 +11294,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         }, 8, ["modelValue", "placeholder"])
       ]));
     }
-  }), TagsFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6beab283"]]), filterTagsMap = IS_NHENTAI_TO ? {
+  }), TagsFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4057e360"]]), filterTagsMap = IS_NHENTAI_TO ? {
     japanese: {
       type: "language",
       value: "2"
