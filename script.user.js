@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.23.1
+// @version            3.23.2
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -235,51 +235,51 @@ span.monospace[data-v-fee158ae] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-eb8a3d7f] {
+.bold[data-v-d00f604e] {
   font-weight: 700;
 }
-.info-label[data-v-eb8a3d7f] {
+.info-label[data-v-d00f604e] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-eb8a3d7f] {
+.lang-zh .info-label[data-v-d00f604e] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-eb8a3d7f] {
+.lang-en .info-label[data-v-d00f604e] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-eb8a3d7f] {
+.info-tag-wrapper[data-v-d00f604e] {
   display: flex;
 }
-.info-tag[data-v-eb8a3d7f] {
+.info-tag[data-v-d00f604e] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-eb8a3d7f] {
+.info-tag--pointer[data-v-d00f604e] {
   cursor: pointer;
 }
-.image-loading[data-v-eb8a3d7f] {
+.image-loading[data-v-d00f604e] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-eb8a3d7f] {
+.scroll-container[data-v-d00f604e] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
 }
-.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar {
+.scroll-container[data-v-d00f604e]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-d00f604e]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-eb8a3d7f]::-webkit-scrollbar-track {
+.scroll-container[data-v-d00f604e]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-eb8a3d7f] {
+.scroll-container-inner[data-v-d00f604e] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -10765,7 +10765,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       const getThumbInfo = ({ t: t22, w, h: h2 }, i) => ({
         url: thumbUrlTemplate({
           mid: gallery.value?.media_id,
-          filename: `${i + 1}t.${NHentaiImgExt[t22]}`
+          filename: `${i + 1}t.${IS_NHENTAI_XXX ? "jpg" : NHentaiImgExt[t22]}`
         }),
         height: w && h2 ? Math.floor(pageThumbWidth.value * Math.min(h2 / w, 1.8)) : 0
       }), formatNumber = (num) => num >= 1e6 ? `${Math.floor(num / 1e6)}M` : num >= 1e3 ? `${Math.floor(num / 1e3)}K` : num, openTagUrl = (path) => {
@@ -10978,7 +10978,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-eb8a3d7f"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d00f604e"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
@@ -11306,6 +11306,10 @@ ${this.serializer.serializeToString(this.doc)}`;
     chinese: {
       type: "language",
       value: "10197"
+    },
+    uncensored: {
+      type: "other",
+      value: "632"
     }
   } : IS_NHENTAI_XXX ? {
     japanese: {
@@ -11319,6 +11323,10 @@ ${this.serializer.serializeToString(this.doc)}`;
     chinese: {
       type: "language",
       value: "3"
+    },
+    uncensored: {
+      type: "other",
+      value: "18"
     }
   } : {
     japanese: {
@@ -11346,17 +11354,19 @@ ${this.serializer.serializeToString(this.doc)}`;
   ), langDetectRegMap = Object.entries({
     english: /\[english\]|translation\]/i,
     chinese: /\[chinese\]|中国翻訳|漢化\]/i
-  }), handleMissingDataTags = ($gallery) => {
+  }), TAG_ATTR_NAME = "data-tags", LANGUAGE_DATA_NAME = IS_NHENTAI_XXX ? "languages" : "tags", LANGUAGE_ATTR_NAME = `data-${LANGUAGE_DATA_NAME}`, HIDDEN_CLASS = "nhentai-helper-hidden", handleMissingDataTags = ($gallery) => {
     $gallery.each(function() {
       const title = $(this).find(selector.galleryCaption).text(), lang = langDetectRegMap.find(([, reg]) => reg.test(title))?.[0] || "japanese", tag = filterTagsMap[lang];
       if (tag) {
-        const curTags = this.dataset.tags;
-        this.dataset.tags = `${curTags ? `${curTags} ` : ""}${tag.value}`;
+        const curTags = this.dataset[LANGUAGE_DATA_NAME];
+        this.dataset[LANGUAGE_DATA_NAME] = `${curTags ? `${curTags} ` : ""}${tag.value}`;
       }
     });
-  }, TAG_ATTR_NAME = IS_NHENTAI_XXX ? "data-languages" : "data-tags", HIDDEN_CLASS = "nhentai-helper-hidden", getNotTagSelector = (items) => items.map((item) => `:not([${TAG_ATTR_NAME}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
+  }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => `:not([${attrName}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
     const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
-    getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(getNode(`${selector.gallery}${getNotTagSelector(allLangTags)}`));
+    getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(
+      getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`)
+    );
     const { [
       "language"
       /* LANGUAGE */
@@ -11367,7 +11377,9 @@ ${this.serializer.serializeToString(this.doc)}`;
       tags,
       (tag) => tag.type
     );
-    langTags?.length && getNode(`${selector.gallery}${getNotTagSelector(tags)}`).addClass(HIDDEN_CLASS), otherTags?.forEach((tag) => {
+    langTags?.length && getNode(`${selector.gallery}${getNotTagSelector(tags, LANGUAGE_ATTR_NAME)}`).addClass(
+      HIDDEN_CLASS
+    ), otherTags?.forEach((tag) => {
       getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`).addClass(
         HIDDEN_CLASS
       );
