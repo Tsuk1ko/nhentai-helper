@@ -2,7 +2,10 @@
   <el-popover
     ref="popoverRef"
     v-model:visible="visible"
-    :popper-class="popoverTransition ? 'popover-transition' : ''"
+    :popper-class="{
+      'gallery-mini-popover-wrapper': true,
+      'popover-transition': popoverTransition,
+    }"
     :virtual-ref="virtualRef"
     virtual-triggering
     :placement="popoverPlacement"
@@ -10,12 +13,7 @@
     :width="popoverWidth"
     :hide-after="0"
   >
-    <div
-      v-if="gallery"
-      class="gallery-mini-popover"
-      :class="`lang-${settings.language}`"
-      @wheel.prevent
-    >
+    <div v-if="gallery" class="gallery-mini-popover" :class="`lang-${settings.language}`">
       <el-descriptions :title="title" :column="1">
         <template #extra>
           <el-button text size="small" @click="copyTitle">{{ t('common.copy') }}</el-button>
@@ -78,7 +76,6 @@
         :infinite-scroll-distance="100"
         class="scroll-container"
         :style="{ height: `${pageThumbScrollHeight}px` }"
-        @wheel.capture.stop="handleScrollWheel"
       >
         <div class="scroll-container-inner">
           <el-row :gutter="8">
@@ -260,16 +257,6 @@ const addPageThumbLine = () => {
   );
 };
 
-const handleScrollWheel = (e: WheelEvent) => {
-  const { scrollTop, clientHeight, scrollHeight } = e.currentTarget as HTMLElement;
-  if (
-    (scrollTop + clientHeight === scrollHeight && e.deltaY > 0) ||
-    (scrollTop === 0 && e.deltaY < 0)
-  ) {
-    e.preventDefault();
-  }
-};
-
 const close = () => {
   if (visible.value) visible.value = false;
 };
@@ -339,6 +326,7 @@ defineExpose({ open });
   min-height: 400px;
   margin: 8px -8px 0 -8px;
   overflow-y: auto;
+  overscroll-behavior: none;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -397,8 +385,13 @@ defineExpose({ open });
   }
 }
 
-.popover-transition {
-  transition: var(--el-transition-all);
-  transition-duration: 0.2s;
+.gallery-mini-popover-wrapper {
+  overflow: hidden;
+  overscroll-behavior: none;
+
+  .popover-transition {
+    transition: var(--el-transition-all);
+    transition-duration: 0.2s;
+  }
 }
 </style>
