@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.23.2
+// @version            3.23.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -235,51 +235,52 @@ span.monospace[data-v-fee158ae] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-d00f604e] {
+.bold[data-v-474c8ebf] {
   font-weight: 700;
 }
-.info-label[data-v-d00f604e] {
+.info-label[data-v-474c8ebf] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-d00f604e] {
+.lang-zh .info-label[data-v-474c8ebf] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-d00f604e] {
+.lang-en .info-label[data-v-474c8ebf] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-d00f604e] {
+.info-tag-wrapper[data-v-474c8ebf] {
   display: flex;
 }
-.info-tag[data-v-d00f604e] {
+.info-tag[data-v-474c8ebf] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-d00f604e] {
+.info-tag--pointer[data-v-474c8ebf] {
   cursor: pointer;
 }
-.image-loading[data-v-d00f604e] {
+.image-loading[data-v-474c8ebf] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-d00f604e] {
+.scroll-container[data-v-474c8ebf] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
+  overscroll-behavior: none;
 }
-.scroll-container[data-v-d00f604e]::-webkit-scrollbar {
+.scroll-container[data-v-474c8ebf]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-d00f604e]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-474c8ebf]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-d00f604e]::-webkit-scrollbar-track {
+.scroll-container[data-v-474c8ebf]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-d00f604e] {
+.scroll-container-inner[data-v-474c8ebf] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -313,7 +314,11 @@ span.monospace[data-v-fee158ae] {
 .gallery-mini-popover .el-image {
   width: 100%;
 }
-.popover-transition {
+.gallery-mini-popover-wrapper {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.gallery-mini-popover-wrapper .popover-transition {
   transition: var(--el-transition-all);
   transition-duration: .2s;
 }
@@ -10798,9 +10803,6 @@ ${this.serializer.serializeToString(this.doc)}`;
         pageThumbs.value.push(
           ...gallery.value.images.pages.slice(curLength, (curLines + 1) * pageThumbsColNum.value).map((img, i) => getThumbInfo(img, curLength + i))
         );
-      }, handleScrollWheel = (e) => {
-        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-        (scrollTop + clientHeight === scrollHeight && e.deltaY > 0 || scrollTop === 0 && e.deltaY < 0) && e.preventDefault();
       }, close = () => {
         visible.value && (visible.value = false);
       }, copyTitle = () => {
@@ -10820,8 +10822,11 @@ ${this.serializer.serializeToString(this.doc)}`;
         ref_key: "popoverRef",
         ref: popoverRef,
         visible: visible.value,
-        "onUpdate:visible": _cache[2] || (_cache[2] = ($event) => visible.value = $event),
-        "popper-class": popoverTransition.value ? "popover-transition" : "",
+        "onUpdate:visible": _cache[1] || (_cache[1] = ($event) => visible.value = $event),
+        "popper-class": {
+          "gallery-mini-popover-wrapper": true,
+          "popover-transition": popoverTransition.value
+        },
         "virtual-ref": virtualRef.value,
         "virtual-triggering": "",
         placement: popoverPlacement.value,
@@ -10832,9 +10837,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         default: Vue.withCtx(() => [
           gallery.value ? (Vue.openBlock(), Vue.createElementBlock("div", {
             key: 0,
-            class: Vue.normalizeClass(["gallery-mini-popover", `lang-${Vue.unref(settings).language}`]),
-            onWheel: _cache[0] || (_cache[0] = Vue.withModifiers(() => {
-            }, ["prevent"]))
+            class: Vue.normalizeClass(["gallery-mini-popover", `lang-${Vue.unref(settings).language}`])
           }, [
             Vue.createVNode(Vue.unref(elementPlus.ElDescriptions), {
               title: title.value,
@@ -10941,8 +10944,7 @@ ${this.serializer.serializeToString(this.doc)}`;
               key: 0,
               "infinite-scroll-distance": 100,
               class: "scroll-container",
-              style: Vue.normalizeStyle({ height: `${pageThumbScrollHeight.value}px` }),
-              onWheelCapture: Vue.withModifiers(handleScrollWheel, ["stop"])
+              style: Vue.normalizeStyle({ height: `${pageThumbScrollHeight.value}px` })
             }, [
               Vue.createElementVNode("div", _hoisted_7, [
                 Vue.createVNode(Vue.unref(elementPlus.ElRow), { gutter: 8 }, {
@@ -10963,13 +10965,13 @@ ${this.serializer.serializeToString(this.doc)}`;
                   _: 1
                 })
               ])
-            ], 36)), [
+            ], 4)), [
               [Vue.unref(elementPlus.ElInfiniteScroll), addPageThumbLine]
             ]) : Vue.createCommentVNode("", true)
-          ], 34)) : Vue.withDirectives((Vue.openBlock(), Vue.createElementBlock("div", {
+          ], 2)) : Vue.withDirectives((Vue.openBlock(), Vue.createElementBlock("div", {
             key: 1,
             style: { height: "700px", maxHeight: "90vh" },
-            onWheel: _cache[1] || (_cache[1] = Vue.withModifiers(() => {
+            onWheel: _cache[0] || (_cache[0] = Vue.withModifiers(() => {
             }, ["prevent"]))
           }, null, 544)), [
             [Vue.unref(elementPlus.vLoading), true]
@@ -10978,7 +10980,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d00f604e"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-474c8ebf"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
