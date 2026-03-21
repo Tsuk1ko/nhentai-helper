@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.23.3
+// @version            3.24.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -8070,6 +8070,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     },
     tip: {
       lastDownloadedPosition: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Last download position" } }
+    },
+    menu: {
+      restoreLastDownload: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Restore last download position" } }
     }
   }, resource = {
     common: {
@@ -8182,6 +8185,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     },
     tip: {
       lastDownloadedPosition: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "上次下载位置" } }
+    },
+    menu: {
+      restoreLastDownload: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "还原上次下载位置记录" } }
     }
   };
   registerMessageResolver(resolveValue);
@@ -10993,12 +10999,12 @@ ${this.serializer.serializeToString(this.doc)}`;
     const url = new URL(location.href);
     return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
   });
-  let latestGid = 0;
+  let latestGid = 0, lastGid = 0;
   const initLastDownload = async () => {
     try {
       const gid = await store.getItem(getKey());
       if (!gid) return;
-      latestGid = gid, _GM_addStyle(
+      latestGid = gid, lastGid = gid, _GM_addStyle(
         `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`
       ), useStyle(
         () => `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t("tip.lastDownloadedPosition")}"}`
@@ -11008,6 +11014,8 @@ ${this.serializer.serializeToString(this.doc)}`;
     }
   }, updateLastDownload = async (gid) => {
     gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
+  }, restoreLastDownload = async () => {
+    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid));
   }, isClient = typeof window < "u" && typeof document < "u";
   typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
   const toString = Object.prototype.toString, isObject = (val) => toString.call(val) === "[object Object]", noop = () => {
@@ -11559,5 +11567,6 @@ ${this.serializer.serializeToString(this.doc)}`;
   createAppAndMount(_sfc_main$4);
   initPage();
   _GM_registerMenuCommand(i18n.global.t("common.settings"), openSettingsDialog);
+  _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), restoreLastDownload);
 
 })(jQuery, Vue, ElementPlus);
