@@ -18,12 +18,14 @@ const getKey = once(() => {
 });
 
 let latestGid: number = 0;
+let lastGid: number = 0;
 
 export const initLastDownload = async () => {
   try {
     const gid = await store.getItem<number>(getKey());
     if (!gid) return;
     latestGid = gid;
+    lastGid = gid;
     GM_addStyle(
       `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
     );
@@ -41,4 +43,10 @@ export const updateLastDownload = async (gid: string | number) => {
   if (!gid || gid <= latestGid) return;
   latestGid = gid;
   await store.setItem(getKey(), gid);
+};
+
+export const restoreLastDownload = async () => {
+  if (!lastGid) return;
+  latestGid = lastGid;
+  await store.setItem(getKey(), lastGid);
 };

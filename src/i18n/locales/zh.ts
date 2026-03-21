@@ -116,4 +116,7 @@ export default {
   tip: {
     lastDownloadedPosition: '上次下载位置',
   },
+  menu: {
+    restoreLastDownload: '还原上次下载位置记录',
+  },
 };

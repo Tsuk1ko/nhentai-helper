@@ -12,6 +12,7 @@ import { IS_SETTINGS_DIALOG_DEV } from './const';
 import { i18n } from './i18n';
 import { createAppAndMount } from './utils/app';
 import { initPage } from './utils/initPage';
+import { restoreLastDownload } from './utils/lastDownload';
 
 extendPrototype(localforage);
 
@@ -30,6 +31,7 @@ createAppAndMount(DownloadPanel);
 initPage();
 
 GM_registerMenuCommand(i18n.global.t('common.settings'), openSettingsDialog);
+GM_registerMenuCommand(i18n.global.t('menu.restoreLastDownload'), restoreLastDownload);
 
 if (IS_SETTINGS_DIALOG_DEV) {
   document.body.outerHTML = '<body></body>';

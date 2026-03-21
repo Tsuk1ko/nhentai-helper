@@ -118,4 +118,7 @@ export default {
   tip: {
     lastDownloadedPosition: 'Last download position',
   },
+  menu: {
+    restoreLastDownload: 'Restore last download position',
+  },
 };
