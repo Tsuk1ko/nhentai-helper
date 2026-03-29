@@ -25,6 +25,7 @@ jobs:
         with:
           path: dist
       - name: Release
+        id: release
         if: github.event_name != 'workflow_dispatch'
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -33,6 +34,27 @@ jobs:
           files: |
             dist/script.meta.js
             dist/script.user.js
+      - name: Update release body
+        if: steps.release.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.release.outputs.automatic_releases_tag }}"
+          EXISTING="$(gh release view "$TAG" --json body -q .body)"
+          APPEND="$(cat <<'EOF'
+
+          ## Installation
+
+          [Via Greasy Fork](https://greasyfork.org/scripts/375992) (login required due to adult content)
+
+          [Via Sleazy Fork](https://sleazyfork.org/scripts/375992) (no login required)
+
+          [Via GitHub Release](https://github.com/Tsuk1ko/nhentai-helper/releases/latest/download/script.user.js)
+
+          [Via GitHub Pages](https://nhelper.lolicon.app/script.user.js)
+          EOF
+          )"
+          gh release edit "$TAG" --notes "${EXISTING}${APPEND}"
       - name: Prepare dist branch files
         run: |
           cp .gitignore ./dist
