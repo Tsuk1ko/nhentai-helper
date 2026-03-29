@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.24.0
+// @version            3.25.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -235,52 +235,52 @@ span.monospace[data-v-fee158ae] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-474c8ebf] {
+.bold[data-v-21ebd57b] {
   font-weight: 700;
 }
-.info-label[data-v-474c8ebf] {
+.info-label[data-v-21ebd57b] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-474c8ebf] {
+.lang-zh .info-label[data-v-21ebd57b] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-474c8ebf] {
+.lang-en .info-label[data-v-21ebd57b] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-474c8ebf] {
+.info-tag-wrapper[data-v-21ebd57b] {
   display: flex;
 }
-.info-tag[data-v-474c8ebf] {
+.info-tag[data-v-21ebd57b] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-474c8ebf] {
+.info-tag--pointer[data-v-21ebd57b] {
   cursor: pointer;
 }
-.image-loading[data-v-474c8ebf] {
+.image-loading[data-v-21ebd57b] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-474c8ebf] {
+.scroll-container[data-v-21ebd57b] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
   overscroll-behavior: none;
 }
-.scroll-container[data-v-474c8ebf]::-webkit-scrollbar {
+.scroll-container[data-v-21ebd57b]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-474c8ebf]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-21ebd57b]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-474c8ebf]::-webkit-scrollbar-track {
+.scroll-container[data-v-21ebd57b]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-474c8ebf] {
+.scroll-container-inner[data-v-21ebd57b] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -8200,7 +8200,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     document.body.append(el);
     const app = Vue.createApp(component);
     return appInitFunc?.(app), app.mount(el);
-  }, compileTemplate = (tpl) => template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g }), getDownloadExt = () => {
+  }, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), compileTemplate = (tpl) => template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g }), getDownloadExt = () => {
     const ext = last(settings.compressionFilename.split("."));
     return ext ? ext.toLowerCase() : "zip";
   }, getCompressionOptions = () => ({
@@ -10267,7 +10267,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     };
   }, fetchText = (url) => fetch(url).then((r) => r.text()), fetchJSON = (url) => fetch(url).then((r) => r.json()), PROTOCOL_REGEXP = /^https?:\/\//, ensureProtocol = (url) => PROTOCOL_REGEXP.test(url) ? url : url.startsWith("//") ? `${location.protocol}${url}` : `${location.protocol}//${url}`;
   var NHentaiImgExt = /* @__PURE__ */ ((NHentaiImgExt2) => (NHentaiImgExt2.j = "jpg", NHentaiImgExt2.p = "png", NHentaiImgExt2.g = "gif", NHentaiImgExt2.w = "webp", NHentaiImgExt2))(NHentaiImgExt || {});
-  const nHentaiImgExtReversed = invert(NHentaiImgExt), getTypeFromExt = (ext) => nHentaiImgExtReversed[ext.toLowerCase()], nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts), getNHentaiDownloadHost = (mid) => {
+  const NHentaiImageRev = invert(NHentaiImgExt), nHentaiImgExtReversed = invert(NHentaiImgExt), getTypeFromExt = (ext) => nHentaiImgExtReversed[ext.toLowerCase()], nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts), getNHentaiDownloadHost = (mid) => {
     switch (settings.nHentaiDownloadHost) {
       case NHentaiDownloadHostSpecial.RANDOM:
         return nHentaiDownloadHostCounter.getRandom(mid);
@@ -10276,9 +10276,28 @@ ${this.serializer.serializeToString(this.doc)}`;
       default:
         return settings.nHentaiDownloadHost;
     }
-  }, getMediaDownloadUrl = (mid, filename) => `https://${getNHentaiDownloadHost(mid)}/galleries/${mid}/${filename}`, getMediaDownloadUrlByWebpage = async (gid, mid, filename) => (await getCompliedMediaUrlTemplate(gid))({ mid, filename }), getGalleryFromApi = (gid) => {
-    const url = `https://nhentai.net/api/gallery/${gid}`;
-    return fetchJSON(url);
+  }, getMediaDownloadUrl = (mid, filename) => `https://${getNHentaiDownloadHost(mid)}/galleries/${mid}/${filename}`, getMediaDownloadUrlByWebpage = async (gid, mid, filename) => (await getCompliedMediaUrlTemplate(gid))({ mid, filename }), getImageTypeFromPath = (path) => {
+    const ext = path.split(".").pop();
+    return NHentaiImageRev[ext];
+  }, getGalleryFromApi = async (gid) => {
+    const url = `https://nhentai.net/api/v2/galleries/${gid}`, resp = await fetchJSON(url);
+    return resp.images = {
+      pages: resp.pages.map((p) => ({
+        w: p.width,
+        h: p.height,
+        t: getImageTypeFromPath(p.path)
+      })),
+      cover: {
+        w: resp.cover.width,
+        h: resp.cover.height,
+        t: getImageTypeFromPath(resp.cover.path)
+      },
+      thumbnail: {
+        w: resp.thumbnail.width,
+        h: resp.thumbnail.height,
+        t: getImageTypeFromPath(resp.thumbnail.path)
+      }
+    }, console.log("resp:", resp), console.log("NHentaiImgExt", NHentaiImgExt), resp;
   }, fixGalleryObj = (gallery, gid) => (gid && (gallery.id = Number(gid)), Array.isArray(gallery.images.pages) || (gallery.images.pages = Object.values(gallery.images.pages)), gallery), getGalleryFromWebpage = async (gid) => {
     let doc = document;
     if (!IS_PAGE_MANGA_DETAIL) {
@@ -10946,34 +10965,39 @@ ${this.serializer.serializeToString(this.doc)}`;
               ]),
               _: 1
             }, 8, ["title"]),
-            pageThumbs.value.length ? Vue.withDirectives((Vue.openBlock(), Vue.createElementBlock("div", {
+            pageThumbs.value.length ? (Vue.openBlock(), Vue.createElementBlock("div", {
               key: 0,
-              "infinite-scroll-distance": 100,
               class: "scroll-container",
               style: Vue.normalizeStyle({ height: `${pageThumbScrollHeight.value}px` })
             }, [
-              Vue.createElementVNode("div", _hoisted_7, [
-                Vue.createVNode(Vue.unref(elementPlus.ElRow), { gutter: 8 }, {
-                  default: Vue.withCtx(() => [
-                    (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(pageThumbs.value, ({ url, height }) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElCol), {
-                      key: url,
-                      span: pageThumbsColSpan.value
-                    }, {
+              Vue.createVNode(Vue.unref(elementPlus.ElScrollbar), {
+                distance: 100,
+                onEndReached: addPageThumbLine
+              }, {
+                default: Vue.withCtx(() => [
+                  Vue.createElementVNode("div", _hoisted_7, [
+                    Vue.createVNode(Vue.unref(elementPlus.ElRow), { gutter: 8 }, {
                       default: Vue.withCtx(() => [
-                        Vue.createVNode(Vue.unref(elementPlus.ElImage), {
-                          src: url,
-                          style: Vue.normalizeStyle({ "min-height": `${height}px` })
-                        }, null, 8, ["src", "style"])
+                        (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(pageThumbs.value, ({ url, height }) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElCol), {
+                          key: url,
+                          span: pageThumbsColSpan.value
+                        }, {
+                          default: Vue.withCtx(() => [
+                            Vue.createVNode(Vue.unref(elementPlus.ElImage), {
+                              src: url,
+                              style: Vue.normalizeStyle({ "min-height": `${height}px` })
+                            }, null, 8, ["src", "style"])
+                          ]),
+                          _: 2
+                        }, 1032, ["span"]))), 128))
                       ]),
-                      _: 2
-                    }, 1032, ["span"]))), 128))
-                  ]),
-                  _: 1
-                })
-              ])
-            ], 4)), [
-              [Vue.unref(elementPlus.ElInfiniteScroll), addPageThumbLine]
-            ]) : Vue.createCommentVNode("", true)
+                      _: 1
+                    })
+                  ])
+                ]),
+                _: 1
+              })
+            ], 4)) : Vue.createCommentVNode("", true)
           ], 2)) : Vue.withDirectives((Vue.openBlock(), Vue.createElementBlock("div", {
             key: 1,
             style: { height: "700px", maxHeight: "90vh" },
@@ -10986,7 +11010,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-474c8ebf"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-21ebd57b"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
@@ -11304,7 +11328,24 @@ ${this.serializer.serializeToString(this.doc)}`;
         }, 8, ["modelValue", "placeholder"])
       ]));
     }
-  }), TagsFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4057e360"]]), filterTagsMap = IS_NHENTAI_TO ? {
+  }), TagsFilter = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4057e360"]]), filterTagsMap = IS_NHENTAI ? {
+    japanese: {
+      type: "language",
+      value: "lang-jp"
+    },
+    english: {
+      type: "language",
+      value: "lang-gb"
+    },
+    chinese: {
+      type: "language",
+      value: "lang-cn"
+    },
+    uncensored: {
+      type: "other",
+      value: "uncensored"
+    }
+  } : IS_NHENTAI_TO ? {
     japanese: {
       type: "language",
       value: "2"
@@ -11372,7 +11413,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         this.dataset[LANGUAGE_DATA_NAME] = `${curTags ? `${curTags} ` : ""}${tag.value}`;
       }
     });
-  }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => `:not([${attrName}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
+  }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => IS_NHENTAI ? `:not(.${item.value})` : `:not([${attrName}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
     const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
     getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(
       getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`)
@@ -11399,7 +11440,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     if (!menuLeft) return {};
     const vnode = Vue.h(TagsFilter);
     return Vue.render(vnode, menuLeft), vnode.component?.exposed ?? {};
-  }, initListPage = () => {
+  }, UNCENSORED_REG = /(?:un|de)censored/i, initListPage = () => {
     initGalleries();
     const { doFilterTags: doFilterTags2 } = mountTagsFilter();
     initShortcut(), initLastDownload(), restoreDownloadQueue();
@@ -11447,7 +11488,9 @@ ${this.serializer.serializeToString(this.doc)}`;
     const gid = /\/g\/(\d+)/.exec($a.attr("href"))?.[1];
     if (!gid) return;
     this.dataset.gid = gid;
-    const enTitle = $gallery.find(selector.galleryCaption).text().trim(), progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
+    const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+    IS_NHENTAI && UNCENSORED_REG.test(enTitle) && $gallery.addClass("uncensored");
+    const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
     let ignoreController, galleryTitle;
     const markGalleryDownloaded = (isDownloaded, needBoardcast = true) => {
@@ -11537,8 +11580,8 @@ ${this.serializer.serializeToString(this.doc)}`;
     }), $(selector.pageContainer).prepend(btn);
   }, applyOnlineViewStyle = (enable, style) => {
     enable ? style.inject() : style.remove();
-  }, initPage = () => {
-    $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
+  }, isSvelte = Object.keys(_unsafeWindow).some((key) => key.startsWith("__svelte")), initPage = async () => {
+    isSvelte && (logger.warn("Svelte detected, waiting for 500ms to avoid hydration mismatch"), await sleep(500)), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
   }, applyPjax = () => {
     $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
