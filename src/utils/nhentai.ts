@@ -32,18 +32,35 @@ export enum NHentaiImgExt {
   w = 'webp',
 }
 
+export const NHentaiImageRev = invert(NHentaiImgExt);
+
+type NHentaiImgExtShort = keyof typeof NHentaiImgExt;
+
 const nHentaiImgExtReversed = invert(NHentaiImgExt) as Record<
   string,
-  keyof typeof NHentaiImgExt | undefined
+  NHentaiImgExtShort | undefined
 >;
 
-const getTypeFromExt = (ext: string): keyof typeof NHentaiImgExt | undefined =>
+const getTypeFromExt = (ext: string): NHentaiImgExtShort | undefined =>
   nHentaiImgExtReversed[ext.toLowerCase()];
 
 export interface NHentaiImage {
-  t: keyof typeof NHentaiImgExt;
+  t: NHentaiImgExtShort;
   w?: number;
   h?: number;
+}
+
+export interface NHentaiImageV2 {
+  path: string;
+  width: number;
+  height: number;
+}
+
+export interface NHentaiPages extends NHentaiImageV2 {
+  number: number;
+  thumbnail: string;
+  thumbnail_width: number;
+  thumbnail_height: number;
 }
 
 export interface NHentaiTag {
@@ -68,6 +85,10 @@ export interface NHentaiGallery {
     cover?: NHentaiImage;
     thumbnail?: NHentaiImage;
   };
+  /** nHentai new field */
+  pages?: NHentaiPages[];
+  cover?: NHentaiImageV2;
+  thumbnail?: NHentaiImageV2;
   scanlator?: string;
   upload_date?: number;
   tags: NHentaiTag[];
@@ -112,9 +133,39 @@ export const getMediaDownloadUrl = (mid: string, filename: string) =>
 export const getMediaDownloadUrlByWebpage = async (gid: string, mid: string, filename: string) =>
   (await getCompliedMediaUrlTemplate(gid))({ mid, filename });
 
-const getGalleryFromApi = (gid: number | string): Promise<NHentaiGallery> => {
-  const url = `https://nhentai.net/api/gallery/${gid}`;
-  return fetchJSON<NHentaiGallery>(url);
+const getImageTypeFromPath = (path: string): NHentaiImgExtShort => {
+  // full extension
+  const ext = path.split('.').pop() as NHentaiImgExt;
+  return NHentaiImageRev[ext];
+};
+
+const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> => {
+  const url = `https://nhentai.net/api/v2/galleries/${gid}`;
+  const resp = await fetchJSON<NHentaiGallery>(url);
+
+  // convert to old format
+  resp.images = {
+    pages: resp.pages!.map(p => ({
+      w: p.width,
+      h: p.height,
+      t: getImageTypeFromPath(p.path),
+    })),
+    cover: {
+      w: resp.cover!.width,
+      h: resp.cover!.height,
+      t: getImageTypeFromPath(resp.cover!.path),
+    },
+    thumbnail: {
+      w: resp.thumbnail!.width,
+      h: resp.thumbnail!.height,
+      t: getImageTypeFromPath(resp.thumbnail!.path),
+    },
+  };
+
+  console.log('resp:', resp);
+  console.log('NHentaiImgExt', NHentaiImgExt);
+
+  return resp;
 };
 
 const fixGalleryObj = (gallery: NHentaiGallery, gid?: number | string) => {

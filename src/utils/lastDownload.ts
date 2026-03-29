@@ -1,7 +1,7 @@
 import { GM_addStyle } from '$';
 import { once } from 'es-toolkit';
 import localforage from 'localforage';
-import { IDB_NAME } from '@/const';
+import { IDB_NAME, IS_DEV } from '@/const';
 import { useStyle } from '@/hooks/useStyle';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
@@ -39,6 +39,10 @@ export const initLastDownload = async () => {
 };
 
 export const updateLastDownload = async (gid: string | number) => {
+  if (IS_DEV) {
+    logger.warn('skip update last download in dev mode');
+    return;
+  }
   gid = Number(gid);
   if (!gid || gid <= latestGid) return;
   latestGid = gid;

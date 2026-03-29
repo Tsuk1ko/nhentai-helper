@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { dlQueue } from '@/common/queue';
+import { IS_NHENTAI } from '@/const';
 import { selector } from '@/rules/selector';
 import { ErrorAction } from '@/typings';
 import { downloadAgainConfirm, errorRetryConfirm } from '../dialog';
@@ -24,6 +25,8 @@ import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { mountTagsFilter } from '../tagsFilter';
+
+const UNCENSORED_REG = /(?:un|de)censored/i;
 
 export const initListPage = (): void => {
   initGalleries();
@@ -95,6 +98,11 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   if (!gid) return;
   this.dataset.gid = gid;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+
+  // for tag filter
+  if (IS_NHENTAI && UNCENSORED_REG.test(enTitle)) {
+    $gallery.addClass('uncensored');
+  }
 
   const progressDisplayController = new ProgressDisplayController();
   const { downloadBtn } = progressDisplayController;

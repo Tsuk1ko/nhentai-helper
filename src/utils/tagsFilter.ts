@@ -2,7 +2,7 @@ import { groupBy } from 'es-toolkit';
 import $ from 'jquery';
 import { h, render } from 'vue';
 import TagsFilter from '@/components/TagsFilter.vue';
-import { IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
+import { IS_NHENTAI, IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
 import { selector } from '@/rules/selector';
 
 export type JQElement = JQuery<HTMLElement>;
@@ -17,8 +17,30 @@ export interface FilterTag {
   value: string;
 }
 
-export const filterTagsMap: Record<string, FilterTag> = IS_NHENTAI_TO
-  ? {
+export const filterTagsMap: Record<string, FilterTag> = (() => {
+  if (IS_NHENTAI) {
+    return {
+      japanese: {
+        type: FilterTagType.LANGUAGE,
+        value: 'lang-jp',
+      },
+      english: {
+        type: FilterTagType.LANGUAGE,
+        value: 'lang-gb',
+      },
+      chinese: {
+        type: FilterTagType.LANGUAGE,
+        value: 'lang-cn',
+      },
+      uncensored: {
+        type: FilterTagType.OTHER,
+        value: 'uncensored',
+      },
+    };
+  }
+
+  if (IS_NHENTAI_TO) {
+    return {
       japanese: {
         type: FilterTagType.LANGUAGE,
         value: '2',
@@ -35,44 +57,49 @@ export const filterTagsMap: Record<string, FilterTag> = IS_NHENTAI_TO
         type: FilterTagType.OTHER,
         value: '632',
       },
-    }
-  : IS_NHENTAI_XXX
-    ? {
-        japanese: {
-          type: FilterTagType.LANGUAGE,
-          value: '2',
-        },
-        english: {
-          type: FilterTagType.LANGUAGE,
-          value: '1',
-        },
-        chinese: {
-          type: FilterTagType.LANGUAGE,
-          value: '3',
-        },
-        uncensored: {
-          type: FilterTagType.OTHER,
-          value: '18',
-        },
-      }
-    : {
-        japanese: {
-          type: FilterTagType.LANGUAGE,
-          value: '6346',
-        },
-        english: {
-          type: FilterTagType.LANGUAGE,
-          value: '12227',
-        },
-        chinese: {
-          type: FilterTagType.LANGUAGE,
-          value: '29963',
-        },
-        uncensored: {
-          type: FilterTagType.OTHER,
-          value: '8693',
-        },
-      };
+    };
+  }
+
+  if (IS_NHENTAI_XXX) {
+    return {
+      japanese: {
+        type: FilterTagType.LANGUAGE,
+        value: '2',
+      },
+      english: {
+        type: FilterTagType.LANGUAGE,
+        value: '1',
+      },
+      chinese: {
+        type: FilterTagType.LANGUAGE,
+        value: '3',
+      },
+      uncensored: {
+        type: FilterTagType.OTHER,
+        value: '18',
+      },
+    };
+  }
+
+  return {
+    japanese: {
+      type: FilterTagType.LANGUAGE,
+      value: '6346',
+    },
+    english: {
+      type: FilterTagType.LANGUAGE,
+      value: '12227',
+    },
+    chinese: {
+      type: FilterTagType.LANGUAGE,
+      value: '29963',
+    },
+    uncensored: {
+      type: FilterTagType.OTHER,
+      value: '8693',
+    },
+  };
+})();
 
 export const filterTagsKeysGrouped = groupBy(
   Object.keys(filterTagsMap),
@@ -106,7 +133,9 @@ const handleMissingDataTags = ($gallery: JQElement) => {
 };
 
 const getNotTagSelector = (items: FilterTag[], attrName = TAG_ATTR_NAME) =>
-  items.map(item => `:not([${attrName}~=${item.value}])`).join('');
+  items
+    .map(item => (IS_NHENTAI ? `:not(.${item.value})` : `:not([${attrName}~=${item.value}])`))
+    .join('');
 
 /** 语言过滤 */
 export const doFilterTags = (tags: FilterTag[], $node?: JQElement): void => {

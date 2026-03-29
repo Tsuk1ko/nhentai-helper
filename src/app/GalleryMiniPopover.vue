@@ -72,18 +72,18 @@
       </el-descriptions>
       <div
         v-if="pageThumbs.length"
-        v-infinite-scroll="addPageThumbLine"
-        :infinite-scroll-distance="100"
         class="scroll-container"
         :style="{ height: `${pageThumbScrollHeight}px` }"
       >
-        <div class="scroll-container-inner">
-          <el-row :gutter="8">
-            <el-col v-for="{ url, height } in pageThumbs" :key="url" :span="pageThumbsColSpan">
-              <el-image :src="url" :style="{ 'min-height': `${height}px` }" />
-            </el-col>
-          </el-row>
-        </div>
+        <el-scrollbar :distance="100" @end-reached="addPageThumbLine">
+          <div class="scroll-container-inner">
+            <el-row :gutter="8">
+              <el-col v-for="{ url, height } in pageThumbs" :key="url" :span="pageThumbsColSpan">
+                <el-image :src="url" :style="{ 'min-height': `${height}px` }" />
+              </el-col>
+            </el-row>
+          </div>
+        </el-scrollbar>
       </div>
     </div>
     <div
@@ -107,8 +107,8 @@ import {
   ElLink,
   ElPopover,
   ElRow,
+  ElScrollbar,
   ElTag,
-  ElInfiniteScroll as vInfiniteScroll,
   vLoading,
 } from 'element-plus';
 import { groupBy } from 'es-toolkit';
