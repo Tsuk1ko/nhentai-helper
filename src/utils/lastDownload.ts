@@ -27,7 +27,7 @@ export const initLastDownload = async () => {
     latestGid = gid;
     lastGid = gid;
     GM_addStyle(
-      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
+      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
     );
     useStyle(
       () =>
