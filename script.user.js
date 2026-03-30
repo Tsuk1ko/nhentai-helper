@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.0
+// @version            3.25.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -4054,7 +4054,9 @@ ${source}
     } catch {
       return null;
     }
-  }), applyDownloadedTitleColor = () => useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`), dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
+  }), applyDownloadedTitleColor = once(
+    () => useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`)
+  ), dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
   dlQueue.canSingleStart = () => !(settings.seriesMode && zipQueue.length);
   zipQueue.emitter.on("finish", () => {
     settings.seriesMode && dlQueue.start().catch(logger.error);
@@ -8239,7 +8241,30 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         return JSON.parse(str);
       } catch {
       }
-  };
+  }, SVELTE_KEY = "__svelte", getSvelteStatus = () => {
+    const keys = Object.keys(_unsafeWindow).filter((key) => key.startsWith(SVELTE_KEY));
+    return {
+      isSvelte: keys.length > 0,
+      isReady: keys.includes(SVELTE_KEY)
+    };
+  }, waitWinProperty = (name, timeout = 2e3) => new Promise((resolve, reject) => {
+    const val = _unsafeWindow?.[name];
+    if (val) {
+      resolve(val);
+      return;
+    }
+    const timeoutTimer = setTimeout(() => {
+      clearInterval(timer), reject(new Error(`Timeout waiting for window property "${name}"`));
+    }, timeout), timer = setInterval(() => {
+      _unsafeWindow?.[name] && (clearTimeout(timeoutTimer), clearInterval(timer), resolve());
+    }, 100);
+  }), waitForSvelteReady = () => waitWinProperty(SVELTE_KEY).catch(logger.warn), onSvelteHydrationMismatch = once((callback) => {
+    if (!_unsafeWindow) return;
+    const origWarn = _unsafeWindow.console.warn;
+    _unsafeWindow.console.warn = new Proxy(origWarn, {
+      apply: (target, thisArg, args) => (args.length === 1 && args[0] === "https://svelte.dev/e/hydration_mismatch" && setTimeout(callback), Reflect.apply(target, thisArg, args))
+    });
+  });
   var noty$1 = { exports: {} };
   var noty = noty$1.exports, hasRequiredNoty;
   function requireNoty() {
@@ -11580,8 +11605,9 @@ ${this.serializer.serializeToString(this.doc)}`;
     }), $(selector.pageContainer).prepend(btn);
   }, applyOnlineViewStyle = (enable, style) => {
     enable ? style.inject() : style.remove();
-  }, isSvelte = Object.keys(_unsafeWindow).some((key) => key.startsWith("__svelte")), initPage = async () => {
-    isSvelte && (logger.warn("Svelte detected, waiting for 500ms to avoid hydration mismatch"), await sleep(500)), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
+  }, initPage = async () => {
+    const { isSvelte, isReady } = getSvelteStatus();
+    isSvelte && onSvelteHydrationMismatch(initPage), isSvelte && !isReady && (logger.warn("Svelte detected, waiting for svelte ready to avoid hydration mismatch"), await waitForSvelteReady(), await sleep(500)), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
   }, applyPjax = () => {
     $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
