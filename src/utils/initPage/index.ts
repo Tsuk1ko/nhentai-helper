@@ -2,7 +2,6 @@ import { unsafeWindow } from '$';
 import $ from 'jquery';
 import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
 import { selector } from '@/rules/selector';
-import { sleep } from '../common';
 import logger from '../logger';
 import { applyDownloadedTitleColor } from '../settings';
 import { getSvelteStatus, onSvelteHydrationMismatch, waitForSvelteReady } from '../svelte';
@@ -11,12 +10,13 @@ import { initGalleries, initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
 
 export const initPage = async (): Promise<void> => {
-  const { isSvelte, isReady } = getSvelteStatus();
-  if (isSvelte) onSvelteHydrationMismatch(initPage);
-  if (isSvelte && !isReady) {
-    logger.warn('Svelte detected, waiting for svelte ready to avoid hydration mismatch');
-    await waitForSvelteReady();
-    await sleep(500);
+  const { isSvelte, isSvelteReady } = getSvelteStatus();
+  if (isSvelte) {
+    onSvelteHydrationMismatch(initPage);
+    if (!isSvelteReady) {
+      logger.warn('Svelte detected, waiting for svelte ready to avoid hydration mismatch');
+      await waitForSvelteReady();
+    }
   }
   $('body').addClass(`nhentai-helper-${location.hostname.replace(/\./g, '_')}`);
   if (IS_PAGE_MANGA_LIST) {

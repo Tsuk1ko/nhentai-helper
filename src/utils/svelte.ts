@@ -1,39 +1,44 @@
 import { unsafeWindow } from '$';
 import { once } from 'es-toolkit';
-import logger from './logger';
+import { sleep } from './common';
 
 const SVELTE_KEY = '__svelte';
 
 export const getSvelteStatus = () => {
-  const keys = Object.keys(unsafeWindow).filter(key => key.startsWith(SVELTE_KEY));
+  const isSvelte = Object.keys(unsafeWindow).some(key => key.startsWith(SVELTE_KEY));
   return {
-    isSvelte: keys.length > 0,
-    isReady: keys.includes(SVELTE_KEY),
+    isSvelte,
+    isSvelteReady: isSvelte && !!document.querySelector('#svelte-announcer'),
   };
 };
 
-const waitWinProperty = (name: string, timeout = 2000) =>
-  new Promise<void>((resolve, reject) => {
-    const val = (unsafeWindow as any)?.[name];
-    if (val) {
-      resolve(val);
-      return;
-    }
-    const timeoutTimer = setTimeout(() => {
-      clearInterval(timer);
-      reject(new Error(`Timeout waiting for window property "${name}"`));
-    }, timeout);
-    const timer = setInterval(() => {
-      const val = (unsafeWindow as any)?.[name];
-      if (val) {
-        clearTimeout(timeoutTimer);
-        clearInterval(timer);
+export const waitForSvelteReady = () => {
+  const observerAbortController = new AbortController();
+  const observerPromise = new Promise<void>(resolve => {
+    const observer = new MutationObserver((mutations, observer) => {
+      if (
+        mutations.some(({ addedNodes }) =>
+          Array.from(addedNodes).some(
+            node => node instanceof HTMLElement && node.id === 'svelte-announcer',
+          ),
+        )
+      ) {
+        observer.disconnect();
         resolve();
       }
-    }, 100);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    observerAbortController.signal.onabort = () => {
+      observer.disconnect();
+      resolve();
+    };
   });
-
-export const waitForSvelteReady = () => waitWinProperty(SVELTE_KEY).catch(logger.warn);
+  const timeoutPromise = (async () => {
+    await sleep(1000);
+    observerAbortController.abort();
+  })();
+  return Promise.race([observerPromise, timeoutPromise]);
+};
 
 export const onSvelteHydrationMismatch = once((callback: () => void) => {
   if (!unsafeWindow) return;
