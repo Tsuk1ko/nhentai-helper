@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.2
+// @version            3.25.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -68,16 +68,17 @@
 
   const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):(document.head||document.documentElement).appendChild(document.createElement("style")).append(t);})(e));};
 
-  importCSS(` .download-item[data-v-0f4d58ac] {
+  importCSS(` .download-item[data-v-e90bde63] {
   position: relative;
   white-space: nowrap;
   padding: 2px;
   overflow: visible;
+  color: #ffffffe6;
 }
-.download-item--can-cancel[data-v-0f4d58ac]:hover {
+.download-item--can-cancel[data-v-e90bde63]:hover {
   width: calc(100% - 30px);
 }
-.download-item__cancel[data-v-0f4d58ac] {
+.download-item__cancel[data-v-e90bde63] {
   cursor: pointer;
   position: absolute;
   top: 0;
@@ -87,22 +88,22 @@
   line-height: 30px;
   width: 30px;
 }
-.download-item__title[data-v-0f4d58ac] {
+.download-item__title[data-v-e90bde63] {
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
 }
-.download-item__progress[data-v-0f4d58ac] {
+.download-item__progress[data-v-e90bde63] {
   background-color: #0000ff80;
   line-height: 10px;
 }
-.download-item--error .download-item__progress[data-v-0f4d58ac] {
+.download-item--error .download-item__progress[data-v-e90bde63] {
   background-color: #ff000080;
 }
-.download-item--compressing .download-item__progress[data-v-0f4d58ac] {
+.download-item--compressing .download-item__progress[data-v-e90bde63] {
   background-color: #00ff0080;
 }
-.download-item__progress-text[data-v-0f4d58ac] {
+.download-item__progress-text[data-v-e90bde63] {
   transform: scale(.8);
 }
 #download-panel[data-v-b1f64280] {
@@ -4112,7 +4113,7 @@ ${source}
     for (const [key, val] of props)
       target[key] = val;
     return target;
-  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-0f4d58ac"]]), _hoisted_1$3 = { id: "download-panel" }, _sfc_main$5 = /* @__PURE__ */ Vue.defineComponent({
+  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-e90bde63"]]), _hoisted_1$3 = { id: "download-panel" }, _sfc_main$5 = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadList",
     props: {
       zipList: {},
@@ -8259,9 +8260,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       observer.observe(document.body, { childList: true, subtree: true }), observerAbortController.signal.onabort = () => {
         observer.disconnect(), resolve();
       };
-    }), timeoutPromise = (async () => {
-      await sleep(1e3), observerAbortController.abort();
-    })();
+    }), timeoutPromise = sleep(1e3).then(() => {
+      observerAbortController.abort();
+    });
     return Promise.race([observerPromise, timeoutPromise]);
   }, onSvelteHydrationMismatch = once((callback) => {
     if (!_unsafeWindow) return;
@@ -11069,7 +11070,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, updateLastDownload = async (gid) => {
     gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
   }, restoreLastDownload = async () => {
-    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid));
+    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid), logger.log(`restore last download: ${lastGid}`));
   }, isClient = typeof window < "u" && typeof document < "u";
   typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
   const toString = Object.prototype.toString, isObject = (val) => toString.call(val) === "[object Object]", noop = () => {
