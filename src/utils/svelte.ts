@@ -33,10 +33,9 @@ export const waitForSvelteReady = () => {
       resolve();
     };
   });
-  const timeoutPromise = (async () => {
-    await sleep(1000);
+  const timeoutPromise = sleep(1000).then(() => {
     observerAbortController.abort();
-  })();
+  });
   return Promise.race([observerPromise, timeoutPromise]);
 };
 
