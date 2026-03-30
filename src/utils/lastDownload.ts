@@ -53,4 +53,5 @@ export const restoreLastDownload = async () => {
   if (!lastGid) return;
   latestGid = lastGid;
   await store.setItem(getKey(), lastGid);
+  logger.log(`restore last download: ${lastGid}`);
 };
