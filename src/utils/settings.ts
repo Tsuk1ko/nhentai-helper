@@ -404,5 +404,6 @@ export const customFilenameFunction = computed(() => {
   }
 });
 
-export const applyDownloadedTitleColor = () =>
-  useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`);
+export const applyDownloadedTitleColor = once(() =>
+  useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`),
+);
