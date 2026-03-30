@@ -59,6 +59,7 @@ const cancel = () => {
   white-space: nowrap;
   padding: 2px;
   overflow: visible;
+  color: rgba(255, 255, 255, 0.9);
   &--can-cancel:hover {
     width: calc(100% - 30px);
   }
