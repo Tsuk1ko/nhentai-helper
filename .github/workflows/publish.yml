@@ -42,7 +42,6 @@ jobs:
           TAG="${{ steps.release.outputs.automatic_releases_tag }}"
           EXISTING="$(gh release view "$TAG" --json body -q .body)"
           APPEND="$(cat <<'EOF'
-
           ## Installation
 
           [Via Greasy Fork](https://greasyfork.org/scripts/375992) (login required due to adult content)
@@ -54,7 +53,7 @@ jobs:
           [Via GitHub Pages](https://nhelper.lolicon.app/script.user.js)
           EOF
           )"
-          gh release edit "$TAG" --notes "${EXISTING}${APPEND}"
+          gh release edit "$TAG" --notes "$(printf '%s\n\n%s\n' "$EXISTING" "$APPEND")"
       - name: Prepare dist branch files
         run: |
           cp .gitignore ./dist
