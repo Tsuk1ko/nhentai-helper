@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.4
+// @version            3.25.5
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -127,32 +127,32 @@
 #download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb {
   background-color: #fff9;
 }
-.nhentai-helper-setting-help-buttons[data-v-fee158ae] {
+.nhentai-helper-setting-help-buttons[data-v-de16c055] {
   float: left;
   position: absolute;
 }
-.inline-item[data-v-fee158ae] {
+.inline-item[data-v-de16c055] {
   display: inline-block;
 }
-.inline-item[data-v-fee158ae]:not(:last-of-type) {
+.inline-item[data-v-de16c055]:not(:last-of-type) {
   margin-right: 8px;
 }
-.inline-item__name[data-v-fee158ae] {
+.inline-item__name[data-v-de16c055] {
   margin-right: 4px;
   -webkit-user-select: none;
   user-select: none;
 }
-.monospace[data-v-fee158ae] {
+.monospace[data-v-de16c055] {
   font-family: monospace;
 }
-span.monospace[data-v-fee158ae] {
+span.monospace[data-v-de16c055] {
   -webkit-user-select: none;
   user-select: none;
 }
-.code-type[data-v-fee158ae] {
+.code-type[data-v-de16c055] {
   color: var(--el-text-color-secondary);
 }
-.downloaded-title-color-preview[data-v-fee158ae] {
+.downloaded-title-color-preview[data-v-de16c055] {
   position: relative !important;
   width: unset !important;
   height: unset !important;
@@ -413,15 +413,7 @@ span.monospace[data-v-fee158ae] {
       mediaImage: "#fimg",
       pageContainer: ".reader_outer"
     }
-  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] }, WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1), { pathname, hostname } = location, IS_PAGE_MANGA_DETAIL = /^\/g\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_ONLINE_VIEW = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && !!document.querySelector(selector.gallery), IS_NHENTAI = hostname === "nhentai.net", IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website", IS_NHENTAI_XXX = hostname === "nhentai.xxx", MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX, MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`, THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`, IDB_NAME = "nhentai_helper", isNodeOrElement = typeof Node == "function" ? (val) => val instanceof Node : (val) => val && typeof val == "object" && typeof val.nodeType == "number" && typeof val.nodeName == "string";
-  if (IS_NHENTAI && (_GM_getValue("prevent_console_clear", false) || localStorage.getItem("NHENTAI_HELPER_DEBUG"))) {
-    const c = _unsafeWindow.console;
-    c._clear = c.clear, c.clear = () => {
-    }, c._log = c.log, c.log = (...args) => {
-      args.length === 1 && isNodeOrElement(args[0]) || c._log(...args);
-    };
-  }
-  const logger = {
+  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] }, WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1), { pathname, hostname } = location, IS_PAGE_MANGA_DETAIL = /^\/g\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_ONLINE_VIEW = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && !!document.querySelector(selector.gallery), IS_NHENTAI = hostname === "nhentai.net", IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website", IS_NHENTAI_XXX = hostname === "nhentai.xxx", MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX, MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`, THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`, IDB_NAME = "nhentai_helper", logger = {
     devLog: () => {
     },
     log: (...args) => {
@@ -1621,6 +1613,33 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   }
   function without(array, ...values) {
     return difference(array, values);
+  }
+  function debounce(func, debounceMs, { signal, edges } = {}) {
+    let pendingThis, pendingArgs = null;
+    const leading = edges != null && edges.includes("leading"), trailing = edges == null || edges.includes("trailing"), invoke = () => {
+      pendingArgs !== null && (func.apply(pendingThis, pendingArgs), pendingThis = void 0, pendingArgs = null);
+    }, onTimerEnd = () => {
+      trailing && invoke(), cancel();
+    };
+    let timeoutId = null;
+    const schedule = () => {
+      timeoutId != null && clearTimeout(timeoutId), timeoutId = setTimeout(() => {
+        timeoutId = null, onTimerEnd();
+      }, debounceMs);
+    }, cancelTimer = () => {
+      timeoutId !== null && (clearTimeout(timeoutId), timeoutId = null);
+    }, cancel = () => {
+      cancelTimer(), pendingThis = void 0, pendingArgs = null;
+    }, flush = () => {
+      invoke();
+    }, debounced = function(...args) {
+      if (signal?.aborted)
+        return;
+      pendingThis = this, pendingArgs = args;
+      const isFirstCall = timeoutId == null;
+      schedule(), leading && isFirstCall && invoke();
+    };
+    return debounced.schedule = schedule, debounced.cancel = cancel, debounced.flush = flush, signal?.addEventListener("abort", cancel, { once: true }), debounced;
   }
   function identity(x) {
     return x;
@@ -7319,7 +7338,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       ), __expose({ open: open2 }), (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElDialog), {
         id: "nhentai-helper-setting-dialog-outside",
         modelValue: show.value,
-        "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => show.value = $event),
+        "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => show.value = $event),
         center: true,
         top: "50px"
       }, {
@@ -7492,7 +7511,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).JPG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
+                          default: Vue.withCtx(() => [..._cache[31] || (_cache[31] = [
                             Vue.createTextVNode("jpg", -1)
                           ])]),
                           _: 1
@@ -7500,7 +7519,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).PNG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
+                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
                             Vue.createTextVNode("png", -1)
                           ])]),
                           _: 1
@@ -7627,14 +7646,13 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       "show-alpha": "",
                       clearable: "",
                       "color-format": "rgb",
-                      "value-on-clear": Vue.unref(settingDefinitions).downloadedTitleColor.default,
                       onActiveChange: handleDownloadedTitleColorPreviewChange,
                       onChange: handleDownloadedTitleColorPreviewChange
-                    }, null, 8, ["modelValue", "value-on-clear"]),
+                    }, null, 8, ["modelValue"]),
                     Vue.createElementVNode("div", {
                       class: Vue.normalizeClass(["downloaded-title-color-preview", Vue.unref(CAPTION_CLASS)]),
                       style: Vue.normalizeStyle({ color: downloadedTitleColorPreview.value })
-                    }, Vue.toDisplayString(Vue.unref(writeableSettings).downloadedTitleColor), 7)
+                    }, Vue.toDisplayString(downloadedTitleColorPreview.value || Vue.unref(writeableSettings).downloadedTitleColor), 7)
                   ]),
                   _: 1
                 }, 8, ["label"]),
@@ -7763,19 +7781,6 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   ]),
                   _: 1
                 }, 8, ["label"]),
-                Vue.unref(IS_NHENTAI) ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
-                  key: 3,
-                  class: "refresh-required",
-                  label: Vue.unref(t2)("setting.preventConsoleClearing")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
-                      modelValue: Vue.unref(writeableSettings).preventConsoleClearing,
-                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).preventConsoleClearing = $event)
-                    }, null, 8, ["modelValue"])
-                  ]),
-                  _: 1
-                }, 8, ["label"])) : Vue.createCommentVNode("", true),
                 Vue.createVNode(Vue.unref(elementPlus.ElCollapse), null, {
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElCollapseItem), null, {
@@ -7793,7 +7798,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                               style: { width: "100%" },
                               onClick: addTitleReplacement
                             }, {
-                              default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
+                              default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
                                 Vue.createTextVNode("+", -1)
                               ])]),
                               _: 1
@@ -7868,23 +7873,23 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createElementVNode("span", _hoisted_12, [
-                      _cache[38] || (_cache[38] = Vue.createTextVNode("function (filename", -1)),
+                      _cache[37] || (_cache[37] = Vue.createTextVNode("function (filename", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
-                        default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
+                        default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
                           Vue.createTextVNode(": string", -1)
                         ])]),
                         _: 1
                       }),
-                      _cache[39] || (_cache[39] = Vue.createTextVNode(", gallery", -1)),
+                      _cache[38] || (_cache[38] = Vue.createTextVNode(", gallery", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
                         default: Vue.withCtx(() => [
-                          _cache[37] || (_cache[37] = Vue.createTextVNode(": ", -1)),
+                          _cache[36] || (_cache[36] = Vue.createTextVNode(": ", -1)),
                           Vue.createVNode(Vue.unref(elementPlus.ElLink), {
                             type: "primary",
                             href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
                             target: "_blank"
                           }, {
-                            default: Vue.withCtx(() => [..._cache[36] || (_cache[36] = [
+                            default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
                               Vue.createTextVNode("NHentaiGallery", -1)
                             ])]),
                             _: 1
@@ -7892,17 +7897,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         ]),
                         _: 1
                       }),
-                      _cache[40] || (_cache[40] = Vue.createTextVNode(") {", -1))
+                      _cache[39] || (_cache[39] = Vue.createTextVNode(") {", -1))
                     ]),
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customFilenameFunction,
-                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
+                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
                       class: "monospace",
                       type: "textarea",
                       placeholder: "return filename;",
                       autosize: { minRows: 1 }
                     }, null, 8, ["modelValue"]),
-                    _cache[41] || (_cache[41] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
+                    _cache[40] || (_cache[40] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
                   ]),
                   _: 1
                 }, 8, ["label"])
@@ -7962,7 +7967,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         _: 1
       }, 8, ["modelValue"]));
     }
-  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-fee158ae"]]), resource$1 = {
+  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-de16c055"]]), resource$1 = {
     common: {
       settings: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Settings" } },
       auto: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Auto" } },
@@ -10328,7 +10333,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         h: resp.thumbnail.height,
         t: getImageTypeFromPath(resp.thumbnail.path)
       }
-    }, console.log("resp:", resp), console.log("NHentaiImgExt", NHentaiImgExt), resp;
+    }, resp;
   }, fixGalleryObj = (gallery, gid) => (gid && (gallery.id = Number(gid)), Array.isArray(gallery.images.pages) || (gallery.images.pages = Object.values(gallery.images.pages)), gallery), getGalleryFromWebpage = async (gid) => {
     let doc = document;
     if (!IS_PAGE_MANGA_DETAIL) {
@@ -10681,7 +10686,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         this._markGalleryDownloaded?.(value, false);
       });
     });
-  }), boardcastMarkDownloadedUpdate = (gid, value) => {
+  }), broadcastMarkDownloadedUpdate = (gid, value) => {
     bc.postMessage({ gid: Number(gid), value });
   }, { t: t$1 } = i18n.global;
   class ProgressDisplayController {
@@ -10754,7 +10759,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     const getGallery2 = once(() => getGalleryInfo());
     let ignoreController;
     const markGalleryDownloaded = async (isDownloaded, needBoardcast = true) => {
-      ignoreController?.setStatus(isDownloaded), needBoardcast && boardcastMarkDownloadedUpdate((await getGallery2()).gid, isDownloaded);
+      ignoreController?.setStatus(isDownloaded), needBoardcast && broadcastMarkDownloadedUpdate((await getGallery2()).gid, isDownloaded);
     };
     if (settings.showIgnoreButton) {
       const gallery = await getGallery2(), isDownloaded = await isDownloadedByGid(gallery.gid);
@@ -11316,12 +11321,12 @@ ${this.serializer.serializeToString(this.doc)}`;
       return Vue.watch(
         filterTags,
         (val) => {
-          doFilterTags(val);
+          doFilterTags$1(val);
         },
         { deep: true, immediate: true }
       ), __expose({
         doFilterTags: ($node) => {
-          doFilterTags(filterTags.value, $node);
+          doFilterTags$1(filterTags.value, $node);
         }
       }), (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("li", _hoisted_1, [
         Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
@@ -11444,7 +11449,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         this.dataset[LANGUAGE_DATA_NAME] = `${curTags ? `${curTags} ` : ""}${tag.value}`;
       }
     });
-  }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => IS_NHENTAI ? `:not(.${item.value})` : `:not([${attrName}~=${item.value}])`).join(""), doFilterTags = (tags, $node) => {
+  }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => IS_NHENTAI ? `:not(.${item.value})` : `:not([${attrName}~=${item.value}])`).join(""), doFilterTags$1 = (tags, $node) => {
     const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
     getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(
       getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`)
@@ -11471,20 +11476,30 @@ ${this.serializer.serializeToString(this.doc)}`;
     if (!menuLeft) return {};
     const vnode = Vue.h(TagsFilter);
     return Vue.render(vnode, menuLeft), vnode.component?.exposed ?? {};
-  }, UNCENSORED_REG = /(?:un|de)censored/i, initListPage = () => {
-    initGalleries();
-    const { doFilterTags: doFilterTags2 } = mountTagsFilter();
-    initShortcut(), initLastDownload(), restoreDownloadQueue();
+  }, UNCENSORED_REG = /(?:un|de)censored/i;
+  let doFilterTags;
+  const debounceDoFilterTags = debounce((el) => {
+    doFilterTags?.($(el));
+  }, 0), initListPage = () => {
+    initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver();
+  }, initMutationObserver = once(() => {
     const contentEl = document.querySelector(selector.galleryList);
-    contentEl && new MutationObserver((mutations) => {
+    contentEl && (IS_NHENTAI && new MutationObserver((mutations) => {
+      mutations.forEach(({ addedNodes, target }) => {
+        if (!(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
+          return;
+        const el = target.parentElement;
+        el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
+      });
+    }).observe(contentEl, { childList: true, subtree: true }), new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes }) => {
-        addedNodes.forEach((node) => {
+        addedNodes.length && addedNodes.forEach((node) => {
           const $el = $(node);
-          $el.find(selector.gallery).each(initGallery), doFilterTags2?.($el);
+          $el.find(selector.gallery).each(initGallery), doFilterTags?.($el);
         });
       });
-    }).observe(contentEl, { childList: true });
-  }, initGalleries = () => {
+    }).observe(contentEl, { childList: true }));
+  }), initGalleries = () => {
     $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
   }, initShortcut = () => {
     const ignoreActiveElTags = /* @__PURE__ */ new Set(["INPUT", "TEXTAREA"]);
@@ -11520,12 +11535,12 @@ ${this.serializer.serializeToString(this.doc)}`;
     if (!gid) return;
     this.dataset.gid = gid;
     const enTitle = $gallery.find(selector.galleryCaption).text().trim();
-    IS_NHENTAI && UNCENSORED_REG.test(enTitle) && $gallery.addClass("uncensored");
+    IS_NHENTAI && (UNCENSORED_REG.test(enTitle) ? $gallery.addClass("uncensored") : $gallery.removeClass("uncensored"));
     const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
     let ignoreController, galleryTitle;
     const markGalleryDownloaded = (isDownloaded, needBoardcast = true) => {
-      isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBoardcast && boardcastMarkDownloadedUpdate(gid, isDownloaded);
+      isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBoardcast && broadcastMarkDownloadedUpdate(gid, isDownloaded);
     };
     this._markGalleryDownloaded = markGalleryDownloaded, Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
       ([gidDownloaded, titleDownloaded]) => {
@@ -11578,9 +11593,13 @@ ${this.serializer.serializeToString(this.doc)}`;
         markGalleryDownloaded: () => markGalleryDownloaded(!0)
       }), updateLastDownload(gid);
     };
-    downloadBtn.addEventListener("click", startDownload), this.addEventListener("contextmenu", (e) => {
+    downloadBtn.addEventListener("click", startDownload);
+    const onContextMenu = (e) => {
       settings.galleryContextmenuPreview && (e.preventDefault(), openGalleryMiniPopover(this, gid));
-    });
+    };
+    this.addEventListener("contextmenu", onContextMenu), this._nhentaiHelperDestroy = () => {
+      this.removeEventListener("contextmenu", onContextMenu), $gallery.removeAttr("init"), downloadBtn.remove(), ignoreController?.ignoreBtn.remove(), delete this._nhentaiHelperDestroy;
+    };
   };
   class StyleInjector {
     styleNode;
@@ -11613,7 +11632,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     enable ? style.inject() : style.remove();
   }, initPage = async () => {
     const { isSvelte, isSvelteReady } = getSvelteStatus();
-    isSvelte && (onSvelteHydrationMismatch(initPage), isSvelteReady || (logger.warn("Svelte detected, waiting for svelte ready to avoid hydration mismatch"), await waitForSvelteReady())), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
+    isSvelte && (onSvelteHydrationMismatch(initPage), isSvelteReady || (logger.warn("Svelte detected, waiting for svelte ready to avoid hydration mismatch"), await waitForSvelteReady())), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), IS_NHENTAI || applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
   }, applyPjax = () => {
     $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
@@ -11625,11 +11644,8 @@ ${this.serializer.serializeToString(this.doc)}`;
         if (!href || href.startsWith("#")) return;
         const isPathname = href.startsWith("/"), url = isPathname ? new URL(href, location.origin) : new URL(href);
         url.searchParams.delete("_pjax"), $this.attr("href", isPathname ? `${url.pathname}${url.search}` : url.href);
-      }), applyLazyLoad();
+      });
     });
-  }, applyLazyLoad = () => {
-    const { _n_app } = _unsafeWindow;
-    _n_app && (_n_app.install_lazy_loader(), _n_app.install_blacklisting());
   };
   extendPrototype(localforage);
   const initSettingsDialogApp = once(
