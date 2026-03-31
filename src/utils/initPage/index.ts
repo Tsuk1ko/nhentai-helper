@@ -1,6 +1,5 @@
-import { unsafeWindow } from '$';
 import $ from 'jquery';
-import { IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
+import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
 import { selector } from '@/rules/selector';
 import logger from '../logger';
 import { applyDownloadedTitleColor } from '../settings';
@@ -21,7 +20,8 @@ export const initPage = async (): Promise<void> => {
   $('body').addClass(`nhentai-helper-${location.hostname.replace(/\./g, '_')}`);
   if (IS_PAGE_MANGA_LIST) {
     initListPage();
-    applyPjax();
+    // nHentai 改版后已经不会导致页面刷新
+    if (!IS_NHENTAI) applyPjax();
   } else if (IS_PAGE_MANGA_DETAIL) {
     initDetailPage().catch(logger.error);
     initGalleries();
@@ -47,15 +47,5 @@ const applyPjax = (): void => {
       url.searchParams.delete('_pjax');
       $this.attr('href', isPathname ? `${url.pathname}${url.search}` : url.href);
     });
-    // 加载 lazyload 图片
-    applyLazyLoad();
   });
-};
-
-const applyLazyLoad = (): void => {
-  const { _n_app } = unsafeWindow;
-  if (_n_app) {
-    _n_app.install_lazy_loader();
-    _n_app.install_blacklisting();
-  }
 };

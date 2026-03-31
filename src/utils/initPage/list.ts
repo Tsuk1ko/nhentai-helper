@@ -1,3 +1,4 @@
+import { debounce, once } from 'es-toolkit';
 import $ from 'jquery';
 import { dlQueue } from '@/common/queue';
 import { IS_NHENTAI } from '@/const';
@@ -25,29 +26,59 @@ import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
 import { mountTagsFilter } from '../tagsFilter';
+import type { JQElement } from '../tagsFilter';
 
 const UNCENSORED_REG = /(?:un|de)censored/i;
 
+let doFilterTags: (($node?: JQElement) => void) | undefined;
+
+const debounceDoFilterTags = debounce((el: HTMLElement) => {
+  doFilterTags?.($(el));
+}, 0);
+
 export const initListPage = (): void => {
   initGalleries();
-  const { doFilterTags } = mountTagsFilter();
+  const tagsFilter = mountTagsFilter();
+  doFilterTags = tagsFilter.doFilterTags;
   initShortcut();
   initLastDownload();
   restoreDownloadQueue();
-
-  const contentEl = document.querySelector(selector.galleryList);
-  if (contentEl) {
-    new MutationObserver(mutations => {
-      mutations.forEach(({ addedNodes }) => {
-        addedNodes.forEach(node => {
-          const $el = $(node as HTMLElement);
-          $el.find(selector.gallery).each(initGallery);
-          doFilterTags?.($el);
-        });
-      });
-    }).observe(contentEl, { childList: true });
-  }
+  initMutationObserver();
 };
+
+const initMutationObserver = once(() => {
+  const contentEl = document.querySelector(selector.galleryList);
+  if (!contentEl) return;
+  if (IS_NHENTAI) {
+    new MutationObserver(mutations => {
+      mutations.forEach(({ addedNodes, target }) => {
+        if (
+          !(
+            addedNodes.length &&
+            target instanceof HTMLElement &&
+            target.parentElement?.matches(selector.gallery)
+          )
+        ) {
+          return;
+        }
+        const el = target.parentElement;
+        (el as any)._nhentaiHelperDestroy?.();
+        initGallery.call(el);
+        if (el.parentElement) debounceDoFilterTags(el.parentElement);
+      });
+    }).observe(contentEl, { childList: true, subtree: true });
+  }
+  new MutationObserver(mutations => {
+    mutations.forEach(({ addedNodes }) => {
+      if (!addedNodes.length) return;
+      addedNodes.forEach(node => {
+        const $el = $(node as HTMLElement);
+        $el.find(selector.gallery).each(initGallery);
+        doFilterTags?.($el);
+      });
+    });
+  }).observe(contentEl, { childList: true });
+});
 
 export const initGalleries = () => {
   $(selector.gallery).each(initGallery);
@@ -85,7 +116,7 @@ const restoreDownloadQueue = (): void => {
   }
 };
 
-const initGallery: Parameters<JQuery['each']>['0'] = function () {
+const initGallery = function (this: HTMLElement) {
   const $gallery = $(this);
 
   if ($gallery.attr('init')) return;
@@ -100,8 +131,12 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
 
   // for tag filter
-  if (IS_NHENTAI && UNCENSORED_REG.test(enTitle)) {
-    $gallery.addClass('uncensored');
+  if (IS_NHENTAI) {
+    if (UNCENSORED_REG.test(enTitle)) {
+      $gallery.addClass('uncensored');
+    } else {
+      $gallery.removeClass('uncensored');
+    }
   }
 
   const progressDisplayController = new ProgressDisplayController();
@@ -210,9 +245,19 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
 
   downloadBtn.addEventListener('click', startDownload);
 
-  this.addEventListener('contextmenu', e => {
+  const onContextMenu = (e: MouseEvent) => {
     if (!settings.galleryContextmenuPreview) return;
     e.preventDefault();
     openGalleryMiniPopover(this, gid);
-  });
+  };
+
+  this.addEventListener('contextmenu', onContextMenu);
+
+  (this as any)._nhentaiHelperDestroy = () => {
+    this.removeEventListener('contextmenu', onContextMenu);
+    $gallery.removeAttr('init');
+    downloadBtn.remove();
+    ignoreController?.ignoreBtn.remove();
+    delete (this as any)._nhentaiHelperDestroy;
+  };
 };
