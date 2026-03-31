@@ -207,14 +207,6 @@
         <el-form-item :label="t('setting.streamDownload')">
           <el-switch v-model="settings.streamDownload" :disabled="DISABLE_STREAM_DOWNLOAD" />
         </el-form-item>
-        <!-- 阻止控制台清空 -->
-        <el-form-item
-          v-if="IS_NHENTAI"
-          class="refresh-required"
-          :label="t('setting.preventConsoleClearing')"
-        >
-          <el-switch v-model="settings.preventConsoleClearing" />
-        </el-form-item>
         <!-- 标题替换 -->
         <el-collapse>
           <el-collapse-item>
