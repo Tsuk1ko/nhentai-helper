@@ -20,6 +20,6 @@ export const initListenMarkDownloadedUpdateForGalleries = once(() => {
   });
 });
 
-export const boardcastMarkDownloadedUpdate = (gid: string | number, value: boolean) => {
+export const broadcastMarkDownloadedUpdate = (gid: string | number, value: boolean) => {
   bc.postMessage({ gid: Number(gid), value });
 };

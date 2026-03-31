@@ -14,7 +14,7 @@ import {
 } from '../downloadHistory';
 import { IgnoreController } from '../ignoreController';
 import logger from '../logger';
-import { boardcastMarkDownloadedUpdate, onMarkDownloadedUpdate } from '../markDownloaded';
+import { broadcastMarkDownloadedUpdate, onMarkDownloadedUpdate } from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { settings } from '../settings';
@@ -44,7 +44,7 @@ export const initDetailPage = async (): Promise<void> => {
 
   const markGalleryDownloaded = async (isDownloaded: boolean, needBoardcast = true) => {
     ignoreController?.setStatus(isDownloaded);
-    if (needBoardcast) boardcastMarkDownloadedUpdate((await getGallery()).gid, isDownloaded);
+    if (needBoardcast) broadcastMarkDownloadedUpdate((await getGallery()).gid, isDownloaded);
   };
 
   if (settings.showIgnoreButton) {

@@ -17,7 +17,7 @@ import { IgnoreController } from '../ignoreController';
 import { initLastDownload, updateLastDownload } from '../lastDownload';
 import logger from '../logger';
 import {
-  boardcastMarkDownloadedUpdate,
+  broadcastMarkDownloadedUpdate,
   initListenMarkDownloadedUpdateForGalleries,
 } from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
@@ -115,7 +115,7 @@ const initGallery: Parameters<JQuery['each']>['0'] = function () {
     if (isDownloaded) $gallery.addClass('downloaded');
     else $gallery.removeClass('downloaded');
     ignoreController?.setStatus(isDownloaded);
-    if (needBoardcast) boardcastMarkDownloadedUpdate(gid, isDownloaded);
+    if (needBoardcast) broadcastMarkDownloadedUpdate(gid, isDownloaded);
   };
 
   // @ts-ignore
