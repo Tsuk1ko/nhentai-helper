@@ -140,7 +140,6 @@
             show-alpha
             clearable
             color-format="rgb"
-            :value-on-clear="settingDefinitions.downloadedTitleColor.default"
             @active-change="handleDownloadedTitleColorPreviewChange"
             @change="handleDownloadedTitleColorPreviewChange"
           />
@@ -149,7 +148,7 @@
             :class="CAPTION_CLASS"
             :style="{ color: downloadedTitleColorPreview }"
           >
-            {{ settings.downloadedTitleColor }}
+            {{ downloadedTitleColorPreview || settings.downloadedTitleColor }}
           </div>
         </el-form-item>
         <!-- 添加元数据文件 -->
