@@ -162,9 +162,6 @@ const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> 
     },
   };
 
-  console.log('resp:', resp);
-  console.log('NHentaiImgExt', NHentaiImgExt);
-
   return resp;
 };
 
