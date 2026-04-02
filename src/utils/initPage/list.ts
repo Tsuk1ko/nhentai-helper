@@ -146,11 +146,11 @@ const initGallery = function (this: HTMLElement) {
   let ignoreController: IgnoreController | undefined;
   let galleryTitle: NHentaiGallery['title'] | undefined;
 
-  const markGalleryDownloaded = (isDownloaded: boolean, needBoardcast = true): void => {
+  const markGalleryDownloaded = (isDownloaded: boolean, needBroadcast = true): void => {
     if (isDownloaded) $gallery.addClass('downloaded');
     else $gallery.removeClass('downloaded');
     ignoreController?.setStatus(isDownloaded);
-    if (needBoardcast) broadcastMarkDownloadedUpdate(gid, isDownloaded);
+    if (needBroadcast) broadcastMarkDownloadedUpdate(gid, isDownloaded);
   };
 
   // @ts-ignore

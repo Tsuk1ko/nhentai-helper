@@ -42,9 +42,9 @@ export const initDetailPage = async (): Promise<void> => {
 
   let ignoreController: IgnoreController | undefined;
 
-  const markGalleryDownloaded = async (isDownloaded: boolean, needBoardcast = true) => {
+  const markGalleryDownloaded = async (isDownloaded: boolean, needBroadcast = true) => {
     ignoreController?.setStatus(isDownloaded);
-    if (needBoardcast) broadcastMarkDownloadedUpdate((await getGallery()).gid, isDownloaded);
+    if (needBroadcast) broadcastMarkDownloadedUpdate((await getGallery()).gid, isDownloaded);
   };
 
   if (settings.showIgnoreButton) {
