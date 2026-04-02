@@ -256,6 +256,7 @@ const initGallery = function (this: HTMLElement) {
   (this as any)._nhentaiHelperDestroy = () => {
     this.removeEventListener('contextmenu', onContextMenu);
     $gallery.removeAttr('init');
+    $gallery.removeClass('downloaded');
     downloadBtn.remove();
     ignoreController?.ignoreBtn.remove();
     delete (this as any)._nhentaiHelperDestroy;
