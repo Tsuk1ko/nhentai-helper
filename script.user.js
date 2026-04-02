@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.6
+// @version            3.25.7
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -10671,6 +10671,9 @@ ${this.serializer.serializeToString(this.doc)}`;
     getStatus() {
       return this.status;
     }
+    destroy() {
+      this.ignoreBtn.remove();
+    }
     updateBtn() {
       this.icon.className = this.iconClass, this.text && (this.text.textContent = this.btnText);
     }
@@ -10737,6 +10740,9 @@ ${this.serializer.serializeToString(this.doc)}`;
         this.setDocTitle(`${done}/${total}`), this.btnTxt.textContent = `${this.downloadingHeadText}${done}/${total}`;
       }
     }
+    destroy() {
+      this.downloadBtn.remove();
+    }
     defaultBtnText(suffix) {
       return this.enableHeadTxt ? `${t$1("button.download")} ${getDownloadExt()}${suffix ? ` ${suffix}` : ""}` : suffix ?? "";
     }
@@ -10758,8 +10764,8 @@ ${this.serializer.serializeToString(this.doc)}`;
     $(selector.infoButtons).append(downloadBtn).after(pagesInput);
     const getGallery2 = once(() => getGalleryInfo());
     let ignoreController;
-    const markGalleryDownloaded = async (isDownloaded, needBoardcast = true) => {
-      ignoreController?.setStatus(isDownloaded), needBoardcast && broadcastMarkDownloadedUpdate((await getGallery2()).gid, isDownloaded);
+    const markGalleryDownloaded = async (isDownloaded, needBroadcast = true) => {
+      ignoreController?.setStatus(isDownloaded), needBroadcast && broadcastMarkDownloadedUpdate((await getGallery2()).gid, isDownloaded);
     };
     if (settings.showIgnoreButton) {
       const gallery = await getGallery2(), isDownloaded = await isDownloadedByGid(gallery.gid);
@@ -11534,13 +11540,13 @@ ${this.serializer.serializeToString(this.doc)}`;
     const gid = /\/g\/(\d+)/.exec($a.attr("href"))?.[1];
     if (!gid) return;
     this.dataset.gid = gid;
-    const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+    const enTitle = $gallery.find(selector.galleryCaption).text().trim(), isNotSelf = () => gid !== this.dataset.gid;
     IS_NHENTAI && (UNCENSORED_REG.test(enTitle) ? $gallery.addClass("uncensored") : $gallery.removeClass("uncensored"));
     const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
     let ignoreController, galleryTitle;
-    const markGalleryDownloaded = (isDownloaded, needBoardcast = true) => {
-      isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBoardcast && broadcastMarkDownloadedUpdate(gid, isDownloaded);
+    const markGalleryDownloaded = (isDownloaded, needBroadcast = true) => {
+      isNotSelf() || (isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBroadcast && broadcastMarkDownloadedUpdate(gid, isDownloaded));
     };
     this._markGalleryDownloaded = markGalleryDownloaded, Promise.all([isDownloadedByGid(gid), isDownloadedByTitle({ english: enTitle })]).then(
       ([gidDownloaded, titleDownloaded]) => {
@@ -11598,7 +11604,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       settings.galleryContextmenuPreview && (e.preventDefault(), openGalleryMiniPopover(this, gid));
     };
     this.addEventListener("contextmenu", onContextMenu), this._nhentaiHelperDestroy = () => {
-      this.removeEventListener("contextmenu", onContextMenu), $gallery.removeAttr("init"), $gallery.removeClass("downloaded"), downloadBtn.remove(), ignoreController?.ignoreBtn.remove(), delete this._nhentaiHelperDestroy;
+      this.removeEventListener("contextmenu", onContextMenu), $gallery.removeAttr("init"), $gallery.removeClass("downloaded"), progressDisplayController.destroy(), ignoreController?.destroy(), delete this._nhentaiHelperDestroy;
     };
   };
   class StyleInjector {
