@@ -39,6 +39,10 @@ export class IgnoreController {
     return this.status;
   }
 
+  destroy(): void {
+    this.ignoreBtn.remove();
+  }
+
   private updateBtn(): void {
     this.icon.className = this.iconClass;
     if (this.text) this.text.textContent = this.btnText;

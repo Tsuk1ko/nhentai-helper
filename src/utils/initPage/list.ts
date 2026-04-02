@@ -130,6 +130,8 @@ const initGallery = function (this: HTMLElement) {
   this.dataset.gid = gid;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
 
+  const isNotSelf = () => gid !== this.dataset.gid;
+
   // for tag filter
   if (IS_NHENTAI) {
     if (UNCENSORED_REG.test(enTitle)) {
@@ -147,6 +149,7 @@ const initGallery = function (this: HTMLElement) {
   let galleryTitle: NHentaiGallery['title'] | undefined;
 
   const markGalleryDownloaded = (isDownloaded: boolean, needBroadcast = true): void => {
+    if (isNotSelf()) return;
     if (isDownloaded) $gallery.addClass('downloaded');
     else $gallery.removeClass('downloaded');
     ignoreController?.setStatus(isDownloaded);
@@ -257,8 +260,8 @@ const initGallery = function (this: HTMLElement) {
     this.removeEventListener('contextmenu', onContextMenu);
     $gallery.removeAttr('init');
     $gallery.removeClass('downloaded');
-    downloadBtn.remove();
-    ignoreController?.ignoreBtn.remove();
+    progressDisplayController.destroy();
+    ignoreController?.destroy();
     delete (this as any)._nhentaiHelperDestroy;
   };
 };

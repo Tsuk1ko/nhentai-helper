@@ -78,6 +78,10 @@ export class ProgressDisplayController {
     }
   }
 
+  destroy(): void {
+    this.downloadBtn.remove();
+  }
+
   private defaultBtnText(suffix?: string): string {
     if (!this.enableHeadTxt) return suffix ?? '';
     return `${t('button.download')} ${getDownloadExt()}${suffix ? ` ${suffix}` : ''}`;
