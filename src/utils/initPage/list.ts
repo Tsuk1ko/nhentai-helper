@@ -33,6 +33,7 @@ const UNCENSORED_REG = /(?:un|de)censored/i;
 let doFilterTags: (($node?: JQElement) => void) | undefined;
 
 const debounceDoFilterTags = debounce((el: HTMLElement) => {
+  logger.debug('debounceDoFilterTags', el);
   doFilterTags?.($(el));
 }, 0);
 
@@ -53,6 +54,14 @@ const initMutationObserver = once(() => {
     new MutationObserver(mutations => {
       mutations.forEach(({ addedNodes, target }) => {
         if (
+          settings.collectLog &&
+          target instanceof HTMLElement &&
+          !target.closest('.nhentai-helper-btn') &&
+          addedNodes.length
+        ) {
+          logger.debug('MutationObserver#1', { target, addedNodes });
+        }
+        if (
           !(
             addedNodes.length &&
             target instanceof HTMLElement &&
@@ -71,6 +80,7 @@ const initMutationObserver = once(() => {
   new MutationObserver(mutations => {
     mutations.forEach(({ addedNodes }) => {
       if (!addedNodes.length) return;
+      logger.debug('MutationObserver#2', addedNodes);
       addedNodes.forEach(node => {
         const $el = $(node as HTMLElement);
         $el.find(selector.gallery).each(initGallery);
@@ -117,6 +127,8 @@ const restoreDownloadQueue = (): void => {
 };
 
 const initGallery = function (this: HTMLElement) {
+  logger.debug('initGallery', this);
+
   const $gallery = $(this);
 
   if ($gallery.attr('init')) return;
@@ -129,6 +141,8 @@ const initGallery = function (this: HTMLElement) {
   if (!gid) return;
   this.dataset.gid = gid;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+
+  logger.debug('initGallery gid', gid);
 
   const isNotSelf = () => gid !== this.dataset.gid;
 

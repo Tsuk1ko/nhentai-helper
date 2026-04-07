@@ -16,8 +16,28 @@ const stringifyReplacer = (key: string, value: any): any => {
   if (Array.isArray(value) || isPlainObject(value) || isPrimitive(value)) {
     return value;
   }
-  // TODO convert error, element, etc.
-  return value;
+  if (value instanceof Error) {
+    return {
+      $: 'Error',
+      name: value.name,
+      message: value.message,
+      stack: value.stack,
+      cause: value.cause,
+    };
+  }
+  if (value instanceof HTMLElement) {
+    return {
+      $: 'HTMLElement',
+      tagName: value.tagName,
+      attributes: Object.fromEntries(
+        Array.from(value.attributes).map(({ name, value }) => [name, value]),
+      ),
+    };
+  }
+  if (value instanceof NodeList) {
+    return Array.from(value);
+  }
+  return String(value);
 };
 
 const stringifyArgs = (args: any[]): string =>
@@ -26,10 +46,12 @@ const stringifyArgs = (args: any[]): string =>
     .join(' ');
 
 const collectLog = (method: LogMethod, args: any[]): void => {
+  const now = new Date();
+  const prefix = `[${method}] ${now.toLocaleString('zh-CN')}:${now.getMilliseconds().toString().padStart(3, '0')}`;
   try {
-    logs.push(`[${method}] ${stringifyArgs(args)}`);
+    logs.push(`${prefix} ${stringifyArgs(args)}`);
   } catch {
-    logs.push(`[${method}] (can't stringify) ${args}`);
+    logs.push(`${prefix} ${args}`);
   }
 };
 
