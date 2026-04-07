@@ -103,10 +103,10 @@ const initShortcut = (): void => {
     if (ignoreActiveElTags.has(activeElTag)) return;
     switch (event.key) {
       case 'ArrowLeft':
-        $(selector.paginationPrevious).trigger('click');
+        (document.querySelector(selector.paginationPrevious) as HTMLElement)?.click();
         break;
       case 'ArrowRight':
-        $(selector.paginationNext).trigger('click');
+        (document.querySelector(selector.paginationNext) as HTMLElement)?.click();
         break;
     }
   });
