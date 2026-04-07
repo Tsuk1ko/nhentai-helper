@@ -86,6 +86,8 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 
 ### Advance Settings
 
+- **Collect logs**  
+  Before reporting an issue to the developer, enable this option, reproduce the problem, then click the "Copy Logs" button and paste the content (already formatted in Markdown) into your report. Remember to disable this option afterwards to avoid performance issues.
 - **nHentai download host**  
   Choose a host for downloading nHentai images. Only available on nHentai.  
   Currently, nHentai CDNs are not fully synchronized, so it is recommended to use "Auto".
