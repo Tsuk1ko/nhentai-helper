@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.8
+// @version            3.25.9
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -10866,6 +10866,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     }
   }
   const { t } = i18n.global, initDetailPage = async () => {
+    logger.debug("initDetailPage");
     const progressDisplayController = new ProgressDisplayController(true, document.title), { downloadBtn } = progressDisplayController, pagesInput = /* @__PURE__ */ createNode(
       "input",
       {
@@ -11602,7 +11603,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   const debounceDoFilterTags = debounce((el) => {
     logger.debug("debounceDoFilterTags", el), doFilterTags?.($(el));
   }, 0), initListPage = () => {
-    initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver();
+    logger.debug("initListPage"), initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver();
   }, initMutationObserver = once(() => {
     const contentEl = document.querySelector(selector.galleryList);
     contentEl && (IS_NHENTAI && new MutationObserver((mutations) => {
@@ -11621,7 +11622,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       });
     }).observe(contentEl, { childList: true }));
   }), initGalleries = () => {
-    $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
+    logger.debug("initGalleries"), $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
   }, initShortcut = () => {
     const ignoreActiveElTags = /* @__PURE__ */ new Set(["INPUT", "TEXTAREA"]);
     $(document).on("keydown", (event) => {
@@ -11629,10 +11630,10 @@ ${this.serializer.serializeToString(this.doc)}`;
       if (!ignoreActiveElTags.has(activeElTag))
         switch (event.key) {
           case "ArrowLeft":
-            $(selector.paginationPrevious).trigger("click");
+            document.querySelector(selector.paginationPrevious)?.click();
             break;
           case "ArrowRight":
-            $(selector.paginationNext).trigger("click");
+            document.querySelector(selector.paginationNext)?.click();
             break;
         }
     });
@@ -11740,6 +11741,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   const initOnlineViewPage = () => {
     IS_NHENTAI || initViewMode();
   }, initViewMode = () => {
+    logger.debug("initViewMode");
     const style = new StyleInjector(
       `${selector.mediaImage}{width:auto;max-width:calc(100vw - 20px);max-height:100vh}`
     ), viewModeText = ["[off]", "[on]"];
@@ -11756,9 +11758,9 @@ ${this.serializer.serializeToString(this.doc)}`;
     enable ? style.inject() : style.remove();
   }, initPage = async () => {
     const { isSvelte, isSvelteReady } = getSvelteStatus();
-    isSvelte && (onSvelteHydrationMismatch(initPage), isSvelteReady || (logger.warn("Svelte detected, waiting for svelte ready to avoid hydration mismatch"), await waitForSvelteReady())), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), IS_NHENTAI || applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
+    logger.debug("initPage", { href: location.href, isSvelte, isSvelteReady }), isSvelte && (onSvelteHydrationMismatch(initPage), isSvelteReady || (logger.warn("Svelte detected, waiting for svelte ready to avoid hydration mismatch"), await waitForSvelteReady())), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), IS_PAGE_MANGA_LIST ? (initListPage(), IS_NHENTAI || applyPjax()) : IS_PAGE_MANGA_DETAIL ? (initDetailPage().catch(logger.error), initGalleries()) : IS_PAGE_ONLINE_VIEW && initOnlineViewPage(), applyDownloadedTitleColor();
   }, applyPjax = () => {
-    $(document).pjax(selector.pjaxTrigger, {
+    logger.debug("applyPjax"), $(document).pjax(selector.pjaxTrigger, {
       container: selector.pjaxTarget,
       fragment: selector.pjaxTarget,
       timeout: 1e4
