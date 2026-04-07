@@ -5,7 +5,7 @@ import { IDB_NAME, IS_DEV } from '@/const';
 import { useStyle } from '@/hooks/useStyle';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
-import logger from './logger';
+import { logger } from './logger';
 
 const store = localforage.createInstance({
   name: IDB_NAME,
@@ -53,5 +53,5 @@ export const restoreLastDownload = async () => {
   if (!lastGid) return;
   latestGid = lastGid;
   await store.setItem(getKey(), lastGid);
-  logger.log(`restore last download: ${lastGid}`);
+  logger.info(`restore last download: ${lastGid}`);
 };

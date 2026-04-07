@@ -68,6 +68,11 @@ export default {
       importTip: '提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录',
     },
     downloadedTitleColor: '已下载本子的标题颜色',
+    collectLog: '收集日志',
+    copyLogs: '复制日志',
+    clearLogs: '清空日志',
+    collectLogTip:
+      '在向开发者反馈问题前，请打开此开关，复现问题后点击"复制日志"按钮，将内容（已附带 Markdown 格式）粘贴到反馈中，操作结束后请关闭此开关以避免产生性能问题',
   },
   dialog: {
     yes: '是的',

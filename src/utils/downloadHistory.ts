@@ -4,7 +4,7 @@ import md5 from 'md5';
 import { IDB_NAME } from '@/const';
 import { dateTimeFormatter } from './formatter';
 import { JSZip } from './jszip';
-import logger from './logger';
+import { logger } from './logger';
 import type { NHentaiGallery } from './nhentai';
 import { settings } from './settings';
 
@@ -32,7 +32,7 @@ class DownloadHistory {
     if (!(await this.ready)) return;
     try {
       await this.store.setItem(key, true);
-      logger.log(`mark "${key}" as downloaded`);
+      logger.info(`mark "${key}" as downloaded`);
     } catch (e) {
       logger.error(e);
     }
@@ -42,7 +42,7 @@ class DownloadHistory {
     if (!(await this.ready)) return;
     try {
       await this.store.removeItem(key);
-      logger.log(`unmark "${key}" as downloaded`);
+      logger.info(`unmark "${key}" as downloaded`);
     } catch (e) {
       logger.error(e);
     }
@@ -176,7 +176,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
     const timeStr = dateTimeFormatter.format(Date.now()).replace(/\D/g, '');
     const filename = `nhentai-helper-download-history-${timeStr}.zip`;
     saveAs(new File([data], filename, { type: 'application/zip' }));
-    logger.log('export download history', filename);
+    logger.info('export download history', filename);
     return true;
   } catch (error) {
     logger.error(error);

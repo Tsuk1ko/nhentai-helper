@@ -68,6 +68,11 @@ export default {
       importTip: 'Tip: Import will not clear the existing history, but merges with it.',
     },
     downloadedTitleColor: 'Downloaded title color',
+    collectLog: 'Collect logs',
+    copyLogs: 'Copy logs',
+    clearLogs: 'Clear logs',
+    collectLogTip:
+      'Before reporting an issue to the developer, enable this option, reproduce the problem, then click the "Copy Logs" button and paste the content (already formatted in Markdown) into your report. Remember to disable this option afterwards to avoid performance issues.',
   },
   dialog: {
     yes: 'YES',

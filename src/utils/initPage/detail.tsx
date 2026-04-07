@@ -13,7 +13,7 @@ import {
   unmarkAsDownloaded,
 } from '../downloadHistory';
 import { IgnoreController } from '../ignoreController';
-import logger from '../logger';
+import { logger } from '../logger';
 import { broadcastMarkDownloadedUpdate, onMarkDownloadedUpdate } from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';

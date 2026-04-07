@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
 import { selector } from '@/rules/selector';
-import logger from '../logger';
+import { logger } from '../logger';
 import { applyDownloadedTitleColor } from '../settings';
 import { getSvelteStatus, onSvelteHydrationMismatch, waitForSvelteReady } from '../svelte';
 import { initDetailPage } from './detail';

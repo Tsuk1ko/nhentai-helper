@@ -116,7 +116,7 @@ import { useI18n } from 'petite-vue-i18n';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { IS_NHENTAI_XXX } from '@/const';
 import { showMessage } from '@/utils/elementPlus';
-import logger from '@/utils/logger';
+import { logger } from '@/utils/logger';
 import { getCompliedThumbMediaUrlTemplate, getGallery, NHentaiImgExt } from '@/utils/nhentai';
 import type { NHentaiGallery, NHentaiImage, NHentaiTag } from '@/utils/nhentai';
 import { settings } from '@/utils/settings';

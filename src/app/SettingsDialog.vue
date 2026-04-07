@@ -170,6 +170,25 @@
         </el-form-item>
         <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
+        <!-- 收集日志 -->
+        <el-form-item :label="t('setting.collectLog')">
+          <div>
+            <div class="gap-inputs">
+              <el-switch v-model="settings.collectLog" />
+              <template v-if="settings.collectLog">
+                <el-button type="primary" :icon="DocumentCopy" @click="copyLogs">{{
+                  t('setting.copyLogs')
+                }}</el-button>
+                <el-button type="danger" :icon="Delete" @click="clearLogs">{{
+                  t('setting.clearLogs')
+                }}</el-button>
+              </template>
+            </div>
+            <div class="no-sl" style="line-height: 1.5; margin-top: 12px">
+              {{ t('setting.collectLogTip') }}
+            </div>
+          </div>
+        </el-form-item>
         <!-- nHentai 下载节点 -->
         <el-form-item v-if="IS_NHENTAI" :label="t('setting.nHentaiDownloadHost')">
           <el-select
@@ -309,8 +328,8 @@
 </template>
 
 <script setup lang="ts">
-import { Delete, Download, Upload } from '@element-plus/icons-vue';
-import { GM_openInTab } from '$';
+import { Delete, DocumentCopy, Download, Upload } from '@element-plus/icons-vue';
+import { GM_openInTab, GM_setClipboard } from '$';
 import {
   ElButton,
   ElCheckbox,
@@ -351,6 +370,7 @@ import {
 import { showMessage } from '@/utils/elementPlus';
 import { pickAndReadFile } from '@/utils/file';
 import { numberFormatter } from '@/utils/formatter';
+import { clearLogs, exportLogs } from '@/utils/logger';
 import {
   DISABLE_STREAM_DOWNLOAD,
   nHentaiDownloadHosts,
@@ -466,6 +486,15 @@ const handleDownloadedTitleColorPreviewChange = (val: string | null) => {
   downloadedTitleColorPreview.value = val || settings.downloadedTitleColor;
 };
 
+const copyLogs = () => {
+  GM_setClipboard(`\`\`\`\n${exportLogs()}\n\`\`\``, 'text', () => {
+    showMessage({
+      type: 'success',
+      message: t('common.copied'),
+    });
+  });
+};
+
 watch(
   () => settings.language,
   val => {
@@ -513,6 +542,11 @@ defineExpose({ open });
   margin-left: 8px !important;
   padding: 4px 16px !important;
   user-select: none !important;
+}
+
+.gap-inputs {
+  display: flex;
+  gap: 4px 12px;
 }
 </style>
 
@@ -595,5 +629,11 @@ defineExpose({ open });
 
 .el-select-dropdown {
   user-select: none;
+}
+
+.gap-inputs {
+  .el-button {
+    margin: 0;
+  }
 }
 </style>

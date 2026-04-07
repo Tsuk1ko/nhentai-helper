@@ -11,7 +11,7 @@ import { removeIllegalFilenameChars } from './formatter';
 import { ImgConverter } from './imgConverter';
 import type { OnUpdateCallback } from './jszip';
 import { JSZip } from './jszip';
-import logger from './logger';
+import { logger } from './logger';
 import { generateMetaFiles } from './meta';
 import type { TaskFunction } from './multiThread';
 import { MultiThread } from './multiThread';
@@ -109,7 +109,7 @@ export const downloadGalleryByInfo = async (
         if (useCounter) {
           return () => {
             const url = getMediaDownloadUrl(mid, filename);
-            logger.log(`[${threadID}] ${url}`);
+            logger.info(`[${threadID}] ${url}`);
             if (settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
               const counterKey = new URL(url).host;
               usedCounterKeys.push(counterKey);
@@ -135,7 +135,7 @@ export const downloadGalleryByInfo = async (
     }
 
     if (typeof urlGetter !== 'function') {
-      logger.log(`[${threadID}] ${urlGetter}`);
+      logger.info(`[${threadID}] ${urlGetter}`);
     }
 
     const { abort, dataPromise } = requestArrayBufferGm({
@@ -151,7 +151,7 @@ export const downloadGalleryByInfo = async (
 
     return {
       abort: () => {
-        logger.log(`[${threadID}] abort`);
+        logger.info(`[${threadID}] abort`);
         abort();
       },
       promise: dataPromise
@@ -208,21 +208,21 @@ export const downloadGalleryByInfo = async (
   return async () => {
     info.compressing = true;
     progressDisplayController?.updateProgress();
-    logger.log('start compressing', cfName);
+    logger.info('start compressing', cfName);
 
     let lastZipFile = '';
 
     const onCompressionUpdate: OnUpdateCallback = ({ workerId, percent, currentFile }) => {
       if (lastZipFile !== currentFile && currentFile) {
         lastZipFile = currentFile;
-        logger.log(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile);
+        logger.info(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile);
       }
       info.compressingPercent = percent.toFixed(2);
       progressDisplayController?.updateProgress();
     };
 
     if (settings.streamDownload) {
-      logger.log('stream mode on');
+      logger.info('stream mode on');
       const fileStream = createWriteStream(cfName);
       const zipStream = await zip.generateStream(getCompressionOptions(), onCompressionUpdate);
       await zipStream.pipeTo(fileStream);
@@ -231,7 +231,7 @@ export const downloadGalleryByInfo = async (
       saveAs(new File([data], cfName, { type: 'application/zip' }));
     }
 
-    logger.log('completed', cfName);
+    logger.info('completed', cfName);
     progressDisplayController?.complete();
     progressDisplayController?.unbindInfo();
   };

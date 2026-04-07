@@ -1,6 +1,6 @@
 import { GM_xmlhttpRequest } from '$';
 import { sleep } from './common';
-import logger from './logger';
+import { logger } from './logger';
 
 class RequestAbortError extends Error {
   constructor(url: string) {
@@ -58,7 +58,7 @@ export const requestArrayBufferGm = (params: {
       });
       abortFunc = () => {
         req.abort();
-        logger.log('Request abort', url);
+        logger.info('Request abort', url);
         reject(new RequestAbortError(url));
       };
     } catch (error) {

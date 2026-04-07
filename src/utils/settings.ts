@@ -7,7 +7,7 @@ import { useStyle } from '@/hooks/useStyle';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
 import { objectEach } from './array';
-import logger from './logger';
+import { logger } from './logger';
 import type { NHentaiGallery } from './nhentai';
 
 export const nHentaiDownloadHosts = [
@@ -98,6 +98,8 @@ export interface Settings {
   removeAdPage: boolean;
   /** 已下载本子的标题颜色 */
   downloadedTitleColor: string;
+  /** 收集日志 */
+  collectLog: boolean;
 }
 
 interface SettingsDefault {
@@ -296,6 +298,11 @@ export const settingDefinitions: Readonly<{
     default: 'rgb(153, 153, 153)',
     validator: stringValidator,
   },
+  collectLog: {
+    key: 'collect_log',
+    default: false,
+    validator: booleanValidator,
+  },
 };
 
 const browserDetect = detect();
@@ -346,7 +353,7 @@ export const startWatchSettings = once(() => {
     const cur = settingDefinitions[key as keyof Settings] as SettingDefinition;
     let valChanged = false;
     const saveValue = (val: any) => {
-      logger.log('update setting', cur.key, toRaw(val));
+      logger.info('update setting', cur.key, toRaw(val));
       GM_setValue(cur.key, val);
     };
     watch(

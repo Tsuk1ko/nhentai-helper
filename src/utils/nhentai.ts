@@ -14,7 +14,7 @@ import { compileTemplate, tryParseJSON } from './common';
 import { Counter } from './counter';
 import { removeIllegalFilenameChars } from './formatter';
 import { loadHTML } from './html';
-import logger from './logger';
+import { logger } from './logger';
 import { OrderCache } from './orderCache';
 import { fetchJSON, fetchText } from './request';
 import {
@@ -191,7 +191,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
     try {
       // eslint-disable-next-line no-eval
       const gallery: NHentaiGallery = (0, eval)(match);
-      logger.log('get gallery by script tag success');
+      logger.info('get gallery by script tag success');
       return fixGalleryObj(gallery, gid);
     } catch {
       logger.warn('get gallery by script tag failed');
@@ -326,7 +326,7 @@ export const getGallery = async (gid: number | string): Promise<NHentaiGallery> 
   if (cached) return cached;
   const gallery = IS_NHENTAI ? await getGalleryFromApi(gid) : await getGalleryFromWebpage(gid);
   galleryCache.set(gid, gallery);
-  logger.devLog('gallery', gallery);
+  logger.debug('gallery', gallery);
   return gallery;
 };
 
@@ -376,7 +376,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     uploadDate: upload_date,
     gallery,
   };
-  logger.log('info', info);
+  logger.info('info', info);
 
   return info;
 };
@@ -393,7 +393,7 @@ const fetchMediaUrlTemplate = async (gid: string) => {
     throw new Error('get media url failed: cannot find a gallery');
   }
 
-  logger.log(`fetching media url template by ${onlineViewUrl}`);
+  logger.info(`fetching media url template by ${onlineViewUrl}`);
 
   const onlineViewHtml = await fetchText(onlineViewUrl);
   const $doc = loadHTML(onlineViewHtml);
@@ -420,7 +420,7 @@ const fetchThumbMediaUrlTemplate = async (gid: string) => {
     throw new Error('get detail url failed: cannot find a gallery');
   }
 
-  logger.log(`fetching thumb media url template by ${detailUrl}`);
+  logger.info(`fetching thumb media url template by ${detailUrl}`);
 
   const detailHtml = await fetchText(detailUrl);
   const $doc = loadHTML(detailHtml);
@@ -457,7 +457,7 @@ const getMediaUrlTemplate = async (
       mediaUrlTemplateGidCache[cacheKey]!.set(gid, promise);
     }
     const template = await promise;
-    logger.log(`use media url template: ${template}`);
+    logger.info(`use media url template: ${template}`);
     return template;
   } catch (error) {
     logger.error(error);

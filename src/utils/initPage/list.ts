@@ -16,7 +16,7 @@ import {
 import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { IgnoreController } from '../ignoreController';
 import { initLastDownload, updateLastDownload } from '../lastDownload';
-import logger from '../logger';
+import { logger } from '../logger';
 import {
   broadcastMarkDownloadedUpdate,
   initListenMarkDownloadedUpdateForGalleries,

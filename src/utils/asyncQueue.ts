@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 import { reactive } from 'vue';
 import { removeAt } from './array';
-import logger from './logger';
+import { logger } from './logger';
 
 type AsyncFunction = () => Promise<void>;
 
