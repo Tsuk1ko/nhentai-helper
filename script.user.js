@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.7
+// @version            3.25.8
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -34,6 +34,7 @@
 // @grant              GM_addStyle
 // @grant              GM_getResourceText
 // @grant              GM_getValue
+// @grant              GM_info
 // @grant              GM_openInTab
 // @grant              GM_registerMenuCommand
 // @grant              GM_setClipboard
@@ -44,7 +45,7 @@
 // @noframes
 // ==/UserScript==
 
-(function ($, Vue, elementPlus) {
+(function (Vue, $, elementPlus) {
   'use strict';
 
   function _interopNamespaceDefault(e) {
@@ -127,32 +128,32 @@
 #download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb {
   background-color: #fff9;
 }
-.nhentai-helper-setting-help-buttons[data-v-de16c055] {
+.nhentai-helper-setting-help-buttons[data-v-b766fb56] {
   float: left;
   position: absolute;
 }
-.inline-item[data-v-de16c055] {
+.inline-item[data-v-b766fb56] {
   display: inline-block;
 }
-.inline-item[data-v-de16c055]:not(:last-of-type) {
+.inline-item[data-v-b766fb56]:not(:last-of-type) {
   margin-right: 8px;
 }
-.inline-item__name[data-v-de16c055] {
+.inline-item__name[data-v-b766fb56] {
   margin-right: 4px;
   -webkit-user-select: none;
   user-select: none;
 }
-.monospace[data-v-de16c055] {
+.monospace[data-v-b766fb56] {
   font-family: monospace;
 }
-span.monospace[data-v-de16c055] {
+span.monospace[data-v-b766fb56] {
   -webkit-user-select: none;
   user-select: none;
 }
-.code-type[data-v-de16c055] {
+.code-type[data-v-b766fb56] {
   color: var(--el-text-color-secondary);
 }
-.downloaded-title-color-preview[data-v-de16c055] {
+.downloaded-title-color-preview[data-v-b766fb56] {
   position: relative !important;
   width: unset !important;
   height: unset !important;
@@ -162,6 +163,10 @@ span.monospace[data-v-de16c055] {
   padding: 4px 16px !important;
   -webkit-user-select: none !important;
   user-select: none !important;
+}
+.gap-inputs[data-v-b766fb56] {
+  display: flex;
+  gap: 4px 12px;
 }
 #nhentai-helper-setting-dialog-outside {
   width: 80%;
@@ -236,52 +241,55 @@ span.monospace[data-v-de16c055] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-21ebd57b] {
+.gap-inputs .el-button {
+  margin: 0;
+}
+.bold[data-v-db37b7bc] {
   font-weight: 700;
 }
-.info-label[data-v-21ebd57b] {
+.info-label[data-v-db37b7bc] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-21ebd57b] {
+.lang-zh .info-label[data-v-db37b7bc] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-21ebd57b] {
+.lang-en .info-label[data-v-db37b7bc] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-21ebd57b] {
+.info-tag-wrapper[data-v-db37b7bc] {
   display: flex;
 }
-.info-tag[data-v-21ebd57b] {
+.info-tag[data-v-db37b7bc] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-21ebd57b] {
+.info-tag--pointer[data-v-db37b7bc] {
   cursor: pointer;
 }
-.image-loading[data-v-21ebd57b] {
+.image-loading[data-v-db37b7bc] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-21ebd57b] {
+.scroll-container[data-v-db37b7bc] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
   overscroll-behavior: none;
 }
-.scroll-container[data-v-21ebd57b]::-webkit-scrollbar {
+.scroll-container[data-v-db37b7bc]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-21ebd57b]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-db37b7bc]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-21ebd57b]::-webkit-scrollbar-track {
+.scroll-container[data-v-db37b7bc]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-21ebd57b] {
+.scroll-container-inner[data-v-db37b7bc] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -354,7 +362,7 @@ span.monospace[data-v-de16c055] {
   }
 } `);
 
-  var _GM_addStyle = typeof GM_addStyle < "u" ? GM_addStyle : void 0, _GM_getResourceText = typeof GM_getResourceText < "u" ? GM_getResourceText : void 0, _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
+  var _GM_addStyle = typeof GM_addStyle < "u" ? GM_addStyle : void 0, _GM_getResourceText = typeof GM_getResourceText < "u" ? GM_getResourceText : void 0, _GM_getValue = typeof GM_getValue < "u" ? GM_getValue : void 0, _GM_info = typeof GM_info < "u" ? GM_info : void 0, _GM_openInTab = typeof GM_openInTab < "u" ? GM_openInTab : void 0, _GM_registerMenuCommand = typeof GM_registerMenuCommand < "u" ? GM_registerMenuCommand : void 0, _GM_setClipboard = typeof GM_setClipboard < "u" ? GM_setClipboard : void 0, _GM_setValue = typeof GM_setValue < "u" ? GM_setValue : void 0, _GM_xmlhttpRequest = typeof GM_xmlhttpRequest < "u" ? GM_xmlhttpRequest : void 0, _unsafeWindow = typeof unsafeWindow < "u" ? unsafeWindow : void 0, _monkeyWindow = window;
   const defaultSelector = {
     // list
     menuLeft: "ul.menu.left",
@@ -413,18 +421,838 @@ span.monospace[data-v-de16c055] {
       mediaImage: "#fimg",
       pageContainer: ".reader_outer"
     }
-  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] }, WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1), { pathname, hostname } = location, IS_PAGE_MANGA_DETAIL = /^\/g\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_ONLINE_VIEW = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && !!document.querySelector(selector.gallery), IS_NHENTAI = hostname === "nhentai.net", IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website", IS_NHENTAI_XXX = hostname === "nhentai.xxx", MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX, MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`, THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`, IDB_NAME = "nhentai_helper", logger = {
-    devLog: () => {
-    },
-    log: (...args) => {
-      console.log("[nhentai-helper]", ...args);
-    },
-    warn: (...args) => {
-      console.warn("[nhentai-helper]", ...args);
-    },
-    error: (...args) => {
-      console.error("[nhentai-helper]", ...args);
+  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] }, IS_DEV = false, WORKER_THREAD_NUM = Math.max(navigator.hardwareConcurrency - 1, 1), { pathname, hostname } = location, IS_PAGE_MANGA_DETAIL = /^\/g\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_ONLINE_VIEW = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/.test(pathname), IS_PAGE_MANGA_LIST = !IS_PAGE_MANGA_DETAIL && !IS_PAGE_ONLINE_VIEW && !!document.querySelector(selector.gallery), IS_NHENTAI = hostname === "nhentai.net", IS_NHENTAI_TO = hostname === "nhentai.to" || hostname === "nhentai.website", IS_NHENTAI_XXX = hostname === "nhentai.xxx", MEDIA_URL_TEMPLATE_MAY_CHANGE = IS_NHENTAI || IS_NHENTAI_XXX, MEDIA_URL_TEMPLATE_KEY = `media_url_template_${hostname}`, THUMB_MEDIA_URL_TEMPLATE_KEY = `thumb_media_url_template_${hostname}`, IDB_NAME = "nhentai_helper";
+  function compact(arr) {
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      item && result.push(item);
     }
+    return result;
+  }
+  function difference(firstArr, secondArr) {
+    const secondSet = new Set(secondArr);
+    return firstArr.filter((item) => !secondSet.has(item));
+  }
+  function groupBy(arr, getKeyFromItem) {
+    const result = {};
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i], key = getKeyFromItem(item);
+      Object.hasOwn(result, key) || (result[key] = []), result[key].push(item);
+    }
+    return result;
+  }
+  function intersection(firstArr, secondArr) {
+    const secondSet = new Set(secondArr);
+    return firstArr.filter((item) => secondSet.has(item));
+  }
+  function last(arr) {
+    return arr[arr.length - 1];
+  }
+  function minBy(items, getValue) {
+    if (items.length === 0)
+      return;
+    let minElement = items[0], min = getValue(minElement);
+    for (let i = 1; i < items.length; i++) {
+      const element = items[i], value = getValue(element);
+      value < min && (min = value, minElement = element);
+    }
+    return minElement;
+  }
+  function sample(arr) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    return arr[randomIndex];
+  }
+  function without(array, ...values) {
+    return difference(array, values);
+  }
+  function debounce(func, debounceMs, { signal, edges } = {}) {
+    let pendingThis, pendingArgs = null;
+    const leading = edges != null && edges.includes("leading"), trailing = edges == null || edges.includes("trailing"), invoke = () => {
+      pendingArgs !== null && (func.apply(pendingThis, pendingArgs), pendingThis = void 0, pendingArgs = null);
+    }, onTimerEnd = () => {
+      trailing && invoke(), cancel();
+    };
+    let timeoutId = null;
+    const schedule = () => {
+      timeoutId != null && clearTimeout(timeoutId), timeoutId = setTimeout(() => {
+        timeoutId = null, onTimerEnd();
+      }, debounceMs);
+    }, cancelTimer = () => {
+      timeoutId !== null && (clearTimeout(timeoutId), timeoutId = null);
+    }, cancel = () => {
+      cancelTimer(), pendingThis = void 0, pendingArgs = null;
+    }, flush = () => {
+      invoke();
+    }, debounced = function(...args) {
+      if (signal?.aborted)
+        return;
+      pendingThis = this, pendingArgs = args;
+      const isFirstCall = timeoutId == null;
+      schedule(), leading && isFirstCall && invoke();
+    };
+    return debounced.schedule = schedule, debounced.cancel = cancel, debounced.flush = flush, signal?.addEventListener("abort", cancel, { once: true }), debounced;
+  }
+  function identity(x) {
+    return x;
+  }
+  function noop$1() {
+  }
+  function once(func) {
+    let called = false, cache2;
+    return function(...args) {
+      return called || (called = true, cache2 = func(...args)), cache2;
+    };
+  }
+  function isPrimitive(value) {
+    return value == null || typeof value != "object" && typeof value != "function";
+  }
+  function getSymbols(object) {
+    return Object.getOwnPropertySymbols(object).filter((symbol) => Object.prototype.propertyIsEnumerable.call(object, symbol));
+  }
+  function getTag(value) {
+    return value == null ? value === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value);
+  }
+  const regexpTag = "[object RegExp]", stringTag = "[object String]", numberTag = "[object Number]", booleanTag = "[object Boolean]", argumentsTag = "[object Arguments]", symbolTag = "[object Symbol]", dateTag = "[object Date]", mapTag = "[object Map]", setTag = "[object Set]", arrayTag = "[object Array]", functionTag = "[object Function]", arrayBufferTag = "[object ArrayBuffer]", objectTag = "[object Object]", errorTag = "[object Error]", dataViewTag = "[object DataView]", uint8ArrayTag = "[object Uint8Array]", uint8ClampedArrayTag = "[object Uint8ClampedArray]", uint16ArrayTag = "[object Uint16Array]", uint32ArrayTag = "[object Uint32Array]", bigUint64ArrayTag = "[object BigUint64Array]", int8ArrayTag = "[object Int8Array]", int16ArrayTag = "[object Int16Array]", int32ArrayTag = "[object Int32Array]", bigInt64ArrayTag = "[object BigInt64Array]", float32ArrayTag = "[object Float32Array]", float64ArrayTag = "[object Float64Array]";
+  function isPlainObject$1(value) {
+    if (!value || typeof value != "object")
+      return false;
+    const proto = Object.getPrototypeOf(value);
+    return proto === null || proto === Object.prototype || Object.getPrototypeOf(proto) === null ? Object.prototype.toString.call(value) === "[object Object]" : false;
+  }
+  function invert(obj) {
+    const result = {}, keys = Object.keys(obj);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i], value = obj[key];
+      result[value] = key;
+    }
+    return result;
+  }
+  function mapValues(object, getNewValue) {
+    const result = {}, keys = Object.keys(object);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i], value = object[key];
+      result[key] = getNewValue(value, key, object);
+    }
+    return result;
+  }
+  function eq(value, other) {
+    return value === other || Number.isNaN(value) && Number.isNaN(other);
+  }
+  function isEqualWith(a, b, areValuesEqual) {
+    return isEqualWithImpl(a, b, void 0, void 0, void 0, void 0, areValuesEqual);
+  }
+  function isEqualWithImpl(a, b, property, aParent, bParent, stack, areValuesEqual) {
+    const result = areValuesEqual(a, b, property, aParent, bParent, stack);
+    if (result !== void 0)
+      return result;
+    if (typeof a == typeof b)
+      switch (typeof a) {
+        case "bigint":
+        case "string":
+        case "boolean":
+        case "symbol":
+        case "undefined":
+          return a === b;
+        case "number":
+          return a === b || Object.is(a, b);
+        case "function":
+          return a === b;
+        case "object":
+          return areObjectsEqual(a, b, stack, areValuesEqual);
+      }
+    return areObjectsEqual(a, b, stack, areValuesEqual);
+  }
+  function areObjectsEqual(a, b, stack, areValuesEqual) {
+    if (Object.is(a, b))
+      return true;
+    let aTag = getTag(a), bTag = getTag(b);
+    if (aTag === argumentsTag && (aTag = objectTag), bTag === argumentsTag && (bTag = objectTag), aTag !== bTag)
+      return false;
+    switch (aTag) {
+      case stringTag:
+        return a.toString() === b.toString();
+      case numberTag: {
+        const x = a.valueOf(), y = b.valueOf();
+        return eq(x, y);
+      }
+      case booleanTag:
+      case dateTag:
+      case symbolTag:
+        return Object.is(a.valueOf(), b.valueOf());
+      case regexpTag:
+        return a.source === b.source && a.flags === b.flags;
+      case functionTag:
+        return a === b;
+    }
+    stack = stack ?? /* @__PURE__ */ new Map();
+    const aStack = stack.get(a), bStack = stack.get(b);
+    if (aStack != null && bStack != null)
+      return aStack === b;
+    stack.set(a, b), stack.set(b, a);
+    try {
+      switch (aTag) {
+        case mapTag: {
+          if (a.size !== b.size)
+            return !1;
+          for (const [key, value] of a.entries())
+            if (!b.has(key) || !isEqualWithImpl(value, b.get(key), key, a, b, stack, areValuesEqual))
+              return !1;
+          return !0;
+        }
+        case setTag: {
+          if (a.size !== b.size)
+            return !1;
+          const aValues = Array.from(a.values()), bValues = Array.from(b.values());
+          for (let i = 0; i < aValues.length; i++) {
+            const aValue = aValues[i], index = bValues.findIndex((bValue) => isEqualWithImpl(aValue, bValue, void 0, a, b, stack, areValuesEqual));
+            if (index === -1)
+              return !1;
+            bValues.splice(index, 1);
+          }
+          return !0;
+        }
+        case arrayTag:
+        case uint8ArrayTag:
+        case uint8ClampedArrayTag:
+        case uint16ArrayTag:
+        case uint32ArrayTag:
+        case bigUint64ArrayTag:
+        case int8ArrayTag:
+        case int16ArrayTag:
+        case int32ArrayTag:
+        case bigInt64ArrayTag:
+        case float32ArrayTag:
+        case float64ArrayTag: {
+          if (typeof Buffer < "u" && Buffer.isBuffer(a) !== Buffer.isBuffer(b) || a.length !== b.length)
+            return !1;
+          for (let i = 0; i < a.length; i++)
+            if (!isEqualWithImpl(a[i], b[i], i, a, b, stack, areValuesEqual))
+              return !1;
+          return !0;
+        }
+        case arrayBufferTag:
+          return a.byteLength !== b.byteLength ? !1 : areObjectsEqual(new Uint8Array(a), new Uint8Array(b), stack, areValuesEqual);
+        case dataViewTag:
+          return a.byteLength !== b.byteLength || a.byteOffset !== b.byteOffset ? !1 : areObjectsEqual(new Uint8Array(a), new Uint8Array(b), stack, areValuesEqual);
+        case errorTag:
+          return a.name === b.name && a.message === b.message;
+        case objectTag: {
+          if (!(areObjectsEqual(a.constructor, b.constructor, stack, areValuesEqual) || isPlainObject$1(a) && isPlainObject$1(b)))
+            return !1;
+          const aKeys = [...Object.keys(a), ...getSymbols(a)], bKeys = [...Object.keys(b), ...getSymbols(b)];
+          if (aKeys.length !== bKeys.length)
+            return !1;
+          for (let i = 0; i < aKeys.length; i++) {
+            const propKey = aKeys[i], aProp = a[propKey];
+            if (!Object.hasOwn(b, propKey))
+              return !1;
+            const bProp = b[propKey];
+            if (!isEqualWithImpl(aProp, bProp, propKey, a, b, stack, areValuesEqual))
+              return !1;
+          }
+          return !0;
+        }
+        default:
+          return !1;
+      }
+    } finally {
+      stack.delete(a), stack.delete(b);
+    }
+  }
+  function isEqual(a, b) {
+    return isEqualWith(a, b, noop$1);
+  }
+  function isLength(value) {
+    return Number.isSafeInteger(value) && value >= 0;
+  }
+  function isNil(x) {
+    return x == null;
+  }
+  function isNotNil(x) {
+    return x != null;
+  }
+  const htmlEscapes = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  };
+  function escape$2(str) {
+    return str.replace(/[&<>"']/g, (match) => htmlEscapes[match]);
+  }
+  var __spreadArray = function(to, from, pack) {
+    for (var i = 0, l = from.length, ar; i < l; i++)
+      (ar || !(i in from)) && (ar || (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
+    return to.concat(ar || Array.prototype.slice.call(from));
+  }, BrowserInfo = (
+    /** @class */
+    /* @__PURE__ */ (function() {
+      function BrowserInfo2(name, version, os) {
+        this.name = name, this.version = version, this.os = os, this.type = "browser";
+      }
+      return BrowserInfo2;
+    })()
+  ), NodeInfo = (
+    /** @class */
+    /* @__PURE__ */ (function() {
+      function NodeInfo2(version) {
+        this.version = version, this.type = "node", this.name = "node", this.os = process.platform;
+      }
+      return NodeInfo2;
+    })()
+  ), SearchBotDeviceInfo = (
+    /** @class */
+    /* @__PURE__ */ (function() {
+      function SearchBotDeviceInfo2(name, version, os, bot) {
+        this.name = name, this.version = version, this.os = os, this.bot = bot, this.type = "bot-device";
+      }
+      return SearchBotDeviceInfo2;
+    })()
+  ), BotInfo = (
+    /** @class */
+    /* @__PURE__ */ (function() {
+      function BotInfo2() {
+        this.type = "bot", this.bot = true, this.name = "bot", this.version = null, this.os = null;
+      }
+      return BotInfo2;
+    })()
+  ), ReactNativeInfo = (
+    /** @class */
+    /* @__PURE__ */ (function() {
+      function ReactNativeInfo2() {
+        this.type = "react-native", this.name = "react-native", this.version = null, this.os = null;
+      }
+      return ReactNativeInfo2;
+    })()
+  ), SEARCHBOX_UA_REGEX = /alexa|bot|crawl(er|ing)|facebookexternalhit|feedburner|google web preview|nagios|postrank|pingdom|slurp|spider|yahoo!|yandex/, SEARCHBOT_OS_REGEX = /(nuhk|curl|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask\ Jeeves\/Teoma|ia_archiver)/, REQUIRED_VERSION_PARTS = 3, userAgentRules = [
+    ["aol", /AOLShield\/([0-9\._]+)/],
+    ["edge", /Edge\/([0-9\._]+)/],
+    ["edge-ios", /EdgiOS\/([0-9\._]+)/],
+    ["yandexbrowser", /YaBrowser\/([0-9\._]+)/],
+    ["kakaotalk", /KAKAOTALK\s([0-9\.]+)/],
+    ["samsung", /SamsungBrowser\/([0-9\.]+)/],
+    ["silk", /\bSilk\/([0-9._-]+)\b/],
+    ["miui", /MiuiBrowser\/([0-9\.]+)$/],
+    ["beaker", /BeakerBrowser\/([0-9\.]+)/],
+    ["edge-chromium", /EdgA?\/([0-9\.]+)/],
+    [
+      "chromium-webview",
+      /(?!Chrom.*OPR)wv\).*Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/
+    ],
+    ["chrome", /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/],
+    ["phantomjs", /PhantomJS\/([0-9\.]+)(:?\s|$)/],
+    ["crios", /CriOS\/([0-9\.]+)(:?\s|$)/],
+    ["firefox", /Firefox\/([0-9\.]+)(?:\s|$)/],
+    ["fxios", /FxiOS\/([0-9\.]+)/],
+    ["opera-mini", /Opera Mini.*Version\/([0-9\.]+)/],
+    ["opera", /Opera\/([0-9\.]+)(?:\s|$)/],
+    ["opera", /OPR\/([0-9\.]+)(:?\s|$)/],
+    ["pie", /^Microsoft Pocket Internet Explorer\/(\d+\.\d+)$/],
+    ["pie", /^Mozilla\/\d\.\d+\s\(compatible;\s(?:MSP?IE|MSInternet Explorer) (\d+\.\d+);.*Windows CE.*\)$/],
+    ["netfront", /^Mozilla\/\d\.\d+.*NetFront\/(\d.\d)/],
+    ["ie", /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/],
+    ["ie", /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/],
+    ["ie", /MSIE\s(7\.0)/],
+    ["bb10", /BB10;\sTouch.*Version\/([0-9\.]+)/],
+    ["android", /Android\s([0-9\.]+)/],
+    ["ios", /Version\/([0-9\._]+).*Mobile.*Safari.*/],
+    ["safari", /Version\/([0-9\._]+).*Safari/],
+    ["facebook", /FB[AS]V\/([0-9\.]+)/],
+    ["instagram", /Instagram\s([0-9\.]+)/],
+    ["ios-webview", /AppleWebKit\/([0-9\.]+).*Mobile/],
+    ["ios-webview", /AppleWebKit\/([0-9\.]+).*Gecko\)$/],
+    ["curl", /^curl\/([0-9\.]+)$/],
+    ["searchbot", SEARCHBOX_UA_REGEX]
+  ], operatingSystemRules = [
+    ["iOS", /iP(hone|od|ad)/],
+    ["Android OS", /Android/],
+    ["BlackBerry OS", /BlackBerry|BB10/],
+    ["Windows Mobile", /IEMobile/],
+    ["Amazon OS", /Kindle/],
+    ["Windows 3.11", /Win16/],
+    ["Windows 95", /(Windows 95)|(Win95)|(Windows_95)/],
+    ["Windows 98", /(Windows 98)|(Win98)/],
+    ["Windows 2000", /(Windows NT 5.0)|(Windows 2000)/],
+    ["Windows XP", /(Windows NT 5.1)|(Windows XP)/],
+    ["Windows Server 2003", /(Windows NT 5.2)/],
+    ["Windows Vista", /(Windows NT 6.0)/],
+    ["Windows 7", /(Windows NT 6.1)/],
+    ["Windows 8", /(Windows NT 6.2)/],
+    ["Windows 8.1", /(Windows NT 6.3)/],
+    ["Windows 10", /(Windows NT 10.0)/],
+    ["Windows ME", /Windows ME/],
+    ["Windows CE", /Windows CE|WinCE|Microsoft Pocket Internet Explorer/],
+    ["Open BSD", /OpenBSD/],
+    ["Sun OS", /SunOS/],
+    ["Chrome OS", /CrOS/],
+    ["Linux", /(Linux)|(X11)/],
+    ["Mac OS", /(Mac_PowerPC)|(Macintosh)/],
+    ["QNX", /QNX/],
+    ["BeOS", /BeOS/],
+    ["OS/2", /OS\/2/]
+  ];
+  function detect(userAgent) {
+    return typeof document > "u" && typeof navigator < "u" && navigator.product === "ReactNative" ? new ReactNativeInfo() : typeof navigator < "u" ? parseUserAgent(navigator.userAgent) : getNodeVersion();
+  }
+  function matchUserAgent(ua) {
+    return ua !== "" && userAgentRules.reduce(function(matched, _a) {
+      var browser = _a[0], regex = _a[1];
+      if (matched)
+        return matched;
+      var uaMatch = regex.exec(ua);
+      return !!uaMatch && [browser, uaMatch];
+    }, false);
+  }
+  function parseUserAgent(ua) {
+    var matchedRule = matchUserAgent(ua);
+    if (!matchedRule)
+      return null;
+    var name = matchedRule[0], match = matchedRule[1];
+    if (name === "searchbot")
+      return new BotInfo();
+    var versionParts = match[1] && match[1].split(".").join("_").split("_").slice(0, 3);
+    versionParts ? versionParts.length < REQUIRED_VERSION_PARTS && (versionParts = __spreadArray(__spreadArray([], versionParts, true), createVersionParts(REQUIRED_VERSION_PARTS - versionParts.length))) : versionParts = [];
+    var version = versionParts.join("."), os = detectOS(ua), searchBotMatch = SEARCHBOT_OS_REGEX.exec(ua);
+    return searchBotMatch && searchBotMatch[1] ? new SearchBotDeviceInfo(name, version, os, searchBotMatch[1]) : new BrowserInfo(name, version, os);
+  }
+  function detectOS(ua) {
+    for (var ii = 0, count = operatingSystemRules.length; ii < count; ii++) {
+      var _a = operatingSystemRules[ii], os = _a[0], regex = _a[1], match = regex.exec(ua);
+      if (match)
+        return os;
+    }
+    return null;
+  }
+  function getNodeVersion() {
+    var isNode = typeof process < "u" && process.version;
+    return isNode ? new NodeInfo(process.version.slice(1)) : null;
+  }
+  function createVersionParts(count) {
+    for (var output = [], ii = 0; ii < count; ii++)
+      output.push("0");
+    return output;
+  }
+  const useStyle = (style) => Vue.watchEffect(() => {
+    const styleEl = _GM_addStyle(Vue.toValue(style));
+    Vue.onWatcherCleanup(() => {
+      styleEl.remove();
+    });
+  });
+  function castArray(value) {
+    return arguments.length === 0 ? [] : Array.isArray(value) ? value : [value];
+  }
+  function isArrayLike(value) {
+    return value != null && typeof value != "function" && isLength(value.length);
+  }
+  function toString$1(value) {
+    if (value == null)
+      return "";
+    if (typeof value == "string")
+      return value;
+    if (Array.isArray(value))
+      return value.map(toString$1).join(",");
+    const result = String(value);
+    return result === "0" && Object.is(Number(value), -0) ? "-0" : result;
+  }
+  function isObject$3(value) {
+    return value !== null && (typeof value == "object" || typeof value == "function");
+  }
+  const IS_UNSIGNED_INTEGER = /^(?:0|[1-9]\d*)$/;
+  function isIndex(value, length = Number.MAX_SAFE_INTEGER) {
+    switch (typeof value) {
+      case "number":
+        return Number.isInteger(value) && value >= 0 && value < length;
+      case "symbol":
+        return false;
+      case "string":
+        return IS_UNSIGNED_INTEGER.test(value);
+    }
+  }
+  function isIterateeCall(value, index, object) {
+    return isObject$3(object) && (typeof index == "number" && isArrayLike(object) && isIndex(index) && index < object.length || typeof index == "string" && index in object) ? eq(object[index], value) : false;
+  }
+  function attempt(func, ...args) {
+    try {
+      return func(...args);
+    } catch (e) {
+      return e instanceof Error ? e : new Error(e);
+    }
+  }
+  function defaults(object, ...sources) {
+    object = Object(object);
+    const objectProto = Object.prototype;
+    let length = sources.length;
+    const guard = length > 2 ? sources[2] : void 0;
+    guard && isIterateeCall(sources[0], sources[1], guard) && (length = 1);
+    for (let i = 0; i < length; i++) {
+      if (isNil(sources[i]))
+        continue;
+      const source = sources[i], keys = Object.keys(source);
+      for (let j = 0; j < keys.length; j++) {
+        const key = keys[j], value = object[key];
+        (value === void 0 || !Object.hasOwn(object, key) && eq(value, objectProto[key])) && (object[key] = source[key]);
+      }
+    }
+    return object;
+  }
+  function escape$1(string) {
+    return escape$2(toString$1(string));
+  }
+  const esTemplateRegExp = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, unEscapedRegExp = /['\n\r\u2028\u2029\\]/g, noMatchExp = /($^)/, escapeMap = /* @__PURE__ */ new Map([
+    ["\\", "\\"],
+    ["'", "'"],
+    [`
+`, "n"],
+    ["\r", "r"],
+    ["\u2028", "u2028"],
+    ["\u2029", "u2029"]
+  ]);
+  function escapeString(match) {
+    return `\\${escapeMap.get(match)}`;
+  }
+  const defaultInterpolateRegExp = /<%=([\s\S]+?)%>/g, templateSettings = {
+    escape: /<%-([\s\S]+?)%>/g,
+    evaluate: /<%([\s\S]+?)%>/g,
+    interpolate: defaultInterpolateRegExp,
+    variable: "",
+    imports: {
+      _: {
+        escape: escape$1,
+        template
+      }
+    }
+  };
+  function template(string, options, guard) {
+    string = toString$1(string), guard && (options = templateSettings), options = defaults({ ...options }, templateSettings);
+    const delimitersRegExp = new RegExp([
+      options.escape?.source ?? noMatchExp.source,
+      options.interpolate?.source ?? noMatchExp.source,
+      options.interpolate === defaultInterpolateRegExp ? esTemplateRegExp.source : noMatchExp.source,
+      options.evaluate?.source ?? noMatchExp.source,
+      "$"
+    ].join("|"), "g");
+    let lastIndex = 0, isEvaluated = false, source = "__p += ''";
+    for (const match of string.matchAll(delimitersRegExp)) {
+      const [fullMatch, escapeValue, interpolateValue, esTemplateValue, evaluateValue] = match, { index } = match;
+      source += ` + '${string.slice(lastIndex, index).replace(unEscapedRegExp, escapeString)}'`, escapeValue && (source += ` + _.escape(${escapeValue})`), interpolateValue ? source += ` + ((${interpolateValue}) == null ? '' : ${interpolateValue})` : esTemplateValue && (source += ` + ((${esTemplateValue}) == null ? '' : ${esTemplateValue})`), evaluateValue && (source += `;
+${evaluateValue};
+ __p += ''`, isEvaluated = true), lastIndex = index + fullMatch.length;
+    }
+    const imports = defaults({ ...options.imports }, templateSettings.imports), importsKeys = Object.keys(imports), importValues = Object.values(imports), sourceURL = `//# sourceURL=${options.sourceURL ? String(options.sourceURL).replace(/[\r\n]/g, " ") : `es-toolkit.templateSource[${Date.now()}]`}
+`, compiledFunction = `function(${options.variable || "obj"}) {
+    let __p = '';
+    ${options.variable ? "" : "if (obj == null) { obj = {}; }"}
+    ${isEvaluated ? "function print() { __p += Array.prototype.join.call(arguments, ''); }" : ""}
+    ${options.variable ? source : `with(obj) {
+${source}
+}`}
+    return __p;
+  }`, result = attempt(() => new Function(...importsKeys, `${sourceURL}return ${compiledFunction}`)(...importValues));
+    if (result.source = compiledFunction, result instanceof Error)
+      throw result;
+    return result;
+  }
+  const supportLanguage = /* @__PURE__ */ new Set(["zh", "en"]), defaultLocale = (() => {
+    const languages = castArray(navigator.languages || navigator.language);
+    for (const language of languages) {
+      const lang = language.split("-")[0];
+      if (lang && supportLanguage.has(lang)) return lang;
+    }
+    return "en";
+  })();
+  var ErrorAction = /* @__PURE__ */ ((ErrorAction2) => (ErrorAction2.GET_INFO = "getInfo", ErrorAction2.DOWNLOAD = "download", ErrorAction2))(ErrorAction || {}), MIME = /* @__PURE__ */ ((MIME2) => (MIME2.JPG = "image/jpeg", MIME2.PNG = "image/png", MIME2))(MIME || {});
+  const removeAt = (array, index) => array.splice(index, 1)[0], filterNotNil = (array) => array.filter(isNotNil), objectEach = (object, iteratee) => {
+    Object.entries(object).forEach(([key, value]) => {
+      iteratee(value, key, object);
+    });
+  }, nHentaiDownloadHosts = [
+    "i.nhentai.net",
+    "i1.nhentai.net",
+    "i2.nhentai.net",
+    "i3.nhentai.net",
+    "i4.nhentai.net",
+    "i5.nhentai.net",
+    "i7.nhentai.net"
+  ];
+  var NHentaiDownloadHostSpecial = /* @__PURE__ */ ((NHentaiDownloadHostSpecial2) => (NHentaiDownloadHostSpecial2.AUTO = "auto", NHentaiDownloadHostSpecial2.RANDOM = "random", NHentaiDownloadHostSpecial2.BALANCE = "balance", NHentaiDownloadHostSpecial2))(NHentaiDownloadHostSpecial || {});
+  const nHentaiDownloadHostSpecials = [
+    "auto",
+    "random",
+    "balance"
+    /* BALANCE */
+  ], availableNHentaiDownloadHost = /* @__PURE__ */ new Set([
+    ...nHentaiDownloadHostSpecials,
+    ...nHentaiDownloadHosts
+  ]), booleanValidator = (val) => typeof val == "boolean", stringValidator = (val) => typeof val == "string", createNumberValidator = (min, max) => (val) => typeof val == "number" && min <= val && val <= max, trimFormatter = (val) => val.trim(), availableMetaFiles = ["ComicInfoXml", "EzeInfoJson"], availableMetaFileTitleLanguage = /* @__PURE__ */ new Set(["english", "japanese"]), settingDefinitions = {
+    language: {
+      key: "language",
+      default: defaultLocale,
+      validator: (val) => supportLanguage.has(val)
+    },
+    threadNum: {
+      key: "thread_num",
+      default: 8,
+      validator: createNumberValidator(1, 32),
+      formatter: (val) => Math.floor(val)
+    },
+    openOnNewTab: {
+      key: "open_on_new_tab",
+      default: true,
+      validator: booleanValidator
+    },
+    customDownloadUrl: {
+      key: "custom_download_url",
+      default: "",
+      validator: stringValidator,
+      formatter: trimFormatter
+    },
+    compressionFilename: {
+      key: "cf_name",
+      default: "{{japanese}}.zip",
+      validator: stringValidator,
+      formatter: trimFormatter
+    },
+    filenameMaxArtistsNumber: {
+      key: "cf_name_max_artists_number",
+      default: 3,
+      validator: createNumberValidator(0, 1 / 0)
+    },
+    filenameArtistsSeparator: {
+      key: "cf_name_artists_separator",
+      default: ", ",
+      validator: stringValidator
+    },
+    compressionLevel: {
+      key: "c_lv",
+      default: 0,
+      validator: createNumberValidator(0, 9),
+      formatter: (val) => Math.floor(val)
+    },
+    compressionStreamFiles: {
+      key: "c_stream_files",
+      default: false,
+      validator: booleanValidator
+    },
+    streamDownload: {
+      key: "stream_download",
+      default: false,
+      validator: booleanValidator
+    },
+    seriesMode: {
+      key: "series_mode",
+      default: false,
+      validator: booleanValidator
+    },
+    filenameLength: {
+      key: "filename_length",
+      default: 0,
+      validator: (val) => val === "auto" || typeof val == "number" && val >= 0,
+      formatter: (val) => typeof val == "number" ? Math.floor(val) : val
+    },
+    autoCancelDownloadedManga: {
+      key: "auto_cancel_downloaded_doujin",
+      default: false,
+      validator: booleanValidator
+    },
+    autoRetryWhenErrorOccurs: {
+      key: "auto_retry_when_error_occurs",
+      default: false,
+      validator: booleanValidator
+    },
+    autoShowAll: {
+      key: "auto_show_all",
+      default: false,
+      validator: booleanValidator
+    },
+    showIgnoreButton: {
+      key: "show_ignore_button",
+      default: false,
+      validator: booleanValidator
+    },
+    preventConsoleClearing: {
+      key: "prevent_console_clear",
+      default: false,
+      validator: booleanValidator
+    },
+    judgeDownloadedByEnglish: {
+      key: "judge_downloaded_by_english",
+      default: false,
+      validator: booleanValidator
+    },
+    judgeDownloadedByJapanese: {
+      key: "judge_downloaded_by_japanese",
+      default: true,
+      validator: booleanValidator
+    },
+    judgeDownloadedByPretty: {
+      key: "judge_downloaded_by_pretty",
+      default: false,
+      validator: booleanValidator
+    },
+    nHentaiDownloadHost: {
+      key: "nHentai_media_host",
+      default: "auto",
+      validator: (val) => availableNHentaiDownloadHost.has(val)
+    },
+    addMetaFile: {
+      key: "add_meta_file",
+      default: () => [],
+      validator: (val) => Array.isArray(val),
+      formatter: (val) => intersection(val, availableMetaFiles)
+    },
+    metaFileTitleLanguage: {
+      key: "meta_file_title_language",
+      default: "english",
+      validator: (val) => availableMetaFileTitleLanguage.has(val)
+    },
+    titleReplacement: {
+      key: "title_replacement",
+      default: () => [],
+      validator: (val) => Array.isArray(val),
+      itemValidator: (item) => item && stringValidator(item.from) && stringValidator(item.to) && booleanValidator(item.regexp)
+    },
+    galleryContextmenuPreview: {
+      key: "gallery_contextmenu_preview",
+      default: false,
+      validator: booleanValidator
+    },
+    convertWebpTo: {
+      key: "convert_webp_to",
+      default: MIME.JPG,
+      validator: (val) => [MIME.JPG, MIME.PNG, ""].includes(val)
+    },
+    convertWebpQuality: {
+      key: "convert_webp_quality",
+      default: 85,
+      validator: (val) => val >= 0 && val <= 100
+    },
+    customFilenameFunction: {
+      key: "custom_title_function",
+      default: "",
+      validator: stringValidator
+    },
+    removeAdPage: {
+      key: "remove_ad_page",
+      default: false,
+      validator: booleanValidator
+    },
+    downloadedTitleColor: {
+      key: "downloaded_title_color",
+      default: "rgb(153, 153, 153)",
+      validator: stringValidator
+    },
+    collectLog: {
+      key: "collect_log",
+      default: false,
+      validator: booleanValidator
+    }
+  }, browserDetect = detect(), DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox"), readSettings = () => mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
+    const realDefault = typeof defaultVal == "function" ? defaultVal() : defaultVal, val = _GM_getValue(key, realDefault);
+    if (!validator(val)) return realDefault;
+    if (Array.isArray(val) && itemValidator) {
+      const validItems = val.filter(itemValidator);
+      if (val.length !== validItems.length)
+        return realDefault;
+    }
+    return val;
+  }), initSettings = () => {
+    const settings2 = readSettings();
+    {
+      const key = "_flag_nHentai_media_host_reset_20241207";
+      if (!_GM_getValue(key, false)) {
+        const def = settingDefinitions.nHentaiDownloadHost;
+        settings2.nHentaiDownloadHost !== def.default && (settings2.nHentaiDownloadHost = def.default, _GM_setValue(def.key, def.default)), _GM_setValue(key, true);
+      }
+    }
+    return settings2;
+  }, writeableSettings = Vue.reactive(initSettings()), settings = writeableSettings;
+  DISABLE_STREAM_DOWNLOAD && settings.streamDownload && (writeableSettings.streamDownload = false);
+  const startWatchSettings = once(() => {
+    const settingRefs = Vue.toRefs(writeableSettings);
+    objectEach(settingRefs, (ref2, key) => {
+      const cur = settingDefinitions[key];
+      let valChanged = false;
+      const saveValue = (val) => {
+        logger.info("update setting", cur.key, Vue.toRaw(val)), _GM_setValue(cur.key, val);
+      };
+      Vue.watch(
+        ref2,
+        (val) => {
+          if (valChanged) {
+            valChanged = false, saveValue(val);
+            return;
+          }
+          const applyChange = (newVal) => {
+            val = newVal, ref2.value = newVal, valChanged = true;
+          };
+          if (!cur.validator(val)) {
+            applyChange(typeof cur.default == "function" ? cur.default() : cur.default);
+            return;
+          }
+          if (Array.isArray(val) && cur.itemValidator) {
+            const validItems = val.filter(cur.itemValidator);
+            val.length !== validItems.length && applyChange(validItems);
+          }
+          if (cur.formatter) {
+            const formattedVal = cur.formatter(val);
+            (typeof formattedVal == "object" ? !isEqual(val, formattedVal) : val !== formattedVal) && applyChange(formattedVal);
+          }
+          valChanged || saveValue(val);
+        },
+        typeof ref2.value == "object" ? { deep: true } : void 0
+      );
+    });
+  }), validTitleReplacement = Vue.computed(
+    () => settings.titleReplacement.filter((item) => item?.from)
+  ), customFilenameFunction = Vue.computed(() => {
+    if (!settings.customFilenameFunction.trim()) return null;
+    try {
+      return new Function("filename", "gallery", settings.customFilenameFunction);
+    } catch {
+      return null;
+    }
+  }), applyDownloadedTitleColor = once(
+    () => useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`)
+  ), LOG_PREFIX = "[nhentai-helper]", logs = [], stringifyReplacer = (key, value) => typeof value == "bigint" ? JSON.rawJSON?.(value.toString()) ?? Number(value) : Array.isArray(value) || isPlainObject$1(value) || isPrimitive(value) ? value : value instanceof Error ? {
+    $: "Error",
+    name: value.name,
+    message: value.message,
+    stack: value.stack,
+    cause: value.cause
+  } : value instanceof HTMLElement ? {
+    $: "HTMLElement",
+    tagName: value.tagName,
+    attributes: Object.fromEntries(
+      Array.from(value.attributes).map(({ name, value: value2 }) => [name, value2])
+    )
+  } : value instanceof NodeList ? Array.from(value) : String(value), stringifyArgs = (args) => args.map((arg) => typeof arg == "object" ? JSON.stringify(arg, stringifyReplacer) : String(arg)).join(" "), collectLog = (method, args) => {
+    const now = /* @__PURE__ */ new Date(), prefix = `[${method}] ${now.toLocaleString("zh-CN")}:${now.getMilliseconds().toString().padStart(3, "0")}`;
+    try {
+      logs.push(`${prefix} ${stringifyArgs(args)}`);
+    } catch {
+      logs.push(`${prefix} ${args}`);
+    }
+  }, createLoggerFn = (method) => (...args) => {
+    settings.collectLog && collectLog(method, args), (method !== "debug" || IS_DEV) && console[method](LOG_PREFIX, ...args);
+  }, logger = {
+    debug: createLoggerFn("debug"),
+    info: createLoggerFn("info"),
+    warn: createLoggerFn("warn"),
+    error: createLoggerFn("error")
+  }, getInfoLog = once(
+    () => stringifyArgs([
+      "[debug] info",
+      {
+        extension: `${_GM_info.scriptHandler} ${_GM_info.version}`,
+        userAgent: _GM_info.userAgentData,
+        version: _GM_info.script.version
+      }
+    ])
+  ), exportLogs = () => [getInfoLog(), ...logs].join(`
+`), clearLogs = () => {
+    logs.length = 0;
   };
   (function($2) {
     function fnPjax(selector2, container, options) {
@@ -1570,263 +2398,6 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   importCSS(notyCss);
   const cssLoader = (e) => _GM_addStyle(_GM_getResourceText(e));
   cssLoader("element-plus-css");
-  function compact(arr) {
-    const result = [];
-    for (let i = 0; i < arr.length; i++) {
-      const item = arr[i];
-      item && result.push(item);
-    }
-    return result;
-  }
-  function difference(firstArr, secondArr) {
-    const secondSet = new Set(secondArr);
-    return firstArr.filter((item) => !secondSet.has(item));
-  }
-  function groupBy(arr, getKeyFromItem) {
-    const result = {};
-    for (let i = 0; i < arr.length; i++) {
-      const item = arr[i], key = getKeyFromItem(item);
-      Object.hasOwn(result, key) || (result[key] = []), result[key].push(item);
-    }
-    return result;
-  }
-  function intersection(firstArr, secondArr) {
-    const secondSet = new Set(secondArr);
-    return firstArr.filter((item) => secondSet.has(item));
-  }
-  function last(arr) {
-    return arr[arr.length - 1];
-  }
-  function minBy(items, getValue) {
-    if (items.length === 0)
-      return;
-    let minElement = items[0], min = getValue(minElement);
-    for (let i = 1; i < items.length; i++) {
-      const element = items[i], value = getValue(element);
-      value < min && (min = value, minElement = element);
-    }
-    return minElement;
-  }
-  function sample(arr) {
-    const randomIndex = Math.floor(Math.random() * arr.length);
-    return arr[randomIndex];
-  }
-  function without(array, ...values) {
-    return difference(array, values);
-  }
-  function debounce(func, debounceMs, { signal, edges } = {}) {
-    let pendingThis, pendingArgs = null;
-    const leading = edges != null && edges.includes("leading"), trailing = edges == null || edges.includes("trailing"), invoke = () => {
-      pendingArgs !== null && (func.apply(pendingThis, pendingArgs), pendingThis = void 0, pendingArgs = null);
-    }, onTimerEnd = () => {
-      trailing && invoke(), cancel();
-    };
-    let timeoutId = null;
-    const schedule = () => {
-      timeoutId != null && clearTimeout(timeoutId), timeoutId = setTimeout(() => {
-        timeoutId = null, onTimerEnd();
-      }, debounceMs);
-    }, cancelTimer = () => {
-      timeoutId !== null && (clearTimeout(timeoutId), timeoutId = null);
-    }, cancel = () => {
-      cancelTimer(), pendingThis = void 0, pendingArgs = null;
-    }, flush = () => {
-      invoke();
-    }, debounced = function(...args) {
-      if (signal?.aborted)
-        return;
-      pendingThis = this, pendingArgs = args;
-      const isFirstCall = timeoutId == null;
-      schedule(), leading && isFirstCall && invoke();
-    };
-    return debounced.schedule = schedule, debounced.cancel = cancel, debounced.flush = flush, signal?.addEventListener("abort", cancel, { once: true }), debounced;
-  }
-  function identity(x) {
-    return x;
-  }
-  function noop$1() {
-  }
-  function once(func) {
-    let called = false, cache2;
-    return function(...args) {
-      return called || (called = true, cache2 = func(...args)), cache2;
-    };
-  }
-  function getSymbols(object) {
-    return Object.getOwnPropertySymbols(object).filter((symbol) => Object.prototype.propertyIsEnumerable.call(object, symbol));
-  }
-  function getTag(value) {
-    return value == null ? value === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value);
-  }
-  const regexpTag = "[object RegExp]", stringTag = "[object String]", numberTag = "[object Number]", booleanTag = "[object Boolean]", argumentsTag = "[object Arguments]", symbolTag = "[object Symbol]", dateTag = "[object Date]", mapTag = "[object Map]", setTag = "[object Set]", arrayTag = "[object Array]", functionTag = "[object Function]", arrayBufferTag = "[object ArrayBuffer]", objectTag = "[object Object]", errorTag = "[object Error]", dataViewTag = "[object DataView]", uint8ArrayTag = "[object Uint8Array]", uint8ClampedArrayTag = "[object Uint8ClampedArray]", uint16ArrayTag = "[object Uint16Array]", uint32ArrayTag = "[object Uint32Array]", bigUint64ArrayTag = "[object BigUint64Array]", int8ArrayTag = "[object Int8Array]", int16ArrayTag = "[object Int16Array]", int32ArrayTag = "[object Int32Array]", bigInt64ArrayTag = "[object BigInt64Array]", float32ArrayTag = "[object Float32Array]", float64ArrayTag = "[object Float64Array]";
-  function isPlainObject$1(value) {
-    if (!value || typeof value != "object")
-      return false;
-    const proto = Object.getPrototypeOf(value);
-    return proto === null || proto === Object.prototype || Object.getPrototypeOf(proto) === null ? Object.prototype.toString.call(value) === "[object Object]" : false;
-  }
-  function invert(obj) {
-    const result = {}, keys = Object.keys(obj);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i], value = obj[key];
-      result[value] = key;
-    }
-    return result;
-  }
-  function mapValues(object, getNewValue) {
-    const result = {}, keys = Object.keys(object);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i], value = object[key];
-      result[key] = getNewValue(value, key, object);
-    }
-    return result;
-  }
-  function eq(value, other) {
-    return value === other || Number.isNaN(value) && Number.isNaN(other);
-  }
-  function isEqualWith(a, b, areValuesEqual) {
-    return isEqualWithImpl(a, b, void 0, void 0, void 0, void 0, areValuesEqual);
-  }
-  function isEqualWithImpl(a, b, property, aParent, bParent, stack, areValuesEqual) {
-    const result = areValuesEqual(a, b, property, aParent, bParent, stack);
-    if (result !== void 0)
-      return result;
-    if (typeof a == typeof b)
-      switch (typeof a) {
-        case "bigint":
-        case "string":
-        case "boolean":
-        case "symbol":
-        case "undefined":
-          return a === b;
-        case "number":
-          return a === b || Object.is(a, b);
-        case "function":
-          return a === b;
-        case "object":
-          return areObjectsEqual(a, b, stack, areValuesEqual);
-      }
-    return areObjectsEqual(a, b, stack, areValuesEqual);
-  }
-  function areObjectsEqual(a, b, stack, areValuesEqual) {
-    if (Object.is(a, b))
-      return true;
-    let aTag = getTag(a), bTag = getTag(b);
-    if (aTag === argumentsTag && (aTag = objectTag), bTag === argumentsTag && (bTag = objectTag), aTag !== bTag)
-      return false;
-    switch (aTag) {
-      case stringTag:
-        return a.toString() === b.toString();
-      case numberTag: {
-        const x = a.valueOf(), y = b.valueOf();
-        return eq(x, y);
-      }
-      case booleanTag:
-      case dateTag:
-      case symbolTag:
-        return Object.is(a.valueOf(), b.valueOf());
-      case regexpTag:
-        return a.source === b.source && a.flags === b.flags;
-      case functionTag:
-        return a === b;
-    }
-    stack = stack ?? /* @__PURE__ */ new Map();
-    const aStack = stack.get(a), bStack = stack.get(b);
-    if (aStack != null && bStack != null)
-      return aStack === b;
-    stack.set(a, b), stack.set(b, a);
-    try {
-      switch (aTag) {
-        case mapTag: {
-          if (a.size !== b.size)
-            return !1;
-          for (const [key, value] of a.entries())
-            if (!b.has(key) || !isEqualWithImpl(value, b.get(key), key, a, b, stack, areValuesEqual))
-              return !1;
-          return !0;
-        }
-        case setTag: {
-          if (a.size !== b.size)
-            return !1;
-          const aValues = Array.from(a.values()), bValues = Array.from(b.values());
-          for (let i = 0; i < aValues.length; i++) {
-            const aValue = aValues[i], index = bValues.findIndex((bValue) => isEqualWithImpl(aValue, bValue, void 0, a, b, stack, areValuesEqual));
-            if (index === -1)
-              return !1;
-            bValues.splice(index, 1);
-          }
-          return !0;
-        }
-        case arrayTag:
-        case uint8ArrayTag:
-        case uint8ClampedArrayTag:
-        case uint16ArrayTag:
-        case uint32ArrayTag:
-        case bigUint64ArrayTag:
-        case int8ArrayTag:
-        case int16ArrayTag:
-        case int32ArrayTag:
-        case bigInt64ArrayTag:
-        case float32ArrayTag:
-        case float64ArrayTag: {
-          if (typeof Buffer < "u" && Buffer.isBuffer(a) !== Buffer.isBuffer(b) || a.length !== b.length)
-            return !1;
-          for (let i = 0; i < a.length; i++)
-            if (!isEqualWithImpl(a[i], b[i], i, a, b, stack, areValuesEqual))
-              return !1;
-          return !0;
-        }
-        case arrayBufferTag:
-          return a.byteLength !== b.byteLength ? !1 : areObjectsEqual(new Uint8Array(a), new Uint8Array(b), stack, areValuesEqual);
-        case dataViewTag:
-          return a.byteLength !== b.byteLength || a.byteOffset !== b.byteOffset ? !1 : areObjectsEqual(new Uint8Array(a), new Uint8Array(b), stack, areValuesEqual);
-        case errorTag:
-          return a.name === b.name && a.message === b.message;
-        case objectTag: {
-          if (!(areObjectsEqual(a.constructor, b.constructor, stack, areValuesEqual) || isPlainObject$1(a) && isPlainObject$1(b)))
-            return !1;
-          const aKeys = [...Object.keys(a), ...getSymbols(a)], bKeys = [...Object.keys(b), ...getSymbols(b)];
-          if (aKeys.length !== bKeys.length)
-            return !1;
-          for (let i = 0; i < aKeys.length; i++) {
-            const propKey = aKeys[i], aProp = a[propKey];
-            if (!Object.hasOwn(b, propKey))
-              return !1;
-            const bProp = b[propKey];
-            if (!isEqualWithImpl(aProp, bProp, propKey, a, b, stack, areValuesEqual))
-              return !1;
-          }
-          return !0;
-        }
-        default:
-          return !1;
-      }
-    } finally {
-      stack.delete(a), stack.delete(b);
-    }
-  }
-  function isEqual(a, b) {
-    return isEqualWith(a, b, noop$1);
-  }
-  function isLength(value) {
-    return Number.isSafeInteger(value) && value >= 0;
-  }
-  function isNil(x) {
-    return x == null;
-  }
-  function isNotNil(x) {
-    return x != null;
-  }
-  const htmlEscapes = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  };
-  function escape$2(str) {
-    return str.replace(/[&<>"']/g, (match) => htmlEscapes[match]);
-  }
   var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x.default : x;
@@ -3491,11 +4062,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
     })(eventemitter3)), eventemitter3.exports;
   }
   var eventemitter3Exports = requireEventemitter3();
-  const EventEmitter = /* @__PURE__ */ getDefaultExportFromCjs(eventemitter3Exports), removeAt = (array, index) => array.splice(index, 1)[0], filterNotNil = (array) => array.filter(isNotNil), objectEach = (object, iteratee) => {
-    Object.entries(object).forEach(([key, value]) => {
-      iteratee(value, key, object);
-    });
-  };
+  const EventEmitter = /* @__PURE__ */ getDefaultExportFromCjs(eventemitter3Exports);
   class AsyncQueue {
     constructor(thread = 1) {
       this.thread = thread;
@@ -3552,531 +4119,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
       this.singleRunning = false, await this.start();
     }
   }
-  var __spreadArray = function(to, from, pack) {
-    for (var i = 0, l = from.length, ar; i < l; i++)
-      (ar || !(i in from)) && (ar || (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
-    return to.concat(ar || Array.prototype.slice.call(from));
-  }, BrowserInfo = (
-    /** @class */
-    /* @__PURE__ */ (function() {
-      function BrowserInfo2(name, version, os) {
-        this.name = name, this.version = version, this.os = os, this.type = "browser";
-      }
-      return BrowserInfo2;
-    })()
-  ), NodeInfo = (
-    /** @class */
-    /* @__PURE__ */ (function() {
-      function NodeInfo2(version) {
-        this.version = version, this.type = "node", this.name = "node", this.os = process.platform;
-      }
-      return NodeInfo2;
-    })()
-  ), SearchBotDeviceInfo = (
-    /** @class */
-    /* @__PURE__ */ (function() {
-      function SearchBotDeviceInfo2(name, version, os, bot) {
-        this.name = name, this.version = version, this.os = os, this.bot = bot, this.type = "bot-device";
-      }
-      return SearchBotDeviceInfo2;
-    })()
-  ), BotInfo = (
-    /** @class */
-    /* @__PURE__ */ (function() {
-      function BotInfo2() {
-        this.type = "bot", this.bot = true, this.name = "bot", this.version = null, this.os = null;
-      }
-      return BotInfo2;
-    })()
-  ), ReactNativeInfo = (
-    /** @class */
-    /* @__PURE__ */ (function() {
-      function ReactNativeInfo2() {
-        this.type = "react-native", this.name = "react-native", this.version = null, this.os = null;
-      }
-      return ReactNativeInfo2;
-    })()
-  ), SEARCHBOX_UA_REGEX = /alexa|bot|crawl(er|ing)|facebookexternalhit|feedburner|google web preview|nagios|postrank|pingdom|slurp|spider|yahoo!|yandex/, SEARCHBOT_OS_REGEX = /(nuhk|curl|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask\ Jeeves\/Teoma|ia_archiver)/, REQUIRED_VERSION_PARTS = 3, userAgentRules = [
-    ["aol", /AOLShield\/([0-9\._]+)/],
-    ["edge", /Edge\/([0-9\._]+)/],
-    ["edge-ios", /EdgiOS\/([0-9\._]+)/],
-    ["yandexbrowser", /YaBrowser\/([0-9\._]+)/],
-    ["kakaotalk", /KAKAOTALK\s([0-9\.]+)/],
-    ["samsung", /SamsungBrowser\/([0-9\.]+)/],
-    ["silk", /\bSilk\/([0-9._-]+)\b/],
-    ["miui", /MiuiBrowser\/([0-9\.]+)$/],
-    ["beaker", /BeakerBrowser\/([0-9\.]+)/],
-    ["edge-chromium", /EdgA?\/([0-9\.]+)/],
-    [
-      "chromium-webview",
-      /(?!Chrom.*OPR)wv\).*Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/
-    ],
-    ["chrome", /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/],
-    ["phantomjs", /PhantomJS\/([0-9\.]+)(:?\s|$)/],
-    ["crios", /CriOS\/([0-9\.]+)(:?\s|$)/],
-    ["firefox", /Firefox\/([0-9\.]+)(?:\s|$)/],
-    ["fxios", /FxiOS\/([0-9\.]+)/],
-    ["opera-mini", /Opera Mini.*Version\/([0-9\.]+)/],
-    ["opera", /Opera\/([0-9\.]+)(?:\s|$)/],
-    ["opera", /OPR\/([0-9\.]+)(:?\s|$)/],
-    ["pie", /^Microsoft Pocket Internet Explorer\/(\d+\.\d+)$/],
-    ["pie", /^Mozilla\/\d\.\d+\s\(compatible;\s(?:MSP?IE|MSInternet Explorer) (\d+\.\d+);.*Windows CE.*\)$/],
-    ["netfront", /^Mozilla\/\d\.\d+.*NetFront\/(\d.\d)/],
-    ["ie", /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/],
-    ["ie", /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/],
-    ["ie", /MSIE\s(7\.0)/],
-    ["bb10", /BB10;\sTouch.*Version\/([0-9\.]+)/],
-    ["android", /Android\s([0-9\.]+)/],
-    ["ios", /Version\/([0-9\._]+).*Mobile.*Safari.*/],
-    ["safari", /Version\/([0-9\._]+).*Safari/],
-    ["facebook", /FB[AS]V\/([0-9\.]+)/],
-    ["instagram", /Instagram\s([0-9\.]+)/],
-    ["ios-webview", /AppleWebKit\/([0-9\.]+).*Mobile/],
-    ["ios-webview", /AppleWebKit\/([0-9\.]+).*Gecko\)$/],
-    ["curl", /^curl\/([0-9\.]+)$/],
-    ["searchbot", SEARCHBOX_UA_REGEX]
-  ], operatingSystemRules = [
-    ["iOS", /iP(hone|od|ad)/],
-    ["Android OS", /Android/],
-    ["BlackBerry OS", /BlackBerry|BB10/],
-    ["Windows Mobile", /IEMobile/],
-    ["Amazon OS", /Kindle/],
-    ["Windows 3.11", /Win16/],
-    ["Windows 95", /(Windows 95)|(Win95)|(Windows_95)/],
-    ["Windows 98", /(Windows 98)|(Win98)/],
-    ["Windows 2000", /(Windows NT 5.0)|(Windows 2000)/],
-    ["Windows XP", /(Windows NT 5.1)|(Windows XP)/],
-    ["Windows Server 2003", /(Windows NT 5.2)/],
-    ["Windows Vista", /(Windows NT 6.0)/],
-    ["Windows 7", /(Windows NT 6.1)/],
-    ["Windows 8", /(Windows NT 6.2)/],
-    ["Windows 8.1", /(Windows NT 6.3)/],
-    ["Windows 10", /(Windows NT 10.0)/],
-    ["Windows ME", /Windows ME/],
-    ["Windows CE", /Windows CE|WinCE|Microsoft Pocket Internet Explorer/],
-    ["Open BSD", /OpenBSD/],
-    ["Sun OS", /SunOS/],
-    ["Chrome OS", /CrOS/],
-    ["Linux", /(Linux)|(X11)/],
-    ["Mac OS", /(Mac_PowerPC)|(Macintosh)/],
-    ["QNX", /QNX/],
-    ["BeOS", /BeOS/],
-    ["OS/2", /OS\/2/]
-  ];
-  function detect(userAgent) {
-    return typeof document > "u" && typeof navigator < "u" && navigator.product === "ReactNative" ? new ReactNativeInfo() : typeof navigator < "u" ? parseUserAgent(navigator.userAgent) : getNodeVersion();
-  }
-  function matchUserAgent(ua) {
-    return ua !== "" && userAgentRules.reduce(function(matched, _a) {
-      var browser = _a[0], regex = _a[1];
-      if (matched)
-        return matched;
-      var uaMatch = regex.exec(ua);
-      return !!uaMatch && [browser, uaMatch];
-    }, false);
-  }
-  function parseUserAgent(ua) {
-    var matchedRule = matchUserAgent(ua);
-    if (!matchedRule)
-      return null;
-    var name = matchedRule[0], match = matchedRule[1];
-    if (name === "searchbot")
-      return new BotInfo();
-    var versionParts = match[1] && match[1].split(".").join("_").split("_").slice(0, 3);
-    versionParts ? versionParts.length < REQUIRED_VERSION_PARTS && (versionParts = __spreadArray(__spreadArray([], versionParts, true), createVersionParts(REQUIRED_VERSION_PARTS - versionParts.length))) : versionParts = [];
-    var version = versionParts.join("."), os = detectOS(ua), searchBotMatch = SEARCHBOT_OS_REGEX.exec(ua);
-    return searchBotMatch && searchBotMatch[1] ? new SearchBotDeviceInfo(name, version, os, searchBotMatch[1]) : new BrowserInfo(name, version, os);
-  }
-  function detectOS(ua) {
-    for (var ii = 0, count = operatingSystemRules.length; ii < count; ii++) {
-      var _a = operatingSystemRules[ii], os = _a[0], regex = _a[1], match = regex.exec(ua);
-      if (match)
-        return os;
-    }
-    return null;
-  }
-  function getNodeVersion() {
-    var isNode = typeof process < "u" && process.version;
-    return isNode ? new NodeInfo(process.version.slice(1)) : null;
-  }
-  function createVersionParts(count) {
-    for (var output = [], ii = 0; ii < count; ii++)
-      output.push("0");
-    return output;
-  }
-  const useStyle = (style) => Vue.watchEffect(() => {
-    const styleEl = _GM_addStyle(Vue.toValue(style));
-    Vue.onWatcherCleanup(() => {
-      styleEl.remove();
-    });
-  });
-  function castArray(value) {
-    return arguments.length === 0 ? [] : Array.isArray(value) ? value : [value];
-  }
-  function isArrayLike(value) {
-    return value != null && typeof value != "function" && isLength(value.length);
-  }
-  function toString$1(value) {
-    if (value == null)
-      return "";
-    if (typeof value == "string")
-      return value;
-    if (Array.isArray(value))
-      return value.map(toString$1).join(",");
-    const result = String(value);
-    return result === "0" && Object.is(Number(value), -0) ? "-0" : result;
-  }
-  function isObject$3(value) {
-    return value !== null && (typeof value == "object" || typeof value == "function");
-  }
-  const IS_UNSIGNED_INTEGER = /^(?:0|[1-9]\d*)$/;
-  function isIndex(value, length = Number.MAX_SAFE_INTEGER) {
-    switch (typeof value) {
-      case "number":
-        return Number.isInteger(value) && value >= 0 && value < length;
-      case "symbol":
-        return false;
-      case "string":
-        return IS_UNSIGNED_INTEGER.test(value);
-    }
-  }
-  function isIterateeCall(value, index, object) {
-    return isObject$3(object) && (typeof index == "number" && isArrayLike(object) && isIndex(index) && index < object.length || typeof index == "string" && index in object) ? eq(object[index], value) : false;
-  }
-  function attempt(func, ...args) {
-    try {
-      return func(...args);
-    } catch (e) {
-      return e instanceof Error ? e : new Error(e);
-    }
-  }
-  function defaults(object, ...sources) {
-    object = Object(object);
-    const objectProto = Object.prototype;
-    let length = sources.length;
-    const guard = length > 2 ? sources[2] : void 0;
-    guard && isIterateeCall(sources[0], sources[1], guard) && (length = 1);
-    for (let i = 0; i < length; i++) {
-      if (isNil(sources[i]))
-        continue;
-      const source = sources[i], keys = Object.keys(source);
-      for (let j = 0; j < keys.length; j++) {
-        const key = keys[j], value = object[key];
-        (value === void 0 || !Object.hasOwn(object, key) && eq(value, objectProto[key])) && (object[key] = source[key]);
-      }
-    }
-    return object;
-  }
-  function escape$1(string) {
-    return escape$2(toString$1(string));
-  }
-  const esTemplateRegExp = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, unEscapedRegExp = /['\n\r\u2028\u2029\\]/g, noMatchExp = /($^)/, escapeMap = /* @__PURE__ */ new Map([
-    ["\\", "\\"],
-    ["'", "'"],
-    [`
-`, "n"],
-    ["\r", "r"],
-    ["\u2028", "u2028"],
-    ["\u2029", "u2029"]
-  ]);
-  function escapeString(match) {
-    return `\\${escapeMap.get(match)}`;
-  }
-  const defaultInterpolateRegExp = /<%=([\s\S]+?)%>/g, templateSettings = {
-    escape: /<%-([\s\S]+?)%>/g,
-    evaluate: /<%([\s\S]+?)%>/g,
-    interpolate: defaultInterpolateRegExp,
-    variable: "",
-    imports: {
-      _: {
-        escape: escape$1,
-        template
-      }
-    }
-  };
-  function template(string, options, guard) {
-    string = toString$1(string), guard && (options = templateSettings), options = defaults({ ...options }, templateSettings);
-    const delimitersRegExp = new RegExp([
-      options.escape?.source ?? noMatchExp.source,
-      options.interpolate?.source ?? noMatchExp.source,
-      options.interpolate === defaultInterpolateRegExp ? esTemplateRegExp.source : noMatchExp.source,
-      options.evaluate?.source ?? noMatchExp.source,
-      "$"
-    ].join("|"), "g");
-    let lastIndex = 0, isEvaluated = false, source = "__p += ''";
-    for (const match of string.matchAll(delimitersRegExp)) {
-      const [fullMatch, escapeValue, interpolateValue, esTemplateValue, evaluateValue] = match, { index } = match;
-      source += ` + '${string.slice(lastIndex, index).replace(unEscapedRegExp, escapeString)}'`, escapeValue && (source += ` + _.escape(${escapeValue})`), interpolateValue ? source += ` + ((${interpolateValue}) == null ? '' : ${interpolateValue})` : esTemplateValue && (source += ` + ((${esTemplateValue}) == null ? '' : ${esTemplateValue})`), evaluateValue && (source += `;
-${evaluateValue};
- __p += ''`, isEvaluated = true), lastIndex = index + fullMatch.length;
-    }
-    const imports = defaults({ ...options.imports }, templateSettings.imports), importsKeys = Object.keys(imports), importValues = Object.values(imports), sourceURL = `//# sourceURL=${options.sourceURL ? String(options.sourceURL).replace(/[\r\n]/g, " ") : `es-toolkit.templateSource[${Date.now()}]`}
-`, compiledFunction = `function(${options.variable || "obj"}) {
-    let __p = '';
-    ${options.variable ? "" : "if (obj == null) { obj = {}; }"}
-    ${isEvaluated ? "function print() { __p += Array.prototype.join.call(arguments, ''); }" : ""}
-    ${options.variable ? source : `with(obj) {
-${source}
-}`}
-    return __p;
-  }`, result = attempt(() => new Function(...importsKeys, `${sourceURL}return ${compiledFunction}`)(...importValues));
-    if (result.source = compiledFunction, result instanceof Error)
-      throw result;
-    return result;
-  }
-  const supportLanguage = /* @__PURE__ */ new Set(["zh", "en"]), defaultLocale = (() => {
-    const languages = castArray(navigator.languages || navigator.language);
-    for (const language of languages) {
-      const lang = language.split("-")[0];
-      if (lang && supportLanguage.has(lang)) return lang;
-    }
-    return "en";
-  })();
-  var ErrorAction = /* @__PURE__ */ ((ErrorAction2) => (ErrorAction2.GET_INFO = "getInfo", ErrorAction2.DOWNLOAD = "download", ErrorAction2))(ErrorAction || {}), MIME = /* @__PURE__ */ ((MIME2) => (MIME2.JPG = "image/jpeg", MIME2.PNG = "image/png", MIME2))(MIME || {});
-  const nHentaiDownloadHosts = [
-    "i.nhentai.net",
-    "i1.nhentai.net",
-    "i2.nhentai.net",
-    "i3.nhentai.net",
-    "i4.nhentai.net",
-    "i5.nhentai.net",
-    "i7.nhentai.net"
-  ];
-  var NHentaiDownloadHostSpecial = /* @__PURE__ */ ((NHentaiDownloadHostSpecial2) => (NHentaiDownloadHostSpecial2.AUTO = "auto", NHentaiDownloadHostSpecial2.RANDOM = "random", NHentaiDownloadHostSpecial2.BALANCE = "balance", NHentaiDownloadHostSpecial2))(NHentaiDownloadHostSpecial || {});
-  const nHentaiDownloadHostSpecials = [
-    "auto",
-    "random",
-    "balance"
-    /* BALANCE */
-  ], availableNHentaiDownloadHost = /* @__PURE__ */ new Set([
-    ...nHentaiDownloadHostSpecials,
-    ...nHentaiDownloadHosts
-  ]), booleanValidator = (val) => typeof val == "boolean", stringValidator = (val) => typeof val == "string", createNumberValidator = (min, max) => (val) => typeof val == "number" && min <= val && val <= max, trimFormatter = (val) => val.trim(), availableMetaFiles = ["ComicInfoXml", "EzeInfoJson"], availableMetaFileTitleLanguage = /* @__PURE__ */ new Set(["english", "japanese"]), settingDefinitions = {
-    language: {
-      key: "language",
-      default: defaultLocale,
-      validator: (val) => supportLanguage.has(val)
-    },
-    threadNum: {
-      key: "thread_num",
-      default: 8,
-      validator: createNumberValidator(1, 32),
-      formatter: (val) => Math.floor(val)
-    },
-    openOnNewTab: {
-      key: "open_on_new_tab",
-      default: true,
-      validator: booleanValidator
-    },
-    customDownloadUrl: {
-      key: "custom_download_url",
-      default: "",
-      validator: stringValidator,
-      formatter: trimFormatter
-    },
-    compressionFilename: {
-      key: "cf_name",
-      default: "{{japanese}}.zip",
-      validator: stringValidator,
-      formatter: trimFormatter
-    },
-    filenameMaxArtistsNumber: {
-      key: "cf_name_max_artists_number",
-      default: 3,
-      validator: createNumberValidator(0, 1 / 0)
-    },
-    filenameArtistsSeparator: {
-      key: "cf_name_artists_separator",
-      default: ", ",
-      validator: stringValidator
-    },
-    compressionLevel: {
-      key: "c_lv",
-      default: 0,
-      validator: createNumberValidator(0, 9),
-      formatter: (val) => Math.floor(val)
-    },
-    compressionStreamFiles: {
-      key: "c_stream_files",
-      default: false,
-      validator: booleanValidator
-    },
-    streamDownload: {
-      key: "stream_download",
-      default: false,
-      validator: booleanValidator
-    },
-    seriesMode: {
-      key: "series_mode",
-      default: false,
-      validator: booleanValidator
-    },
-    filenameLength: {
-      key: "filename_length",
-      default: 0,
-      validator: (val) => val === "auto" || typeof val == "number" && val >= 0,
-      formatter: (val) => typeof val == "number" ? Math.floor(val) : val
-    },
-    autoCancelDownloadedManga: {
-      key: "auto_cancel_downloaded_doujin",
-      default: false,
-      validator: booleanValidator
-    },
-    autoRetryWhenErrorOccurs: {
-      key: "auto_retry_when_error_occurs",
-      default: false,
-      validator: booleanValidator
-    },
-    autoShowAll: {
-      key: "auto_show_all",
-      default: false,
-      validator: booleanValidator
-    },
-    showIgnoreButton: {
-      key: "show_ignore_button",
-      default: false,
-      validator: booleanValidator
-    },
-    preventConsoleClearing: {
-      key: "prevent_console_clear",
-      default: false,
-      validator: booleanValidator
-    },
-    judgeDownloadedByEnglish: {
-      key: "judge_downloaded_by_english",
-      default: false,
-      validator: booleanValidator
-    },
-    judgeDownloadedByJapanese: {
-      key: "judge_downloaded_by_japanese",
-      default: true,
-      validator: booleanValidator
-    },
-    judgeDownloadedByPretty: {
-      key: "judge_downloaded_by_pretty",
-      default: false,
-      validator: booleanValidator
-    },
-    nHentaiDownloadHost: {
-      key: "nHentai_media_host",
-      default: "auto",
-      validator: (val) => availableNHentaiDownloadHost.has(val)
-    },
-    addMetaFile: {
-      key: "add_meta_file",
-      default: () => [],
-      validator: (val) => Array.isArray(val),
-      formatter: (val) => intersection(val, availableMetaFiles)
-    },
-    metaFileTitleLanguage: {
-      key: "meta_file_title_language",
-      default: "english",
-      validator: (val) => availableMetaFileTitleLanguage.has(val)
-    },
-    titleReplacement: {
-      key: "title_replacement",
-      default: () => [],
-      validator: (val) => Array.isArray(val),
-      itemValidator: (item) => item && stringValidator(item.from) && stringValidator(item.to) && booleanValidator(item.regexp)
-    },
-    galleryContextmenuPreview: {
-      key: "gallery_contextmenu_preview",
-      default: false,
-      validator: booleanValidator
-    },
-    convertWebpTo: {
-      key: "convert_webp_to",
-      default: MIME.JPG,
-      validator: (val) => [MIME.JPG, MIME.PNG, ""].includes(val)
-    },
-    convertWebpQuality: {
-      key: "convert_webp_quality",
-      default: 85,
-      validator: (val) => val >= 0 && val <= 100
-    },
-    customFilenameFunction: {
-      key: "custom_title_function",
-      default: "",
-      validator: stringValidator
-    },
-    removeAdPage: {
-      key: "remove_ad_page",
-      default: false,
-      validator: booleanValidator
-    },
-    downloadedTitleColor: {
-      key: "downloaded_title_color",
-      default: "rgb(153, 153, 153)",
-      validator: stringValidator
-    }
-  }, browserDetect = detect(), DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox"), readSettings = () => mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
-    const realDefault = typeof defaultVal == "function" ? defaultVal() : defaultVal, val = _GM_getValue(key, realDefault);
-    if (!validator(val)) return realDefault;
-    if (Array.isArray(val) && itemValidator) {
-      const validItems = val.filter(itemValidator);
-      if (val.length !== validItems.length)
-        return realDefault;
-    }
-    return val;
-  }), initSettings = () => {
-    const settings2 = readSettings();
-    {
-      const key = "_flag_nHentai_media_host_reset_20241207";
-      if (!_GM_getValue(key, false)) {
-        const def = settingDefinitions.nHentaiDownloadHost;
-        settings2.nHentaiDownloadHost !== def.default && (settings2.nHentaiDownloadHost = def.default, _GM_setValue(def.key, def.default)), _GM_setValue(key, true);
-      }
-    }
-    return settings2;
-  }, writeableSettings = Vue.reactive(initSettings()), settings = writeableSettings;
-  DISABLE_STREAM_DOWNLOAD && settings.streamDownload && (writeableSettings.streamDownload = false);
-  const startWatchSettings = once(() => {
-    const settingRefs = Vue.toRefs(writeableSettings);
-    objectEach(settingRefs, (ref2, key) => {
-      const cur = settingDefinitions[key];
-      let valChanged = false;
-      const saveValue = (val) => {
-        logger.log("update setting", cur.key, Vue.toRaw(val)), _GM_setValue(cur.key, val);
-      };
-      Vue.watch(
-        ref2,
-        (val) => {
-          if (valChanged) {
-            valChanged = false, saveValue(val);
-            return;
-          }
-          const applyChange = (newVal) => {
-            val = newVal, ref2.value = newVal, valChanged = true;
-          };
-          if (!cur.validator(val)) {
-            applyChange(typeof cur.default == "function" ? cur.default() : cur.default);
-            return;
-          }
-          if (Array.isArray(val) && cur.itemValidator) {
-            const validItems = val.filter(cur.itemValidator);
-            val.length !== validItems.length && applyChange(validItems);
-          }
-          if (cur.formatter) {
-            const formattedVal = cur.formatter(val);
-            (typeof formattedVal == "object" ? !isEqual(val, formattedVal) : val !== formattedVal) && applyChange(formattedVal);
-          }
-          valChanged || saveValue(val);
-        },
-        typeof ref2.value == "object" ? { deep: true } : void 0
-      );
-    });
-  }), validTitleReplacement = Vue.computed(
-    () => settings.titleReplacement.filter((item) => item?.from)
-  ), customFilenameFunction = Vue.computed(() => {
-    if (!settings.customFilenameFunction.trim()) return null;
-    try {
-      return new Function("filename", "gallery", settings.customFilenameFunction);
-    } catch {
-      return null;
-    }
-  }), applyDownloadedTitleColor = once(
-    () => useStyle(() => `:root{--nh-helper-downloaded-title-color:${settings.downloadedTitleColor}}`)
-  ), dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
+  const dlQueue = new AsyncQueue(), zipQueue = new AsyncQueue(WORKER_THREAD_NUM);
   dlQueue.canSingleStart = () => !(settings.seriesMode && zipQueue.length);
   zipQueue.emitter.on("finish", () => {
     settings.seriesMode && dlQueue.start().catch(logger.error);
@@ -4195,7 +4238,21 @@ ${source}
         })
       ]));
     }
-  }), delete_default = _sfc_main80, _sfc_main91 = /* @__PURE__ */ Vue.defineComponent({
+  }), delete_default = _sfc_main80, _sfc_main87 = /* @__PURE__ */ Vue.defineComponent({
+    name: "DocumentCopy",
+    __name: "document-copy",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M128 320v576h576V320zm-32-64h640a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H96a32 32 0 0 1-32-32V288a32 32 0 0 1 32-32M960 96v704a32 32 0 0 1-32 32h-96v-64h64V128H384v64h-64V96a32 32 0 0 1 32-32h576a32 32 0 0 1 32 32M256 672h320v64H256zm0-192h320v64H256z"
+        })
+      ]));
+    }
+  }), document_copy_default = _sfc_main87, _sfc_main91 = /* @__PURE__ */ Vue.defineComponent({
     name: "Download",
     __name: "download",
     setup(__props) {
@@ -7022,7 +7079,7 @@ break;case "inversionMode":switch(c){case "original":Y="dontInvert";break;case "
     async add(key) {
       if (await this.ready)
         try {
-          await this.store.setItem(key, !0), logger.log(`mark "${key}" as downloaded`);
+          await this.store.setItem(key, !0), logger.info(`mark "${key}" as downloaded`);
         } catch (e) {
           logger.error(e);
         }
@@ -7030,7 +7087,7 @@ break;case "inversionMode":switch(c){case "original":Y="dontInvert";break;case "
     async del(key) {
       if (await this.ready)
         try {
-          await this.store.removeItem(key), logger.log(`unmark "${key}" as downloaded`);
+          await this.store.removeItem(key), logger.info(`unmark "${key}" as downloaded`);
         } catch (e) {
           logger.error(e);
         }
@@ -7091,7 +7148,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         compression: "DEFLATE",
         compressionOptions: { level: 9 }
       }), filename = `nhentai-helper-download-history-${dateTimeFormatter.format(Date.now()).replace(/\D/g, "")}.zip`;
-      return FileSaver_minExports.saveAs(new File([data], filename, { type: "application/zip" })), logger.log("export download history", filename), !0;
+      return FileSaver_minExports.saveAs(new File([data], filename, { type: "application/zip" })), logger.info("export download history", filename), !0;
     } catch (error) {
       logger.error(error);
     }
@@ -7262,13 +7319,16 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
   }, _hoisted_1$2 = { class: "nhentai-helper-setting-help-buttons no-sl" }, _hoisted_2$1 = ["id"], _hoisted_3$1 = { id: "nhentai-helper-setting-dialog" }, _hoisted_4$1 = {
     class: "asterisk-example no-sl",
     style: { "margin-bottom": "18px" }
-  }, _hoisted_5$1 = { class: "inline-item" }, _hoisted_6$1 = { class: "inline-item__name" }, _hoisted_7$1 = { class: "inline-item" }, _hoisted_8 = { class: "inline-item__name" }, _hoisted_9 = { style: { color: "var(--el-text-color-regular)", "font-size": "var(--el-form-label-font-size)" } }, _hoisted_10 = {
+  }, _hoisted_5$1 = { class: "inline-item" }, _hoisted_6$1 = { class: "inline-item__name" }, _hoisted_7$1 = { class: "inline-item" }, _hoisted_8 = { class: "inline-item__name" }, _hoisted_9 = { class: "gap-inputs" }, _hoisted_10 = {
+    class: "no-sl",
+    style: { "line-height": "1.5", "margin-top": "12px" }
+  }, _hoisted_11 = { style: { color: "var(--el-text-color-regular)", "font-size": "var(--el-form-label-font-size)" } }, _hoisted_12 = {
     key: 0,
     class: "no-sl"
-  }, _hoisted_11 = {
+  }, _hoisted_13 = {
     key: 0,
     class: "no-sl"
-  }, _hoisted_12 = { class: "monospace" }, _hoisted_13 = { class: "no-sl" }, _hoisted_14 = { class: "no-sl" }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
+  }, _hoisted_14 = { class: "monospace" }, _hoisted_15 = { class: "no-sl" }, _hoisted_16 = { class: "no-sl" }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
     __name: "SettingsDialog",
     setup(__props, { expose: __expose }) {
       startWatchSettings();
@@ -7329,6 +7389,15 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         writeableSettings.titleReplacement.splice(index, 1);
       }, downloadedTitleColorPreview = Vue.ref(writeableSettings.downloadedTitleColor), handleDownloadedTitleColorPreviewChange = (val) => {
         downloadedTitleColorPreview.value = val || writeableSettings.downloadedTitleColor;
+      }, copyLogs = () => {
+        _GM_setClipboard(`\`\`\`
+${exportLogs()}
+\`\`\``, "text", () => {
+          showMessage({
+            type: "success",
+            message: t2("common.copied")
+          });
+        });
       };
       return Vue.watch(
         () => writeableSettings.language,
@@ -7338,7 +7407,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       ), __expose({ open: open2 }), (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElDialog), {
         id: "nhentai-helper-setting-dialog-outside",
         modelValue: show.value,
-        "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => show.value = $event),
+        "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => show.value = $event),
         center: true,
         top: "50px"
       }, {
@@ -7511,7 +7580,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).JPG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[31] || (_cache[31] = [
+                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
                             Vue.createTextVNode("jpg", -1)
                           ])]),
                           _: 1
@@ -7519,7 +7588,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).PNG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
+                          default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
                             Vue.createTextVNode("png", -1)
                           ])]),
                           _: 1
@@ -7709,6 +7778,44 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   ]),
                   _: 1
                 }),
+                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+                  label: Vue.unref(t2)("setting.collectLog")
+                }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createElementVNode("div", null, [
+                      Vue.createElementVNode("div", _hoisted_9, [
+                        Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                          modelValue: Vue.unref(writeableSettings).collectLog,
+                          "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).collectLog = $event)
+                        }, null, 8, ["modelValue"]),
+                        Vue.unref(writeableSettings).collectLog ? (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, { key: 0 }, [
+                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                            type: "primary",
+                            icon: Vue.unref(document_copy_default),
+                            onClick: copyLogs
+                          }, {
+                            default: Vue.withCtx(() => [
+                              Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.copyLogs")), 1)
+                            ]),
+                            _: 1
+                          }, 8, ["icon"]),
+                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                            type: "danger",
+                            icon: Vue.unref(delete_default),
+                            onClick: Vue.unref(clearLogs)
+                          }, {
+                            default: Vue.withCtx(() => [
+                              Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.clearLogs")), 1)
+                            ]),
+                            _: 1
+                          }, 8, ["icon", "onClick"])
+                        ], 64)) : Vue.createCommentVNode("", true)
+                      ]),
+                      Vue.createElementVNode("div", _hoisted_10, Vue.toDisplayString(Vue.unref(t2)("setting.collectLogTip")), 1)
+                    ])
+                  ]),
+                  _: 1
+                }, 8, ["label"]),
                 Vue.unref(IS_NHENTAI) ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
                   key: 2,
                   label: Vue.unref(t2)("setting.nHentaiDownloadHost")
@@ -7716,7 +7823,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
                       modelValue: Vue.unref(writeableSettings).nHentaiDownloadHost,
-                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
+                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
                       disabled: !!Vue.unref(writeableSettings).customDownloadUrl
                     }, {
                       default: Vue.withCtx(() => [
@@ -7742,7 +7849,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customDownloadUrl,
-                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
+                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7753,7 +7860,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
-                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
+                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7764,7 +7871,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).seriesMode,
-                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
+                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7775,7 +7882,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).streamDownload,
-                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
+                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
                       disabled: Vue.unref(DISABLE_STREAM_DOWNLOAD)
                     }, null, 8, ["modelValue", "disabled"])
                   ]),
@@ -7785,7 +7892,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElCollapseItem), null, {
                       title: Vue.withCtx(() => [
-                        Vue.createElementVNode("span", _hoisted_9, Vue.toDisplayString(Vue.unref(t2)("setting.titleReplacement")), 1)
+                        Vue.createElementVNode("span", _hoisted_11, Vue.toDisplayString(Vue.unref(t2)("setting.titleReplacement")), 1)
                       ]),
                       default: Vue.withCtx(() => [
                         Vue.createVNode(Vue.unref(elementPlus.ElTable), {
@@ -7798,7 +7905,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                               style: { width: "100%" },
                               onClick: addTitleReplacement
                             }, {
-                              default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
+                              default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
                                 Vue.createTextVNode("+", -1)
                               ])]),
                               _: 1
@@ -7812,10 +7919,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                                   "onUpdate:modelValue": ($event) => scope.row.from = $event
                                 }, {
                                   prefix: Vue.withCtx(() => [
-                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_10, "/")) : Vue.createCommentVNode("", true)
+                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_12, "/")) : Vue.createCommentVNode("", true)
                                   ]),
                                   suffix: Vue.withCtx(() => [
-                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_11, "/")) : Vue.createCommentVNode("", true)
+                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_13, "/")) : Vue.createCommentVNode("", true)
                                   ]),
                                   _: 2
                                 }, 1032, ["modelValue", "onUpdate:modelValue"])
@@ -7872,24 +7979,24 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   label: Vue.unref(t2)("setting.customFilenameFunction")
                 }, {
                   default: Vue.withCtx(() => [
-                    Vue.createElementVNode("span", _hoisted_12, [
-                      _cache[37] || (_cache[37] = Vue.createTextVNode("function (filename", -1)),
+                    Vue.createElementVNode("span", _hoisted_14, [
+                      _cache[38] || (_cache[38] = Vue.createTextVNode("function (filename", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
-                        default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
+                        default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
                           Vue.createTextVNode(": string", -1)
                         ])]),
                         _: 1
                       }),
-                      _cache[38] || (_cache[38] = Vue.createTextVNode(", gallery", -1)),
+                      _cache[39] || (_cache[39] = Vue.createTextVNode(", gallery", -1)),
                       Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
                         default: Vue.withCtx(() => [
-                          _cache[36] || (_cache[36] = Vue.createTextVNode(": ", -1)),
+                          _cache[37] || (_cache[37] = Vue.createTextVNode(": ", -1)),
                           Vue.createVNode(Vue.unref(elementPlus.ElLink), {
                             type: "primary",
                             href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
                             target: "_blank"
                           }, {
-                            default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
+                            default: Vue.withCtx(() => [..._cache[36] || (_cache[36] = [
                               Vue.createTextVNode("NHentaiGallery", -1)
                             ])]),
                             _: 1
@@ -7897,17 +8004,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                         ]),
                         _: 1
                       }),
-                      _cache[39] || (_cache[39] = Vue.createTextVNode(") {", -1))
+                      _cache[40] || (_cache[40] = Vue.createTextVNode(") {", -1))
                     ]),
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customFilenameFunction,
-                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
+                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
                       class: "monospace",
                       type: "textarea",
                       placeholder: "return filename;",
                       autosize: { minRows: 1 }
                     }, null, 8, ["modelValue"]),
-                    _cache[40] || (_cache[40] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
+                    _cache[41] || (_cache[41] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
                   ]),
                   _: 1
                 }, 8, ["label"])
@@ -7920,7 +8027,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
               ]),
               _: 1
             }),
-            Vue.createElementVNode("p", _hoisted_13, Vue.toDisplayString(Vue.unref(t2)("setting.history.downloadedNumberTip", {
+            Vue.createElementVNode("p", _hoisted_15, Vue.toDisplayString(Vue.unref(t2)("setting.history.downloadedNumberTip", {
               num: Number.isNaN(downloadedNum.value) ? downloadedNum.value : Vue.unref(numberFormatter).format(downloadedNum.value)
             })), 1),
             Vue.createVNode(Vue.unref(elementPlus.ElButton), {
@@ -7961,13 +8068,13 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
               ]),
               _: 1
             }),
-            Vue.createElementVNode("p", _hoisted_14, Vue.toDisplayString(Vue.unref(t2)("setting.history.importTip")), 1)
+            Vue.createElementVNode("p", _hoisted_16, Vue.toDisplayString(Vue.unref(t2)("setting.history.importTip")), 1)
           ])
         ]),
         _: 1
       }, 8, ["modelValue"]));
     }
-  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-de16c055"]]), resource$1 = {
+  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b766fb56"]]), resource$1 = {
     common: {
       settings: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Settings" } },
       auto: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Auto" } },
@@ -8034,7 +8141,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         clear: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Clear" } },
         importTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tip: Import will not clear the existing history, but merges with it." } }
       },
-      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Downloaded title color" } }
+      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Downloaded title color" } },
+      collectLog: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Collect logs" } },
+      copyLogs: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copy logs" } },
+      clearLogs: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Clear logs" } },
+      collectLogTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: 'Before reporting an issue to the developer, enable this option, reproduce the problem, then click the "Copy Logs" button and paste the content (already formatted in Markdown) into your report. Remember to disable this option afterwards to avoid performance issues.' } }
     },
     dialog: {
       yes: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "YES" } },
@@ -8149,7 +8260,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         clear: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "清空" } },
         importTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "提示：导入会将导入的历史记录与现有历史记录合并，不会清空现有历史记录" } }
       },
-      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已下载本子的标题颜色" } }
+      downloadedTitleColor: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已下载本子的标题颜色" } },
+      collectLog: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "收集日志" } },
+      copyLogs: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "复制日志" } },
+      clearLogs: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "清空日志" } },
+      collectLogTip: { t: 0, b: { t: 2, i: [{ t: 3 }], s: '在向开发者反馈问题前，请打开此开关，复现问题后点击"复制日志"按钮，将内容（已附带 Markdown 格式）粘贴到反馈中，操作结束后请关闭此开关以避免产生性能问题' } }
     },
     dialog: {
       yes: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "是的" } },
@@ -10291,7 +10406,7 @@ ${this.serializer.serializeToString(this.doc)}`;
           }
         });
         abortFunc = () => {
-          req.abort(), logger.log("Request abort", url), reject(new RequestAbortError(url));
+          req.abort(), logger.info("Request abort", url), reject(new RequestAbortError(url));
         };
       } catch (error) {
         reject(error);
@@ -10344,7 +10459,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     if (match)
       try {
         const gallery = (0, eval)(match);
-        return logger.log("get gallery by script tag success"), fixGalleryObj(gallery, gid);
+        return logger.info("get gallery by script tag success"), fixGalleryObj(gallery, gid);
       } catch {
         logger.warn("get gallery by script tag failed");
       }
@@ -10430,7 +10545,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     const cached = galleryCache.get(gid);
     if (cached) return cached;
     const gallery = IS_NHENTAI ? await getGalleryFromApi(gid) : await getGalleryFromWebpage(gid);
-    return galleryCache.set(gid, gallery), gallery;
+    return galleryCache.set(gid, gallery), logger.debug("gallery", gallery), gallery;
   }, getGalleryInfo = async (gid) => {
     const gallery = await (async () => {
       if (gid) return getGallery(gid);
@@ -10465,12 +10580,12 @@ ${this.serializer.serializeToString(this.doc)}`;
       uploadDate: upload_date,
       gallery
     };
-    return logger.log("info", info), info;
+    return logger.info("info", info), info;
   }, fetchMediaUrlTemplate = async (gid) => {
     const onlineViewUrl = document.querySelector(selector.galleryHref)?.getAttribute("href")?.replace(/\/+$/, "").replace(/\d+$/, gid).concat("/1") ?? document.querySelector(selector.thumbnailHref)?.getAttribute("href");
     if (!onlineViewUrl)
       throw new Error("get media url failed: cannot find a gallery");
-    logger.log(`fetching media url template by ${onlineViewUrl}`);
+    logger.info(`fetching media url template by ${onlineViewUrl}`);
     const onlineViewHtml = await fetchText(onlineViewUrl), $img = loadHTML(onlineViewHtml).find(selector.mediaImage), imgSrc = $img.attr("data-src") || $img.attr("src");
     if (!imgSrc)
       throw new Error("get media url failed: cannot find an image src");
@@ -10482,7 +10597,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     const detailUrl = document.querySelector(selector.galleryHref)?.getAttribute("href")?.replace(/\d+(\/)?$/, `${gid}$1`);
     if (!detailUrl)
       throw new Error("get detail url failed: cannot find a gallery");
-    logger.log(`fetching thumb media url template by ${detailUrl}`);
+    logger.info(`fetching thumb media url template by ${detailUrl}`);
     const detailHtml = await fetchText(detailUrl), $img = loadHTML(detailHtml).find(selector.thumbnailContainerImage), imgSrc = $img.attr("data-src") || $img.attr("src");
     if (!imgSrc)
       throw new Error("get thumb media url failed: cannot find an image src");
@@ -10497,7 +10612,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       const promise = getter(gid);
       MEDIA_URL_TEMPLATE_MAY_CHANGE && !mediaUrlTemplateGidCache[cacheKey].has(gid) && mediaUrlTemplateGidCache[cacheKey].set(gid, promise);
       const template2 = await promise;
-      return logger.log(`use media url template: ${template2}`), template2;
+      return logger.info(`use media url template: ${template2}`), template2;
     } catch (error) {
       if (logger.error(error), MEDIA_URL_TEMPLATE_MAY_CHANGE)
         mediaUrlTemplateGidCache[cacheKey].delete(gid);
@@ -10549,7 +10664,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         const filename = `${page.i}.${page.t}`;
         return IS_NHENTAI && settings.nHentaiDownloadHost !== NHentaiDownloadHostSpecial.AUTO ? useCounter ? () => {
           const url = getMediaDownloadUrl(mid, filename);
-          if (logger.log(`[${threadID}] ${url}`), settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
+          if (logger.info(`[${threadID}] ${url}`), settings.nHentaiDownloadHost === NHentaiDownloadHostSpecial.BALANCE) {
             const counterKey = new URL(url).host;
             usedCounterKeys.push(counterKey), nHentaiDownloadHostCounter.add(counterKey);
           }
@@ -10560,7 +10675,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       });
       if (!urlGetter || urlGetterError)
         throw info.error = true, urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No available url");
-      typeof urlGetter != "function" && logger.log(`[${threadID}] ${urlGetter}`);
+      typeof urlGetter != "function" && logger.info(`[${threadID}] ${urlGetter}`);
       const { abort: abort2, dataPromise } = requestArrayBufferGm({
         url: urlGetter,
         on404: useCounter ? (url) => {
@@ -10570,7 +10685,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       });
       return {
         abort: () => {
-          logger.log(`[${threadID}] abort`), abort2();
+          logger.info(`[${threadID}] abort`), abort2();
         },
         promise: dataPromise.then(async (data) => {
           if (data) {
@@ -10602,20 +10717,20 @@ ${this.serializer.serializeToString(this.doc)}`;
       aborted = true, abort(), progressDisplayController?.reset();
     }, aborted || await promise, !aborted)
       return async () => {
-        info.compressing = true, progressDisplayController?.updateProgress(), logger.log("start compressing", cfName);
+        info.compressing = true, progressDisplayController?.updateProgress(), logger.info("start compressing", cfName);
         let lastZipFile = "";
         const onCompressionUpdate = ({ workerId, percent, currentFile }) => {
-          lastZipFile !== currentFile && currentFile && (lastZipFile = currentFile, logger.log(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile)), info.compressingPercent = percent.toFixed(2), progressDisplayController?.updateProgress();
+          lastZipFile !== currentFile && currentFile && (lastZipFile = currentFile, logger.info(`[${workerId}] compressing ${percent.toFixed(2)}%`, currentFile)), info.compressingPercent = percent.toFixed(2), progressDisplayController?.updateProgress();
         };
         if (settings.streamDownload) {
-          logger.log("stream mode on");
+          logger.info("stream mode on");
           const fileStream = StreamSaverExports.createWriteStream(cfName);
           await (await zip.generateStream(getCompressionOptions(), onCompressionUpdate)).pipeTo(fileStream);
         } else {
           const data = await zip.generateAsync(getCompressionOptions(), onCompressionUpdate);
           FileSaver_minExports.saveAs(new File([data], cfName, { type: "application/zip" }));
         }
-        logger.log("completed", cfName), progressDisplayController?.complete(), progressDisplayController?.unbindInfo();
+        logger.info("completed", cfName), progressDisplayController?.complete(), progressDisplayController?.unbindInfo();
       };
   }, addDownloadGalleryTask = (gallery, { progressDisplayController, markGalleryDownloaded } = {}) => {
     const info = createMangaDownloadInfo(gallery, true);
@@ -11052,7 +11167,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-21ebd57b"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-db37b7bc"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
@@ -11081,7 +11196,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, updateLastDownload = async (gid) => {
     gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
   }, restoreLastDownload = async () => {
-    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid), logger.log(`restore last download: ${lastGid}`));
+    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid), logger.info(`restore last download: ${lastGid}`));
   }, isClient = typeof window < "u" && typeof document < "u";
   typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
   const toString = Object.prototype.toString, isObject = (val) => toString.call(val) === "[object Object]", noop = () => {
@@ -11485,24 +11600,24 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, UNCENSORED_REG = /(?:un|de)censored/i;
   let doFilterTags;
   const debounceDoFilterTags = debounce((el) => {
-    doFilterTags?.($(el));
+    logger.debug("debounceDoFilterTags", el), doFilterTags?.($(el));
   }, 0), initListPage = () => {
     initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver();
   }, initMutationObserver = once(() => {
     const contentEl = document.querySelector(selector.galleryList);
     contentEl && (IS_NHENTAI && new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes, target }) => {
-        if (!(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
+        if (settings.collectLog && target instanceof HTMLElement && !target.closest(".nhentai-helper-btn") && addedNodes.length && logger.debug("MutationObserver#1", { target, addedNodes }), !(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
           return;
         const el = target.parentElement;
         el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
       });
     }).observe(contentEl, { childList: true, subtree: true }), new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes }) => {
-        addedNodes.length && addedNodes.forEach((node) => {
+        addedNodes.length && (logger.debug("MutationObserver#2", addedNodes), addedNodes.forEach((node) => {
           const $el = $(node);
           $el.find(selector.gallery).each(initGallery), doFilterTags?.($el);
-        });
+        }));
       });
     }).observe(contentEl, { childList: true }));
   }), initGalleries = () => {
@@ -11532,6 +11647,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         logger.error(error);
       }
   }, initGallery = function() {
+    logger.debug("initGallery", this);
     const $gallery = $(this);
     if ($gallery.attr("init")) return;
     $gallery.attr("init", "true"), $gallery.addClass("nhentai-helper-gallery");
@@ -11540,7 +11656,9 @@ ${this.serializer.serializeToString(this.doc)}`;
     const gid = /\/g\/(\d+)/.exec($a.attr("href"))?.[1];
     if (!gid) return;
     this.dataset.gid = gid;
-    const enTitle = $gallery.find(selector.galleryCaption).text().trim(), isNotSelf = () => gid !== this.dataset.gid;
+    const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+    logger.debug("initGallery gid", gid);
+    const isNotSelf = () => gid !== this.dataset.gid;
     IS_NHENTAI && (UNCENSORED_REG.test(enTitle) ? $gallery.addClass("uncensored") : $gallery.removeClass("uncensored"));
     const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
@@ -11666,4 +11784,4 @@ ${this.serializer.serializeToString(this.doc)}`;
   _GM_registerMenuCommand(i18n.global.t("common.settings"), openSettingsDialog);
   _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), restoreLastDownload);
 
-})(jQuery, Vue, ElementPlus);
+})(Vue, jQuery, ElementPlus);
