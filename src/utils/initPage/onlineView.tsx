@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { IS_NHENTAI } from '@/const';
 import { className } from '@/rules/className';
 import { selector } from '@/rules/selector';
+import { logger } from '../logger';
 import { StyleInjector } from '../styleInjector';
 
 export const initOnlineViewPage = (): void => {
@@ -11,6 +12,7 @@ export const initOnlineViewPage = (): void => {
 
 /** 本子浏览模式 */
 const initViewMode = (): void => {
+  logger.debug('initViewMode');
   const style = new StyleInjector(
     `${selector.mediaImage}{width:auto;max-width:calc(100vw - 20px);max-height:100vh}`,
   );

@@ -22,6 +22,8 @@ import { settings } from '../settings';
 const { t } = i18n.global;
 
 export const initDetailPage = async (): Promise<void> => {
+  logger.debug('initDetailPage');
+
   const progressDisplayController = new ProgressDisplayController(true, document.title);
 
   const { downloadBtn } = progressDisplayController;

@@ -10,6 +10,7 @@ import { initOnlineViewPage } from './onlineView';
 
 export const initPage = async (): Promise<void> => {
   const { isSvelte, isSvelteReady } = getSvelteStatus();
+  logger.debug('initPage', { href: location.href, isSvelte, isSvelteReady });
   if (isSvelte) {
     onSvelteHydrationMismatch(initPage);
     if (!isSvelteReady) {
@@ -30,6 +31,8 @@ export const initPage = async (): Promise<void> => {
 };
 
 const applyPjax = (): void => {
+  logger.debug('applyPjax');
+
   $(document).pjax(selector.pjaxTrigger, {
     container: selector.pjaxTarget,
     fragment: selector.pjaxTarget,

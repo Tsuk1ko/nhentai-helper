@@ -38,6 +38,7 @@ const debounceDoFilterTags = debounce((el: HTMLElement) => {
 }, 0);
 
 export const initListPage = (): void => {
+  logger.debug('initListPage');
   initGalleries();
   const tagsFilter = mountTagsFilter();
   doFilterTags = tagsFilter.doFilterTags;
@@ -91,6 +92,7 @@ const initMutationObserver = once(() => {
 });
 
 export const initGalleries = () => {
+  logger.debug('initGalleries');
   $(selector.gallery).each(initGallery);
   initListenMarkDownloadedUpdateForGalleries();
 };
