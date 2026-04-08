@@ -1,6 +1,7 @@
 import { unsafeWindow } from '$';
 import { once } from 'es-toolkit';
 import { sleep } from './common';
+import { logger } from './logger';
 
 const SVELTE_KEY = '__svelte';
 
@@ -33,7 +34,7 @@ export const waitForSvelteReady = () => {
       resolve();
     };
   });
-  const timeoutPromise = sleep(1000).then(() => {
+  const timeoutPromise = sleep(3000).then(() => {
     observerAbortController.abort();
   });
   return Promise.race([observerPromise, timeoutPromise]);
@@ -45,6 +46,7 @@ export const onSvelteHydrationMismatch = once((callback: () => void) => {
   unsafeWindow.console.warn = new Proxy(origWarn, {
     apply: (target, thisArg, args) => {
       if (args.length === 1 && args[0] === 'https://svelte.dev/e/hydration_mismatch') {
+        logger.warn('Svelte hydration mismatch detected');
         setTimeout(callback);
       }
       return Reflect.apply(target, thisArg, args);
