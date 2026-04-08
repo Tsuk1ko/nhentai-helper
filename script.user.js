@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.9
+// @version            3.25.10
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -8362,7 +8362,7 @@ ${exportLogs()}
         return JSON.parse(str);
       } catch {
       }
-  }, SVELTE_KEY = "__svelte", getSvelteStatus = () => {
+  }, needRunComplexDebug = () => settings.collectLog || IS_DEV, SVELTE_KEY = "__svelte", getSvelteStatus = () => {
     const isSvelte = Object.keys(_unsafeWindow).some((key) => key.startsWith(SVELTE_KEY));
     return {
       isSvelte,
@@ -8380,7 +8380,7 @@ ${exportLogs()}
       observer.observe(document.body, { childList: true, subtree: true }), observerAbortController.signal.onabort = () => {
         observer.disconnect(), resolve();
       };
-    }), timeoutPromise = sleep(1e3).then(() => {
+    }), timeoutPromise = sleep(3e3).then(() => {
       observerAbortController.abort();
     });
     return Promise.race([observerPromise, timeoutPromise]);
@@ -8388,7 +8388,7 @@ ${exportLogs()}
     if (!_unsafeWindow) return;
     const origWarn = _unsafeWindow.console.warn;
     _unsafeWindow.console.warn = new Proxy(origWarn, {
-      apply: (target, thisArg, args) => (args.length === 1 && args[0] === "https://svelte.dev/e/hydration_mismatch" && setTimeout(callback), Reflect.apply(target, thisArg, args))
+      apply: (target, thisArg, args) => (args.length === 1 && args[0] === "https://svelte.dev/e/hydration_mismatch" && (logger.warn("Svelte hydration mismatch detected"), setTimeout(callback)), Reflect.apply(target, thisArg, args))
     });
   });
   var noty$1 = { exports: {} };
@@ -11572,8 +11572,9 @@ ${this.serializer.serializeToString(this.doc)}`;
       }
     });
   }, getNotTagSelector = (items, attrName = TAG_ATTR_NAME) => items.map((item) => IS_NHENTAI ? `:not(.${item.value})` : `:not([${attrName}~=${item.value}])`).join(""), doFilterTags$1 = (tags, $node) => {
+    logger.debug("doFilterTags", tags, $node?.[0]);
     const getNode = $node ? (selector2) => $node.find(selector2) : (selector2) => $(selector2);
-    getNode(selector.gallery).removeClass(HIDDEN_CLASS), handleMissingDataTags(
+    getNode(selector.gallery).removeClass(HIDDEN_CLASS), IS_NHENTAI || handleMissingDataTags(
       getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`)
     );
     const { [
@@ -11586,12 +11587,13 @@ ${this.serializer.serializeToString(this.doc)}`;
       tags,
       (tag) => tag.type
     );
-    langTags?.length && getNode(`${selector.gallery}${getNotTagSelector(tags, LANGUAGE_ATTR_NAME)}`).addClass(
-      HIDDEN_CLASS
-    ), otherTags?.forEach((tag) => {
-      getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`).addClass(
-        HIDDEN_CLASS
-      );
+    if (langTags?.length) {
+      const $g = getNode(`${selector.gallery}${getNotTagSelector(tags, LANGUAGE_ATTR_NAME)}`);
+      needRunComplexDebug() && logger.debug("hide galleries by lang", Array.from($g)), $g.addClass(HIDDEN_CLASS);
+    }
+    otherTags?.forEach((tag) => {
+      const $g = getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`);
+      needRunComplexDebug() && logger.debug("hide galleries by other", Array.from($g)), $g.addClass(HIDDEN_CLASS);
     });
   }, mountTagsFilter = () => {
     const menuLeft = document.querySelector(selector.menuLeft);
@@ -11603,12 +11605,28 @@ ${this.serializer.serializeToString(this.doc)}`;
   const debounceDoFilterTags = debounce((el) => {
     logger.debug("debounceDoFilterTags", el), doFilterTags?.($(el));
   }, 0), initListPage = () => {
-    logger.debug("initListPage"), initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver();
-  }, initMutationObserver = once(() => {
+    logger.debug("initListPage"), initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, onceInit();
+  }, onceInit = once(() => {
+    initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver(), clickDebugLog();
+  }), clickDebugLog = () => {
+    document.addEventListener("click", (e) => {
+      if (!(needRunComplexDebug() && e.target instanceof HTMLElement)) return;
+      const paginationEl = e.target.closest(selector.pjaxTrigger);
+      if (paginationEl) {
+        const $el = $(paginationEl);
+        if (["next", "previous", "first", "last"].some((className2) => $el.hasClass(className2) ? (logger.debug(`click pagination ${className2}`), true) : false)) return;
+        if ($el.hasClass("page")) {
+          logger.debug("click pagination", $el.text());
+          return;
+        }
+        logger.debug("click", paginationEl);
+      }
+    });
+  }, initMutationObserver = () => {
     const contentEl = document.querySelector(selector.galleryList);
     contentEl && (IS_NHENTAI && new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes, target }) => {
-        if (settings.collectLog && target instanceof HTMLElement && !target.closest(".nhentai-helper-btn") && addedNodes.length && logger.debug("MutationObserver#1", { target, addedNodes }), !(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
+        if (needRunComplexDebug() && target instanceof HTMLElement && !target.closest(".nhentai-helper-btn") && addedNodes.length && logger.debug("MutationObserver#1", { target, addedNodes }), !(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
           return;
         const el = target.parentElement;
         el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
@@ -11621,11 +11639,11 @@ ${this.serializer.serializeToString(this.doc)}`;
         }));
       });
     }).observe(contentEl, { childList: true }));
-  }), initGalleries = () => {
+  }, initGalleries = () => {
     logger.debug("initGalleries"), $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
   }, initShortcut = () => {
     const ignoreActiveElTags = /* @__PURE__ */ new Set(["INPUT", "TEXTAREA"]);
-    $(document).on("keydown", (event) => {
+    document.addEventListener("keydown", (event) => {
       const activeElTag = document.activeElement?.tagName || "";
       if (!ignoreActiveElTags.has(activeElTag))
         switch (event.key) {
