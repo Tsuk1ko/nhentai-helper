@@ -4,6 +4,7 @@ import { dlQueue } from '@/common/queue';
 import { IS_NHENTAI } from '@/const';
 import { selector } from '@/rules/selector';
 import { ErrorAction } from '@/typings';
+import { needRunComplexDebug } from '../common';
 import { downloadAgainConfirm, errorRetryConfirm } from '../dialog';
 import { addDownloadGalleryTask } from '../download';
 import {
@@ -42,20 +43,48 @@ export const initListPage = (): void => {
   initGalleries();
   const tagsFilter = mountTagsFilter();
   doFilterTags = tagsFilter.doFilterTags;
+  onceInit();
+};
+
+const onceInit = once(() => {
   initShortcut();
   initLastDownload();
   restoreDownloadQueue();
   initMutationObserver();
+  clickDebugLog();
+});
+
+const clickDebugLog = () => {
+  document.addEventListener('click', e => {
+    if (!(needRunComplexDebug() && e.target instanceof HTMLElement)) return;
+    const paginationEl = e.target.closest(selector.pjaxTrigger);
+    if (paginationEl) {
+      const $el = $(paginationEl);
+      const clicked = ['next', 'previous', 'first', 'last'].some(className => {
+        if ($el.hasClass(className)) {
+          logger.debug(`click pagination ${className}`);
+          return true;
+        }
+        return false;
+      });
+      if (clicked) return;
+      if ($el.hasClass('page')) {
+        logger.debug('click pagination', $el.text());
+        return;
+      }
+      logger.debug('click', paginationEl);
+    }
+  });
 };
 
-const initMutationObserver = once(() => {
+const initMutationObserver = () => {
   const contentEl = document.querySelector(selector.galleryList);
   if (!contentEl) return;
   if (IS_NHENTAI) {
     new MutationObserver(mutations => {
       mutations.forEach(({ addedNodes, target }) => {
         if (
-          settings.collectLog &&
+          needRunComplexDebug() &&
           target instanceof HTMLElement &&
           !target.closest('.nhentai-helper-btn') &&
           addedNodes.length
@@ -89,7 +118,7 @@ const initMutationObserver = once(() => {
       });
     });
   }).observe(contentEl, { childList: true });
-});
+};
 
 export const initGalleries = () => {
   logger.debug('initGalleries');
@@ -100,7 +129,7 @@ export const initGalleries = () => {
 const initShortcut = (): void => {
   const ignoreActiveElTags = new Set(['INPUT', 'TEXTAREA']);
   // 左右键翻页
-  $(document).on('keydown', event => {
+  document.addEventListener('keydown', event => {
     const activeElTag = document.activeElement?.tagName || '';
     if (ignoreActiveElTags.has(activeElTag)) return;
     switch (event.key) {

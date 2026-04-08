@@ -4,6 +4,8 @@ import { h, render } from 'vue';
 import TagsFilter from '@/components/TagsFilter.vue';
 import { IS_NHENTAI, IS_NHENTAI_TO, IS_NHENTAI_XXX } from '@/const';
 import { selector } from '@/rules/selector';
+import { needRunComplexDebug } from './common';
+import { logger } from './logger';
 
 export type JQElement = JQuery<HTMLElement>;
 
@@ -139,14 +141,18 @@ const getNotTagSelector = (items: FilterTag[], attrName = TAG_ATTR_NAME) =>
 
 /** 语言过滤 */
 export const doFilterTags = (tags: FilterTag[], $node?: JQElement): void => {
+  logger.debug('doFilterTags', tags, $node?.[0]);
+
   const getNode = $node
     ? (selector: string) => $node.find(selector)
     : (selector: string) => $(selector);
 
   getNode(selector.gallery).removeClass(HIDDEN_CLASS);
-  handleMissingDataTags(
-    getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`),
-  );
+  if (!IS_NHENTAI) {
+    handleMissingDataTags(
+      getNode(`${selector.gallery}${getNotTagSelector(allLangTags, LANGUAGE_ATTR_NAME)}`),
+    );
+  }
 
   const { [FilterTagType.LANGUAGE]: langTags, [FilterTagType.OTHER]: otherTags } = groupBy(
     tags,
@@ -154,15 +160,15 @@ export const doFilterTags = (tags: FilterTag[], $node?: JQElement): void => {
   );
 
   if (langTags?.length) {
-    getNode(`${selector.gallery}${getNotTagSelector(tags, LANGUAGE_ATTR_NAME)}`).addClass(
-      HIDDEN_CLASS,
-    );
+    const $g = getNode(`${selector.gallery}${getNotTagSelector(tags, LANGUAGE_ATTR_NAME)}`);
+    if (needRunComplexDebug()) logger.debug('hide galleries by lang', Array.from($g));
+    $g.addClass(HIDDEN_CLASS);
   }
 
   otherTags?.forEach(tag => {
-    getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`).addClass(
-      HIDDEN_CLASS,
-    );
+    const $g = getNode(`${selector.gallery}:not(.${HIDDEN_CLASS})${getNotTagSelector([tag])}`);
+    if (needRunComplexDebug()) logger.debug('hide galleries by other', Array.from($g));
+    $g.addClass(HIDDEN_CLASS);
   });
 };
 

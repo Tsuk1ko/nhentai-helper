@@ -3,6 +3,7 @@ import { last } from 'es-toolkit';
 import { template } from 'es-toolkit/compat';
 import $ from 'jquery';
 import { markRaw, reactive } from 'vue';
+import { IS_DEV } from '@/const';
 import { selector } from '@/rules/selector';
 import type { MangaDownloadInfo } from '@/typings';
 import type { JSZipGeneratorOptionsCustom } from '@/workers/jszip';
@@ -79,3 +80,5 @@ export const tryParseJSON = <T = unknown>(str: unknown): T | undefined => {
     return JSON.parse(str);
   } catch {}
 };
+
+export const needRunComplexDebug = () => settings.collectLog || IS_DEV;
