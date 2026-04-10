@@ -24,6 +24,11 @@ const { t } = i18n.global;
 export const initDetailPage = async (): Promise<void> => {
   logger.debug('initDetailPage');
 
+  if ($(selector.infoButtons).find('.nhentai-helper-btn').length) {
+    logger.warn('detail page already initialized');
+    return;
+  }
+
   const progressDisplayController = new ProgressDisplayController(true, document.title);
 
   const { downloadBtn } = progressDisplayController;
