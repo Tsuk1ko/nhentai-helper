@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.25.11
+// @version            3.25.12
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -11626,22 +11626,22 @@ ${this.serializer.serializeToString(this.doc)}`;
       }
     });
   }, initMutationObserver = () => {
-    const contentEl = document.querySelector(selector.galleryList);
-    contentEl && (IS_NHENTAI && new MutationObserver((mutations) => {
+    new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes, target }) => {
-        if (needRunComplexDebug() && target instanceof HTMLElement && !target.closest(".nhentai-helper-btn") && addedNodes.length && logger.debug("MutationObserver#1", { target, addedNodes }), !(addedNodes.length && target instanceof HTMLElement && target.parentElement?.matches(selector.gallery)))
-          return;
-        const el = target.parentElement;
-        el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
-      });
-    }).observe(contentEl, { childList: true, subtree: true }), new MutationObserver((mutations) => {
-      mutations.forEach(({ addedNodes }) => {
-        addedNodes.length && (logger.debug("MutationObserver#2", addedNodes), addedNodes.forEach((node) => {
-          const $el = $(node);
-          $el.find(selector.gallery).each(initGallery), doFilterTags?.($el);
+        !addedNodes.length || !(target instanceof HTMLElement) || (needRunComplexDebug() && !(target.closest(".nhentai-helper-btn,.el-popper,[data-v-app]") || target.classList.contains("nhentai-helper-gallery") || target.id.startsWith("el-")) && logger.debug("MutationObserver#body", { target, addedNodes }), addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            if (target.parentElement?.matches(selector.gallery)) {
+              const el = target.parentElement;
+              el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
+            }
+            if (node.tagName === "DIV" && (node.matches(selector.galleryList) || node.parentElement?.matches(selector.galleryList))) {
+              const $el = $(node);
+              $el.find(selector.gallery).each(initGallery), doFilterTags?.($el);
+            }
+          }
         }));
       });
-    }).observe(contentEl, { childList: true }));
+    }).observe(document.body, { subtree: true, childList: true });
   }, initGalleries = () => {
     logger.debug("initGalleries"), $(selector.gallery).each(initGallery), initListenMarkDownloadedUpdateForGalleries();
   }, initShortcut = () => {
