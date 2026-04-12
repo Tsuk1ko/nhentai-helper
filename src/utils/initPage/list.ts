@@ -78,46 +78,42 @@ const clickDebugLog = () => {
 };
 
 const initMutationObserver = () => {
-  const contentEl = document.querySelector(selector.galleryList);
-  if (!contentEl) return;
-  if (IS_NHENTAI) {
-    new MutationObserver(mutations => {
-      mutations.forEach(({ addedNodes, target }) => {
-        if (
-          needRunComplexDebug() &&
-          target instanceof HTMLElement &&
-          !target.closest('.nhentai-helper-btn') &&
-          addedNodes.length
-        ) {
-          logger.debug('MutationObserver#1', { target, addedNodes });
-        }
-        if (
-          !(
-            addedNodes.length &&
-            target instanceof HTMLElement &&
-            target.parentElement?.matches(selector.gallery)
-          )
-        ) {
-          return;
-        }
-        const el = target.parentElement;
-        (el as any)._nhentaiHelperDestroy?.();
-        initGallery.call(el);
-        if (el.parentElement) debounceDoFilterTags(el.parentElement);
-      });
-    }).observe(contentEl, { childList: true, subtree: true });
-  }
   new MutationObserver(mutations => {
-    mutations.forEach(({ addedNodes }) => {
-      if (!addedNodes.length) return;
-      logger.debug('MutationObserver#2', addedNodes);
+    mutations.forEach(({ addedNodes, target }) => {
+      if (!addedNodes.length || !(target instanceof HTMLElement)) return;
+      if (
+        needRunComplexDebug() &&
+        !(
+          target.closest('.nhentai-helper-btn,.el-popper,[data-v-app]') ||
+          target.classList.contains('nhentai-helper-gallery') ||
+          target.id.startsWith('el-')
+        )
+      ) {
+        logger.debug('MutationObserver#body', { target, addedNodes });
+      }
       addedNodes.forEach(node => {
-        const $el = $(node as HTMLElement);
-        $el.find(selector.gallery).each(initGallery);
-        doFilterTags?.($el);
+        if (!(node instanceof HTMLElement)) return;
+
+        // Svelte
+        if (target.parentElement?.matches(selector.gallery)) {
+          const el = target.parentElement;
+          (el as any)._nhentaiHelperDestroy?.();
+          initGallery.call(el);
+          if (el.parentElement) debounceDoFilterTags(el.parentElement);
+        }
+
+        // Super Preloader / 东方永页机
+        if (
+          node.tagName === 'DIV' &&
+          (node.matches(selector.galleryList) || node.parentElement?.matches(selector.galleryList))
+        ) {
+          const $el = $(node as HTMLElement);
+          $el.find(selector.gallery).each(initGallery);
+          doFilterTags?.($el);
+        }
       });
     });
-  }).observe(contentEl, { childList: true });
+  }).observe(document.body, { subtree: true, childList: true });
 };
 
 export const initGalleries = () => {
