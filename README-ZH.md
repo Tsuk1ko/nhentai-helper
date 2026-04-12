@@ -119,6 +119,30 @@
 
 ## 其他功能
 
+### 自动翻页脚本支持
+
+#### 东方永页机
+
+https://greasyfork.org/scripts/438684
+
+#### Super-preloader
+
+https://github.com/machsix/Super-preloader
+
+你需要添加该自定义规则以支持新版 nHentai 网站：
+
+```json
+[
+  {
+    "name": "nhentai-new",
+    "url": "^https://nhentai\\.net",
+    "pageElement": "//div[@class='container index-container']|//section[@id='image-container']",
+    "exampleUrl": "https://nhentai.net/language/chinese/",
+    "nextLink": "(//section[contains(@class, 'pagination')]|//div[@class='reader-pagination'])/a[contains(@class, 'next')]"
+  }
+]
+```
+
 ### 镜像站支持
 
 该脚本支持部分镜像站，具体见脚本的 `@match` 与 `@include`
@@ -142,8 +166,3 @@
 在线阅读时可开启或关闭，只在第三方镜像站生效，nHentai 官方已经有这个功能了
 
 ![viewMode](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/viewMode.png)
-
-## 推荐脚本
-
-- [Super-preloader](https://github.com/machsix/Super-preloader)  
-  支持在本子列表页无限下拉翻页

@@ -122,6 +122,30 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
 
 ## Other features
 
+### Auto-pager script support
+
+#### Pagetual
+
+https://greasyfork.org/scripts/438684
+
+#### Super-preloader
+
+https://github.com/machsix/Super-preloader
+
+You need to add this custom rule to support the new version of nHentai:
+
+```json
+[
+  {
+    "name": "nhentai-new",
+    "url": "^https://nhentai\\.net",
+    "pageElement": "//div[@class='container index-container']|//section[@id='image-container']",
+    "exampleUrl": "https://nhentai.net/language/chinese/",
+    "nextLink": "(//section[contains(@class, 'pagination')]|//div[@class='reader-pagination'])/a[contains(@class, 'next')]"
+  }
+]
+```
+
 ### nHentai mirror sites support
 
 This script also support some nHentai mirror sites. See the script's `@match` and `@include`.
@@ -145,8 +169,3 @@ You can filter here in the navigation bar. Languages use 'OR' logic, while other
 Effective when reading online, only for mirror sites (now nHentai official site already has this feature).
 
 ![viewMode](https://raw.githubusercontent.com/Tsuk1ko/nhentai-helper/master/docs/viewMode.png)
-
-## Recommended scripts
-
-- [Super-preloader](https://github.com/machsix/Super-preloader)  
-  A userscript for auto loading paginated web pages. It will join pages together, which is useful on manga list page.
