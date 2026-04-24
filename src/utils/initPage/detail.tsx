@@ -22,7 +22,7 @@ import { settings } from '../settings';
 const { t } = i18n.global;
 
 export const initDetailPage = async (): Promise<void> => {
-  logger.debug('initDetailPage');
+  logger.info('init detail page');
 
   if ($(selector.infoButtons).find('.nhentai-helper-btn').length) {
     logger.warn('detail page already initialized');

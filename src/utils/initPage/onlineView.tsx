@@ -12,7 +12,7 @@ export const initOnlineViewPage = (): void => {
 
 /** 本子浏览模式 */
 const initViewMode = (): void => {
-  logger.debug('initViewMode');
+  logger.info('init view mode');
   const style = new StyleInjector(
     `${selector.mediaImage}{width:auto;max-width:calc(100vw - 20px);max-height:100vh}`,
   );

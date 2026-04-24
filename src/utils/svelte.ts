@@ -5,13 +5,9 @@ import { logger } from './logger';
 
 const SVELTE_KEY = '__svelte';
 
-export const getSvelteStatus = () => {
-  const isSvelte = Object.keys(unsafeWindow).some(key => key.startsWith(SVELTE_KEY));
-  return {
-    isSvelte,
-    isSvelteReady: isSvelte && !!document.querySelector('#svelte-announcer'),
-  };
-};
+export const IS_SVELTE = Object.keys(unsafeWindow).some(key => key.startsWith(SVELTE_KEY));
+
+export const isSvelteReady = () => IS_SVELTE && !!document.querySelector('#svelte-announcer');
 
 export const waitForSvelteReady = () => {
   const observerAbortController = new AbortController();

@@ -3,11 +3,11 @@ import { identity, invert, once } from 'es-toolkit';
 import $ from 'jquery';
 import {
   IS_NHENTAI,
-  IS_PAGE_MANGA_DETAIL,
   MEDIA_URL_TEMPLATE_KEY,
   MEDIA_URL_TEMPLATE_MAY_CHANGE,
   THUMB_MEDIA_URL_TEMPLATE_KEY,
 } from '@/const';
+import { isPageMangaDetail } from '@/env';
 import { selector } from '@/rules/selector';
 import { filterNotNil, objectEach } from './array';
 import { compileTemplate, tryParseJSON } from './common';
@@ -178,7 +178,7 @@ const fixGalleryObj = (gallery: NHentaiGallery, gid?: number | string) => {
 const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGallery> => {
   let doc = document;
 
-  if (!IS_PAGE_MANGA_DETAIL) {
+  if (!isPageMangaDetail()) {
     const html = await fetchText(`/g/${gid}`);
     // 直接把 html 给 jq 解析的话会把里面的图片也给加载了，用 DOMParser 解析完再扔给 jq 就不会
     const parser = new DOMParser();
@@ -253,9 +253,7 @@ const getGalleryFromWebpage = async (gid: number | string): Promise<NHentaiGalle
         if (!(el instanceof HTMLElement)) return undefined;
         const name = el.querySelector<HTMLElement>(selector.tagName)?.textContent.trim();
         const countStr = el.querySelector<HTMLElement>(selector.tagCount)?.textContent.trim();
-        const count = countStr
-          ? parseInt(countStr) * (countStr.match(/k$/i) ? 1000 : 1)
-          : undefined;
+        const count = countStr ? parseInt(countStr) * (/k$/i.test(countStr) ? 1000 : 1) : undefined;
         return name
           ? {
               type,

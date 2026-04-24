@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 /// <reference types="nano-jsx" />
-/// <reference types="@types/jquery.pjax" />
+/// <reference types="jquery.pjax" />
+/// <reference types="dom-navigation" />
 
 type GlobalThis = typeof globalThis;
 

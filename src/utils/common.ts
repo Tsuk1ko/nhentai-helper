@@ -10,7 +10,8 @@ import type { JSZipGeneratorOptionsCustom } from '@/workers/jszip';
 import type { NHentaiGalleryInfo } from './nhentai';
 import { settings } from './settings';
 
-export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms?: number): Promise<void> =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
 export const compileTemplate = (tpl: string): ((data?: object) => string) =>
   template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g });

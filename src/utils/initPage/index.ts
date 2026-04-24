@@ -1,37 +1,73 @@
 import $ from 'jquery';
-import { IS_NHENTAI, IS_PAGE_MANGA_DETAIL, IS_PAGE_MANGA_LIST, IS_PAGE_ONLINE_VIEW } from '@/const';
+import { IS_NHENTAI } from '@/const';
+import { getPageType, PageType } from '@/env';
 import { selector } from '@/rules/selector';
+import { sleep } from '../common';
 import { logger } from '../logger';
 import { applyDownloadedTitleColor } from '../settings';
-import { getSvelteStatus, onSvelteHydrationMismatch, waitForSvelteReady } from '../svelte';
+import { IS_SVELTE, isSvelteReady, onSvelteHydrationMismatch, waitForSvelteReady } from '../svelte';
 import { initDetailPage } from './detail';
 import { initGalleries, initListPage } from './list';
 import { initOnlineViewPage } from './onlineView';
 
-export const initPage = async (): Promise<void> => {
-  const { isSvelte, isSvelteReady } = getSvelteStatus();
-  logger.debug('initPage', { href: location.href, isSvelte, isSvelteReady });
-  if (isSvelte) {
+export const init = () => {
+  let lastPageType = getPageType();
+
+  initPage(lastPageType).catch(logger.error);
+
+  if (IS_SVELTE) {
+    // 处理 svelte 无刷新加载
+    window.navigation.addEventListener('navigate', async () => {
+      logger.info('page navigate');
+      await sleep();
+
+      const pageType = getPageType();
+      if (!(lastPageType === PageType.MANGA_LIST && pageType === PageType.MANGA_LIST)) {
+        initPage(pageType).catch(logger.error);
+      }
+
+      lastPageType = pageType;
+    });
+  }
+};
+
+const initPage = async (pageType: PageType = getPageType()): Promise<void> => {
+  logger.info('init page', { url: location.href, pageType, isSvelte: IS_SVELTE });
+
+  if (IS_SVELTE) {
     onSvelteHydrationMismatch(initPage);
-    if (!isSvelteReady) {
-      logger.warn('Svelte detected, waiting for svelte ready to avoid hydration mismatch');
+    if (!isSvelteReady()) {
+      logger.warn('Svelte detected and not ready, waiting to avoid hydration mismatch');
       await waitForSvelteReady();
     }
   }
+
   $('body').addClass(`nhentai-helper-${location.hostname.replace(/\./g, '_')}`);
-  if (IS_PAGE_MANGA_LIST) {
-    initListPage();
-    // nHentai 改版后已经不会导致页面刷新
-    if (!IS_NHENTAI) applyPjax();
-  } else if (IS_PAGE_MANGA_DETAIL) {
-    initDetailPage().catch(logger.error);
-    initGalleries();
-  } else if (IS_PAGE_ONLINE_VIEW) initOnlineViewPage();
+
+  switch (pageType) {
+    case PageType.MANGA_LIST:
+      initListPage();
+      applyPjax();
+      break;
+
+    case PageType.MANGA_DETAIL:
+      initDetailPage().catch(logger.error);
+      initGalleries();
+      break;
+
+    case PageType.ONLINE_VIEW:
+      initOnlineViewPage();
+      break;
+  }
+
   applyDownloadedTitleColor();
 };
 
 const applyPjax = (): void => {
-  logger.debug('applyPjax');
+  // nHentai 改版后已经不会导致页面刷新
+  if (IS_NHENTAI) return;
+
+  logger.info('apply pjax');
 
   $(document).pjax(selector.pjaxTrigger, {
     container: selector.pjaxTarget,
