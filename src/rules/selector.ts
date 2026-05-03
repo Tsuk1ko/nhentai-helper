@@ -12,7 +12,8 @@ const defaultSelector = {
   paginationPrevious: '.pagination .previous',
   paginationNext: '.pagination .next',
   // gallery
-  showAllImagesButton: '#show-all-images-button',
+  showAllImagesContainer: '#show-all-images-container',
+  showAllImagesButton: '#show-all-images-button,#show-all-images-container > .btn.btn-secondary',
   thumbnailContainer: '#thumbnail-container',
   thumbnailContainerImage: '#thumbnail-container img',
   thumbnailHref: 'a.gallerythumb',

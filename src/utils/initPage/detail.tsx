@@ -121,10 +121,14 @@ export const initDetailPage = async (): Promise<void> => {
   applyAutoShowAll();
 };
 
-const applyAutoShowAll = (): void => {
-  if (settings.autoShowAll) {
-    getShowAllBtn()
-      .then($btn => $btn.trigger('click'))
-      .catch(logger.error);
+const applyAutoShowAll = async () => {
+  logger.info('apply auto show all');
+  if (!settings.autoShowAll) return;
+  try {
+    const btn = await getShowAllBtn();
+    logger.info('show all button found', btn.length);
+    if (btn.length) btn.trigger('click');
+  } catch (e) {
+    logger.error(e);
   }
 };

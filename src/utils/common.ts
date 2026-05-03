@@ -45,8 +45,11 @@ export const getShowAllBtn = (): Promise<JQuery<HTMLElement>> =>
     }
     new MutationObserver((mutations, self) => {
       mutations.forEach(({ addedNodes }) => {
-        const btnContainer = addedNodes[0] as HTMLElement | undefined;
-        if (btnContainer?.id === 'show-all-images-container') {
+        const btnContainer = addedNodes[0];
+        if (
+          btnContainer instanceof HTMLElement &&
+          btnContainer.matches(selector.showAllImagesContainer)
+        ) {
           self.disconnect();
           resolve($(selector.showAllImagesButton));
         }
