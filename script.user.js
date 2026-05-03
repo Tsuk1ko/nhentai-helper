@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.26.0
+// @version            3.26.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -2841,7 +2841,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.get(key2);
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.get(key2);
                     req.onsuccess = function() {
                       var value = req.result;
                       value === void 0 && (value = null), _isEncodedBlob(value) && (value = _decodeBlob(value)), resolve(value);
@@ -2863,7 +2863,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.openCursor(), iterationNumber = 1;
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.openCursor(), iterationNumber = 1;
                     req.onsuccess = function() {
                       var cursor = req.result;
                       if (cursor) {
@@ -2898,9 +2898,9 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName);
+                    var store = transaction.objectStore(self2._dbInfo.storeName);
                     value2 === null && (value2 = void 0);
-                    var req = store2.put(value2, key2);
+                    var req = store.put(value2, key2);
                     transaction.oncomplete = function() {
                       value2 === void 0 && (value2 = null), resolve(value2);
                     }, transaction.onabort = transaction.onerror = function() {
@@ -2924,7 +2924,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.delete(key2);
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.delete(key2);
                     transaction.oncomplete = function() {
                       resolve();
                     }, transaction.onerror = function() {
@@ -2948,7 +2948,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.clear();
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.clear();
                     transaction.oncomplete = function() {
                       resolve();
                     }, transaction.onabort = transaction.onerror = function() {
@@ -2970,7 +2970,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.count();
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.count();
                     req.onsuccess = function() {
                       resolve(req.result);
                     }, req.onerror = function() {
@@ -2995,7 +2995,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), advanced = !1, req = store2.openKeyCursor();
+                    var store = transaction.objectStore(self2._dbInfo.storeName), advanced = !1, req = store.openKeyCursor();
                     req.onsuccess = function() {
                       var cursor = req.result;
                       if (!cursor) {
@@ -3021,7 +3021,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
                   if (err)
                     return reject(err);
                   try {
-                    var store2 = transaction.objectStore(self2._dbInfo.storeName), req = store2.openKeyCursor(), keys2 = [];
+                    var store = transaction.objectStore(self2._dbInfo.storeName), req = store.openKeyCursor(), keys2 = [];
                     req.onsuccess = function() {
                       var cursor = req.result;
                       if (!cursor) {
@@ -3825,7 +3825,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   function setItemsIndexedDB(items, keyFn, valueFn, callback) {
     var localforageInstance = this, promise = localforageInstance.ready().then(function() {
       return new Promise(function(resolve, reject) {
-        var dbInfo = localforageInstance._dbInfo, transaction = dbInfo.db.transaction(dbInfo.storeName, "readwrite"), store2 = transaction.objectStore(dbInfo.storeName), lastError;
+        var dbInfo = localforageInstance._dbInfo, transaction = dbInfo.db.transaction(dbInfo.storeName, "readwrite"), store = transaction.objectStore(dbInfo.storeName), lastError;
         transaction.oncomplete = function() {
           resolve(items);
         }, transaction.onabort = transaction.onerror = function(event) {
@@ -3837,7 +3837,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         }
         forEachItem(items, keyFn, valueFn, function(key, value) {
           value === null && (value = void 0);
-          var request = store2.put(value, key);
+          var request = store.put(value, key);
           request.onerror = requestOnError;
         });
       });
@@ -6358,7 +6358,8 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
     paginationPrevious: ".pagination .previous",
     paginationNext: ".pagination .next",
     // gallery
-    showAllImagesButton: "#show-all-images-button",
+    showAllImagesContainer: "#show-all-images-container",
+    showAllImagesButton: "#show-all-images-button,#show-all-images-container > .btn.btn-secondary",
     thumbnailContainer: "#thumbnail-container",
     thumbnailContainerImage: "#thumbnail-container img",
     thumbnailHref: "a.gallerythumb",
@@ -8333,7 +8334,7 @@ ${exportLogs()}
     document.body.append(el);
     const app = Vue.createApp(component);
     return appInitFunc?.(app), app.mount(el);
-  }, PAGE_MANGA_DETAIL_REG = /^\/g\/\d+\/?(?:\?.*)?$/, PAGE_ONLINE_VIEW_REG = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/, isPageMangaDetail = () => PAGE_MANGA_DETAIL_REG.test(location.pathname), isPageOnlineView = () => PAGE_ONLINE_VIEW_REG.test(location.pathname);
+  }, PAGE_MANGA_DETAIL_REG = /^\/g\/\d+\/?(?:\?.*)?$/, PAGE_ONLINE_VIEW_REG = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/, isPageMangaDetail = () => PAGE_MANGA_DETAIL_REG.test(location.pathname), isPageOnlineView = () => PAGE_ONLINE_VIEW_REG.test(location.pathname), isPageMangaList = () => !isPageMangaDetail() && !isPageOnlineView() && !!document.querySelector(selector.gallery);
   var PageType = /* @__PURE__ */ ((PageType2) => (PageType2[PageType2.UNKNOWN = 0] = "UNKNOWN", PageType2[PageType2.MANGA_LIST = 1] = "MANGA_LIST", PageType2[PageType2.MANGA_DETAIL = 2] = "MANGA_DETAIL", PageType2[PageType2.ONLINE_VIEW = 3] = "ONLINE_VIEW", PageType2))(PageType || {});
   const getPageType = () => isPageMangaDetail() ? 2 : isPageOnlineView() ? 3 : document.querySelector(selector.gallery) ? 1 : 0, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), compileTemplate = (tpl) => template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g }), getDownloadExt = () => {
     const ext = last(settings.compressionFilename.split("."));
@@ -8356,7 +8357,8 @@ ${exportLogs()}
     }
     new MutationObserver((mutations, self2) => {
       mutations.forEach(({ addedNodes }) => {
-        addedNodes[0]?.id === "show-all-images-container" && (self2.disconnect(), resolve($(selector.showAllImagesButton)));
+        const btnContainer = addedNodes[0];
+        btnContainer instanceof HTMLElement && btnContainer.matches(selector.showAllImagesContainer) && (self2.disconnect(), resolve($(selector.showAllImagesButton)));
       });
     }).observe(container, { childList: true });
   }), createMangaDownloadInfo = (gallery, needReactive = false) => {
@@ -8374,7 +8376,57 @@ ${exportLogs()}
         return JSON.parse(str);
       } catch {
       }
-  }, needRunComplexDebug = () => settings.collectLog || IS_DEV, SVELTE_KEY = "__svelte", IS_SVELTE = Object.keys(_unsafeWindow).some((key) => key.startsWith(SVELTE_KEY)), isSvelteReady = () => IS_SVELTE && !!document.querySelector("#svelte-announcer"), waitForSvelteReady = () => {
+  }, needRunComplexDebug = () => settings.collectLog || IS_DEV;
+  class LastDownloadStore {
+    store = localforage.createInstance({
+      name: IDB_NAME,
+      storeName: "last_download"
+    });
+    key = "";
+    latestGid = 0;
+    lastGid = 0;
+    styleEl;
+    onceInit = once(() => {
+      useStyle(
+        () => `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t("tip.lastDownloadedPosition")}"}`
+      );
+    });
+    async init() {
+      try {
+        logger.info("init last download"), this.key = this.getKey();
+        const gid = await this.store.getItem(this.key);
+        if (!gid) {
+          this.reset();
+          return;
+        }
+        this.latestGid = gid, this.lastGid = gid, this.addStyle(gid), this.onceInit();
+      } catch (error) {
+        logger.error(error), this.reset();
+      }
+    }
+    async update(gid) {
+      isPageMangaList() && (gid = Number(gid), !(!gid || gid <= this.latestGid) && (this.latestGid = gid, await this.store.setItem(this.key, gid)));
+    }
+    async restore() {
+      this.lastGid && (this.latestGid = this.lastGid, await this.store.setItem(this.key, this.lastGid), logger.info(`restore last download: ${this.lastGid}`));
+    }
+    getKey() {
+      const url = new URL(location.href);
+      return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+    }
+    reset() {
+      this.latestGid = 0, this.lastGid = 0, this.removeStyle();
+    }
+    removeStyle() {
+      this.styleEl?.remove(), this.styleEl = void 0;
+    }
+    addStyle(gid) {
+      this.removeStyle(), this.styleEl = _GM_addStyle(
+        `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`
+      );
+    }
+  }
+  const lastDownload = new LastDownloadStore(), SVELTE_KEY = "__svelte", IS_SVELTE = Object.keys(_unsafeWindow).some((key) => key.startsWith(SVELTE_KEY)), isSvelteReady = () => IS_SVELTE && !!document.querySelector("#svelte-announcer"), waitForSvelteReady = () => {
     const observerAbortController = new AbortController(), observerPromise = new Promise((resolve) => {
       const observer = new MutationObserver((mutations, observer2) => {
         mutations.some(
@@ -10922,8 +10974,14 @@ ${this.serializer.serializeToString(this.doc)}`;
         progressDisplayController.error(), logger.error(error);
       }
     }), applyAutoShowAll();
-  }, applyAutoShowAll = () => {
-    settings.autoShowAll && getShowAllBtn().then(($btn) => $btn.trigger("click")).catch(logger.error);
+  }, applyAutoShowAll = async () => {
+    if (logger.info("apply auto show all"), !!settings.autoShowAll)
+      try {
+        const btn = await getShowAllBtn();
+        logger.info("show all button found", btn.length), btn.length && btn.trigger("click");
+      } catch (e) {
+        logger.error(e);
+      }
   }, _hoisted_1$1 = { class: "info-label bold" }, _hoisted_2 = { class: "info-label bold" }, _hoisted_3 = { class: "bold" }, _hoisted_4 = { class: "info-label bold" }, _hoisted_5 = { class: "bold" }, _hoisted_6 = { class: "info-label bold" }, _hoisted_7 = { class: "scroll-container-inner" }, POPOVER_MAX_WIDTH = 720, POPOVER_THUMB_MORE_COL_WIDTH = 640, _sfc_main$1 = /* @__PURE__ */ Vue.defineComponent({
     __name: "GalleryMiniPopover",
     setup(__props, { expose: __expose }) {
@@ -11183,30 +11241,6 @@ ${this.serializer.serializeToString(this.doc)}`;
     })
   ), openGalleryMiniPopover = (el, gid) => {
     initApp().open(el, gid);
-  }, store = localforage.createInstance({
-    name: IDB_NAME,
-    storeName: "last_download"
-  }), getKey = once(() => {
-    const url = new URL(location.href);
-    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
-  });
-  let latestGid = 0, lastGid = 0;
-  const initLastDownload = async () => {
-    try {
-      const gid = await store.getItem(getKey());
-      if (!gid) return;
-      latestGid = gid, lastGid = gid, _GM_addStyle(
-        `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`
-      ), useStyle(
-        () => `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t("tip.lastDownloadedPosition")}"}`
-      );
-    } catch (error) {
-      logger.error(error);
-    }
-  }, updateLastDownload = async (gid) => {
-    gid = Number(gid), !(!gid || gid <= latestGid) && (latestGid = gid, await store.setItem(getKey(), gid));
-  }, restoreLastDownload = async () => {
-    lastGid && (latestGid = lastGid, await store.setItem(getKey(), lastGid), logger.info(`restore last download: ${lastGid}`));
   }, isClient = typeof window < "u" && typeof document < "u";
   typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
   const toString = Object.prototype.toString, isObject = (val) => toString.call(val) === "[object Object]", noop = () => {
@@ -11615,7 +11649,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, 0), initListPage = () => {
     logger.info("init list page"), initGalleries(), doFilterTags = mountTagsFilter().doFilterTags, onceInit();
   }, onceInit = once(() => {
-    initShortcut(), initLastDownload(), restoreDownloadQueue(), initMutationObserver(), clickDebugLog();
+    initShortcut(), lastDownload.init(), restoreDownloadQueue(), initMutationObserver(), clickDebugLog();
   }), clickDebugLog = () => {
     document.addEventListener("click", (e) => {
       if (!(needRunComplexDebug() && e.target instanceof HTMLElement)) return;
@@ -11742,7 +11776,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       addDownloadGalleryTask(gallery, {
         progressDisplayController,
         markGalleryDownloaded: () => markGalleryDownloaded(!0)
-      }), updateLastDownload(gid);
+      }), lastDownload.update(gid);
     };
     downloadBtn.addEventListener("click", startDownload);
     const onContextMenu = (e) => {
@@ -11785,9 +11819,11 @@ ${this.serializer.serializeToString(this.doc)}`;
   }, init = () => {
     let lastPageType = getPageType();
     initPage(lastPageType).catch(logger.error), IS_SVELTE && window.navigation.addEventListener("navigate", async () => {
-      logger.info("page navigate"), await sleep();
-      const pageType = getPageType();
-      lastPageType === PageType.MANGA_LIST && pageType === PageType.MANGA_LIST || initPage(pageType).catch(logger.error), lastPageType = pageType;
+      logger.info("page navigate");
+      const lastUrl = new URL(location.href);
+      await sleep();
+      const curUrl = new URL(location.href), pageType = getPageType();
+      lastPageType === PageType.MANGA_LIST && pageType === PageType.MANGA_LIST || initPage(pageType).catch(logger.error), pageType === PageType.MANGA_LIST && (lastPageType !== pageType || lastUrl.pathname !== curUrl.pathname) && lastDownload.init(), lastPageType = pageType;
     });
   }, initPage = async (pageType = getPageType()) => {
     switch (logger.info("init page", { url: location.href, pageType, isSvelte: IS_SVELTE }), IS_SVELTE && (onSvelteHydrationMismatch(initPage), isSvelteReady() || (logger.warn("Svelte detected and not ready, waiting to avoid hydration mismatch"), await waitForSvelteReady())), $("body").addClass(`nhentai-helper-${location.hostname.replace(/\./g, "_")}`), pageType) {
@@ -11827,6 +11863,6 @@ ${this.serializer.serializeToString(this.doc)}`;
   createAppAndMount(_sfc_main$4);
   init();
   _GM_registerMenuCommand(i18n.global.t("common.settings"), openSettingsDialog);
-  _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), restoreLastDownload);
+  _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), () => lastDownload.restore());
 
 })(Vue, jQuery, ElementPlus);
