@@ -3,6 +3,7 @@ import { IS_NHENTAI } from '@/const';
 import { getPageType, PageType } from '@/env';
 import { selector } from '@/rules/selector';
 import { sleep } from '../common';
+import { lastDownload } from '../lastDownload';
 import { logger } from '../logger';
 import { applyDownloadedTitleColor } from '../settings';
 import { IS_SVELTE, isSvelteReady, onSvelteHydrationMismatch, waitForSvelteReady } from '../svelte';
@@ -19,11 +20,19 @@ export const init = () => {
     // 处理 svelte 无刷新加载
     window.navigation.addEventListener('navigate', async () => {
       logger.info('page navigate');
+      const lastUrl = new URL(location.href);
       await sleep();
 
+      const curUrl = new URL(location.href);
       const pageType = getPageType();
       if (!(lastPageType === PageType.MANGA_LIST && pageType === PageType.MANGA_LIST)) {
         initPage(pageType).catch(logger.error);
+      }
+      if (
+        pageType === PageType.MANGA_LIST &&
+        (lastPageType !== pageType || lastUrl.pathname !== curUrl.pathname)
+      ) {
+        lastDownload.init();
       }
 
       lastPageType = pageType;

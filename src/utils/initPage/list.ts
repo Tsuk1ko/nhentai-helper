@@ -16,7 +16,7 @@ import {
 } from '../downloadHistory';
 import { openGalleryMiniPopover } from '../galleryMiniPopover';
 import { IgnoreController } from '../ignoreController';
-import { initLastDownload, updateLastDownload } from '../lastDownload';
+import { lastDownload } from '../lastDownload';
 import { logger } from '../logger';
 import {
   broadcastMarkDownloadedUpdate,
@@ -48,7 +48,7 @@ export const initListPage = (): void => {
 
 const onceInit = once(() => {
   initShortcut();
-  initLastDownload();
+  lastDownload.init();
   restoreDownloadQueue();
   initMutationObserver();
   clickDebugLog();
@@ -284,7 +284,7 @@ const initGallery = function (this: HTMLElement) {
       progressDisplayController,
       markGalleryDownloaded: () => markGalleryDownloaded(true),
     });
-    updateLastDownload(gid);
+    lastDownload.update(gid);
   };
 
   downloadBtn.addEventListener('click', startDownload);
