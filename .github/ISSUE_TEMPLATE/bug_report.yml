@@ -1,0 +1,60 @@
+name: Bug 报告 / Bug Report
+description: 发现了 Bug / Found a bug
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **请先更新脚本到最新版本，确认问题是否仍然存在后再提交 issue**  
+        ⚠️ **Please update the script to the latest version first, confirm whether the issue still persists, and then submit an issue**
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述 / Description
+      placeholder: |
+        预期行为 / Expected behavior: ...
+        实际行为 / Actual behavior: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤 / Reproduction steps
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / Logs
+      description: |
+        查看“设置-收集日志”，按照说明进行操作  
+        Check "Settings - Collect Logs" and follow the instructions
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 截图 / Screenshot
+      description: |
+        请提供出现问题时的网页界面截图，直接在此处粘贴即可上传  
+        Please provide a screenshot of the webpage interface where the issue occurred, and you can upload it by pasting it directly here
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 其他信息 / Other information
+      description: |
+        任何你想要补充的信息  
+        Any information you want to add
+    validations:
+      required: false
