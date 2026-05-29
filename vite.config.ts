@@ -92,6 +92,7 @@ const config: UserConfigFnPromise = async ({ mode }) => ({
               // @ts-expect-error
               if (!window.Date.now) {
                 // @ts-expect-error
+                // eslint-disable-next-line e18e/prefer-date-now
                 window.Date.now = () => new Date().getTime();
               }
             }),
