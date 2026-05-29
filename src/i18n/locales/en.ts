@@ -57,6 +57,7 @@ export default {
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
     titleReplacement: 'Title replacement',
+    titleBlacklist: 'Title blacklist',
     galleryContextmenuPreview: 'Context menu preview',
     customFilenameFunction: 'Custom filename function',
     history: {

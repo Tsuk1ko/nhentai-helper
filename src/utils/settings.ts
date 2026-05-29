@@ -1,12 +1,13 @@
 import { GM_getValue, GM_setValue } from '$';
 import { detect } from 'detect-browser';
-import { intersection, isEqual, mapValues, once } from 'es-toolkit';
+import { flow, identity, intersection, isEqual, mapValues, once } from 'es-toolkit';
 import { computed, reactive, toRaw, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useStyle } from '@/hooks/useStyle';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
 import { objectEach } from './array';
+import { alwaysFalse } from './common';
 import { logger } from './logger';
 import type { NHentaiGallery } from './nhentai';
 
@@ -86,6 +87,8 @@ export interface Settings {
   metaFileTitleLanguage: string;
   /** 标题替换 */
   titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
+  /** 标题黑名单 */
+  titleBlacklist: Array<{ content: string; regexp: boolean }>;
   /** 右键预览 */
   galleryContextmenuPreview: boolean;
   /** 转换 webp 到其他格式 */
@@ -268,6 +271,12 @@ export const settingDefinitions: Readonly<{
       stringValidator(item.to) &&
       booleanValidator(item.regexp),
   },
+  titleBlacklist: {
+    key: 'title_blacklist',
+    default: () => [],
+    validator: val => Array.isArray(val),
+    itemValidator: item => item && stringValidator(item.content) && booleanValidator(item.regexp),
+  },
   galleryContextmenuPreview: {
     key: 'gallery_contextmenu_preview',
     default: false,
@@ -394,9 +403,30 @@ export const startWatchSettings = once(() => {
   });
 });
 
-export const validTitleReplacement = computed(() =>
-  settings.titleReplacement.filter(item => item?.from),
-);
+export const replaceTitle = computed<(title: string) => string>(() => {
+  const list = settings.titleReplacement.filter(item => item?.from);
+  if (!list.length) return identity;
+  return flow(
+    ...list.map(({ from, to, regexp }) => {
+      const searchValue = regexp ? new RegExp(from) : from;
+      return (title: string) => title.replaceAll(searchValue, to);
+    }),
+  );
+});
+
+export const isTitleBlacklisted = computed<(title: string) => boolean>(() => {
+  const list = settings.titleBlacklist
+    .filter(item => item?.content)
+    .map(({ content, regexp }) => {
+      if (regexp) {
+        const reg = new RegExp(content);
+        return (title: string) => reg.test(title);
+      }
+      return (title: string) => title.includes(content);
+    });
+  if (!list.length) return alwaysFalse;
+  return (title: string) => list.some(fn => fn(title));
+});
 
 export const customFilenameFunction = computed(() => {
   if (!settings.customFilenameFunction.trim()) return null;

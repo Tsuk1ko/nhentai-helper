@@ -86,3 +86,5 @@ export const tryParseJSON = <T = unknown>(str: unknown): T | undefined => {
 };
 
 export const needRunComplexDebug = () => settings.collectLog || IS_DEV;
+
+export const alwaysFalse = () => false;

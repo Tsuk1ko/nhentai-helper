@@ -57,6 +57,7 @@ export default {
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
     titleReplacement: '标题替换',
+    titleBlacklist: '标题黑名单',
     galleryContextmenuPreview: '右击预览',
     customFilenameFunction: '自定义文件名函数',
     history: {

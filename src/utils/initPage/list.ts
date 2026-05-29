@@ -25,7 +25,7 @@ import {
 import { getGalleryInfo } from '../nhentai';
 import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
-import { settings } from '../settings';
+import { isTitleBlacklisted, settings } from '../settings';
 import { mountTagsFilter } from '../tagsFilter';
 import type { JQElement } from '../tagsFilter';
 
@@ -168,6 +168,7 @@ const initGallery = function (this: HTMLElement) {
   if (!gid) return;
   this.dataset.gid = gid;
   const enTitle = $gallery.find(selector.galleryCaption).text().trim();
+  $gallery.toggleClass('nhentai-helper-blacklist', isTitleBlacklisted.value(enTitle));
 
   logger.debug('initGallery gid', gid);
 
@@ -301,6 +302,7 @@ const initGallery = function (this: HTMLElement) {
     this.removeEventListener('contextmenu', onContextMenu);
     $gallery.removeAttr('init');
     $gallery.removeClass('downloaded');
+    $gallery.removeClass('nhentai-helper-blacklist');
     progressDisplayController.destroy();
     ignoreController?.destroy();
     delete (this as any)._nhentaiHelperDestroy;

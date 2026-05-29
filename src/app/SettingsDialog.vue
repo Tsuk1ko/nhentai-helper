@@ -152,6 +152,8 @@
             <el-option :label="t('common.japanese')" value="japanese" />
           </el-select>
         </el-form-item>
+        <!-- 标题黑名单 -->
+        <TitleBlacklist />
         <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
         <!-- 收集日志 -->
@@ -212,6 +214,7 @@ import {
   DownloadedTitleColor,
   DownloadHistory,
   NHentaiDownloadHost,
+  TitleBlacklist,
   TitleReplacement,
 } from '@/components/settings';
 import { MIME } from '@/typings';
