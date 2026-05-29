@@ -20,8 +20,8 @@ import { fetchJSON, fetchText } from './request';
 import {
   nHentaiDownloadHosts,
   NHentaiDownloadHostSpecial,
+  replaceTitle,
   settings,
-  validTitleReplacement,
 } from './settings';
 import { ensureProtocol } from './url';
 
@@ -355,6 +355,8 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
 
   const infoPages = pages.map(({ t, w, h }, i) => ({ i: i + 1, t: NHentaiImgExt[t], w, h }));
 
+  const applyTitleReplacement = replaceTitle.value;
+
   const info: NHentaiGalleryInfo = {
     gid: id,
     mid: media_id,
@@ -485,14 +487,3 @@ export const getCompliedThumbMediaUrlTemplate = (MEDIA_URL_TEMPLATE_MAY_CHANGE ?
         : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY, gid),
     ),
 );
-
-const applyTitleReplacement = (title: string) => {
-  if (!validTitleReplacement.value.length) return title;
-  return validTitleReplacement.value.reduce((pre, { from, to, regexp }) => {
-    try {
-      return pre.replaceAll(regexp ? new RegExp(from, 'g') : from, to);
-    } catch {
-      return pre;
-    }
-  }, title);
-};
