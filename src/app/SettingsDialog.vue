@@ -134,23 +134,7 @@
           <el-checkbox v-model="settings.judgeDownloadedByPretty" :label="t('common.pretty')" />
         </el-form-item>
         <!-- 已下载本子的标题颜色 -->
-        <el-form-item :label="t('setting.downloadedTitleColor')">
-          <el-color-picker
-            v-model="settings.downloadedTitleColor"
-            show-alpha
-            clearable
-            color-format="rgb"
-            @active-change="handleDownloadedTitleColorPreviewChange"
-            @change="handleDownloadedTitleColorPreviewChange"
-          />
-          <div
-            class="downloaded-title-color-preview"
-            :class="CAPTION_CLASS"
-            :style="{ color: downloadedTitleColorPreview }"
-          >
-            {{ downloadedTitleColorPreview || settings.downloadedTitleColor }}
-          </div>
-        </el-form-item>
+        <DownloadedTitleColor />
         <!-- 添加元数据文件 -->
         <el-form-item :label="t('setting.addMetaFile')">
           <el-checkbox-group v-model="settings.addMetaFile">
@@ -171,44 +155,9 @@
         <!-- 进阶设置 -->
         <el-divider>{{ t('setting.advanceTitle') }}</el-divider>
         <!-- 收集日志 -->
-        <el-form-item :label="t('setting.collectLog')">
-          <div>
-            <div class="gap-inputs">
-              <el-switch v-model="settings.collectLog" />
-              <template v-if="settings.collectLog">
-                <el-button type="primary" :icon="DocumentCopy" @click="copyLogs">{{
-                  t('setting.copyLogs')
-                }}</el-button>
-                <el-button type="danger" :icon="Delete" @click="clearLogs">{{
-                  t('setting.clearLogs')
-                }}</el-button>
-              </template>
-            </div>
-            <div class="no-sl" style="line-height: 1.5; margin-top: 12px">
-              {{ t('setting.collectLogTip') }}
-            </div>
-          </div>
-        </el-form-item>
+        <CollectLog />
         <!-- nHentai 下载节点 -->
-        <el-form-item v-if="IS_NHENTAI" :label="t('setting.nHentaiDownloadHost')">
-          <el-select
-            v-model="settings.nHentaiDownloadHost"
-            :disabled="!!settings.customDownloadUrl"
-          >
-            <el-option
-              v-for="value in nHentaiDownloadHostSpecials"
-              :key="value"
-              :label="t(`setting.nHentaiDownloadHostOption.${value}`)"
-              :value="value"
-            />
-            <el-option
-              v-for="host in nHentaiDownloadHosts"
-              :key="host"
-              :label="host"
-              :value="host"
-            />
-          </el-select>
-        </el-form-item>
+        <NHentaiDownloadHost />
         <!-- 自定义下载地址 -->
         <el-form-item :label="t('setting.customDownloadUrl')">
           <el-input v-model="settings.customDownloadUrl" />
@@ -226,163 +175,55 @@
           <el-switch v-model="settings.streamDownload" :disabled="DISABLE_STREAM_DOWNLOAD" />
         </el-form-item>
         <!-- 标题替换 -->
-        <el-collapse>
-          <el-collapse-item>
-            <template #title>
-              <span
-                style="
-                  color: var(--el-text-color-regular);
-                  font-size: var(--el-form-label-font-size);
-                "
-                >{{ t('setting.titleReplacement') }}</span
-              >
-            </template>
-            <el-table id="title-replacement-table" :data="settings.titleReplacement">
-              <el-table-column label="From">
-                <template #default="scope">
-                  <el-input v-model="scope.row.from">
-                    <template #prefix>
-                      <span v-if="scope.row.regexp" class="no-sl">/</span>
-                    </template>
-                    <template #suffix>
-                      <span v-if="scope.row.regexp" class="no-sl">/</span>
-                    </template>
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="To">
-                <template #default="scope">
-                  <el-input v-model="scope.row.to" />
-                </template>
-              </el-table-column>
-              <el-table-column label="RegExp" width="80">
-                <template #default="scope">
-                  <el-switch v-model="scope.row.regexp" />
-                </template>
-              </el-table-column>
-              <el-table-column width="70">
-                <template #default="scope">
-                  <ConfirmPopup @confirm="() => delTitleReplacement(scope.$index)">
-                    <el-button type="danger" :icon="Delete" />
-                  </ConfirmPopup>
-                </template>
-              </el-table-column>
-              <template #append>
-                <el-button text style="width: 100%" @click="addTitleReplacement">+</el-button>
-              </template>
-            </el-table>
-          </el-collapse-item>
-        </el-collapse>
+        <TitleReplacement />
         <!-- 自定义文件名函数 -->
-        <el-form-item :label="t('setting.customFilenameFunction')">
-          <span class="monospace"
-            >function (filename<el-text type="info">: string</el-text>, gallery<el-text type="info"
-              >:
-              <el-link
-                type="primary"
-                href="https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75"
-                target="_blank"
-                >NHentaiGallery</el-link
-              ></el-text
-            >) {</span
-          >
-          <el-input
-            v-model="settings.customFilenameFunction"
-            class="monospace"
-            type="textarea"
-            placeholder="return filename;"
-            :autosize="{ minRows: 1 }"
-          />
-          <span class="monospace">}</span>
-        </el-form-item>
+        <CustomFilenameFunction />
       </el-form>
-      <el-divider>{{ t('setting.history.title') }}</el-divider>
-      <p class="no-sl">
-        {{
-          t('setting.history.downloadedNumberTip', {
-            num: Number.isNaN(downloadedNum)
-              ? downloadedNum
-              : numberFormatter.format(downloadedNum),
-          })
-        }}
-      </p>
-      <el-button
-        type="primary"
-        :icon="Download"
-        :disabled="!downloadedNum"
-        :loading="exporting"
-        @click="exportHistory"
-        >{{ t('setting.history.export') }}</el-button
-      >
-      <el-button type="primary" :icon="Upload" :loading="importing" @click="importHistory">{{
-        t('setting.history.import')
-      }}</el-button>
-      <ConfirmPopup @confirm="clearHistory">
-        <el-button type="danger" :icon="Delete" :loading="clearing">{{
-          t('setting.history.clear')
-        }}</el-button>
-      </ConfirmPopup>
-      <p class="no-sl">{{ t('setting.history.importTip') }}</p>
+      <!-- 下载历史 -->
+      <DownloadHistory />
     </div>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { Delete, DocumentCopy, Download, Upload } from '@element-plus/icons-vue';
-import { GM_openInTab, GM_setClipboard } from '$';
+import { GM_openInTab } from '$';
 import {
   ElButton,
   ElCheckbox,
   ElCheckboxGroup,
-  ElCollapse,
-  ElCollapseItem,
-  ElColorPicker,
   ElDialog,
   ElDivider,
   ElForm,
   ElFormItem,
   ElInput,
   ElInputNumber,
-  ElLink,
   ElOption,
   ElRadio,
   ElRadioGroup,
   ElSelect,
   ElSlider,
   ElSwitch,
-  ElTable,
-  ElTableColumn,
-  ElText,
 } from 'element-plus';
 import { useI18n } from 'petite-vue-i18n';
 import { computed, ref, watch } from 'vue';
-import ConfirmPopup from '@/components/ConfirmPopup.vue';
-import { IS_NHENTAI } from '@/const';
-import { selector } from '@/rules/selector';
+import {
+  CollectLog,
+  CustomFilenameFunction,
+  DownloadedTitleColor,
+  DownloadHistory,
+  NHentaiDownloadHost,
+  TitleReplacement,
+} from '@/components/settings';
 import { MIME } from '@/typings';
 import type { ElMarks } from '@/typings';
 import {
-  clearDownloadHistory,
-  exportDownloadHistory,
-  getDownloadNumber,
-  importDownloadHistory,
-} from '@/utils/downloadHistory';
-import { showMessage } from '@/utils/elementPlus';
-import { pickAndReadFile } from '@/utils/file';
-import { numberFormatter } from '@/utils/formatter';
-import { clearLogs, exportLogs } from '@/utils/logger';
-import {
   DISABLE_STREAM_DOWNLOAD,
-  nHentaiDownloadHosts,
-  nHentaiDownloadHostSpecials,
   settingDefinitions,
   writeableSettings as settings,
   startWatchSettings,
 } from '@/utils/settings';
 
 startWatchSettings();
-
-const CAPTION_CLASS = selector.galleryCaption.replace('.', '');
 
 const threadNumMarks: ElMarks = {
   1: '1',
@@ -403,7 +244,6 @@ const compressionLevelMarks: ElMarks = {
 const { t, locale } = useI18n();
 
 const show = ref(false);
-const downloadedNum = ref(NaN);
 
 const filenameLengthNumber = computed<number>({
   get: () => (typeof settings.filenameLength === 'number' ? settings.filenameLength : 0),
@@ -418,13 +258,8 @@ const filenameLengthAuto = computed<boolean>({
   },
 });
 
-const refreshDownloadNum = async () => {
-  downloadedNum.value = await getDownloadNumber();
-};
-
 const open = () => {
   show.value = true;
-  refreshDownloadNum();
 };
 
 const openHelp = () => {
@@ -434,65 +269,6 @@ const openHelp = () => {
       : 'https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings',
     { active: true, setParent: true },
   );
-};
-
-const exporting = ref(false);
-const importing = ref(false);
-const clearing = ref(false);
-
-const showMessageBySucceed = (succeed: boolean): void => {
-  showMessage({
-    type: succeed ? 'success' : 'error',
-    message: succeed ? 'Succeed' : 'Failed, please check console for error message',
-  });
-};
-
-const exportHistory = async () => {
-  exporting.value = true;
-  const succeed = await exportDownloadHistory();
-  exporting.value = false;
-  showMessageBySucceed(succeed);
-};
-
-const importHistory = async () => {
-  const data = await pickAndReadFile('application/zip');
-  if (!data) return;
-  importing.value = true;
-  const succeed = await importDownloadHistory(data);
-  importing.value = false;
-  refreshDownloadNum();
-  showMessageBySucceed(succeed);
-};
-
-const clearHistory = async () => {
-  clearing.value = true;
-  const succeed = await clearDownloadHistory();
-  clearing.value = false;
-  refreshDownloadNum();
-  showMessageBySucceed(succeed);
-};
-
-const addTitleReplacement = () => {
-  settings.titleReplacement.push({ from: '', to: '', regexp: false });
-};
-
-const delTitleReplacement = (index: number) => {
-  settings.titleReplacement.splice(index, 1);
-};
-
-const downloadedTitleColorPreview = ref(settings.downloadedTitleColor);
-
-const handleDownloadedTitleColorPreviewChange = (val: string | null) => {
-  downloadedTitleColorPreview.value = val || settings.downloadedTitleColor;
-};
-
-const copyLogs = () => {
-  GM_setClipboard(`\`\`\`\n${exportLogs()}\n\`\`\``, 'text', () => {
-    showMessage({
-      type: 'success',
-      message: t('common.copied'),
-    });
-  });
 };
 
 watch(
@@ -520,33 +296,6 @@ defineExpose({ open });
     margin-right: 4px;
     user-select: none;
   }
-}
-
-.monospace {
-  font-family: monospace;
-  span& {
-    user-select: none;
-  }
-}
-
-.code-type {
-  color: var(--el-text-color-secondary);
-}
-
-.downloaded-title-color-preview {
-  position: relative !important;
-  width: unset !important;
-  height: unset !important;
-  inset: unset !important;
-  border-radius: 0 !important;
-  margin-left: 8px !important;
-  padding: 4px 16px !important;
-  user-select: none !important;
-}
-
-.gap-inputs {
-  display: flex;
-  gap: 4px 12px;
 }
 </style>
 
@@ -629,11 +378,5 @@ defineExpose({ open });
 
 .el-select-dropdown {
   user-select: none;
-}
-
-.gap-inputs {
-  .el-button {
-    margin: 0;
-  }
 }
 </style>
