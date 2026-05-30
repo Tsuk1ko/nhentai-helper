@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.26.1
+// @version            3.27.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -128,32 +128,25 @@
 #download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb {
   background-color: #fff9;
 }
-.nhentai-helper-setting-help-buttons[data-v-b766fb56] {
-  float: left;
-  position: absolute;
+.gap-inputs[data-v-577c6dc6] {
+  display: flex;
+  gap: 4px 12px;
 }
-.inline-item[data-v-b766fb56] {
-  display: inline-block;
+.gap-inputs[data-v-577c6dc6] .el-button {
+  margin: 0;
 }
-.inline-item[data-v-b766fb56]:not(:last-of-type) {
-  margin-right: 8px;
+.collect-log-tip[data-v-577c6dc6] {
+  line-height: 1.5;
+  margin-top: 12px;
 }
-.inline-item__name[data-v-b766fb56] {
-  margin-right: 4px;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.monospace[data-v-b766fb56] {
+.monospace[data-v-e4fd1f32] {
   font-family: monospace;
 }
-span.monospace[data-v-b766fb56] {
+span.monospace[data-v-e4fd1f32] {
   -webkit-user-select: none;
   user-select: none;
 }
-.code-type[data-v-b766fb56] {
-  color: var(--el-text-color-secondary);
-}
-.downloaded-title-color-preview[data-v-b766fb56] {
+.downloaded-title-color-preview[data-v-297ff1d5] {
   position: relative !important;
   width: unset !important;
   height: unset !important;
@@ -164,9 +157,25 @@ span.monospace[data-v-b766fb56] {
   -webkit-user-select: none !important;
   user-select: none !important;
 }
-.gap-inputs[data-v-b766fb56] {
-  display: flex;
-  gap: 4px 12px;
+.is-error[data-v-b6830946] {
+  --el-input-border-color: var(--el-color-danger);
+  --el-input-hover-border-color: var(--el-color-danger);
+  --el-input-focus-border-color: var(--el-color-danger);
+}
+.nhentai-helper-setting-help-buttons[data-v-2301e7fc] {
+  float: left;
+  position: absolute;
+}
+.inline-item[data-v-2301e7fc] {
+  display: inline-block;
+}
+.inline-item[data-v-2301e7fc]:not(:last-of-type) {
+  margin-right: 8px;
+}
+.inline-item__name[data-v-2301e7fc] {
+  margin-right: 4px;
+  -webkit-user-select: none;
+  user-select: none;
 }
 #nhentai-helper-setting-dialog-outside {
   width: 80%;
@@ -240,9 +249,6 @@ span.monospace[data-v-b766fb56] {
 .el-select-dropdown {
   -webkit-user-select: none;
   user-select: none;
-}
-.gap-inputs .el-button {
-  margin: 0;
 }
 .bold[data-v-db37b7bc] {
   font-weight: 700;
@@ -434,6 +440,14 @@ span.monospace[data-v-b766fb56] {
       schedule(), leading && isFirstCall && invoke();
     };
     return debounced.schedule = schedule, debounced.cancel = cancel, debounced.flush = flush, signal?.addEventListener("abort", cancel, { once: true }), debounced;
+  }
+  function flow(...funcs) {
+    return function(...args) {
+      let result = funcs.length ? funcs[0].apply(this, args) : args[0];
+      for (let i = 1; i < funcs.length; i++)
+        result = funcs[i].call(this, result);
+      return result;
+    };
   }
   function identity(x) {
     return x;
@@ -914,7 +928,106 @@ ${source}
     Object.entries(object).forEach(([key, value]) => {
       iteratee(value, key, object);
     });
-  }, nHentaiDownloadHosts = [
+  }, defaultSelector = {
+    // list
+    menuLeft: "ul.menu.left",
+    gallery: ".gallery",
+    galleryHref: ".gallery a",
+    galleryList: "#content",
+    galleryCover: "a.cover",
+    galleryCaption: ".caption",
+    pjaxTrigger: ".pagination a, .sort a",
+    pjaxTarget: "#content",
+    pjaxRemoveParam: ".pagination a",
+    paginationPrevious: ".pagination .previous",
+    paginationNext: ".pagination .next",
+    // gallery
+    showAllImagesContainer: "#show-all-images-container",
+    showAllImagesButton: "#show-all-images-button,#show-all-images-container > .btn.btn-secondary",
+    thumbnailContainer: "#thumbnail-container",
+    thumbnailContainerImage: "#thumbnail-container img",
+    thumbnailHref: "a.gallerythumb",
+    englishTitle: "#info h1",
+    japaneseTitle: "#info h2",
+    tag: (text) => `#tags .tag-container:contains(${text}) .tag`,
+    tagName: ".name",
+    tagCount: ".count",
+    pagesTag: "#tags .tag-container:contains(Pages) .name",
+    uploadDateTag: "#tags .tag-container:contains(Uploaded) time",
+    infoButtons: "#info > .buttons",
+    // view
+    mediaImage: "#image-container img",
+    pageContainer: "#page-container"
+  }, siteMap$1 = {
+    "nhentai.xxx": {
+      // list
+      menuLeft: "ul.hd_left",
+      gallery: ".gallery_item",
+      galleryHref: ".gallery_item a",
+      galleryList: ".main_wrap",
+      galleryCover: "a",
+      pjaxTrigger: ".pagination a, .sort_links a",
+      pjaxTarget: ".main_wrap",
+      paginationPrevious: ".pagination a:contains(Previous)",
+      paginationNext: ".pagination a:contains(Next)",
+      // gallery
+      showAllImagesButton: "#show_all",
+      thumbnailContainer: ".outer_thumbs",
+      thumbnailContainerImage: ".outer_thumbs img",
+      thumbnailHref: ".gt_th > a",
+      englishTitle: ".info h1",
+      japaneseTitle: ".info h2",
+      tag: (text) => `li.tags:contains(${text}) .tag_btn`,
+      tagName: ".tag_name",
+      tagCount: ".tag_count",
+      pagesTag: ".tag_name.pages",
+      uploadDateTag: ".tags.uploaded",
+      infoButtons: ".info > .g_buttons",
+      // view
+      mediaImage: "#fimg",
+      pageContainer: ".reader_outer"
+    }
+  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] }, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), compileTemplate = (tpl) => template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g }), getDownloadExt = () => {
+    const ext = last(settings.compressionFilename.split("."));
+    return ext ? ext.toLowerCase() : "zip";
+  }, getCompressionOptions = () => ({
+    removeAdPage: settings.removeAdPage,
+    streamFiles: settings.compressionStreamFiles,
+    compression: settings.compressionLevel > 0 ? "DEFLATE" : "STORE",
+    compressionOptions: { level: settings.compressionLevel }
+  }), getShowAllBtn = () => new Promise((resolve, reject) => {
+    const $btn = $(selector.showAllImagesButton);
+    if ($btn.length > 0) {
+      resolve($btn);
+      return;
+    }
+    const container = document.querySelector(selector.thumbnailContainer);
+    if (!container) {
+      reject(new Error("Show all button not found"));
+      return;
+    }
+    new MutationObserver((mutations, self2) => {
+      mutations.forEach(({ addedNodes }) => {
+        const btnContainer = addedNodes[0];
+        btnContainer instanceof HTMLElement && btnContainer.matches(selector.showAllImagesContainer) && (self2.disconnect(), resolve($(selector.showAllImagesButton)));
+      });
+    }).observe(container, { childList: true });
+  }), createMangaDownloadInfo = (gallery, needReactive = false) => {
+    const info = {
+      gallery,
+      done: 0,
+      compressing: false,
+      compressingPercent: "0",
+      error: false
+    };
+    return needReactive ? (Vue.markRaw(info.gallery), Vue.reactive(info)) : info;
+  }, tryParseJSON = (str) => {
+    if (typeof str == "string")
+      try {
+        return JSON.parse(str);
+      } catch {
+      }
+  }, needRunComplexDebug = () => settings.collectLog || IS_DEV, alwaysFalse = () => false, nHentaiDownloadHosts = [
     "i.nhentai.net",
     "i1.nhentai.net",
     "i2.nhentai.net",
@@ -1060,6 +1173,12 @@ ${source}
       validator: (val) => Array.isArray(val),
       itemValidator: (item) => item && stringValidator(item.from) && stringValidator(item.to) && booleanValidator(item.regexp)
     },
+    titleBlacklist: {
+      key: "title_blacklist",
+      default: () => [],
+      validator: (val) => Array.isArray(val),
+      itemValidator: (item) => item && stringValidator(item.content) && booleanValidator(item.regexp)
+    },
     galleryContextmenuPreview: {
       key: "gallery_contextmenu_preview",
       default: false,
@@ -1151,9 +1270,31 @@ ${source}
         typeof ref2.value == "object" ? { deep: true } : void 0
       );
     });
-  }), validTitleReplacement = Vue.computed(
-    () => settings.titleReplacement.filter((item) => item?.from)
-  ), customFilenameFunction = Vue.computed(() => {
+  }), replaceTitle = Vue.computed(() => {
+    const list = settings.titleReplacement.filter((item) => item?.from);
+    return list.length ? flow(
+      ...list.map(({ from, to, regexp }) => {
+        try {
+          const searchValue = regexp ? new RegExp(from) : from;
+          return (title) => title.replaceAll(searchValue, to);
+        } catch (error) {
+          return logger.error("title replacement regexp:", error), identity;
+        }
+      })
+    ) : identity;
+  }), isTitleBlacklisted = Vue.computed(() => {
+    const list = settings.titleBlacklist.filter((item) => item?.content).map(({ content, regexp }) => {
+      if (regexp)
+        try {
+          const reg = new RegExp(content);
+          return (title) => reg.test(title);
+        } catch (error) {
+          return logger.error("title blacklist regexp:", error), alwaysFalse;
+        }
+      return (title) => title.includes(content);
+    });
+    return list.length ? (title) => list.some((fn) => fn(title)) : alwaysFalse;
+  }), customFilenameFunction = Vue.computed(() => {
     if (!settings.customFilenameFunction.trim()) return null;
     try {
       return new Function("filename", "gallery", settings.customFilenameFunction);
@@ -1505,7 +1646,8 @@ ${source}
     $2.event.props && $2.inArray("state", $2.event.props) < 0 ? $2.event.props.push("state") : "state" in $2.Event.prototype || $2.event.addProp("state"), $2.support.pjax = window.history && window.history.pushState && window.history.replaceState && // pushState isn't reliable on iOS until 5.
     !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]\D|WebApps\/.+CFNetwork)/), $2.support.pjax ? enable() : disable();
   })(jQuery);
-  const indexLess = `.nhentai-helper-hidden {
+  const indexLess = `.nhentai-helper-hidden,
+.nhentai-helper-blacklist {
   display: none !important;
 }
 .nhentai-helper-btn:disabled {
@@ -4071,7 +4213,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   zipQueue.emitter.on("finish", () => {
     settings.seriesMode && dlQueue.start().catch(logger.error);
   });
-  const _hoisted_1$4 = ["title"], _hoisted_2$2 = { class: "download-item__title" }, _hoisted_3$2 = { class: "download-item__progress-text" }, _sfc_main$6 = /* @__PURE__ */ Vue.defineComponent({
+  const _hoisted_1$a = ["title"], _hoisted_2$5 = { class: "download-item__title" }, _hoisted_3$2 = { class: "download-item__progress-text" }, _sfc_main$e = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadItem",
     props: {
       item: {},
@@ -4108,28 +4250,28 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         }, [..._cache[0] || (_cache[0] = [
           Vue.createElementVNode("i", { class: "fa fa-times" }, null, -1)
         ])])) : Vue.createCommentVNode("", true),
-        Vue.createElementVNode("div", _hoisted_2$2, Vue.toDisplayString(title.value), 1),
+        Vue.createElementVNode("div", _hoisted_2$5, Vue.toDisplayString(title.value), 1),
         Vue.createElementVNode("div", {
           class: "download-item__progress",
           style: Vue.normalizeStyle({ width: `${progressWidth.value}%` })
         }, [
           Vue.createElementVNode("div", _hoisted_3$2, Vue.toDisplayString(progressWidth.value) + "%", 1)
         ], 4)
-      ], 10, _hoisted_1$4));
+      ], 10, _hoisted_1$a));
     }
   }), _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
     for (const [key, val] of props)
       target[key] = val;
     return target;
-  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-e90bde63"]]), _hoisted_1$3 = { id: "download-panel" }, _sfc_main$5 = /* @__PURE__ */ Vue.defineComponent({
+  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-e90bde63"]]), _hoisted_1$9 = { id: "download-panel" }, _sfc_main$d = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadList",
     props: {
       zipList: {},
       dlList: {}
     },
     setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("div", _hoisted_1$3, [
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("div", _hoisted_1$9, [
         (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(__props.zipList, (item, index) => (Vue.openBlock(), Vue.createBlock(DownloadItem, {
           key: index,
           item,
@@ -4142,7 +4284,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         }, null, 8, ["item", "index"]))), 128))
       ]));
     }
-  }), DownloadList = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-b1f64280"]]), _sfc_main$4 = /* @__PURE__ */ Vue.defineComponent({
+  }), DownloadList = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-b1f64280"]]), _sfc_main$c = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadPanel",
     setup(__props) {
       const { title } = document, zipList = Vue.computed(() => zipQueue.queue.map(({ info }) => info)), dlList = Vue.computed(() => dlQueue.queue.map(({ info }) => info)), infoList = Vue.computed(() => [...zipList.value, ...dlList.value]), error = Vue.computed(() => !!dlList.value[0]?.error), titleWithStatus = Vue.computed(() => error.value ? `[×] ${title}` : `[${infoList.value.length || "✓"}] ${title}`);
@@ -4157,77 +4299,6 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
       }, null, 8, ["zip-list", "dl-list"])) : Vue.createCommentVNode("", true);
     }
   });
-  var _sfc_main55 = /* @__PURE__ */ Vue.defineComponent({
-    name: "CloseBold",
-    __name: "close-bold",
-    setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 1024 1024"
-      }, [
-        Vue.createElementVNode("path", {
-          fill: "currentColor",
-          d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496"
-        })
-      ]));
-    }
-  }), close_bold_default = _sfc_main55, _sfc_main80 = /* @__PURE__ */ Vue.defineComponent({
-    name: "Delete",
-    __name: "delete",
-    setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 1024 1024"
-      }, [
-        Vue.createElementVNode("path", {
-          fill: "currentColor",
-          d: "M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"
-        })
-      ]));
-    }
-  }), delete_default = _sfc_main80, _sfc_main87 = /* @__PURE__ */ Vue.defineComponent({
-    name: "DocumentCopy",
-    __name: "document-copy",
-    setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 1024 1024"
-      }, [
-        Vue.createElementVNode("path", {
-          fill: "currentColor",
-          d: "M128 320v576h576V320zm-32-64h640a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H96a32 32 0 0 1-32-32V288a32 32 0 0 1 32-32M960 96v704a32 32 0 0 1-32 32h-96v-64h64V128H384v64h-64V96a32 32 0 0 1 32-32h576a32 32 0 0 1 32 32M256 672h320v64H256zm0-192h320v64H256z"
-        })
-      ]));
-    }
-  }), document_copy_default = _sfc_main87, _sfc_main91 = /* @__PURE__ */ Vue.defineComponent({
-    name: "Download",
-    __name: "download",
-    setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 1024 1024"
-      }, [
-        Vue.createElementVNode("path", {
-          fill: "currentColor",
-          d: "M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.696 236.288-236.352 45.248 45.248L508.8 704 192 387.2l45.248-45.248L480 584.704V128h64z"
-        })
-      ]));
-    }
-  }), download_default = _sfc_main91, _sfc_main275 = /* @__PURE__ */ Vue.defineComponent({
-    name: "Upload",
-    __name: "upload",
-    setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 1024 1024"
-      }, [
-        Vue.createElementVNode("path", {
-          fill: "currentColor",
-          d: "M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-578.304V704h-64V247.296L237.248 490.048 192 444.8 508.8 128l316.8 316.8-45.312 45.248z"
-        })
-      ]));
-    }
-  }), upload_default = _sfc_main275;
   function warn(msg, err) {
     typeof console < "u" && (console.warn("[intlify] " + msg), err && console.warn(err.stack));
   }
@@ -6326,7 +6397,205 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
     const target = getGlobalThis();
     target.__INTLIFY__ = true, setDevToolsHook(target.__INTLIFY_DEVTOOLS_GLOBAL_HOOK__);
   }
-  const _sfc_main$3 = /* @__PURE__ */ Vue.defineComponent({
+  var _sfc_main55 = /* @__PURE__ */ Vue.defineComponent({
+    name: "CloseBold",
+    __name: "close-bold",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496"
+        })
+      ]));
+    }
+  }), close_bold_default = _sfc_main55, _sfc_main80 = /* @__PURE__ */ Vue.defineComponent({
+    name: "Delete",
+    __name: "delete",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"
+        })
+      ]));
+    }
+  }), delete_default = _sfc_main80, _sfc_main87 = /* @__PURE__ */ Vue.defineComponent({
+    name: "DocumentCopy",
+    __name: "document-copy",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M128 320v576h576V320zm-32-64h640a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H96a32 32 0 0 1-32-32V288a32 32 0 0 1 32-32M960 96v704a32 32 0 0 1-32 32h-96v-64h64V128H384v64h-64V96a32 32 0 0 1 32-32h576a32 32 0 0 1 32 32M256 672h320v64H256zm0-192h320v64H256z"
+        })
+      ]));
+    }
+  }), document_copy_default = _sfc_main87, _sfc_main91 = /* @__PURE__ */ Vue.defineComponent({
+    name: "Download",
+    __name: "download",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.696 236.288-236.352 45.248 45.248L508.8 704 192 387.2l45.248-45.248L480 584.704V128h64z"
+        })
+      ]));
+    }
+  }), download_default = _sfc_main91, _sfc_main275 = /* @__PURE__ */ Vue.defineComponent({
+    name: "Upload",
+    __name: "upload",
+    setup(__props) {
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 1024 1024"
+      }, [
+        Vue.createElementVNode("path", {
+          fill: "currentColor",
+          d: "M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-578.304V704h-64V247.296L237.248 490.048 192 444.8 508.8 128l316.8 316.8-45.312 45.248z"
+        })
+      ]));
+    }
+  }), upload_default = _sfc_main275;
+  const showMessage = (params) => elementPlus.ElMessage({ ...params, appendTo: _monkeyWindow.document.body }), _hoisted_1$8 = { class: "gap-inputs" }, _hoisted_2$4 = { class: "no-sl collect-log-tip" }, _sfc_main$b = /* @__PURE__ */ Vue.defineComponent({
+    __name: "CollectLog",
+    setup(__props) {
+      const { t: t2 } = useI18n(), copyLogs = () => {
+        _GM_setClipboard(`\`\`\`
+${exportLogs()}
+\`\`\``, "text", () => {
+          showMessage({
+            type: "success",
+            message: t2("common.copied")
+          });
+        });
+      };
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+        label: Vue.unref(t2)("setting.collectLog")
+      }, {
+        default: Vue.withCtx(() => [
+          Vue.createElementVNode("div", null, [
+            Vue.createElementVNode("div", _hoisted_1$8, [
+              Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                modelValue: Vue.unref(writeableSettings).collectLog,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).collectLog = $event)
+              }, null, 8, ["modelValue"]),
+              Vue.unref(writeableSettings).collectLog ? (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, { key: 0 }, [
+                Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                  type: "primary",
+                  icon: Vue.unref(document_copy_default),
+                  onClick: copyLogs
+                }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.copyLogs")), 1)
+                  ]),
+                  _: 1
+                }, 8, ["icon"]),
+                Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                  type: "danger",
+                  icon: Vue.unref(delete_default),
+                  onClick: Vue.unref(clearLogs)
+                }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.clearLogs")), 1)
+                  ]),
+                  _: 1
+                }, 8, ["icon", "onClick"])
+              ], 64)) : Vue.createCommentVNode("", true)
+            ]),
+            Vue.createElementVNode("div", _hoisted_2$4, Vue.toDisplayString(Vue.unref(t2)("setting.collectLogTip")), 1)
+          ])
+        ]),
+        _: 1
+      }, 8, ["label"]));
+    }
+  }), CollectLog = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-577c6dc6"]]), _hoisted_1$7 = { class: "monospace" }, _sfc_main$a = /* @__PURE__ */ Vue.defineComponent({
+    __name: "CustomFilenameFunction",
+    setup(__props) {
+      const { t: t2 } = useI18n();
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+        label: Vue.unref(t2)("setting.customFilenameFunction")
+      }, {
+        default: Vue.withCtx(() => [
+          Vue.createElementVNode("span", _hoisted_1$7, [
+            _cache[4] || (_cache[4] = Vue.createTextVNode("function (filename", -1)),
+            Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
+              default: Vue.withCtx(() => [..._cache[1] || (_cache[1] = [
+                Vue.createTextVNode(": string", -1)
+              ])]),
+              _: 1
+            }),
+            _cache[5] || (_cache[5] = Vue.createTextVNode(", gallery", -1)),
+            Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
+              default: Vue.withCtx(() => [
+                _cache[3] || (_cache[3] = Vue.createTextVNode(": ", -1)),
+                Vue.createVNode(Vue.unref(elementPlus.ElLink), {
+                  type: "primary",
+                  href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
+                  target: "_blank"
+                }, {
+                  default: Vue.withCtx(() => [..._cache[2] || (_cache[2] = [
+                    Vue.createTextVNode("NHentaiGallery", -1)
+                  ])]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }),
+            _cache[6] || (_cache[6] = Vue.createTextVNode(") {", -1))
+          ]),
+          Vue.createVNode(Vue.unref(elementPlus.ElInput), {
+            modelValue: Vue.unref(writeableSettings).customFilenameFunction,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
+            class: "monospace",
+            type: "textarea",
+            placeholder: "return filename;",
+            autosize: { minRows: 1 }
+          }, null, 8, ["modelValue"]),
+          _cache[7] || (_cache[7] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
+        ]),
+        _: 1
+      }, 8, ["label"]));
+    }
+  }), CustomFilenameFunction = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-e4fd1f32"]]), _sfc_main$9 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "DownloadedTitleColor",
+    setup(__props) {
+      const { t: t2 } = useI18n(), CAPTION_CLASS = selector.galleryCaption.replace(".", ""), downloadedTitleColorPreview = Vue.ref(writeableSettings.downloadedTitleColor), handlePreviewChange = (val) => {
+        downloadedTitleColorPreview.value = val || writeableSettings.downloadedTitleColor;
+      };
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+        label: Vue.unref(t2)("setting.downloadedTitleColor")
+      }, {
+        default: Vue.withCtx(() => [
+          Vue.createVNode(Vue.unref(elementPlus.ElColorPicker), {
+            modelValue: Vue.unref(writeableSettings).downloadedTitleColor,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).downloadedTitleColor = $event),
+            "show-alpha": "",
+            clearable: "",
+            "color-format": "rgb",
+            onActiveChange: handlePreviewChange,
+            onChange: handlePreviewChange
+          }, null, 8, ["modelValue"]),
+          Vue.createElementVNode("div", {
+            class: Vue.normalizeClass(["downloaded-title-color-preview", Vue.unref(CAPTION_CLASS)]),
+            style: Vue.normalizeStyle({ color: downloadedTitleColorPreview.value })
+          }, Vue.toDisplayString(downloadedTitleColorPreview.value || Vue.unref(writeableSettings).downloadedTitleColor), 7)
+        ]),
+        _: 1
+      }, 8, ["label"]));
+    }
+  }), DownloadedTitleColor = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-297ff1d5"]]), _sfc_main$8 = /* @__PURE__ */ Vue.defineComponent({
     __name: "ConfirmPopup",
     emits: ["confirm"],
     setup(__props, { emit: __emit }) {
@@ -6344,66 +6613,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         _: 3
       }, 8, ["title", "confirm-button-text", "cancel-button-text"]));
     }
-  }), defaultSelector = {
-    // list
-    menuLeft: "ul.menu.left",
-    gallery: ".gallery",
-    galleryHref: ".gallery a",
-    galleryList: "#content",
-    galleryCover: "a.cover",
-    galleryCaption: ".caption",
-    pjaxTrigger: ".pagination a, .sort a",
-    pjaxTarget: "#content",
-    pjaxRemoveParam: ".pagination a",
-    paginationPrevious: ".pagination .previous",
-    paginationNext: ".pagination .next",
-    // gallery
-    showAllImagesContainer: "#show-all-images-container",
-    showAllImagesButton: "#show-all-images-button,#show-all-images-container > .btn.btn-secondary",
-    thumbnailContainer: "#thumbnail-container",
-    thumbnailContainerImage: "#thumbnail-container img",
-    thumbnailHref: "a.gallerythumb",
-    englishTitle: "#info h1",
-    japaneseTitle: "#info h2",
-    tag: (text) => `#tags .tag-container:contains(${text}) .tag`,
-    tagName: ".name",
-    tagCount: ".count",
-    pagesTag: "#tags .tag-container:contains(Pages) .name",
-    uploadDateTag: "#tags .tag-container:contains(Uploaded) time",
-    infoButtons: "#info > .buttons",
-    // view
-    mediaImage: "#image-container img",
-    pageContainer: "#page-container"
-  }, siteMap$1 = {
-    "nhentai.xxx": {
-      // list
-      menuLeft: "ul.hd_left",
-      gallery: ".gallery_item",
-      galleryHref: ".gallery_item a",
-      galleryList: ".main_wrap",
-      galleryCover: "a",
-      pjaxTrigger: ".pagination a, .sort_links a",
-      pjaxTarget: ".main_wrap",
-      paginationPrevious: ".pagination a:contains(Previous)",
-      paginationNext: ".pagination a:contains(Next)",
-      // gallery
-      showAllImagesButton: "#show_all",
-      thumbnailContainer: ".outer_thumbs",
-      thumbnailContainerImage: ".outer_thumbs img",
-      thumbnailHref: ".gt_th > a",
-      englishTitle: ".info h1",
-      japaneseTitle: ".info h2",
-      tag: (text) => `li.tags:contains(${text}) .tag_btn`,
-      tagName: ".tag_name",
-      tagCount: ".tag_count",
-      pagesTag: ".tag_name.pages",
-      uploadDateTag: ".tags.uploaded",
-      infoButtons: ".info > .g_buttons",
-      // view
-      mediaImage: "#fimg",
-      pageContainer: ".reader_outer"
-    }
-  }, selector = { ...defaultSelector, ...siteMap$1[location.hostname] };
+  });
   var FileSaver_min$1 = { exports: {} }, FileSaver_min = FileSaver_min$1.exports, hasRequiredFileSaver_min;
   function requireFileSaver_min() {
     return hasRequiredFileSaver_min || (hasRequiredFileSaver_min = 1, (function(module, exports$1) {
@@ -7197,7 +7407,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       logger.error(error);
     }
     return false;
-  }, isSameTitleString = (title1, title2) => !!title1 && !!title2 && normalizeTitle(title1) === normalizeTitle(title2), isSameTitle = (title1, title2) => !!(settings.judgeDownloadedByJapanese && isSameTitleString(title1.japanese, title2.japanese) || settings.judgeDownloadedByEnglish && isSameTitleString(title1.english, title2.english) || settings.judgeDownloadedByPretty && isSameTitleString(title1.pretty, title2.pretty)), showMessage = (params) => elementPlus.ElMessage({ ...params, appendTo: _monkeyWindow.document.body }), isSSR = () => typeof _nano < "u" && _nano.isSSR === true, tick = Promise.prototype.then.bind(Promise.resolve()), strToHash = (s) => {
+  }, isSameTitleString = (title1, title2) => !!title1 && !!title2 && normalizeTitle(title1) === normalizeTitle(title2), isSameTitle = (title1, title2) => !!(settings.judgeDownloadedByJapanese && isSameTitleString(title1.japanese, title2.japanese) || settings.judgeDownloadedByEnglish && isSameTitleString(title1.english, title2.english) || settings.judgeDownloadedByPretty && isSameTitleString(title1.pretty, title2.pretty)), isSSR = () => typeof _nano < "u" && _nano.isSSR === true, tick = Promise.prototype.then.bind(Promise.resolve()), strToHash = (s) => {
     let hash = 0;
     for (let i = 0; i < s.length; i++) {
       const chr = s.charCodeAt(i);
@@ -7327,55 +7537,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
   }), pickAndReadFile = async (accept) => {
     const file = await pickFile(accept);
     if (file) return readFile(file);
-  }, _hoisted_1$2 = { class: "nhentai-helper-setting-help-buttons no-sl" }, _hoisted_2$1 = ["id"], _hoisted_3$1 = { id: "nhentai-helper-setting-dialog" }, _hoisted_4$1 = {
-    class: "asterisk-example no-sl",
-    style: { "margin-bottom": "18px" }
-  }, _hoisted_5$1 = { class: "inline-item" }, _hoisted_6$1 = { class: "inline-item__name" }, _hoisted_7$1 = { class: "inline-item" }, _hoisted_8 = { class: "inline-item__name" }, _hoisted_9 = { class: "gap-inputs" }, _hoisted_10 = {
-    class: "no-sl",
-    style: { "line-height": "1.5", "margin-top": "12px" }
-  }, _hoisted_11 = { style: { color: "var(--el-text-color-regular)", "font-size": "var(--el-form-label-font-size)" } }, _hoisted_12 = {
-    key: 0,
-    class: "no-sl"
-  }, _hoisted_13 = {
-    key: 0,
-    class: "no-sl"
-  }, _hoisted_14 = { class: "monospace" }, _hoisted_15 = { class: "no-sl" }, _hoisted_16 = { class: "no-sl" }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
-    __name: "SettingsDialog",
-    setup(__props, { expose: __expose }) {
-      startWatchSettings();
-      const CAPTION_CLASS = selector.galleryCaption.replace(".", ""), threadNumMarks = {
-        1: "1",
-        4: "4",
-        8: "8",
-        16: "16",
-        32: {
-          label: "32",
-          style: { whiteSpace: "nowrap" }
-        }
-      }, compressionLevelMarks = {
-        0: "0",
-        1: "1",
-        9: "9"
-      }, { t: t2, locale } = useI18n(), show = Vue.ref(false), downloadedNum = Vue.ref(NaN), filenameLengthNumber = Vue.computed({
-        get: () => typeof writeableSettings.filenameLength == "number" ? writeableSettings.filenameLength : 0,
-        set: (val) => {
-          writeableSettings.filenameLength = val;
-        }
-      }), filenameLengthAuto = Vue.computed({
-        get: () => writeableSettings.filenameLength === "auto",
-        set: (val) => {
-          writeableSettings.filenameLength = val ? "auto" : 0;
-        }
-      }), refreshDownloadNum = async () => {
+  }, _hoisted_1$6 = { class: "no-sl" }, _hoisted_2$3 = { class: "no-sl" }, _sfc_main$7 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "DownloadHistory",
+    setup(__props) {
+      const { t: t2 } = useI18n(), downloadedNum = Vue.ref(NaN), exporting = Vue.ref(false), importing = Vue.ref(false), clearing = Vue.ref(false), refreshDownloadNum = async () => {
         downloadedNum.value = await getDownloadNumber();
-      }, open2 = () => {
-        show.value = true, refreshDownloadNum();
-      }, openHelp = () => {
-        _GM_openInTab(
-          locale.value === "zh" ? "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE" : "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings",
-          { active: true, setParent: true }
-        );
-      }, exporting = Vue.ref(false), importing = Vue.ref(false), clearing = Vue.ref(false), showMessageBySucceed = (succeed) => {
+      }, showMessageBySucceed = (succeed) => {
         showMessage({
           type: succeed ? "success" : "error",
           message: succeed ? "Succeed" : "Failed, please check console for error message"
@@ -7394,21 +7561,334 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         clearing.value = true;
         const succeed = await clearDownloadHistory();
         clearing.value = false, refreshDownloadNum(), showMessageBySucceed(succeed);
-      }, addTitleReplacement = () => {
+      };
+      return Vue.onMounted(() => {
+        refreshDownloadNum();
+      }), (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, null, [
+        Vue.createVNode(Vue.unref(elementPlus.ElDivider), null, {
+          default: Vue.withCtx(() => [
+            Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.title")), 1)
+          ]),
+          _: 1
+        }),
+        Vue.createElementVNode("p", _hoisted_1$6, Vue.toDisplayString(Vue.unref(t2)("setting.history.downloadedNumberTip", {
+          num: Number.isNaN(downloadedNum.value) ? downloadedNum.value : Vue.unref(numberFormatter).format(downloadedNum.value)
+        })), 1),
+        Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+          type: "primary",
+          icon: Vue.unref(download_default),
+          disabled: !downloadedNum.value,
+          loading: exporting.value,
+          onClick: exportHistory
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.export")), 1)
+          ]),
+          _: 1
+        }, 8, ["icon", "disabled", "loading"]),
+        Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+          type: "primary",
+          icon: Vue.unref(upload_default),
+          loading: importing.value,
+          onClick: importHistory
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.import")), 1)
+          ]),
+          _: 1
+        }, 8, ["icon", "loading"]),
+        Vue.createVNode(_sfc_main$8, { onConfirm: clearHistory }, {
+          default: Vue.withCtx(() => [
+            Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+              type: "danger",
+              icon: Vue.unref(delete_default),
+              loading: clearing.value
+            }, {
+              default: Vue.withCtx(() => [
+                Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.clear")), 1)
+              ]),
+              _: 1
+            }, 8, ["icon", "loading"])
+          ]),
+          _: 1
+        }),
+        Vue.createElementVNode("p", _hoisted_2$3, Vue.toDisplayString(Vue.unref(t2)("setting.history.importTip")), 1)
+      ], 64));
+    }
+  }), _sfc_main$6 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "NHentaiDownloadHost",
+    setup(__props) {
+      const { t: t2 } = useI18n();
+      return (_ctx, _cache) => Vue.unref(IS_NHENTAI) ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+        key: 0,
+        label: Vue.unref(t2)("setting.nHentaiDownloadHost")
+      }, {
+        default: Vue.withCtx(() => [
+          Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
+            modelValue: Vue.unref(writeableSettings).nHentaiDownloadHost,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
+            disabled: !!Vue.unref(writeableSettings).customDownloadUrl
+          }, {
+            default: Vue.withCtx(() => [
+              (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(nHentaiDownloadHostSpecials), (value) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
+                key: value,
+                label: Vue.unref(t2)(`setting.nHentaiDownloadHostOption.${value}`),
+                value
+              }, null, 8, ["label", "value"]))), 128)),
+              (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(nHentaiDownloadHosts), (host) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
+                key: host,
+                label: host,
+                value: host
+              }, null, 8, ["label", "value"]))), 128))
+            ]),
+            _: 1
+          }, 8, ["modelValue", "disabled"])
+        ]),
+        _: 1
+      }, 8, ["label"])) : Vue.createCommentVNode("", true);
+    }
+  }), _hoisted_1$5 = {
+    key: 0,
+    class: "no-sl"
+  }, _hoisted_2$2 = {
+    key: 0,
+    class: "no-sl"
+  }, _sfc_main$5 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "RegExpInput",
+    props: /* @__PURE__ */ Vue.mergeModels({
+      regexp: { type: Boolean }
+    }, {
+      modelValue: { default: "", required: true },
+      modelModifiers: {}
+    }),
+    emits: ["update:modelValue"],
+    setup(__props) {
+      const value = Vue.useModel(__props, "modelValue"), isError = Vue.computed(() => {
+        if (!__props.regexp) return false;
+        try {
+          return new RegExp(value.value), !1;
+        } catch {
+          return true;
+        }
+      });
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElInput), {
+        modelValue: value.value,
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => value.value = $event),
+        class: Vue.normalizeClass({ "is-error": isError.value })
+      }, {
+        prefix: Vue.withCtx(() => [
+          __props.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_1$5, "/")) : Vue.createCommentVNode("", true)
+        ]),
+        suffix: Vue.withCtx(() => [
+          __props.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_2$2, "/")) : Vue.createCommentVNode("", true)
+        ]),
+        _: 1
+      }, 8, ["modelValue", "class"]));
+    }
+  }), RegExpInput = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-b6830946"]]), _hoisted_1$4 = { style: { "font-size": "var(--el-form-label-font-size)", color: "var(--el-text-color-regular)" } }, _sfc_main$4 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "TitleBlacklist",
+    setup(__props) {
+      const { t: t2 } = useI18n(), addTitleBlacklist = () => {
+        writeableSettings.titleBlacklist.push({ content: "", regexp: false });
+      }, delTitleBlacklist = (index) => {
+        writeableSettings.titleBlacklist.splice(index, 1);
+      };
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElCollapse), null, {
+        default: Vue.withCtx(() => [
+          Vue.createVNode(Vue.unref(elementPlus.ElCollapseItem), null, {
+            title: Vue.withCtx(() => [
+              Vue.createElementVNode("span", _hoisted_1$4, Vue.toDisplayString(Vue.unref(t2)("setting.titleBlacklist")) + " (" + Vue.toDisplayString(Vue.unref(writeableSettings).titleBlacklist.length) + ") ", 1)
+            ]),
+            default: Vue.withCtx(() => [
+              Vue.createVNode(Vue.unref(elementPlus.ElTable), {
+                data: Vue.unref(writeableSettings).titleBlacklist
+              }, {
+                append: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                    text: "",
+                    style: { width: "100%" },
+                    onClick: addTitleBlacklist
+                  }, {
+                    default: Vue.withCtx(() => [..._cache[0] || (_cache[0] = [
+                      Vue.createTextVNode("+", -1)
+                    ])]),
+                    _: 1
+                  })
+                ]),
+                default: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "Content" }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(RegExpInput, {
+                        modelValue: row.content,
+                        "onUpdate:modelValue": ($event) => row.content = $event,
+                        regexp: row.regexp
+                      }, null, 8, ["modelValue", "onUpdate:modelValue", "regexp"])
+                    ]),
+                    _: 1
+                  }),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: "RegExp",
+                    width: "80"
+                  }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                        modelValue: row.regexp,
+                        "onUpdate:modelValue": ($event) => row.regexp = $event
+                      }, null, 8, ["modelValue", "onUpdate:modelValue"])
+                    ]),
+                    _: 1
+                  }),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
+                    default: Vue.withCtx(({ $index }) => [
+                      Vue.createVNode(_sfc_main$8, {
+                        onConfirm: () => delTitleBlacklist($index)
+                      }, {
+                        default: Vue.withCtx(() => [
+                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                            type: "danger",
+                            icon: Vue.unref(delete_default)
+                          }, null, 8, ["icon"])
+                        ]),
+                        _: 1
+                      }, 8, ["onConfirm"])
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              }, 8, ["data"])
+            ]),
+            _: 1
+          })
+        ]),
+        _: 1
+      }));
+    }
+  }), _hoisted_1$3 = { style: { color: "var(--el-text-color-regular)", "font-size": "var(--el-form-label-font-size)" } }, _sfc_main$3 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "TitleReplacement",
+    setup(__props) {
+      const { t: t2 } = useI18n(), addTitleReplacement = () => {
         writeableSettings.titleReplacement.push({ from: "", to: "", regexp: false });
       }, delTitleReplacement = (index) => {
         writeableSettings.titleReplacement.splice(index, 1);
-      }, downloadedTitleColorPreview = Vue.ref(writeableSettings.downloadedTitleColor), handleDownloadedTitleColorPreviewChange = (val) => {
-        downloadedTitleColorPreview.value = val || writeableSettings.downloadedTitleColor;
-      }, copyLogs = () => {
-        _GM_setClipboard(`\`\`\`
-${exportLogs()}
-\`\`\``, "text", () => {
-          showMessage({
-            type: "success",
-            message: t2("common.copied")
-          });
-        });
+      };
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElCollapse), null, {
+        default: Vue.withCtx(() => [
+          Vue.createVNode(Vue.unref(elementPlus.ElCollapseItem), null, {
+            title: Vue.withCtx(() => [
+              Vue.createElementVNode("span", _hoisted_1$3, Vue.toDisplayString(Vue.unref(t2)("setting.titleReplacement")) + " (" + Vue.toDisplayString(Vue.unref(writeableSettings).titleReplacement.length) + ") ", 1)
+            ]),
+            default: Vue.withCtx(() => [
+              Vue.createVNode(Vue.unref(elementPlus.ElTable), {
+                data: Vue.unref(writeableSettings).titleReplacement
+              }, {
+                append: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                    text: "",
+                    style: { width: "100%" },
+                    onClick: addTitleReplacement
+                  }, {
+                    default: Vue.withCtx(() => [..._cache[0] || (_cache[0] = [
+                      Vue.createTextVNode("+", -1)
+                    ])]),
+                    _: 1
+                  })
+                ]),
+                default: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "From" }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(RegExpInput, {
+                        modelValue: row.from,
+                        "onUpdate:modelValue": ($event) => row.from = $event,
+                        regexp: row.regexp
+                      }, null, 8, ["modelValue", "onUpdate:modelValue", "regexp"])
+                    ]),
+                    _: 1
+                  }),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "To" }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(Vue.unref(elementPlus.ElInput), {
+                        modelValue: row.to,
+                        "onUpdate:modelValue": ($event) => row.to = $event
+                      }, null, 8, ["modelValue", "onUpdate:modelValue"])
+                    ]),
+                    _: 1
+                  }),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: "RegExp",
+                    width: "80"
+                  }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                        modelValue: row.regexp,
+                        "onUpdate:modelValue": ($event) => row.regexp = $event
+                      }, null, 8, ["modelValue", "onUpdate:modelValue"])
+                    ]),
+                    _: 1
+                  }),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
+                    default: Vue.withCtx(({ $index }) => [
+                      Vue.createVNode(_sfc_main$8, {
+                        onConfirm: () => delTitleReplacement($index)
+                      }, {
+                        default: Vue.withCtx(() => [
+                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                            type: "danger",
+                            icon: Vue.unref(delete_default)
+                          }, null, 8, ["icon"])
+                        ]),
+                        _: 1
+                      }, 8, ["onConfirm"])
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              }, 8, ["data"])
+            ]),
+            _: 1
+          })
+        ]),
+        _: 1
+      }));
+    }
+  }), _hoisted_1$2 = { class: "nhentai-helper-setting-help-buttons no-sl" }, _hoisted_2$1 = ["id"], _hoisted_3$1 = { id: "nhentai-helper-setting-dialog" }, _hoisted_4$1 = {
+    class: "asterisk-example no-sl",
+    style: { "margin-bottom": "18px" }
+  }, _hoisted_5$1 = { class: "inline-item" }, _hoisted_6$1 = { class: "inline-item__name" }, _hoisted_7$1 = { class: "inline-item" }, _hoisted_8 = { class: "inline-item__name" }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "SettingsDialog",
+    setup(__props, { expose: __expose }) {
+      startWatchSettings();
+      const threadNumMarks = {
+        1: "1",
+        4: "4",
+        8: "8",
+        16: "16",
+        32: {
+          label: "32",
+          style: { whiteSpace: "nowrap" }
+        }
+      }, compressionLevelMarks = {
+        0: "0",
+        1: "1",
+        9: "9"
+      }, { t: t2, locale } = useI18n(), show = Vue.ref(false), filenameLengthNumber = Vue.computed({
+        get: () => typeof writeableSettings.filenameLength == "number" ? writeableSettings.filenameLength : 0,
+        set: (val) => {
+          writeableSettings.filenameLength = val;
+        }
+      }), filenameLengthAuto = Vue.computed({
+        get: () => writeableSettings.filenameLength === "auto",
+        set: (val) => {
+          writeableSettings.filenameLength = val ? "auto" : 0;
+        }
+      }), open2 = () => {
+        show.value = true;
+      }, openHelp = () => {
+        _GM_openInTab(
+          locale.value === "zh" ? "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README-ZH.md#%E8%AE%BE%E7%BD%AE" : "https://github.com/Tsuk1ko/nhentai-helper/blob/master/README.md#settings",
+          { active: true, setParent: true }
+        );
       };
       return Vue.watch(
         () => writeableSettings.language,
@@ -7418,7 +7898,7 @@ ${exportLogs()}
       ), __expose({ open: open2 }), (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElDialog), {
         id: "nhentai-helper-setting-dialog-outside",
         modelValue: show.value,
-        "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => show.value = $event),
+        "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => show.value = $event),
         center: true,
         top: "50px"
       }, {
@@ -7591,7 +8071,7 @@ ${exportLogs()}
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).JPG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[32] || (_cache[32] = [
+                          default: Vue.withCtx(() => [..._cache[28] || (_cache[28] = [
                             Vue.createTextVNode("jpg", -1)
                           ])]),
                           _: 1
@@ -7599,7 +8079,7 @@ ${exportLogs()}
                         Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
                           value: Vue.unref(MIME).PNG
                         }, {
-                          default: Vue.withCtx(() => [..._cache[33] || (_cache[33] = [
+                          default: Vue.withCtx(() => [..._cache[29] || (_cache[29] = [
                             Vue.createTextVNode("png", -1)
                           ])]),
                           _: 1
@@ -7716,33 +8196,14 @@ ${exportLogs()}
                   ]),
                   _: 1
                 }, 8, ["label"]),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.downloadedTitleColor")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElColorPicker), {
-                      modelValue: Vue.unref(writeableSettings).downloadedTitleColor,
-                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => Vue.unref(writeableSettings).downloadedTitleColor = $event),
-                      "show-alpha": "",
-                      clearable: "",
-                      "color-format": "rgb",
-                      onActiveChange: handleDownloadedTitleColorPreviewChange,
-                      onChange: handleDownloadedTitleColorPreviewChange
-                    }, null, 8, ["modelValue"]),
-                    Vue.createElementVNode("div", {
-                      class: Vue.normalizeClass(["downloaded-title-color-preview", Vue.unref(CAPTION_CLASS)]),
-                      style: Vue.normalizeStyle({ color: downloadedTitleColorPreview.value })
-                    }, Vue.toDisplayString(downloadedTitleColorPreview.value || Vue.unref(writeableSettings).downloadedTitleColor), 7)
-                  ]),
-                  _: 1
-                }, 8, ["label"]),
+                Vue.createVNode(Vue.unref(DownloadedTitleColor)),
                 Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
                   label: Vue.unref(t2)("setting.addMetaFile")
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckboxGroup), {
                       modelValue: Vue.unref(writeableSettings).addMetaFile,
-                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
+                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
                     }, {
                       default: Vue.withCtx(() => [
                         Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
@@ -7766,7 +8227,7 @@ ${exportLogs()}
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
                       modelValue: Vue.unref(writeableSettings).metaFileTitleLanguage,
-                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
+                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
                     }, {
                       default: Vue.withCtx(() => [
                         Vue.createVNode(Vue.unref(elementPlus.ElOption), {
@@ -7783,84 +8244,22 @@ ${exportLogs()}
                   ]),
                   _: 1
                 }, 8, ["label"])) : Vue.createCommentVNode("", true),
+                Vue.createVNode(Vue.unref(_sfc_main$4)),
                 Vue.createVNode(Vue.unref(elementPlus.ElDivider), null, {
                   default: Vue.withCtx(() => [
                     Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.advanceTitle")), 1)
                   ]),
                   _: 1
                 }),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.collectLog")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createElementVNode("div", null, [
-                      Vue.createElementVNode("div", _hoisted_9, [
-                        Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
-                          modelValue: Vue.unref(writeableSettings).collectLog,
-                          "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).collectLog = $event)
-                        }, null, 8, ["modelValue"]),
-                        Vue.unref(writeableSettings).collectLog ? (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, { key: 0 }, [
-                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-                            type: "primary",
-                            icon: Vue.unref(document_copy_default),
-                            onClick: copyLogs
-                          }, {
-                            default: Vue.withCtx(() => [
-                              Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.copyLogs")), 1)
-                            ]),
-                            _: 1
-                          }, 8, ["icon"]),
-                          Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-                            type: "danger",
-                            icon: Vue.unref(delete_default),
-                            onClick: Vue.unref(clearLogs)
-                          }, {
-                            default: Vue.withCtx(() => [
-                              Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.clearLogs")), 1)
-                            ]),
-                            _: 1
-                          }, 8, ["icon", "onClick"])
-                        ], 64)) : Vue.createCommentVNode("", true)
-                      ]),
-                      Vue.createElementVNode("div", _hoisted_10, Vue.toDisplayString(Vue.unref(t2)("setting.collectLogTip")), 1)
-                    ])
-                  ]),
-                  _: 1
-                }, 8, ["label"]),
-                Vue.unref(IS_NHENTAI) ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
-                  key: 2,
-                  label: Vue.unref(t2)("setting.nHentaiDownloadHost")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
-                      modelValue: Vue.unref(writeableSettings).nHentaiDownloadHost,
-                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).nHentaiDownloadHost = $event),
-                      disabled: !!Vue.unref(writeableSettings).customDownloadUrl
-                    }, {
-                      default: Vue.withCtx(() => [
-                        (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(nHentaiDownloadHostSpecials), (value) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
-                          key: value,
-                          label: Vue.unref(t2)(`setting.nHentaiDownloadHostOption.${value}`),
-                          value
-                        }, null, 8, ["label", "value"]))), 128)),
-                        (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(Vue.unref(nHentaiDownloadHosts), (host) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElOption), {
-                          key: host,
-                          label: host,
-                          value: host
-                        }, null, 8, ["label", "value"]))), 128))
-                      ]),
-                      _: 1
-                    }, 8, ["modelValue", "disabled"])
-                  ]),
-                  _: 1
-                }, 8, ["label"])) : Vue.createCommentVNode("", true),
+                Vue.createVNode(Vue.unref(CollectLog)),
+                Vue.createVNode(Vue.unref(_sfc_main$6)),
                 Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
                   label: Vue.unref(t2)("setting.customDownloadUrl")
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customDownloadUrl,
-                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
+                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7871,7 +8270,7 @@ ${exportLogs()}
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
-                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
+                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7882,7 +8281,7 @@ ${exportLogs()}
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).seriesMode,
-                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
+                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -7893,199 +8292,24 @@ ${exportLogs()}
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).streamDownload,
-                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
+                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
                       disabled: Vue.unref(DISABLE_STREAM_DOWNLOAD)
                     }, null, 8, ["modelValue", "disabled"])
                   ]),
                   _: 1
                 }, 8, ["label"]),
-                Vue.createVNode(Vue.unref(elementPlus.ElCollapse), null, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElCollapseItem), null, {
-                      title: Vue.withCtx(() => [
-                        Vue.createElementVNode("span", _hoisted_11, Vue.toDisplayString(Vue.unref(t2)("setting.titleReplacement")), 1)
-                      ]),
-                      default: Vue.withCtx(() => [
-                        Vue.createVNode(Vue.unref(elementPlus.ElTable), {
-                          id: "title-replacement-table",
-                          data: Vue.unref(writeableSettings).titleReplacement
-                        }, {
-                          append: Vue.withCtx(() => [
-                            Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-                              text: "",
-                              style: { width: "100%" },
-                              onClick: addTitleReplacement
-                            }, {
-                              default: Vue.withCtx(() => [..._cache[34] || (_cache[34] = [
-                                Vue.createTextVNode("+", -1)
-                              ])]),
-                              _: 1
-                            })
-                          ]),
-                          default: Vue.withCtx(() => [
-                            Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "From" }, {
-                              default: Vue.withCtx((scope) => [
-                                Vue.createVNode(Vue.unref(elementPlus.ElInput), {
-                                  modelValue: scope.row.from,
-                                  "onUpdate:modelValue": ($event) => scope.row.from = $event
-                                }, {
-                                  prefix: Vue.withCtx(() => [
-                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_12, "/")) : Vue.createCommentVNode("", true)
-                                  ]),
-                                  suffix: Vue.withCtx(() => [
-                                    scope.row.regexp ? (Vue.openBlock(), Vue.createElementBlock("span", _hoisted_13, "/")) : Vue.createCommentVNode("", true)
-                                  ]),
-                                  _: 2
-                                }, 1032, ["modelValue", "onUpdate:modelValue"])
-                              ]),
-                              _: 1
-                            }),
-                            Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "To" }, {
-                              default: Vue.withCtx((scope) => [
-                                Vue.createVNode(Vue.unref(elementPlus.ElInput), {
-                                  modelValue: scope.row.to,
-                                  "onUpdate:modelValue": ($event) => scope.row.to = $event
-                                }, null, 8, ["modelValue", "onUpdate:modelValue"])
-                              ]),
-                              _: 1
-                            }),
-                            Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
-                              label: "RegExp",
-                              width: "80"
-                            }, {
-                              default: Vue.withCtx((scope) => [
-                                Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
-                                  modelValue: scope.row.regexp,
-                                  "onUpdate:modelValue": ($event) => scope.row.regexp = $event
-                                }, null, 8, ["modelValue", "onUpdate:modelValue"])
-                              ]),
-                              _: 1
-                            }),
-                            Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
-                              default: Vue.withCtx((scope) => [
-                                Vue.createVNode(_sfc_main$3, {
-                                  onConfirm: () => delTitleReplacement(scope.$index)
-                                }, {
-                                  default: Vue.withCtx(() => [
-                                    Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-                                      type: "danger",
-                                      icon: Vue.unref(delete_default)
-                                    }, null, 8, ["icon"])
-                                  ]),
-                                  _: 1
-                                }, 8, ["onConfirm"])
-                              ]),
-                              _: 1
-                            })
-                          ]),
-                          _: 1
-                        }, 8, ["data"])
-                      ]),
-                      _: 1
-                    })
-                  ]),
-                  _: 1
-                }),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.customFilenameFunction")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createElementVNode("span", _hoisted_14, [
-                      _cache[38] || (_cache[38] = Vue.createTextVNode("function (filename", -1)),
-                      Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
-                        default: Vue.withCtx(() => [..._cache[35] || (_cache[35] = [
-                          Vue.createTextVNode(": string", -1)
-                        ])]),
-                        _: 1
-                      }),
-                      _cache[39] || (_cache[39] = Vue.createTextVNode(", gallery", -1)),
-                      Vue.createVNode(Vue.unref(elementPlus.ElText), { type: "info" }, {
-                        default: Vue.withCtx(() => [
-                          _cache[37] || (_cache[37] = Vue.createTextVNode(": ", -1)),
-                          Vue.createVNode(Vue.unref(elementPlus.ElLink), {
-                            type: "primary",
-                            href: "https://github.com/Tsuk1ko/nhentai-helper/blob/df00acb0d5ad8244d408561410b3c647d5af7ed4/src/utils/nhentai.ts#L57-L75",
-                            target: "_blank"
-                          }, {
-                            default: Vue.withCtx(() => [..._cache[36] || (_cache[36] = [
-                              Vue.createTextVNode("NHentaiGallery", -1)
-                            ])]),
-                            _: 1
-                          })
-                        ]),
-                        _: 1
-                      }),
-                      _cache[40] || (_cache[40] = Vue.createTextVNode(") {", -1))
-                    ]),
-                    Vue.createVNode(Vue.unref(elementPlus.ElInput), {
-                      modelValue: Vue.unref(writeableSettings).customFilenameFunction,
-                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => Vue.unref(writeableSettings).customFilenameFunction = $event),
-                      class: "monospace",
-                      type: "textarea",
-                      placeholder: "return filename;",
-                      autosize: { minRows: 1 }
-                    }, null, 8, ["modelValue"]),
-                    _cache[41] || (_cache[41] = Vue.createElementVNode("span", { class: "monospace" }, "}", -1))
-                  ]),
-                  _: 1
-                }, 8, ["label"])
+                Vue.createVNode(Vue.unref(_sfc_main$3)),
+                Vue.createVNode(Vue.unref(CustomFilenameFunction))
               ]),
               _: 1
             }),
-            Vue.createVNode(Vue.unref(elementPlus.ElDivider), null, {
-              default: Vue.withCtx(() => [
-                Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.title")), 1)
-              ]),
-              _: 1
-            }),
-            Vue.createElementVNode("p", _hoisted_15, Vue.toDisplayString(Vue.unref(t2)("setting.history.downloadedNumberTip", {
-              num: Number.isNaN(downloadedNum.value) ? downloadedNum.value : Vue.unref(numberFormatter).format(downloadedNum.value)
-            })), 1),
-            Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-              type: "primary",
-              icon: Vue.unref(download_default),
-              disabled: !downloadedNum.value,
-              loading: exporting.value,
-              onClick: exportHistory
-            }, {
-              default: Vue.withCtx(() => [
-                Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.export")), 1)
-              ]),
-              _: 1
-            }, 8, ["icon", "disabled", "loading"]),
-            Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-              type: "primary",
-              icon: Vue.unref(upload_default),
-              loading: importing.value,
-              onClick: importHistory
-            }, {
-              default: Vue.withCtx(() => [
-                Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.import")), 1)
-              ]),
-              _: 1
-            }, 8, ["icon", "loading"]),
-            Vue.createVNode(_sfc_main$3, { onConfirm: clearHistory }, {
-              default: Vue.withCtx(() => [
-                Vue.createVNode(Vue.unref(elementPlus.ElButton), {
-                  type: "danger",
-                  icon: Vue.unref(delete_default),
-                  loading: clearing.value
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("setting.history.clear")), 1)
-                  ]),
-                  _: 1
-                }, 8, ["icon", "loading"])
-              ]),
-              _: 1
-            }),
-            Vue.createElementVNode("p", _hoisted_16, Vue.toDisplayString(Vue.unref(t2)("setting.history.importTip")), 1)
+            Vue.createVNode(Vue.unref(_sfc_main$7))
           ])
         ]),
         _: 1
       }, 8, ["modelValue"]));
     }
-  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b766fb56"]]), resource$1 = {
+  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-2301e7fc"]]), resource$1 = {
     common: {
       settings: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Settings" } },
       auto: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Auto" } },
@@ -8142,6 +8366,7 @@ ${exportLogs()}
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Add metadata file" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title language" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title replacement" } },
+      titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title blacklist" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Context menu preview" } },
       customFilenameFunction: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Custom filename function" } },
       history: {
@@ -8261,6 +8486,7 @@ ${exportLogs()}
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "添加元数据文件" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题语言" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题替换" } },
+      titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题黑名单" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "右击预览" } },
       customFilenameFunction: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "自定义文件名函数" } },
       history: {
@@ -8336,47 +8562,7 @@ ${exportLogs()}
     return appInitFunc?.(app), app.mount(el);
   }, PAGE_MANGA_DETAIL_REG = /^\/g\/\d+\/?(?:\?.*)?$/, PAGE_ONLINE_VIEW_REG = /^\/g\/\d+(?:\/list)?\/\d+\/?(?:\?.*)?$/, isPageMangaDetail = () => PAGE_MANGA_DETAIL_REG.test(location.pathname), isPageOnlineView = () => PAGE_ONLINE_VIEW_REG.test(location.pathname), isPageMangaList = () => !isPageMangaDetail() && !isPageOnlineView() && !!document.querySelector(selector.gallery);
   var PageType = /* @__PURE__ */ ((PageType2) => (PageType2[PageType2.UNKNOWN = 0] = "UNKNOWN", PageType2[PageType2.MANGA_LIST = 1] = "MANGA_LIST", PageType2[PageType2.MANGA_DETAIL = 2] = "MANGA_DETAIL", PageType2[PageType2.ONLINE_VIEW = 3] = "ONLINE_VIEW", PageType2))(PageType || {});
-  const getPageType = () => isPageMangaDetail() ? 2 : isPageOnlineView() ? 3 : document.querySelector(selector.gallery) ? 1 : 0, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), compileTemplate = (tpl) => template(tpl, { interpolate: /\{\{([\s\S]+?)\}\}/g }), getDownloadExt = () => {
-    const ext = last(settings.compressionFilename.split("."));
-    return ext ? ext.toLowerCase() : "zip";
-  }, getCompressionOptions = () => ({
-    removeAdPage: settings.removeAdPage,
-    streamFiles: settings.compressionStreamFiles,
-    compression: settings.compressionLevel > 0 ? "DEFLATE" : "STORE",
-    compressionOptions: { level: settings.compressionLevel }
-  }), getShowAllBtn = () => new Promise((resolve, reject) => {
-    const $btn = $(selector.showAllImagesButton);
-    if ($btn.length > 0) {
-      resolve($btn);
-      return;
-    }
-    const container = document.querySelector(selector.thumbnailContainer);
-    if (!container) {
-      reject(new Error("Show all button not found"));
-      return;
-    }
-    new MutationObserver((mutations, self2) => {
-      mutations.forEach(({ addedNodes }) => {
-        const btnContainer = addedNodes[0];
-        btnContainer instanceof HTMLElement && btnContainer.matches(selector.showAllImagesContainer) && (self2.disconnect(), resolve($(selector.showAllImagesButton)));
-      });
-    }).observe(container, { childList: true });
-  }), createMangaDownloadInfo = (gallery, needReactive = false) => {
-    const info = {
-      gallery,
-      done: 0,
-      compressing: false,
-      compressingPercent: "0",
-      error: false
-    };
-    return needReactive ? (Vue.markRaw(info.gallery), Vue.reactive(info)) : info;
-  }, tryParseJSON = (str) => {
-    if (typeof str == "string")
-      try {
-        return JSON.parse(str);
-      } catch {
-      }
-  }, needRunComplexDebug = () => settings.collectLog || IS_DEV;
+  const getPageType = () => isPageMangaDetail() ? 2 : isPageOnlineView() ? 3 : document.querySelector(selector.gallery) ? 1 : 0;
   class LastDownloadStore {
     store = localforage.createInstance({
       name: IDB_NAME,
@@ -10619,7 +10805,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       num_pages,
       tags,
       upload_date
-    } = gallery, { english, japanese, pretty } = title, infoPages = pages.map(({ t: t2, w, h: h2 }, i) => ({ i: i + 1, t: NHentaiImgExt[t2], w, h: h2 })), info = {
+    } = gallery, { english, japanese, pretty } = title, infoPages = pages.map(({ t: t2, w, h: h2 }, i) => ({ i: i + 1, t: NHentaiImgExt[t2], w, h: h2 })), applyTitleReplacement = replaceTitle.value, info = {
       gid: id,
       mid: media_id,
       title,
@@ -10687,13 +10873,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     async (gid) => compileTemplate(
       IS_NHENTAI ? "https://t3.nhentai.net/galleries/{{mid}}/{{filename}}" : await getMediaUrlTemplate(fetchThumbMediaUrlTemplate, THUMB_MEDIA_URL_TEMPLATE_KEY, gid)
     )
-  ), applyTitleReplacement = (title) => validTitleReplacement.value.length ? validTitleReplacement.value.reduce((pre, { from, to, regexp }) => {
-    try {
-      return pre.replaceAll(regexp ? new RegExp(from, "g") : from, to);
-    } catch {
-      return pre;
-    }
-  }, title) : title, imgConverter = new ImgConverter(), downloadGalleryByInfo = async (info, { progressDisplayController, rangeCheckers } = {}) => {
+  ), imgConverter = new ImgConverter(), downloadGalleryByInfo = async (info, { progressDisplayController, rangeCheckers } = {}) => {
     info.done = 0;
     let { mid, pages, cfName } = info.gallery;
     if (customFilenameFunction.value) {
@@ -11718,7 +11898,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     if (!gid) return;
     this.dataset.gid = gid;
     const enTitle = $gallery.find(selector.galleryCaption).text().trim();
-    logger.debug("initGallery gid", gid);
+    $gallery.toggleClass("nhentai-helper-blacklist", isTitleBlacklisted.value(enTitle)), logger.debug("initGallery gid", gid);
     const isNotSelf = () => gid !== this.dataset.gid;
     IS_NHENTAI && (UNCENSORED_REG.test(enTitle) ? $gallery.addClass("uncensored") : $gallery.removeClass("uncensored"));
     const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
@@ -11783,7 +11963,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       settings.galleryContextmenuPreview && (e.preventDefault(), openGalleryMiniPopover(this, gid));
     };
     this.addEventListener("contextmenu", onContextMenu), this._nhentaiHelperDestroy = () => {
-      this.removeEventListener("contextmenu", onContextMenu), $gallery.removeAttr("init"), $gallery.removeClass("downloaded"), progressDisplayController.destroy(), ignoreController?.destroy(), delete this._nhentaiHelperDestroy;
+      this.removeEventListener("contextmenu", onContextMenu), $gallery.removeAttr("init"), $gallery.removeClass("downloaded"), $gallery.removeClass("nhentai-helper-blacklist"), progressDisplayController.destroy(), ignoreController?.destroy(), delete this._nhentaiHelperDestroy;
     };
   };
   class StyleInjector {
@@ -11860,7 +12040,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   ), openSettingsDialog = () => {
     initSettingsDialogApp().open();
   };
-  createAppAndMount(_sfc_main$4);
+  createAppAndMount(_sfc_main$c);
   init();
   _GM_registerMenuCommand(i18n.global.t("common.settings"), openSettingsDialog);
   _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), () => lastDownload.restore());
