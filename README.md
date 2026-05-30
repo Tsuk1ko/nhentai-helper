@@ -79,10 +79,11 @@ Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https:
   Customize the text color of downloaded manga titles.
 - **Add metadata file**  
   These metadata files are currently supported:
-  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))
+  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))  
+    You need to specify the title language (english or japanese).
   - info.json (eze style, not guaranteed to work properly)
-
-  If you choose to add ComicInfo.xml, you need to specify the title language (english or japanese).
+- **Title blacklist**  
+  Hide manga whose title contains specified strings or matches specified regular expressions. Note that this only checks the English title, which is the title shown on list pages.
 
 ### Advance Settings
 
