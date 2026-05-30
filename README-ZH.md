@@ -77,10 +77,11 @@
   自定义已下载本子的标题颜色
 - **添加元数据文件**  
   目前支持添加这些元数据文件：
-  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))
+  - ComicInfo.xml (v2.1 from [anansi-project/comicinfo](https://github.com/anansi-project/comicinfo))  
+    需要指定标题语言（英语或日语）
   - info.json (eze 样式，不保证能正常工作)
-
-  若添加 ComicInfo.xml 则需要指定标题语言（英语或日语）
+- **标题黑名单**
+  可以隐藏标题包含指定字符串或符合指定正则表达式的本子，注意这只会判断英文标题，即在列表页中可以看到的标题
 
 ### 进阶设置
 
