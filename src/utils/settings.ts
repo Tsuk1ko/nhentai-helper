@@ -408,8 +408,13 @@ export const replaceTitle = computed<(title: string) => string>(() => {
   if (!list.length) return identity;
   return flow(
     ...list.map(({ from, to, regexp }) => {
-      const searchValue = regexp ? new RegExp(from) : from;
-      return (title: string) => title.replaceAll(searchValue, to);
+      try {
+        const searchValue = regexp ? new RegExp(from) : from;
+        return (title: string) => title.replaceAll(searchValue, to);
+      } catch (error) {
+        logger.error('title replacement regexp:', error);
+        return identity;
+      }
     }),
   );
 });
@@ -419,8 +424,13 @@ export const isTitleBlacklisted = computed<(title: string) => boolean>(() => {
     .filter(item => item?.content)
     .map(({ content, regexp }) => {
       if (regexp) {
-        const reg = new RegExp(content);
-        return (title: string) => reg.test(title);
+        try {
+          const reg = new RegExp(content);
+          return (title: string) => reg.test(title);
+        } catch (error) {
+          logger.error('title blacklist regexp:', error);
+          return alwaysFalse;
+        }
       }
       return (title: string) => title.includes(content);
     });

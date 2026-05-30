@@ -3,31 +3,25 @@
     <el-collapse-item>
       <template #title>
         <span
-          style="color: var(--el-text-color-regular); font-size: var(--el-form-label-font-size)"
-          >{{ t('setting.titleBlacklist') }}</span
+          style="font-size: var(--el-form-label-font-size); color: var(--el-text-color-regular)"
         >
+          {{ t('setting.titleBlacklist') }} ({{ settings.titleBlacklist.length }})
+        </span>
       </template>
       <el-table :data="settings.titleBlacklist">
         <el-table-column label="Content">
-          <template #default="scope">
-            <el-input v-model="scope.row.content">
-              <template #prefix>
-                <span v-if="scope.row.regexp" class="no-sl">/</span>
-              </template>
-              <template #suffix>
-                <span v-if="scope.row.regexp" class="no-sl">/</span>
-              </template>
-            </el-input>
+          <template #default="{ row }">
+            <RegExpInput v-model="row.content" :regexp="row.regexp" />
           </template>
         </el-table-column>
         <el-table-column label="RegExp" width="80">
-          <template #default="scope">
-            <el-switch v-model="scope.row.regexp" />
+          <template #default="{ row }">
+            <el-switch v-model="row.regexp" />
           </template>
         </el-table-column>
         <el-table-column width="70">
-          <template #default="scope">
-            <ConfirmPopup @confirm="() => delTitleBlacklist(scope.$index)">
+          <template #default="{ $index }">
+            <ConfirmPopup @confirm="() => delTitleBlacklist($index)">
               <el-button type="danger" :icon="Delete" />
             </ConfirmPopup>
           </template>
@@ -46,13 +40,13 @@ import {
   ElButton,
   ElCollapse,
   ElCollapseItem,
-  ElInput,
   ElSwitch,
   ElTable,
   ElTableColumn,
 } from 'element-plus';
 import { useI18n } from 'petite-vue-i18n';
 import ConfirmPopup from '@/components/ConfirmPopup.vue';
+import RegExpInput from '@/components/RegExpInput.vue';
 import { writeableSettings as settings } from '@/utils/settings';
 
 const { t } = useI18n();
