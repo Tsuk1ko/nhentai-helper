@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.27.0
+// @version            3.28.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -139,6 +139,17 @@
   line-height: 1.5;
   margin-top: 12px;
 }
+.inline-item[data-v-5c8e4767] {
+  display: inline-block;
+}
+.inline-item[data-v-5c8e4767]:not(:last-of-type) {
+  margin-right: 8px;
+}
+.inline-item__name[data-v-5c8e4767] {
+  margin-right: 4px;
+  -webkit-user-select: none;
+  user-select: none;
+}
 .monospace[data-v-e4fd1f32] {
   font-family: monospace;
 }
@@ -157,25 +168,17 @@ span.monospace[data-v-e4fd1f32] {
   -webkit-user-select: none !important;
   user-select: none !important;
 }
+.comic-info-tags-extra-include-popper .el-select-dropdown__footer {
+  padding: 0;
+}
 .is-error[data-v-b6830946] {
   --el-input-border-color: var(--el-color-danger);
   --el-input-hover-border-color: var(--el-color-danger);
   --el-input-focus-border-color: var(--el-color-danger);
 }
-.nhentai-helper-setting-help-buttons[data-v-2301e7fc] {
+.nhentai-helper-setting-help-buttons[data-v-6b8ca407] {
   float: left;
   position: absolute;
-}
-.inline-item[data-v-2301e7fc] {
-  display: inline-block;
-}
-.inline-item[data-v-2301e7fc]:not(:last-of-type) {
-  margin-right: 8px;
-}
-.inline-item__name[data-v-2301e7fc] {
-  margin-right: 4px;
-  -webkit-user-select: none;
-  user-select: none;
 }
 #nhentai-helper-setting-dialog-outside {
   width: 80%;
@@ -250,52 +253,52 @@ span.monospace[data-v-e4fd1f32] {
   -webkit-user-select: none;
   user-select: none;
 }
-.bold[data-v-db37b7bc] {
+.bold[data-v-9fa42e74] {
   font-weight: 700;
 }
-.info-label[data-v-db37b7bc] {
+.info-label[data-v-9fa42e74] {
   display: inline-block;
 }
-.lang-zh .info-label[data-v-db37b7bc] {
+.lang-zh .info-label[data-v-9fa42e74] {
   min-width: 30px;
 }
-.lang-en .info-label[data-v-db37b7bc] {
+.lang-en .info-label[data-v-9fa42e74] {
   min-width: 80px;
 }
-.info-tag-wrapper[data-v-db37b7bc] {
+.info-tag-wrapper[data-v-9fa42e74] {
   display: flex;
 }
-.info-tag[data-v-db37b7bc] {
+.info-tag[data-v-9fa42e74] {
   margin: 2px;
   -webkit-user-select: none;
   user-select: none;
 }
-.info-tag--pointer[data-v-db37b7bc] {
+.info-tag--pointer[data-v-9fa42e74] {
   cursor: pointer;
 }
-.image-loading[data-v-db37b7bc] {
+.image-loading[data-v-9fa42e74] {
   width: 100%;
   height: 100%;
   background-color: #0009;
 }
-.scroll-container[data-v-db37b7bc] {
+.scroll-container[data-v-9fa42e74] {
   min-height: 400px;
   margin: 8px -8px 0;
   overflow-y: auto;
   overscroll-behavior: none;
 }
-.scroll-container[data-v-db37b7bc]::-webkit-scrollbar {
+.scroll-container[data-v-9fa42e74]::-webkit-scrollbar {
   width: 6px;
 }
-.scroll-container[data-v-db37b7bc]::-webkit-scrollbar-thumb {
+.scroll-container[data-v-9fa42e74]::-webkit-scrollbar-thumb {
   background-color: #0003;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
-.scroll-container[data-v-db37b7bc]::-webkit-scrollbar-track {
+.scroll-container[data-v-9fa42e74]::-webkit-scrollbar-track {
   border-radius: 10px;
 }
-.scroll-container-inner[data-v-db37b7bc] {
+.scroll-container-inner[data-v-9fa42e74] {
   padding: 0 8px;
 }
 .gallery-mini-popover .el-descriptions__header {
@@ -1166,6 +1169,12 @@ ${source}
       key: "meta_file_title_language",
       default: "english",
       validator: (val) => availableMetaFileTitleLanguage.has(val)
+    },
+    comicInfoTagsExtraInclude: {
+      key: "comic_info_tags_extra_include",
+      default: () => ["character", "artist", "group"],
+      validator: (val) => Array.isArray(val),
+      itemValidator: stringValidator
     },
     titleReplacement: {
       key: "title_replacement",
@@ -4213,7 +4222,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
   zipQueue.emitter.on("finish", () => {
     settings.seriesMode && dlQueue.start().catch(logger.error);
   });
-  const _hoisted_1$a = ["title"], _hoisted_2$5 = { class: "download-item__title" }, _hoisted_3$2 = { class: "download-item__progress-text" }, _sfc_main$e = /* @__PURE__ */ Vue.defineComponent({
+  const _hoisted_1$b = ["title"], _hoisted_2$6 = { class: "download-item__title" }, _hoisted_3$3 = { class: "download-item__progress-text" }, _sfc_main$h = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadItem",
     props: {
       item: {},
@@ -4250,28 +4259,28 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         }, [..._cache[0] || (_cache[0] = [
           Vue.createElementVNode("i", { class: "fa fa-times" }, null, -1)
         ])])) : Vue.createCommentVNode("", true),
-        Vue.createElementVNode("div", _hoisted_2$5, Vue.toDisplayString(title.value), 1),
+        Vue.createElementVNode("div", _hoisted_2$6, Vue.toDisplayString(title.value), 1),
         Vue.createElementVNode("div", {
           class: "download-item__progress",
           style: Vue.normalizeStyle({ width: `${progressWidth.value}%` })
         }, [
-          Vue.createElementVNode("div", _hoisted_3$2, Vue.toDisplayString(progressWidth.value) + "%", 1)
+          Vue.createElementVNode("div", _hoisted_3$3, Vue.toDisplayString(progressWidth.value) + "%", 1)
         ], 4)
-      ], 10, _hoisted_1$a));
+      ], 10, _hoisted_1$b));
     }
   }), _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
     for (const [key, val] of props)
       target[key] = val;
     return target;
-  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-e90bde63"]]), _hoisted_1$9 = { id: "download-panel" }, _sfc_main$d = /* @__PURE__ */ Vue.defineComponent({
+  }, DownloadItem = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-e90bde63"]]), _hoisted_1$a = { id: "download-panel" }, _sfc_main$g = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadList",
     props: {
       zipList: {},
       dlList: {}
     },
     setup(__props) {
-      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("div", _hoisted_1$9, [
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock("div", _hoisted_1$a, [
         (Vue.openBlock(true), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(__props.zipList, (item, index) => (Vue.openBlock(), Vue.createBlock(DownloadItem, {
           key: index,
           item,
@@ -4284,7 +4293,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
         }, null, 8, ["item", "index"]))), 128))
       ]));
     }
-  }), DownloadList = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-b1f64280"]]), _sfc_main$c = /* @__PURE__ */ Vue.defineComponent({
+  }), DownloadList = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-b1f64280"]]), _sfc_main$f = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadPanel",
     setup(__props) {
       const { title } = document, zipList = Vue.computed(() => zipQueue.queue.map(({ info }) => info)), dlList = Vue.computed(() => dlQueue.queue.map(({ info }) => info)), infoList = Vue.computed(() => [...zipList.value, ...dlList.value]), error = Vue.computed(() => !!dlList.value[0]?.error), titleWithStatus = Vue.computed(() => error.value ? `[×] ${title}` : `[${infoList.value.length || "✓"}] ${title}`);
@@ -6468,7 +6477,7 @@ body.nhentai-helper-nhentai_xxx .g_buttons .download-zip-btn {
       ]));
     }
   }), upload_default = _sfc_main275;
-  const showMessage = (params) => elementPlus.ElMessage({ ...params, appendTo: _monkeyWindow.document.body }), _hoisted_1$8 = { class: "gap-inputs" }, _hoisted_2$4 = { class: "no-sl collect-log-tip" }, _sfc_main$b = /* @__PURE__ */ Vue.defineComponent({
+  const showMessage = (params) => elementPlus.ElMessage({ ...params, appendTo: _monkeyWindow.document.body }), _hoisted_1$9 = { class: "gap-inputs" }, _hoisted_2$5 = { class: "no-sl collect-log-tip" }, _sfc_main$e = /* @__PURE__ */ Vue.defineComponent({
     __name: "CollectLog",
     setup(__props) {
       const { t: t2 } = useI18n(), copyLogs = () => {
@@ -6486,7 +6495,7 @@ ${exportLogs()}
       }, {
         default: Vue.withCtx(() => [
           Vue.createElementVNode("div", null, [
-            Vue.createElementVNode("div", _hoisted_1$8, [
+            Vue.createElementVNode("div", _hoisted_1$9, [
               Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                 modelValue: Vue.unref(writeableSettings).collectLog,
                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).collectLog = $event)
@@ -6514,13 +6523,126 @@ ${exportLogs()}
                 }, 8, ["icon", "onClick"])
               ], 64)) : Vue.createCommentVNode("", true)
             ]),
-            Vue.createElementVNode("div", _hoisted_2$4, Vue.toDisplayString(Vue.unref(t2)("setting.collectLogTip")), 1)
+            Vue.createElementVNode("div", _hoisted_2$5, Vue.toDisplayString(Vue.unref(t2)("setting.collectLogTip")), 1)
           ])
         ]),
         _: 1
       }, 8, ["label"]));
     }
-  }), CollectLog = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-577c6dc6"]]), _hoisted_1$7 = { class: "monospace" }, _sfc_main$a = /* @__PURE__ */ Vue.defineComponent({
+  }), CollectLog = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-577c6dc6"]]), _hoisted_1$8 = { class: "inline-item" }, _hoisted_2$4 = { class: "inline-item__name" }, _hoisted_3$2 = { class: "inline-item" }, _hoisted_4$2 = { class: "inline-item__name" }, _sfc_main$d = /* @__PURE__ */ Vue.defineComponent({
+    __name: "CompressionFileName",
+    setup(__props) {
+      const { t: t2 } = useI18n(), artistReg = /\{\{\s*artist\s*\}\}/, hasArtist = Vue.computed(() => artistReg.test(writeableSettings.compressionFilename));
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, null, [
+        Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+          label: Vue.unref(t2)("setting.compressionFilename")
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createVNode(Vue.unref(elementPlus.ElInput), {
+              modelValue: Vue.unref(writeableSettings).compressionFilename,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).compressionFilename = $event),
+              placeholder: Vue.unref(settingDefinitions).compressionFilename.default,
+              onBlur: _cache[1] || (_cache[1] = ($event) => {
+                Vue.unref(writeableSettings).compressionFilename || (Vue.unref(writeableSettings).compressionFilename = Vue.unref(settingDefinitions).compressionFilename.default);
+              })
+            }, null, 8, ["modelValue", "placeholder"])
+          ]),
+          _: 1
+        }, 8, ["label"]),
+        hasArtist.value ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+          key: 0,
+          label: "└ {{artist}}"
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createElementVNode("div", _hoisted_1$8, [
+              Vue.createElementVNode("span", _hoisted_2$4, Vue.toDisplayString(Vue.unref(t2)("setting.maxNumber")), 1),
+              Vue.createVNode(Vue.unref(elementPlus.ElInputNumber), {
+                modelValue: Vue.unref(writeableSettings).filenameMaxArtistsNumber,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => Vue.unref(writeableSettings).filenameMaxArtistsNumber = $event),
+                size: "small",
+                min: 0,
+                "value-on-clear": Vue.unref(settingDefinitions).filenameMaxArtistsNumber.default,
+                "step-strictly": true,
+                style: { width: "90px" }
+              }, null, 8, ["modelValue", "value-on-clear"])
+            ]),
+            Vue.createElementVNode("div", _hoisted_3$2, [
+              Vue.createElementVNode("span", _hoisted_4$2, Vue.toDisplayString(Vue.unref(t2)("setting.separator")), 1),
+              Vue.createVNode(Vue.unref(elementPlus.ElInput), {
+                modelValue: Vue.unref(writeableSettings).filenameArtistsSeparator,
+                "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => Vue.unref(writeableSettings).filenameArtistsSeparator = $event),
+                size: "small",
+                placeholder: Vue.unref(settingDefinitions).filenameArtistsSeparator.default,
+                style: { width: "50px" }
+              }, null, 8, ["modelValue", "placeholder"])
+            ])
+          ]),
+          _: 1
+        })) : Vue.createCommentVNode("", true)
+      ], 64));
+    }
+  }), CompressionFileName = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-5c8e4767"]]), _sfc_main$c = /* @__PURE__ */ Vue.defineComponent({
+    __name: "ConvertWebp",
+    setup(__props) {
+      const { t: t2 } = useI18n();
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, null, [
+        Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+          label: Vue.unref(t2)("setting.convertWebpTo")
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createVNode(Vue.unref(elementPlus.ElRadioGroup), {
+              modelValue: Vue.unref(writeableSettings).convertWebpTo,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).convertWebpTo = $event)
+            }, {
+              default: Vue.withCtx(() => [
+                Vue.createVNode(Vue.unref(elementPlus.ElRadio), { value: "" }, {
+                  default: Vue.withCtx(() => [
+                    Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("common.disabled")), 1)
+                  ]),
+                  _: 1
+                }),
+                Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
+                  value: Vue.unref(MIME).JPG
+                }, {
+                  default: Vue.withCtx(() => [..._cache[2] || (_cache[2] = [
+                    Vue.createTextVNode("jpg", -1)
+                  ])]),
+                  _: 1
+                }, 8, ["value"]),
+                Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
+                  value: Vue.unref(MIME).PNG
+                }, {
+                  default: Vue.withCtx(() => [..._cache[3] || (_cache[3] = [
+                    Vue.createTextVNode("png", -1)
+                  ])]),
+                  _: 1
+                }, 8, ["value"])
+              ]),
+              _: 1
+            }, 8, ["modelValue"])
+          ]),
+          _: 1
+        }, 8, ["label"]),
+        Vue.unref(writeableSettings).convertWebpTo === Vue.unref(MIME).JPG ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
+          key: 0,
+          label: `└ ${Vue.unref(t2)("setting.convertWebpQuality")} (0~100)`
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createVNode(Vue.unref(elementPlus.ElInputNumber), {
+              modelValue: Vue.unref(writeableSettings).convertWebpQuality,
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => Vue.unref(writeableSettings).convertWebpQuality = $event),
+              size: "small",
+              min: 0,
+              max: 100,
+              "value-on-clear": Vue.unref(settingDefinitions).convertWebpQuality.default,
+              "step-strictly": true
+            }, null, 8, ["modelValue", "value-on-clear"])
+          ]),
+          _: 1
+        }, 8, ["label"])) : Vue.createCommentVNode("", true)
+      ], 64));
+    }
+  }), _hoisted_1$7 = { class: "monospace" }, _sfc_main$b = /* @__PURE__ */ Vue.defineComponent({
     __name: "CustomFilenameFunction",
     setup(__props) {
       const { t: t2 } = useI18n();
@@ -6568,7 +6690,7 @@ ${exportLogs()}
         _: 1
       }, 8, ["label"]));
     }
-  }), CustomFilenameFunction = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-e4fd1f32"]]), _sfc_main$9 = /* @__PURE__ */ Vue.defineComponent({
+  }), CustomFilenameFunction = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-e4fd1f32"]]), _sfc_main$a = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadedTitleColor",
     setup(__props) {
       const { t: t2 } = useI18n(), CAPTION_CLASS = selector.galleryCaption.replace(".", ""), downloadedTitleColorPreview = Vue.ref(writeableSettings.downloadedTitleColor), handlePreviewChange = (val) => {
@@ -6595,7 +6717,7 @@ ${exportLogs()}
         _: 1
       }, 8, ["label"]));
     }
-  }), DownloadedTitleColor = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-297ff1d5"]]), _sfc_main$8 = /* @__PURE__ */ Vue.defineComponent({
+  }), DownloadedTitleColor = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-297ff1d5"]]), _sfc_main$9 = /* @__PURE__ */ Vue.defineComponent({
     __name: "ConfirmPopup",
     emits: ["confirm"],
     setup(__props, { emit: __emit }) {
@@ -7537,7 +7659,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
   }), pickAndReadFile = async (accept) => {
     const file = await pickFile(accept);
     if (file) return readFile(file);
-  }, _hoisted_1$6 = { class: "no-sl" }, _hoisted_2$3 = { class: "no-sl" }, _sfc_main$7 = /* @__PURE__ */ Vue.defineComponent({
+  }, _hoisted_1$6 = { class: "no-sl" }, _hoisted_2$3 = { class: "no-sl" }, _sfc_main$8 = /* @__PURE__ */ Vue.defineComponent({
     __name: "DownloadHistory",
     setup(__props) {
       const { t: t2 } = useI18n(), downloadedNum = Vue.ref(NaN), exporting = Vue.ref(false), importing = Vue.ref(false), clearing = Vue.ref(false), refreshDownloadNum = async () => {
@@ -7597,7 +7719,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           ]),
           _: 1
         }, 8, ["icon", "loading"]),
-        Vue.createVNode(_sfc_main$8, { onConfirm: clearHistory }, {
+        Vue.createVNode(_sfc_main$9, { onConfirm: clearHistory }, {
           default: Vue.withCtx(() => [
             Vue.createVNode(Vue.unref(elementPlus.ElButton), {
               type: "danger",
@@ -7613,6 +7735,109 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
           _: 1
         }),
         Vue.createElementVNode("p", _hoisted_2$3, Vue.toDisplayString(Vue.unref(t2)("setting.history.importTip")), 1)
+      ], 64));
+    }
+  }), _sfc_main$7 = /* @__PURE__ */ Vue.defineComponent({
+    __name: "MetaFile",
+    setup(__props) {
+      const { t: t2 } = useI18n(), comicInfoTagsExtraIncludeOptions = [
+        "parody",
+        "character",
+        "artist",
+        "group",
+        "language",
+        "category"
+      ], comicInfoTagsExtraIncludeOptionsSet = new Set(comicInfoTagsExtraIncludeOptions), resetComicInfoTagsExtraIncludeToDefault = () => {
+        writeableSettings.comicInfoTagsExtraInclude = settingDefinitions.comicInfoTagsExtraInclude.default();
+      };
+      return (_ctx, _cache) => (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, null, [
+        Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+          label: Vue.unref(t2)("setting.addMetaFile")
+        }, {
+          default: Vue.withCtx(() => [
+            Vue.createVNode(Vue.unref(elementPlus.ElCheckboxGroup), {
+              modelValue: Vue.unref(writeableSettings).addMetaFile,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
+            }, {
+              default: Vue.withCtx(() => [
+                Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
+                  label: "ComicInfo.xml",
+                  value: "ComicInfoXml"
+                }),
+                Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
+                  label: "info.json (eze)",
+                  value: "EzeInfoJson"
+                })
+              ]),
+              _: 1
+            }, 8, ["modelValue"])
+          ]),
+          _: 1
+        }, 8, ["label"]),
+        Vue.unref(writeableSettings).addMetaFile.includes("ComicInfoXml") ? (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, { key: 0 }, [
+          Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+            label: `├ ${Vue.unref(t2)("setting.metaFileTitleLanguage")}`
+          }, {
+            default: Vue.withCtx(() => [
+              Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
+                modelValue: Vue.unref(writeableSettings).metaFileTitleLanguage,
+                "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
+              }, {
+                default: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElOption), {
+                    label: Vue.unref(t2)("common.english"),
+                    value: "english"
+                  }, null, 8, ["label"]),
+                  Vue.createVNode(Vue.unref(elementPlus.ElOption), {
+                    label: Vue.unref(t2)("common.japanese"),
+                    value: "japanese"
+                  }, null, 8, ["label"])
+                ]),
+                _: 1
+              }, 8, ["modelValue"])
+            ]),
+            _: 1
+          }, 8, ["label"]),
+          Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+            label: `└ ${Vue.unref(t2)("setting.comicInfoTagsExtraInclude")}`
+          }, {
+            default: Vue.withCtx(() => [
+              Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
+                modelValue: Vue.unref(writeableSettings).comicInfoTagsExtraInclude,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => Vue.unref(writeableSettings).comicInfoTagsExtraInclude = $event),
+                "popper-class": "comic-info-tags-extra-include-popper",
+                multiple: "",
+                filterable: "",
+                "allow-create": ""
+              }, {
+                label: Vue.withCtx(({ value }) => [
+                  Vue.createTextVNode(Vue.toDisplayString(Vue.unref(comicInfoTagsExtraIncludeOptionsSet).has(value) ? Vue.unref(t2)(`meta.${value}`) : value), 1)
+                ]),
+                footer: Vue.withCtx(() => [
+                  Vue.createVNode(Vue.unref(elementPlus.ElButton), {
+                    text: "",
+                    style: { width: "100%" },
+                    onClick: resetComicInfoTagsExtraIncludeToDefault
+                  }, {
+                    default: Vue.withCtx(() => [
+                      Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("common.resetToDefault")), 1)
+                    ]),
+                    _: 1
+                  })
+                ]),
+                default: Vue.withCtx(() => [
+                  (Vue.openBlock(), Vue.createElementBlock(Vue.Fragment, null, Vue.renderList(comicInfoTagsExtraIncludeOptions, (type) => Vue.createVNode(Vue.unref(elementPlus.ElOption), {
+                    key: type,
+                    label: `${Vue.unref(t2)(`meta.${type}`)} (${type})`,
+                    value: type
+                  }, null, 8, ["label", "value"])), 64))
+                ]),
+                _: 1
+              }, 8, ["modelValue"])
+            ]),
+            _: 1
+          }, 8, ["label"])
+        ], 64)) : Vue.createCommentVNode("", true)
       ], 64));
     }
   }), _sfc_main$6 = /* @__PURE__ */ Vue.defineComponent({
@@ -7740,7 +7965,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   }),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
                     default: Vue.withCtx(({ $index }) => [
-                      Vue.createVNode(_sfc_main$8, {
+                      Vue.createVNode(_sfc_main$9, {
                         onConfirm: () => delTitleBlacklist($index)
                       }, {
                         default: Vue.withCtx(() => [
@@ -7828,7 +8053,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   }),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
                     default: Vue.withCtx(({ $index }) => [
-                      Vue.createVNode(_sfc_main$8, {
+                      Vue.createVNode(_sfc_main$9, {
                         onConfirm: () => delTitleReplacement($index)
                       }, {
                         default: Vue.withCtx(() => [
@@ -7855,7 +8080,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
   }), _hoisted_1$2 = { class: "nhentai-helper-setting-help-buttons no-sl" }, _hoisted_2$1 = ["id"], _hoisted_3$1 = { id: "nhentai-helper-setting-dialog" }, _hoisted_4$1 = {
     class: "asterisk-example no-sl",
     style: { "margin-bottom": "18px" }
-  }, _hoisted_5$1 = { class: "inline-item" }, _hoisted_6$1 = { class: "inline-item__name" }, _hoisted_7$1 = { class: "inline-item" }, _hoisted_8 = { class: "inline-item__name" }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
+  }, _sfc_main$2 = /* @__PURE__ */ Vue.defineComponent({
     __name: "SettingsDialog",
     setup(__props, { expose: __expose }) {
       startWatchSettings();
@@ -7898,7 +8123,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       ), __expose({ open: open2 }), (_ctx, _cache) => (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElDialog), {
         id: "nhentai-helper-setting-dialog-outside",
         modelValue: show.value,
-        "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => show.value = $event),
+        "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => show.value = $event),
         center: true,
         top: "50px"
       }, {
@@ -7975,48 +8200,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   ]),
                   _: 1
                 }, 8, ["label"]),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.compressionFilename")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElInput), {
-                      modelValue: Vue.unref(writeableSettings).compressionFilename,
-                      "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => Vue.unref(writeableSettings).compressionFilename = $event),
-                      placeholder: Vue.unref(settingDefinitions).compressionFilename.default,
-                      onBlur: _cache[4] || (_cache[4] = ($event) => {
-                        Vue.unref(writeableSettings).compressionFilename || (Vue.unref(writeableSettings).compressionFilename = Vue.unref(settingDefinitions).compressionFilename.default);
-                      })
-                    }, null, 8, ["modelValue", "placeholder"])
-                  ]),
-                  _: 1
-                }, 8, ["label"]),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), { label: "└ {{artist}}" }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createElementVNode("div", _hoisted_5$1, [
-                      Vue.createElementVNode("span", _hoisted_6$1, Vue.toDisplayString(Vue.unref(t2)("setting.maxNumber")), 1),
-                      Vue.createVNode(Vue.unref(elementPlus.ElInputNumber), {
-                        modelValue: Vue.unref(writeableSettings).filenameMaxArtistsNumber,
-                        "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => Vue.unref(writeableSettings).filenameMaxArtistsNumber = $event),
-                        size: "small",
-                        min: 0,
-                        "value-on-clear": Vue.unref(settingDefinitions).filenameMaxArtistsNumber.default,
-                        "step-strictly": true,
-                        style: { width: "90px" }
-                      }, null, 8, ["modelValue", "value-on-clear"])
-                    ]),
-                    Vue.createElementVNode("div", _hoisted_7$1, [
-                      Vue.createElementVNode("span", _hoisted_8, Vue.toDisplayString(Vue.unref(t2)("setting.separator")), 1),
-                      Vue.createVNode(Vue.unref(elementPlus.ElInput), {
-                        modelValue: Vue.unref(writeableSettings).filenameArtistsSeparator,
-                        "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => Vue.unref(writeableSettings).filenameArtistsSeparator = $event),
-                        size: "small",
-                        placeholder: Vue.unref(settingDefinitions).filenameArtistsSeparator.default,
-                        style: { width: "50px" }
-                      }, null, 8, ["modelValue", "placeholder"])
-                    ])
-                  ]),
-                  _: 1
-                }),
+                Vue.createVNode(Vue.unref(CompressionFileName)),
                 Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
                   class: "m-b-32",
                   label: Vue.unref(t2)("setting.compressionLevel")
@@ -8024,7 +8208,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSlider), {
                       modelValue: Vue.unref(writeableSettings).compressionLevel,
-                      "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => Vue.unref(writeableSettings).compressionLevel = $event),
+                      "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => Vue.unref(writeableSettings).compressionLevel = $event),
                       min: 0,
                       max: 9,
                       marks: compressionLevelMarks
@@ -8038,7 +8222,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElInputNumber), {
                       modelValue: filenameLengthNumber.value,
-                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => filenameLengthNumber.value = $event),
+                      "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => filenameLengthNumber.value = $event),
                       min: 0,
                       "value-on-clear": Vue.unref(settingDefinitions).filenameLength.default,
                       "step-strictly": true,
@@ -8046,74 +8230,21 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                     }, null, 8, ["modelValue", "value-on-clear", "disabled"]),
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
                       modelValue: filenameLengthAuto.value,
-                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => filenameLengthAuto.value = $event),
+                      "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => filenameLengthAuto.value = $event),
                       class: "m-l-16",
                       label: Vue.unref(t2)("common.auto")
                     }, null, 8, ["modelValue", "label"])
                   ]),
                   _: 1
                 }, 8, ["label"]),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.convertWebpTo")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElRadioGroup), {
-                      modelValue: Vue.unref(writeableSettings).convertWebpTo,
-                      "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => Vue.unref(writeableSettings).convertWebpTo = $event)
-                    }, {
-                      default: Vue.withCtx(() => [
-                        Vue.createVNode(Vue.unref(elementPlus.ElRadio), { value: "" }, {
-                          default: Vue.withCtx(() => [
-                            Vue.createTextVNode(Vue.toDisplayString(Vue.unref(t2)("common.disabled")), 1)
-                          ]),
-                          _: 1
-                        }),
-                        Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
-                          value: Vue.unref(MIME).JPG
-                        }, {
-                          default: Vue.withCtx(() => [..._cache[28] || (_cache[28] = [
-                            Vue.createTextVNode("jpg", -1)
-                          ])]),
-                          _: 1
-                        }, 8, ["value"]),
-                        Vue.createVNode(Vue.unref(elementPlus.ElRadio), {
-                          value: Vue.unref(MIME).PNG
-                        }, {
-                          default: Vue.withCtx(() => [..._cache[29] || (_cache[29] = [
-                            Vue.createTextVNode("png", -1)
-                          ])]),
-                          _: 1
-                        }, 8, ["value"])
-                      ]),
-                      _: 1
-                    }, 8, ["modelValue"])
-                  ]),
-                  _: 1
-                }, 8, ["label"]),
-                Vue.unref(writeableSettings).convertWebpTo === Vue.unref(MIME).JPG ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
-                  key: 0,
-                  label: `└ ${Vue.unref(t2)("setting.convertWebpQuality")} (0~100)`
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElInputNumber), {
-                      modelValue: Vue.unref(writeableSettings).convertWebpQuality,
-                      "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => Vue.unref(writeableSettings).convertWebpQuality = $event),
-                      size: "small",
-                      min: 0,
-                      max: 100,
-                      "value-on-clear": Vue.unref(settingDefinitions).convertWebpQuality.default,
-                      "step-strictly": true
-                    }, null, 8, ["modelValue", "value-on-clear"])
-                  ]),
-                  _: 1
-                }, 8, ["label"])) : Vue.createCommentVNode("", true),
+                Vue.createVNode(Vue.unref(_sfc_main$c)),
                 Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
                   label: Vue.unref(t2)("setting.removeAdPage")
                 }, {
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).removeAdPage,
-                      "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => Vue.unref(writeableSettings).removeAdPage = $event)
+                      "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => Vue.unref(writeableSettings).removeAdPage = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8124,7 +8255,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).autoCancelDownloadedManga,
-                      "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => Vue.unref(writeableSettings).autoCancelDownloadedManga = $event)
+                      "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => Vue.unref(writeableSettings).autoCancelDownloadedManga = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8135,7 +8266,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).autoRetryWhenErrorOccurs,
-                      "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => Vue.unref(writeableSettings).autoRetryWhenErrorOccurs = $event)
+                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => Vue.unref(writeableSettings).autoRetryWhenErrorOccurs = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8146,7 +8277,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).autoShowAll,
-                      "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => Vue.unref(writeableSettings).autoShowAll = $event)
+                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => Vue.unref(writeableSettings).autoShowAll = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8158,7 +8289,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).showIgnoreButton,
-                      "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => Vue.unref(writeableSettings).showIgnoreButton = $event)
+                      "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => Vue.unref(writeableSettings).showIgnoreButton = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8169,7 +8300,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).galleryContextmenuPreview,
-                      "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => Vue.unref(writeableSettings).galleryContextmenuPreview = $event)
+                      "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => Vue.unref(writeableSettings).galleryContextmenuPreview = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8180,70 +8311,24 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
                       modelValue: Vue.unref(writeableSettings).judgeDownloadedByEnglish,
-                      "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByEnglish = $event),
+                      "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByEnglish = $event),
                       label: Vue.unref(t2)("common.english")
                     }, null, 8, ["modelValue", "label"]),
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
                       modelValue: Vue.unref(writeableSettings).judgeDownloadedByJapanese,
-                      "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByJapanese = $event),
+                      "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByJapanese = $event),
                       label: Vue.unref(t2)("common.japanese")
                     }, null, 8, ["modelValue", "label"]),
                     Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
                       modelValue: Vue.unref(writeableSettings).judgeDownloadedByPretty,
-                      "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByPretty = $event),
+                      "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => Vue.unref(writeableSettings).judgeDownloadedByPretty = $event),
                       label: Vue.unref(t2)("common.pretty")
                     }, null, 8, ["modelValue", "label"])
                   ]),
                   _: 1
                 }, 8, ["label"]),
                 Vue.createVNode(Vue.unref(DownloadedTitleColor)),
-                Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-                  label: Vue.unref(t2)("setting.addMetaFile")
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElCheckboxGroup), {
-                      modelValue: Vue.unref(writeableSettings).addMetaFile,
-                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => Vue.unref(writeableSettings).addMetaFile = $event)
-                    }, {
-                      default: Vue.withCtx(() => [
-                        Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
-                          label: "ComicInfo.xml",
-                          value: "ComicInfoXml"
-                        }),
-                        Vue.createVNode(Vue.unref(elementPlus.ElCheckbox), {
-                          label: "info.json (eze)",
-                          value: "EzeInfoJson"
-                        })
-                      ]),
-                      _: 1
-                    }, 8, ["modelValue"])
-                  ]),
-                  _: 1
-                }, 8, ["label"]),
-                Vue.unref(writeableSettings).addMetaFile.includes("ComicInfoXml") ? (Vue.openBlock(), Vue.createBlock(Vue.unref(elementPlus.ElFormItem), {
-                  key: 1,
-                  label: `└ ${Vue.unref(t2)("setting.metaFileTitleLanguage")}`
-                }, {
-                  default: Vue.withCtx(() => [
-                    Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
-                      modelValue: Vue.unref(writeableSettings).metaFileTitleLanguage,
-                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => Vue.unref(writeableSettings).metaFileTitleLanguage = $event)
-                    }, {
-                      default: Vue.withCtx(() => [
-                        Vue.createVNode(Vue.unref(elementPlus.ElOption), {
-                          label: Vue.unref(t2)("common.english"),
-                          value: "english"
-                        }, null, 8, ["label"]),
-                        Vue.createVNode(Vue.unref(elementPlus.ElOption), {
-                          label: Vue.unref(t2)("common.japanese"),
-                          value: "japanese"
-                        }, null, 8, ["label"])
-                      ]),
-                      _: 1
-                    }, 8, ["modelValue"])
-                  ]),
-                  _: 1
-                }, 8, ["label"])) : Vue.createCommentVNode("", true),
+                Vue.createVNode(Vue.unref(_sfc_main$7)),
                 Vue.createVNode(Vue.unref(_sfc_main$4)),
                 Vue.createVNode(Vue.unref(elementPlus.ElDivider), null, {
                   default: Vue.withCtx(() => [
@@ -8259,7 +8344,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                       modelValue: Vue.unref(writeableSettings).customDownloadUrl,
-                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
+                      "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => Vue.unref(writeableSettings).customDownloadUrl = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8270,7 +8355,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).compressionStreamFiles,
-                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
+                      "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => Vue.unref(writeableSettings).compressionStreamFiles = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8281,7 +8366,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).seriesMode,
-                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
+                      "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => Vue.unref(writeableSettings).seriesMode = $event)
                     }, null, 8, ["modelValue"])
                   ]),
                   _: 1
@@ -8292,7 +8377,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   default: Vue.withCtx(() => [
                     Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
                       modelValue: Vue.unref(writeableSettings).streamDownload,
-                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
+                      "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => Vue.unref(writeableSettings).streamDownload = $event),
                       disabled: Vue.unref(DISABLE_STREAM_DOWNLOAD)
                     }, null, 8, ["modelValue", "disabled"])
                   ]),
@@ -8303,13 +8388,13 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
               ]),
               _: 1
             }),
-            Vue.createVNode(Vue.unref(_sfc_main$7))
+            Vue.createVNode(Vue.unref(_sfc_main$8))
           ])
         ]),
         _: 1
       }, 8, ["modelValue"]));
     }
-  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-2301e7fc"]]), resource$1 = {
+  }), SettingsDialog = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6b8ca407"]]), resource$1 = {
     common: {
       settings: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Settings" } },
       auto: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Auto" } },
@@ -8325,6 +8410,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Copied" } },
       language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Language" } },
       other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Other" } },
+      resetToDefault: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Reset to default" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "EN" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "JP" } },
@@ -8365,6 +8451,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       },
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Add metadata file" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title language" } },
+      comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags extra include" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title replacement" } },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title blacklist" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Context menu preview" } },
@@ -8445,6 +8532,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       copied: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "已复制" } },
       language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "语言" } },
       other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "其他" } },
+      resetToDefault: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "重置为默认" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "英" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "日" } },
@@ -8485,6 +8573,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       },
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "添加元数据文件" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题语言" } },
+      comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags 额外包含" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题替换" } },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题黑名单" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "右击预览" } },
@@ -10420,9 +10509,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         const date = new Date(info.uploadDate * 1e3);
         this.appendElement("Year", date.getUTCFullYear()), this.appendElement("Month", date.getUTCMonth() + 1), this.appendElement("Day", date.getUTCDate());
       }
-      const getTags = (type) => info.tags.filter((t2) => t2.type === type), artistTags = getTags("artist");
+      const getTags = (type) => info.tags.filter((t2) => t2.type === type), getTagsBatch = (types) => {
+        const set = new Set(types);
+        return info.tags.filter((t2) => set.has(t2.type));
+      }, artistTags = getTags("artist");
       artistTags.length && this.appendElement("Writer", artistTags.map((t2) => t2.name).join(", "));
-      const tags = getTags("tag");
+      const tags = getTagsBatch(["tag", ...settings.comicInfoTagsExtraInclude]);
       tags.length && this.appendElement("Tags", tags.map((t2) => t2.name).join(", ")), this.appendElement("Web", `${location.origin}/g/${info.gid}`), this.appendElement("PageCount", info.pages.length);
       const languageTag = info.tags.find(({ type, name }) => type === "language" && name in langMap);
       languageTag && this.appendElement("LanguageISO", langMap[languageTag.name]), this.appendElement("Format", /\[digital\]/i.test(info.title.english) ? "Digital" : "TBP"), this.appendElement("Manga", "Yes");
@@ -11208,7 +11300,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       };
       let loadingGid = "";
       const open2 = async (el, gid) => {
-        if (virtualRef.value === el) return;
+        if (virtualRef.value === el && gallery.value?.id === Number(gid)) return;
         const rect = el.getBoundingClientRect(), bodyWidth = document.body.clientWidth, showRight = rect.left + rect.right <= bodyWidth;
         virtualRef.value = el, popoverPlacement.value = showRight ? "right" : "left", popoverTransition.value = false, popoverWidth.value = Math.min(
           POPOVER_MAX_WIDTH,
@@ -11415,7 +11507,7 @@ ${this.serializer.serializeToString(this.doc)}`;
         _: 1
       }, 8, ["visible", "popper-class", "virtual-ref", "placement", "width"]));
     }
-  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-db37b7bc"]]), initApp = once(
+  }), GalleryMiniPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-9fa42e74"]]), initApp = once(
     () => createAppAndMount(GalleryMiniPopover, (app) => {
       app.use(i18n);
     })
@@ -11844,16 +11936,16 @@ ${this.serializer.serializeToString(this.doc)}`;
         logger.debug("click", paginationEl);
       }
     });
-  }, initMutationObserver = () => {
+  }, isHTMLElement = (node) => node instanceof HTMLElement || String(node) === "[object HTMLDivElement]", initMutationObserver = () => {
     new MutationObserver((mutations) => {
       mutations.forEach(({ addedNodes, target }) => {
         !addedNodes.length || !(target instanceof HTMLElement) || (needRunComplexDebug() && !(target.closest(".nhentai-helper-btn,.el-popper,[data-v-app]") || target.classList.contains("nhentai-helper-gallery") || target.id.startsWith("el-")) && logger.debug("MutationObserver#body", { target, addedNodes }), addedNodes.forEach((node) => {
-          if (node instanceof HTMLElement) {
+          if (isHTMLElement(node)) {
             if (target.parentElement?.matches(selector.gallery)) {
               const el = target.parentElement;
               el._nhentaiHelperDestroy?.(), initGallery.call(el), el.parentElement && debounceDoFilterTags(el.parentElement);
             }
-            if (node.tagName === "DIV" && (node.matches(selector.galleryList) || node.parentElement?.matches(selector.galleryList))) {
+            if (node.tagName === "DIV" && (node.matches(selector.galleryList) || node.parentElement?.matches(selector.galleryList) || node.matches(".gallery-grid"))) {
               const $el = $(node);
               $el.find(selector.gallery).each(initGallery), doFilterTags?.($el);
             }
@@ -12040,7 +12132,7 @@ ${this.serializer.serializeToString(this.doc)}`;
   ), openSettingsDialog = () => {
     initSettingsDialogApp().open();
   };
-  createAppAndMount(_sfc_main$c);
+  createAppAndMount(_sfc_main$f);
   init();
   _GM_registerMenuCommand(i18n.global.t("common.settings"), openSettingsDialog);
   _GM_registerMenuCommand(i18n.global.t("menu.restoreLastDownload"), () => lastDownload.restore());
