@@ -16,6 +16,7 @@ export default {
     copied: 'Copied',
     language: 'Language',
     other: 'Other',
+    resetToDefault: 'Reset to default',
     abbr: {
       english: 'EN',
       japanese: 'JP',
@@ -56,6 +57,7 @@ export default {
     },
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
+    comicInfoTagsExtraInclude: 'Tags extra include',
     titleReplacement: 'Title replacement',
     titleBlacklist: 'Title blacklist',
     galleryContextmenuPreview: 'Context menu preview',

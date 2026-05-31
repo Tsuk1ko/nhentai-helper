@@ -85,6 +85,8 @@ export interface Settings {
   addMetaFile: string[];
   /** 元数据标题语言 */
   metaFileTitleLanguage: string;
+  /** ComicInfo.xml Tags 额外包含 */
+  comicInfoTagsExtraInclude: string[];
   /** 标题替换 */
   titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
   /** 标题黑名单 */
@@ -260,6 +262,12 @@ export const settingDefinitions: Readonly<{
     key: 'meta_file_title_language',
     default: 'english',
     validator: val => availableMetaFileTitleLanguage.has(val),
+  },
+  comicInfoTagsExtraInclude: {
+    key: 'comic_info_tags_extra_include',
+    default: () => ['character', 'artist', 'group'],
+    validator: val => Array.isArray(val),
+    itemValidator: stringValidator,
   },
   titleReplacement: {
     key: 'title_replacement',
