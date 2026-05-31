@@ -27,41 +27,7 @@
           <el-switch v-model="settings.openOnNewTab" />
         </el-form-item>
         <!-- 自定义压缩文件名 -->
-        <el-form-item :label="t('setting.compressionFilename')">
-          <el-input
-            v-model="settings.compressionFilename"
-            :placeholder="settingDefinitions.compressionFilename.default"
-            @blur="
-              if (!settings.compressionFilename) {
-                settings.compressionFilename = settingDefinitions.compressionFilename.default;
-              }
-            "
-          />
-        </el-form-item>
-        <el-form-item label="└ {{artist}}">
-          <!-- 文件名最大作者数量 -->
-          <div class="inline-item">
-            <span class="inline-item__name">{{ t('setting.maxNumber') }}</span>
-            <el-input-number
-              v-model="settings.filenameMaxArtistsNumber"
-              size="small"
-              :min="0"
-              :value-on-clear="settingDefinitions.filenameMaxArtistsNumber.default"
-              :step-strictly="true"
-              :style="{ width: '90px' }"
-            />
-          </div>
-          <!-- 文件名作者分隔符 -->
-          <div class="inline-item">
-            <span class="inline-item__name">{{ t('setting.separator') }}</span>
-            <el-input
-              v-model="settings.filenameArtistsSeparator"
-              size="small"
-              :placeholder="settingDefinitions.filenameArtistsSeparator.default"
-              :style="{ width: '50px' }"
-            />
-          </div>
-        </el-form-item>
+        <CompressionFileName />
         <!-- 自定义压缩级别 -->
         <el-form-item class="m-b-32" :label="t('setting.compressionLevel')">
           <el-slider
@@ -83,26 +49,7 @@
           <el-checkbox v-model="filenameLengthAuto" class="m-l-16" :label="t('common.auto')" />
         </el-form-item>
         <!-- 转换 webp -->
-        <el-form-item :label="t('setting.convertWebpTo')">
-          <el-radio-group v-model="settings.convertWebpTo">
-            <el-radio value="">{{ t('common.disabled') }}</el-radio>
-            <el-radio :value="MIME.JPG">jpg</el-radio>
-            <el-radio :value="MIME.PNG">png</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item
-          v-if="settings.convertWebpTo === MIME.JPG"
-          :label="`└ ${t('setting.convertWebpQuality')} (0~100)`"
-        >
-          <el-input-number
-            v-model="settings.convertWebpQuality"
-            size="small"
-            :min="0"
-            :max="100"
-            :value-on-clear="settingDefinitions.convertWebpQuality.default"
-            :step-strictly="true"
-          />
-        </el-form-item>
+        <ConvertWebp />
         <!-- 移除广告页 -->
         <el-form-item :label="t('setting.removeAdPage')">
           <el-switch v-model="settings.removeAdPage" />
@@ -135,23 +82,8 @@
         </el-form-item>
         <!-- 已下载本子的标题颜色 -->
         <DownloadedTitleColor />
-        <!-- 添加元数据文件 -->
-        <el-form-item :label="t('setting.addMetaFile')">
-          <el-checkbox-group v-model="settings.addMetaFile">
-            <el-checkbox label="ComicInfo.xml" value="ComicInfoXml" />
-            <el-checkbox label="info.json (eze)" value="EzeInfoJson" />
-          </el-checkbox-group>
-        </el-form-item>
-        <!-- 元数据标题语言 -->
-        <el-form-item
-          v-if="settings.addMetaFile.includes('ComicInfoXml')"
-          :label="`└ ${t('setting.metaFileTitleLanguage')}`"
-        >
-          <el-select v-model="settings.metaFileTitleLanguage">
-            <el-option :label="t('common.english')" value="english" />
-            <el-option :label="t('common.japanese')" value="japanese" />
-          </el-select>
-        </el-form-item>
+        <!-- 元数据文件 -->
+        <MetaFile />
         <!-- 标题黑名单 -->
         <TitleBlacklist />
         <!-- 进阶设置 -->
@@ -192,7 +124,6 @@ import { GM_openInTab } from '$';
 import {
   ElButton,
   ElCheckbox,
-  ElCheckboxGroup,
   ElDialog,
   ElDivider,
   ElForm,
@@ -200,8 +131,6 @@ import {
   ElInput,
   ElInputNumber,
   ElOption,
-  ElRadio,
-  ElRadioGroup,
   ElSelect,
   ElSlider,
   ElSwitch,
@@ -210,14 +139,16 @@ import { useI18n } from 'petite-vue-i18n';
 import { computed, ref, watch } from 'vue';
 import {
   CollectLog,
+  CompressionFileName,
+  ConvertWebp,
   CustomFilenameFunction,
   DownloadedTitleColor,
   DownloadHistory,
+  MetaFile,
   NHentaiDownloadHost,
   TitleBlacklist,
   TitleReplacement,
 } from '@/components/settings';
-import { MIME } from '@/typings';
 import type { ElMarks } from '@/typings';
 import {
   DISABLE_STREAM_DOWNLOAD,
@@ -288,17 +219,6 @@ defineExpose({ open });
 .nhentai-helper-setting-help-buttons {
   float: left;
   position: absolute;
-}
-
-.inline-item {
-  display: inline-block;
-  &:not(:last-of-type) {
-    margin-right: 8px;
-  }
-  &__name {
-    margin-right: 4px;
-    user-select: none;
-  }
 }
 </style>
 
