@@ -12,7 +12,7 @@
         <el-option :label="t('common.japanese')" value="japanese" />
       </el-select>
     </el-form-item>
-    <el-form-item :label="`└ ${t('setting.comicInfoTagsExtraInclude')}`">
+    <el-form-item :label="`├ ${t('setting.comicInfoTagsExtraInclude')}`">
       <el-select
         v-model="settings.comicInfoTagsExtraInclude"
         popper-class="comic-info-tags-extra-include-popper"
@@ -36,6 +36,9 @@
         </template>
       </el-select>
     </el-form-item>
+    <el-form-item :label="`└ ${t('setting.comicInfoTagsExtraWithType')}`">
+      <el-switch v-model="settings.comicInfoTagsExtraWithType" />
+    </el-form-item>
   </template>
 </template>
 
@@ -47,6 +50,7 @@ import {
   ElFormItem,
   ElOption,
   ElSelect,
+  ElSwitch,
 } from 'element-plus';
 import { useI18n } from 'petite-vue-i18n';
 import { settingDefinitions, writeableSettings as settings } from '@/utils/settings';

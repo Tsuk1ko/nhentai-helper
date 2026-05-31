@@ -87,6 +87,8 @@ export interface Settings {
   metaFileTitleLanguage: string;
   /** ComicInfo.xml Tags 额外包含 */
   comicInfoTagsExtraInclude: string[];
+  /** ComicInfo.xml Tags 额外包含附带类型前缀 */
+  comicInfoTagsExtraWithType: boolean;
   /** 标题替换 */
   titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
   /** 标题黑名单 */
@@ -268,6 +270,11 @@ export const settingDefinitions: Readonly<{
     default: () => ['character', 'artist', 'group'],
     validator: val => Array.isArray(val),
     itemValidator: stringValidator,
+  },
+  comicInfoTagsExtraWithType: {
+    key: 'comic_info_tags_extra_with_type',
+    default: true,
+    validator: booleanValidator,
   },
   titleReplacement: {
     key: 'title_replacement',

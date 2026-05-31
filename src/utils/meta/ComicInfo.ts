@@ -48,7 +48,16 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
 
     const tags = getTagsBatch(['tag', ...settings.comicInfoTagsExtraInclude]);
     if (tags.length) {
-      this.appendElement('Tags', tags.map(t => t.name).join(', '));
+      this.appendElement(
+        'Tags',
+        tags
+          .map(t =>
+            settings.comicInfoTagsExtraWithType && t.type !== 'tag'
+              ? `${t.type}:${t.name}`
+              : t.name,
+          )
+          .join(', '),
+      );
     }
 
     this.appendElement('Web', `${location.origin}/g/${info.gid}`);

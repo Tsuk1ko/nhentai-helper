@@ -58,6 +58,7 @@ export default {
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
     comicInfoTagsExtraInclude: 'Tags 额外包含',
+    comicInfoTagsExtraWithType: '额外包含附带类型前缀',
     titleReplacement: '标题替换',
     titleBlacklist: '标题黑名单',
     galleryContextmenuPreview: '右击预览',

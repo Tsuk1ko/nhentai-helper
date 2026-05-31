@@ -58,6 +58,7 @@ export default {
     addMetaFile: 'Add metadata file',
     metaFileTitleLanguage: 'Title language',
     comicInfoTagsExtraInclude: 'Tags extra include',
+    comicInfoTagsExtraWithType: 'Extra tags with type prefix',
     titleReplacement: 'Title replacement',
     titleBlacklist: 'Title blacklist',
     galleryContextmenuPreview: 'Context menu preview',
