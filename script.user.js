@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.28.0
+// @version            3.28.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -1175,6 +1175,11 @@ ${source}
       default: () => ["character", "artist", "group"],
       validator: (val) => Array.isArray(val),
       itemValidator: stringValidator
+    },
+    comicInfoTagsExtraWithType: {
+      key: "comic_info_tags_extra_with_type",
+      default: true,
+      validator: booleanValidator
     },
     titleReplacement: {
       key: "title_replacement",
@@ -7799,7 +7804,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
             _: 1
           }, 8, ["label"]),
           Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
-            label: `└ ${Vue.unref(t2)("setting.comicInfoTagsExtraInclude")}`
+            label: `├ ${Vue.unref(t2)("setting.comicInfoTagsExtraInclude")}`
           }, {
             default: Vue.withCtx(() => [
               Vue.createVNode(Vue.unref(elementPlus.ElSelect), {
@@ -7834,6 +7839,17 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                 ]),
                 _: 1
               }, 8, ["modelValue"])
+            ]),
+            _: 1
+          }, 8, ["label"]),
+          Vue.createVNode(Vue.unref(elementPlus.ElFormItem), {
+            label: `└ ${Vue.unref(t2)("setting.comicInfoTagsExtraWithType")}`
+          }, {
+            default: Vue.withCtx(() => [
+              Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                modelValue: Vue.unref(writeableSettings).comicInfoTagsExtraWithType,
+                "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => Vue.unref(writeableSettings).comicInfoTagsExtraWithType = $event)
+              }, null, 8, ["modelValue"])
             ]),
             _: 1
           }, 8, ["label"])
@@ -8452,6 +8468,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Add metadata file" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title language" } },
       comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags extra include" } },
+      comicInfoTagsExtraWithType: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Extra tags with type prefix" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title replacement" } },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title blacklist" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Context menu preview" } },
@@ -8574,6 +8591,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       addMetaFile: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "添加元数据文件" } },
       metaFileTitleLanguage: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题语言" } },
       comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags 额外包含" } },
+      comicInfoTagsExtraWithType: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "额外包含附带类型前缀" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题替换" } },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题黑名单" } },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "右击预览" } },
@@ -10515,7 +10533,12 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       }, artistTags = getTags("artist");
       artistTags.length && this.appendElement("Writer", artistTags.map((t2) => t2.name).join(", "));
       const tags = getTagsBatch(["tag", ...settings.comicInfoTagsExtraInclude]);
-      tags.length && this.appendElement("Tags", tags.map((t2) => t2.name).join(", ")), this.appendElement("Web", `${location.origin}/g/${info.gid}`), this.appendElement("PageCount", info.pages.length);
+      tags.length && this.appendElement(
+        "Tags",
+        tags.map(
+          (t2) => settings.comicInfoTagsExtraWithType && t2.type !== "tag" ? `${t2.type}:${t2.name}` : t2.name
+        ).join(", ")
+      ), this.appendElement("Web", `${location.origin}/g/${info.gid}`), this.appendElement("PageCount", info.pages.length);
       const languageTag = info.tags.find(({ type, name }) => type === "language" && name in langMap);
       languageTag && this.appendElement("LanguageISO", langMap[languageTag.name]), this.appendElement("Format", /\[digital\]/i.test(info.title.english) ? "Digital" : "TBP"), this.appendElement("Manga", "Yes");
       const characterTags = getTags("character");
