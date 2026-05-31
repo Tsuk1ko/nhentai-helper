@@ -213,7 +213,7 @@ const openTagUrl = (path?: string) => {
 let loadingGid: string = '';
 
 const open = async (el: HTMLElement, gid: string) => {
-  if (virtualRef.value === el) return;
+  if (virtualRef.value === el && gallery.value?.id === Number(gid)) return;
   const rect = el.getBoundingClientRect();
   const bodyWidth = document.body.clientWidth;
   const showRight = rect.left + rect.right <= bodyWidth;
