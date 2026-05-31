@@ -36,13 +36,17 @@ export class ComicInfoXmlBuilder implements MetaBuilder {
     }
 
     const getTags = (type: string) => info.tags.filter(t => t.type === type);
+    const getTagsBatch = (types: string[]) => {
+      const set = new Set(types);
+      return info.tags.filter(t => set.has(t.type));
+    };
 
     const artistTags = getTags('artist');
     if (artistTags.length) {
       this.appendElement('Writer', artistTags.map(t => t.name).join(', '));
     }
 
-    const tags = getTags('tag');
+    const tags = getTagsBatch(['tag', ...settings.comicInfoTagsExtraInclude]);
     if (tags.length) {
       this.appendElement('Tags', tags.map(t => t.name).join(', '));
     }

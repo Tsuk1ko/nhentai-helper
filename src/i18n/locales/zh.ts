@@ -16,6 +16,7 @@ export default {
     copied: '已复制',
     language: '语言',
     other: '其他',
+    resetToDefault: '重置为默认',
     abbr: {
       english: '英',
       japanese: '日',
@@ -56,6 +57,7 @@ export default {
     },
     addMetaFile: '添加元数据文件',
     metaFileTitleLanguage: '标题语言',
+    comicInfoTagsExtraInclude: 'Tags 额外包含',
     titleReplacement: '标题替换',
     titleBlacklist: '标题黑名单',
     galleryContextmenuPreview: '右击预览',
