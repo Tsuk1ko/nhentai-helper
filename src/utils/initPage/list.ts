@@ -77,6 +77,10 @@ const clickDebugLog = () => {
   });
 };
 
+const isHTMLElement = (node: Node): node is HTMLElement => {
+  return node instanceof HTMLElement || String(node) === '[object HTMLDivElement]';
+};
+
 const initMutationObserver = () => {
   new MutationObserver(mutations => {
     mutations.forEach(({ addedNodes, target }) => {
@@ -92,7 +96,7 @@ const initMutationObserver = () => {
         logger.debug('MutationObserver#body', { target, addedNodes });
       }
       addedNodes.forEach(node => {
-        if (!(node instanceof HTMLElement)) return;
+        if (!isHTMLElement(node)) return;
 
         // Svelte
         if (target.parentElement?.matches(selector.gallery)) {
@@ -105,7 +109,9 @@ const initMutationObserver = () => {
         // Super Preloader / 东方永页机
         if (
           node.tagName === 'DIV' &&
-          (node.matches(selector.galleryList) || node.parentElement?.matches(selector.galleryList))
+          (node.matches(selector.galleryList) ||
+            node.parentElement?.matches(selector.galleryList) ||
+            node.matches('.gallery-grid'))
         ) {
           const $el = $(node as HTMLElement);
           $el.find(selector.gallery).each(initGallery);
