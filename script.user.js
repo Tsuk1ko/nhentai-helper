@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.28.1
+// @version            3.29.0
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -646,6 +646,9 @@ span.monospace[data-v-e4fd1f32] {
   function escape$2(str) {
     return str.replace(/[&<>"']/g, (match) => htmlEscapes[match]);
   }
+  function escapeRegExp$1(str) {
+    return str.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+  }
   var __spreadArray = function(to, from, pack) {
     for (var i = 0, l = from.length, ar; i < l; i++)
       (ar || !(i in from)) && (ar || (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
@@ -1030,7 +1033,7 @@ ${source}
         return JSON.parse(str);
       } catch {
       }
-  }, needRunComplexDebug = () => settings.collectLog || IS_DEV, alwaysFalse = () => false, nHentaiDownloadHosts = [
+  }, needRunComplexDebug = () => settings.collectLog || IS_DEV, alwaysFalse = () => false, escapeRegExp = (str) => RegExp.escape?.(str) ?? escapeRegExp$1(str), nHentaiDownloadHosts = [
     "i.nhentai.net",
     "i1.nhentai.net",
     "i2.nhentai.net",
@@ -1185,13 +1188,15 @@ ${source}
       key: "title_replacement",
       default: () => [],
       validator: (val) => Array.isArray(val),
-      itemValidator: (item) => item && stringValidator(item.from) && stringValidator(item.to) && booleanValidator(item.regexp)
+      itemValidator: (item) => item && stringValidator(item.from) && stringValidator(item.to) && booleanValidator(item.regexp) && booleanValidator(item.ignoreCase),
+      migrate: (val) => Array.isArray(val) && val.some((item) => !("ignoreCase" in item)) ? val.map((item) => ({ ...item, ignoreCase: false })) : val
     },
     titleBlacklist: {
       key: "title_blacklist",
       default: () => [],
       validator: (val) => Array.isArray(val),
-      itemValidator: (item) => item && stringValidator(item.content) && booleanValidator(item.regexp)
+      itemValidator: (item) => item && stringValidator(item.content) && booleanValidator(item.regexp) && booleanValidator(item.ignoreCase),
+      migrate: (val) => Array.isArray(val) && val.some((item) => !("ignoreCase" in item)) ? val.map((item) => ({ ...item, ignoreCase: false })) : val
     },
     galleryContextmenuPreview: {
       key: "gallery_contextmenu_preview",
@@ -1228,16 +1233,20 @@ ${source}
       default: false,
       validator: booleanValidator
     }
-  }, browserDetect = detect(), DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox"), readSettings = () => mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
-    const realDefault = typeof defaultVal == "function" ? defaultVal() : defaultVal, val = _GM_getValue(key, realDefault);
-    if (!validator(val)) return realDefault;
-    if (Array.isArray(val) && itemValidator) {
-      const validItems = val.filter(itemValidator);
-      if (val.length !== validItems.length)
-        return realDefault;
+  }, browserDetect = detect(), DISABLE_STREAM_DOWNLOAD = !!browserDetect && (browserDetect.name === "safari" || browserDetect.name === "firefox"), readSettings = () => mapValues(
+    settingDefinitions,
+    ({ key, default: defaultVal, validator, itemValidator, migrate }) => {
+      const realDefault = typeof defaultVal == "function" ? defaultVal() : defaultVal;
+      let val = _GM_getValue(key, realDefault);
+      if (migrate && (val = migrate(val)), !validator(val)) return realDefault;
+      if (Array.isArray(val) && itemValidator) {
+        const validItems = val.filter(itemValidator);
+        if (val.length !== validItems.length)
+          return realDefault;
+      }
+      return val;
     }
-    return val;
-  }), initSettings = () => {
+  ), initSettings = () => {
     const settings2 = readSettings();
     {
       const key = "_flag_nHentai_media_host_reset_20241207";
@@ -1287,9 +1296,9 @@ ${source}
   }), replaceTitle = Vue.computed(() => {
     const list = settings.titleReplacement.filter((item) => item?.from);
     return list.length ? flow(
-      ...list.map(({ from, to, regexp }) => {
+      ...list.map(({ from, to, regexp, ignoreCase }) => {
         try {
-          const searchValue = regexp ? new RegExp(from) : from;
+          const searchValue = regexp ? new RegExp(from, ignoreCase ? "gi" : "g") : ignoreCase ? new RegExp(escapeRegExp(from), "gi") : from;
           return (title) => title.replaceAll(searchValue, to);
         } catch (error) {
           return logger.error("title replacement regexp:", error), identity;
@@ -1297,14 +1306,18 @@ ${source}
       })
     ) : identity;
   }), isTitleBlacklisted = Vue.computed(() => {
-    const list = settings.titleBlacklist.filter((item) => item?.content).map(({ content, regexp }) => {
+    const list = settings.titleBlacklist.filter((item) => item?.content).map(({ content, regexp, ignoreCase }) => {
       if (regexp)
         try {
-          const reg = new RegExp(content);
+          const reg = new RegExp(content, ignoreCase ? "gi" : "g");
           return (title) => reg.test(title);
         } catch (error) {
           return logger.error("title blacklist regexp:", error), alwaysFalse;
         }
+      if (ignoreCase) {
+        const reg = new RegExp(escapeRegExp(content), "gi");
+        return (title) => reg.test(title);
+      }
       return (title) => title.includes(content);
     });
     return list.length ? (title) => list.some((fn) => fn(title)) : alwaysFalse;
@@ -7427,7 +7440,7 @@ break;case "inversionMode":switch(c){case "original":Y="dontInvert";break;case "
     async add(key) {
       if (await this.ready)
         try {
-          await this.store.setItem(key, !0), logger.info(`mark "${key}" as downloaded`);
+          await this.store.setItem(key, !0), logger.debug(`mark "${key}" as downloaded`);
         } catch (e) {
           logger.error(e);
         }
@@ -7435,7 +7448,7 @@ break;case "inversionMode":switch(c){case "original":Y="dontInvert";break;case "
     async del(key) {
       if (await this.ready)
         try {
-          await this.store.removeItem(key), logger.info(`unmark "${key}" as downloaded`);
+          await this.store.removeItem(key), logger.debug(`unmark "${key}" as downloaded`);
         } catch (e) {
           logger.error(e);
         }
@@ -7469,9 +7482,9 @@ break;case "inversionMode":switch(c){case "original":Y="dontInvert";break;case "
     }
   }
   const gidHistory = new DownloadHistory("dl_history_gid"), enTitleHistory = new DownloadHistory("dl_history_en"), jpTitleHistory = new DownloadHistory("dl_history"), prettyTitleHistory = new DownloadHistory("dl_history_pretty"), normalizeTitle = (title) => title.replace(/\s/g, ""), getTitleMd5 = (title) => md5(normalizeTitle(title)), markAsDownloaded = (gid, { english, japanese, pretty } = {}) => {
-    gidHistory.add(String(gid)), english && enTitleHistory.add(getTitleMd5(english)), japanese && jpTitleHistory.add(getTitleMd5(japanese)), pretty && prettyTitleHistory.add(getTitleMd5(pretty));
+    gidHistory.add(String(gid)), english && enTitleHistory.add(getTitleMd5(english)), japanese && jpTitleHistory.add(getTitleMd5(japanese)), pretty && prettyTitleHistory.add(getTitleMd5(pretty)), logger.debug("mark as downloaded", { gid, english, japanese, pretty });
   }, unmarkAsDownloaded = (gid, { english, japanese, pretty } = {}) => {
-    gidHistory.del(String(gid)), english && enTitleHistory.del(getTitleMd5(english)), japanese && jpTitleHistory.del(getTitleMd5(japanese)), pretty && prettyTitleHistory.del(getTitleMd5(pretty));
+    gidHistory.del(String(gid)), english && enTitleHistory.del(getTitleMd5(english)), japanese && jpTitleHistory.del(getTitleMd5(japanese)), pretty && prettyTitleHistory.del(getTitleMd5(pretty)), logger.debug("unmark as downloaded", { gid, english, japanese, pretty });
   }, isDownloadedByGid = (gid) => gidHistory.has(String(gid)), isDownloadedByTitle = async ({
     english,
     japanese,
@@ -7930,7 +7943,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     __name: "TitleBlacklist",
     setup(__props) {
       const { t: t2 } = useI18n(), addTitleBlacklist = () => {
-        writeableSettings.titleBlacklist.push({ content: "", regexp: false });
+        writeableSettings.titleBlacklist.push({ content: "", regexp: false, ignoreCase: false });
       }, delTitleBlacklist = (index) => {
         writeableSettings.titleBlacklist.splice(index, 1);
       };
@@ -7957,7 +7970,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   })
                 ]),
                 default: Vue.withCtx(() => [
-                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "Content" }, {
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: Vue.unref(t2)("setting.titleBlacklistTable.content")
+                  }, {
                     default: Vue.withCtx(({ row }) => [
                       Vue.createVNode(RegExpInput, {
                         modelValue: row.content,
@@ -7966,10 +7981,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       }, null, 8, ["modelValue", "onUpdate:modelValue", "regexp"])
                     ]),
                     _: 1
-                  }),
+                  }, 8, ["label"]),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
-                    label: "RegExp",
-                    width: "80"
+                    label: Vue.unref(t2)("common.regexp"),
+                    width: "110"
                   }, {
                     default: Vue.withCtx(({ row }) => [
                       Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
@@ -7978,7 +7993,19 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       }, null, 8, ["modelValue", "onUpdate:modelValue"])
                     ]),
                     _: 1
-                  }),
+                  }, 8, ["label"]),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: Vue.unref(t2)("common.ignoreCase"),
+                    width: "110"
+                  }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                        modelValue: row.ignoreCase,
+                        "onUpdate:modelValue": ($event) => row.ignoreCase = $event
+                      }, null, 8, ["modelValue", "onUpdate:modelValue"])
+                    ]),
+                    _: 1
+                  }, 8, ["label"]),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
                     default: Vue.withCtx(({ $index }) => [
                       Vue.createVNode(_sfc_main$9, {
@@ -8009,7 +8036,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
     __name: "TitleReplacement",
     setup(__props) {
       const { t: t2 } = useI18n(), addTitleReplacement = () => {
-        writeableSettings.titleReplacement.push({ from: "", to: "", regexp: false });
+        writeableSettings.titleReplacement.push({ from: "", to: "", regexp: false, ignoreCase: false });
       }, delTitleReplacement = (index) => {
         writeableSettings.titleReplacement.splice(index, 1);
       };
@@ -8036,7 +8063,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                   })
                 ]),
                 default: Vue.withCtx(() => [
-                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "From" }, {
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: Vue.unref(t2)("setting.titleReplacementTable.from")
+                  }, {
                     default: Vue.withCtx(({ row }) => [
                       Vue.createVNode(RegExpInput, {
                         modelValue: row.from,
@@ -8045,8 +8074,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       }, null, 8, ["modelValue", "onUpdate:modelValue", "regexp"])
                     ]),
                     _: 1
-                  }),
-                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { label: "To" }, {
+                  }, 8, ["label"]),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: Vue.unref(t2)("setting.titleReplacementTable.to")
+                  }, {
                     default: Vue.withCtx(({ row }) => [
                       Vue.createVNode(Vue.unref(elementPlus.ElInput), {
                         modelValue: row.to,
@@ -8054,10 +8085,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       }, null, 8, ["modelValue", "onUpdate:modelValue"])
                     ]),
                     _: 1
-                  }),
+                  }, 8, ["label"]),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
-                    label: "RegExp",
-                    width: "80"
+                    label: Vue.unref(t2)("common.regexp"),
+                    width: "110"
                   }, {
                     default: Vue.withCtx(({ row }) => [
                       Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
@@ -8066,7 +8097,19 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
                       }, null, 8, ["modelValue", "onUpdate:modelValue"])
                     ]),
                     _: 1
-                  }),
+                  }, 8, ["label"]),
+                  Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), {
+                    label: Vue.unref(t2)("common.ignoreCase"),
+                    width: "110"
+                  }, {
+                    default: Vue.withCtx(({ row }) => [
+                      Vue.createVNode(Vue.unref(elementPlus.ElSwitch), {
+                        modelValue: row.ignoreCase,
+                        "onUpdate:modelValue": ($event) => row.ignoreCase = $event
+                      }, null, 8, ["modelValue", "onUpdate:modelValue"])
+                    ]),
+                    _: 1
+                  }, 8, ["label"]),
                   Vue.createVNode(Vue.unref(elementPlus.ElTableColumn), { width: "70" }, {
                     default: Vue.withCtx(({ $index }) => [
                       Vue.createVNode(_sfc_main$9, {
@@ -8427,6 +8470,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Language" } },
       other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Other" } },
       resetToDefault: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Reset to default" } },
+      regexp: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "RegExp" } },
+      ignoreCase: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Ignore case" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "EN" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "JP" } },
@@ -8470,7 +8515,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags extra include" } },
       comicInfoTagsExtraWithType: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Extra tags with type prefix" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title replacement" } },
+      titleReplacementTable: {
+        from: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "From" } },
+        to: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "To" } }
+      },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Title blacklist" } },
+      titleBlacklistTable: {
+        content: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Content" } }
+      },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Context menu preview" } },
       customFilenameFunction: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Custom filename function" } },
       history: {
@@ -8495,8 +8547,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         download: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "downloading" } }
       },
       downloadAgainConfirm: ({ named }) => `<i>${named("title")}</i> is already downloaded${named("hasQueue") ? " or in queue" : ""}.<br>Do you want to download again?`,
-      errorRetryConfirm: ({ linked, named }) => `Error occurred while ${linked(`message.dialog.action.${named("action")}`)}, retry?`,
-      errorRetryTip: ({ linked, named }) => `Error occurred while ${linked(`message.dialog.action.${named("action")}`)}, retrying...`,
+      errorRetryConfirm: ({ linked, named }) => `Error occurred while ${linked(`dialog.action.${named("action")}`)}, retry?`,
+      errorRetryTip: ({ linked, named }) => `Error occurred while ${linked(`dialog.action.${named("action")}`)}, retrying...`,
       downloadedTip: { t: 0, b: { t: 2, i: [{ t: 3, v: "<i>" }, { t: 4, k: "title" }, { t: 3, v: "</i> is already downloaded or in queue." }] } },
       getMediaUrlTemplateFailed: { t: 0, b: { t: 2, i: [{ t: 3, v: 'Fail to get image download url. Please set "' }, { t: 6, k: { t: 9, v: "setting.customDownloadUrl" } }, { t: 3, v: '" manually, or open a github issue to report with current url.' }] } }
     },
@@ -8550,6 +8602,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       language: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "语言" } },
       other: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "其他" } },
       resetToDefault: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "重置为默认" } },
+      regexp: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "正则表达式" } },
+      ignoreCase: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "忽略大小写" } },
       abbr: {
         english: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "英" } },
         japanese: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "日" } },
@@ -8593,7 +8647,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
       comicInfoTagsExtraInclude: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "Tags 额外包含" } },
       comicInfoTagsExtraWithType: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "额外包含附带类型前缀" } },
       titleReplacement: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题替换" } },
+      titleReplacementTable: {
+        from: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "从" } },
+        to: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "替换为" } }
+      },
       titleBlacklist: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "标题黑名单" } },
+      titleBlacklistTable: {
+        content: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "内容" } }
+      },
       galleryContextmenuPreview: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "右击预览" } },
       customFilenameFunction: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "自定义文件名函数" } },
       history: {
@@ -8618,8 +8679,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`, zip = new 
         download: { t: 0, b: { t: 2, i: [{ t: 3 }], s: "下载" } }
       },
       downloadAgainConfirm: ({ named }) => `《${named("title")}》已下载过${named("hasQueue") ? "或在队列中" : ""}，你希望再次下载吗？`,
-      errorRetryConfirm: ({ linked, named }) => `${linked(`message.dialog.action.${named("action")}`)}发生错误，是否重试？`,
-      errorRetryTip: ({ linked, named }) => `${linked(`message.dialog.action.${named("action")}`)}发生错误，重试中……`,
+      errorRetryConfirm: ({ linked, named }) => `${linked(`dialog.action.${named("action")}`)}发生错误，是否重试？`,
+      errorRetryTip: ({ linked, named }) => `${linked(`dialog.action.${named("action")}`)}发生错误，重试中……`,
       downloadedTip: { t: 0, b: { t: 2, i: [{ t: 3, v: "《" }, { t: 4, k: "title" }, { t: 3, v: "》已经下载过或在队列中" }] } },
       getMediaUrlTemplateFailed: { t: 0, b: { t: 2, i: [{ t: 3, v: "获取图片下载地址失败，请手动设置“" }, { t: 6, k: { t: 9, v: "setting.customDownloadUrl" } }, { t: 3, v: "”，或前往 github issue 或脚本页面反馈并附带当前网址" }] } }
     },
@@ -10939,7 +11000,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       uploadDate: upload_date,
       gallery
     };
-    return logger.info("info", info), info;
+    return logger.debug("info", info), info;
   }, fetchMediaUrlTemplate = async (gid) => {
     const onlineViewUrl = document.querySelector(selector.galleryHref)?.getAttribute("href")?.replace(/\/+$/, "").replace(/\d+$/, gid).concat("/1") ?? document.querySelector(selector.thumbnailHref)?.getAttribute("href");
     if (!onlineViewUrl)
@@ -12018,7 +12079,7 @@ ${this.serializer.serializeToString(this.doc)}`;
     IS_NHENTAI && (UNCENSORED_REG.test(enTitle) ? $gallery.addClass("uncensored") : $gallery.removeClass("uncensored"));
     const progressDisplayController = new ProgressDisplayController(), { downloadBtn } = progressDisplayController;
     $gallery.append(downloadBtn);
-    let ignoreController, galleryTitle;
+    let ignoreController;
     const markGalleryDownloaded = (isDownloaded, needBroadcast = true) => {
       isNotSelf() || (isDownloaded ? $gallery.addClass("downloaded") : $gallery.removeClass("downloaded"), ignoreController?.setStatus(isDownloaded), needBroadcast && broadcastMarkDownloadedUpdate(gid, isDownloaded));
     };
@@ -12027,9 +12088,18 @@ ${this.serializer.serializeToString(this.doc)}`;
         const downloaded = gidDownloaded || titleDownloaded;
         if (downloaded && markGalleryDownloaded(downloaded), settings.showIgnoreButton) {
           ignoreController = new IgnoreController(false, downloaded);
-          const { ignoreBtn } = ignoreController;
-          ignoreBtn.addEventListener("click", () => {
-            ignoreController.getStatus() ? (markGalleryDownloaded(false), unmarkAsDownloaded(gid, galleryTitle)) : (markGalleryDownloaded(true), markAsDownloaded(gid, galleryTitle));
+          const { ignoreBtn } = ignoreController, markGalleryTitleDownloaded = async (downloaded2) => {
+            try {
+              const gallery = await getGalleryInfo(gid);
+              if (ignoreController.getStatus() !== downloaded2) return;
+              (downloaded2 ? markAsDownloaded : unmarkAsDownloaded)(gid, gallery.title);
+            } catch (error) {
+              logger.error("get gallery", gid, error);
+            }
+          };
+          ignoreBtn.addEventListener("click", async () => {
+            const ignore = ignoreController.getStatus();
+            logger.info("ignore gallery", gid, ignore), ignore ? (markGalleryDownloaded(false), await markGalleryTitleDownloaded(false)) : (markGalleryDownloaded(true), await markGalleryTitleDownloaded(true));
           }), $gallery.append(ignoreBtn);
         }
       }
@@ -12047,7 +12117,7 @@ ${this.serializer.serializeToString(this.doc)}`;
       settings.autoCancelDownloadedManga && progressDisplayController.lockBtn("Wait");
       let gallery;
       try {
-        gallery = await getGalleryInfo(gid), galleryTitle = gallery.title;
+        gallery = await getGalleryInfo(gid);
       } catch (error) {
         logger.error(error), progressDisplayController.error(), errorRetryConfirm(ErrorAction.GET_INFO, void 0, startDownload);
         return;
@@ -12113,7 +12183,8 @@ ${this.serializer.serializeToString(this.doc)}`;
     enable ? style.inject() : style.remove();
   }, init = () => {
     let lastPageType = getPageType();
-    initPage(lastPageType).catch(logger.error), IS_SVELTE && window.navigation.addEventListener("navigate", async () => {
+    initPage(lastPageType).catch(logger.error), IS_SVELTE && window.navigation.addEventListener("navigate", async (e) => {
+      if (e.destination.url.startsWith("blob:")) return;
       logger.info("page navigate");
       const lastUrl = new URL(location.href);
       await sleep();
