@@ -376,7 +376,7 @@ export const getGalleryInfo = async (gid?: number | string): Promise<NHentaiGall
     uploadDate: upload_date,
     gallery,
   };
-  logger.info('info', info);
+  logger.debug('info', info);
 
   return info;
 };

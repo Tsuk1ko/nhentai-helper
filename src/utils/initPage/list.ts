@@ -23,7 +23,7 @@ import {
   initListenMarkDownloadedUpdateForGalleries,
 } from '../markDownloaded';
 import { getGalleryInfo } from '../nhentai';
-import type { NHentaiGallery, NHentaiGalleryInfo } from '../nhentai';
+import type { NHentaiGalleryInfo } from '../nhentai';
 import { ProgressDisplayController } from '../progressController';
 import { isTitleBlacklisted, settings } from '../settings';
 import { mountTagsFilter } from '../tagsFilter';
@@ -194,7 +194,6 @@ const initGallery = function (this: HTMLElement) {
   $gallery.append(downloadBtn);
 
   let ignoreController: IgnoreController | undefined;
-  let galleryTitle: NHentaiGallery['title'] | undefined;
 
   const markGalleryDownloaded = (isDownloaded: boolean, needBroadcast = true): void => {
     if (isNotSelf()) return;
@@ -215,14 +214,26 @@ const initGallery = function (this: HTMLElement) {
       if (settings.showIgnoreButton) {
         ignoreController = new IgnoreController(false, downloaded);
         const { ignoreBtn } = ignoreController;
-        ignoreBtn.addEventListener('click', () => {
+
+        const markGalleryTitleDownloaded = async (downloaded: boolean) => {
+          try {
+            const gallery = await getGalleryInfo(gid);
+            if (ignoreController!.getStatus() !== downloaded) return;
+            (downloaded ? markAsDownloaded : unmarkAsDownloaded)(gid, gallery.title);
+          } catch (error) {
+            logger.error('get gallery', gid, error);
+          }
+        };
+
+        ignoreBtn.addEventListener('click', async () => {
           const ignore = ignoreController!.getStatus();
+          logger.info('ignore gallery', gid, ignore);
           if (ignore) {
             markGalleryDownloaded(false);
-            unmarkAsDownloaded(gid, galleryTitle);
+            await markGalleryTitleDownloaded(false);
           } else {
             markGalleryDownloaded(true);
-            markAsDownloaded(gid, galleryTitle);
+            await markGalleryTitleDownloaded(true);
           }
         });
         $gallery.append(ignoreBtn);
@@ -254,7 +265,6 @@ const initGallery = function (this: HTMLElement) {
 
     try {
       gallery = await getGalleryInfo(gid);
-      galleryTitle = gallery.title;
     } catch (error) {
       logger.error(error);
       progressDisplayController.error();

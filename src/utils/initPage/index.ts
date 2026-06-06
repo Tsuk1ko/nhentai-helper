@@ -18,7 +18,9 @@ export const init = () => {
 
   if (IS_SVELTE) {
     // 处理 svelte 无刷新加载
-    window.navigation.addEventListener('navigate', async () => {
+    window.navigation.addEventListener('navigate', async e => {
+      if (e.destination.url.startsWith('blob:')) return;
+
       logger.info('page navigate');
       const lastUrl = new URL(location.href);
       await sleep();

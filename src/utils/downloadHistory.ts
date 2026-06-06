@@ -32,7 +32,7 @@ class DownloadHistory {
     if (!(await this.ready)) return;
     try {
       await this.store.setItem(key, true);
-      logger.info(`mark "${key}" as downloaded`);
+      logger.debug(`mark "${key}" as downloaded`);
     } catch (e) {
       logger.error(e);
     }
@@ -42,7 +42,7 @@ class DownloadHistory {
     if (!(await this.ready)) return;
     try {
       await this.store.removeItem(key);
-      logger.info(`unmark "${key}" as downloaded`);
+      logger.debug(`unmark "${key}" as downloaded`);
     } catch (e) {
       logger.error(e);
     }
@@ -99,6 +99,7 @@ export const markAsDownloaded = (
   if (english) void enTitleHistory.add(getTitleMd5(english));
   if (japanese) void jpTitleHistory.add(getTitleMd5(japanese));
   if (pretty) void prettyTitleHistory.add(getTitleMd5(pretty));
+  logger.debug('mark as downloaded', { gid, english, japanese, pretty });
 };
 
 export const unmarkAsDownloaded = (
@@ -109,6 +110,7 @@ export const unmarkAsDownloaded = (
   if (english) void enTitleHistory.del(getTitleMd5(english));
   if (japanese) void jpTitleHistory.del(getTitleMd5(japanese));
   if (pretty) void prettyTitleHistory.del(getTitleMd5(pretty));
+  logger.debug('unmark as downloaded', { gid, english, japanese, pretty });
 };
 
 export const isDownloadedByGid = (gid: string | number): Promise<boolean> =>
