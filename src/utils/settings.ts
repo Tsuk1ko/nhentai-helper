@@ -424,7 +424,7 @@ export const replaceTitle = computed<(title: string) => string>(() => {
   return flow(
     ...list.map(({ from, to, regexp }) => {
       try {
-        const searchValue = regexp ? new RegExp(from) : from;
+        const searchValue = regexp ? new RegExp(from, 'g') : from;
         return (title: string) => title.replaceAll(searchValue, to);
       } catch (error) {
         logger.error('title replacement regexp:', error);
