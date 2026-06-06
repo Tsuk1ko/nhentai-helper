@@ -9,19 +9,24 @@
         </span>
       </template>
       <el-table :data="settings.titleReplacement">
-        <el-table-column label="From">
+        <el-table-column :label="t('setting.titleReplacementTable.from')">
           <template #default="{ row }">
             <RegExpInput v-model="row.from" :regexp="row.regexp" />
           </template>
         </el-table-column>
-        <el-table-column label="To">
+        <el-table-column :label="t('setting.titleReplacementTable.to')">
           <template #default="{ row }">
             <el-input v-model="row.to" />
           </template>
         </el-table-column>
-        <el-table-column label="RegExp" width="80">
+        <el-table-column :label="t('common.regexp')" width="110">
           <template #default="{ row }">
             <el-switch v-model="row.regexp" />
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.ignoreCase')" width="110">
+          <template #default="{ row }">
+            <el-switch v-model="row.ignoreCase" />
           </template>
         </el-table-column>
         <el-table-column width="70">
@@ -58,7 +63,7 @@ import { writeableSettings as settings } from '@/utils/settings';
 const { t } = useI18n();
 
 const addTitleReplacement = () => {
-  settings.titleReplacement.push({ from: '', to: '', regexp: false });
+  settings.titleReplacement.push({ from: '', to: '', regexp: false, ignoreCase: false });
 };
 
 const delTitleReplacement = (index: number) => {

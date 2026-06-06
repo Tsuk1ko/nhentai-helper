@@ -7,7 +7,7 @@ import { useStyle } from '@/hooks/useStyle';
 import { defaultLocale, supportLanguage } from '@/i18n/utils';
 import { MIME } from '@/typings';
 import { objectEach } from './array';
-import { alwaysFalse } from './common';
+import { alwaysFalse, escapeRegExp } from './common';
 import { logger } from './logger';
 import type { NHentaiGallery } from './nhentai';
 
@@ -90,9 +90,9 @@ export interface Settings {
   /** ComicInfo.xml Tags 额外包含附带类型前缀 */
   comicInfoTagsExtraWithType: boolean;
   /** 标题替换 */
-  titleReplacement: Array<{ from: string; to: string; regexp: boolean }>;
+  titleReplacement: Array<{ from: string; to: string; regexp: boolean; ignoreCase: boolean }>;
   /** 标题黑名单 */
-  titleBlacklist: Array<{ content: string; regexp: boolean }>;
+  titleBlacklist: Array<{ content: string; regexp: boolean; ignoreCase: boolean }>;
   /** 右键预览 */
   galleryContextmenuPreview: boolean;
   /** 转换 webp 到其他格式 */
@@ -115,6 +115,7 @@ interface SettingsDefault {
 
 type SettingValidator = (val: any) => boolean;
 type SettingFormatter<T> = (val: T) => T;
+type SettingMigrate<T> = (val: any) => T;
 
 interface SettingDefinition<T = any, D = any> {
   key: string;
@@ -122,6 +123,7 @@ interface SettingDefinition<T = any, D = any> {
   validator: SettingValidator;
   itemValidator?: SettingValidator;
   formatter?: SettingFormatter<T>;
+  migrate?: SettingMigrate<T>;
 }
 
 const booleanValidator: SettingValidator = val => typeof val === 'boolean';
@@ -284,13 +286,26 @@ export const settingDefinitions: Readonly<{
       item &&
       stringValidator(item.from) &&
       stringValidator(item.to) &&
-      booleanValidator(item.regexp),
+      booleanValidator(item.regexp) &&
+      booleanValidator(item.ignoreCase),
+    migrate: val =>
+      Array.isArray(val) && val.some(item => !('ignoreCase' in item))
+        ? val.map(item => ({ ...item, ignoreCase: false }))
+        : val,
   },
   titleBlacklist: {
     key: 'title_blacklist',
     default: () => [],
     validator: val => Array.isArray(val),
-    itemValidator: item => item && stringValidator(item.content) && booleanValidator(item.regexp),
+    itemValidator: item =>
+      item &&
+      stringValidator(item.content) &&
+      booleanValidator(item.regexp) &&
+      booleanValidator(item.ignoreCase),
+    migrate: val =>
+      Array.isArray(val) && val.some(item => !('ignoreCase' in item))
+        ? val.map(item => ({ ...item, ignoreCase: false }))
+        : val,
   },
   galleryContextmenuPreview: {
     key: 'gallery_contextmenu_preview',
@@ -335,18 +350,22 @@ export const DISABLE_STREAM_DOWNLOAD =
   !!browserDetect && (browserDetect.name === 'safari' || browserDetect.name === 'firefox');
 
 const readSettings = (): Settings =>
-  mapValues(settingDefinitions, ({ key, default: defaultVal, validator, itemValidator }) => {
-    const realDefault = typeof defaultVal === 'function' ? defaultVal() : defaultVal;
-    const val = GM_getValue<any>(key, realDefault);
-    if (!validator(val)) return realDefault;
-    if (Array.isArray(val) && itemValidator) {
-      const validItems = val.filter(itemValidator);
-      if (val.length !== validItems.length) {
-        return realDefault;
+  mapValues(
+    settingDefinitions,
+    ({ key, default: defaultVal, validator, itemValidator, migrate }) => {
+      const realDefault = typeof defaultVal === 'function' ? defaultVal() : defaultVal;
+      let val = GM_getValue<any>(key, realDefault);
+      if (migrate) val = migrate(val);
+      if (!validator(val)) return realDefault;
+      if (Array.isArray(val) && itemValidator) {
+        const validItems = val.filter(itemValidator);
+        if (val.length !== validItems.length) {
+          return realDefault;
+        }
       }
-    }
-    return val;
-  });
+      return val;
+    },
+  );
 
 const initSettings = (): Settings => {
   const settings = readSettings();
@@ -422,9 +441,13 @@ export const replaceTitle = computed<(title: string) => string>(() => {
   const list = settings.titleReplacement.filter(item => item?.from);
   if (!list.length) return identity;
   return flow(
-    ...list.map(({ from, to, regexp }) => {
+    ...list.map(({ from, to, regexp, ignoreCase }) => {
       try {
-        const searchValue = regexp ? new RegExp(from, 'g') : from;
+        const searchValue = regexp
+          ? new RegExp(from, ignoreCase ? 'gi' : 'g')
+          : ignoreCase
+            ? new RegExp(escapeRegExp(from), 'gi')
+            : from;
         return (title: string) => title.replaceAll(searchValue, to);
       } catch (error) {
         logger.error('title replacement regexp:', error);
@@ -437,15 +460,19 @@ export const replaceTitle = computed<(title: string) => string>(() => {
 export const isTitleBlacklisted = computed<(title: string) => boolean>(() => {
   const list = settings.titleBlacklist
     .filter(item => item?.content)
-    .map(({ content, regexp }) => {
+    .map(({ content, regexp, ignoreCase }) => {
       if (regexp) {
         try {
-          const reg = new RegExp(content);
+          const reg = new RegExp(content, ignoreCase ? 'gi' : 'g');
           return (title: string) => reg.test(title);
         } catch (error) {
           logger.error('title blacklist regexp:', error);
           return alwaysFalse;
         }
+      }
+      if (ignoreCase) {
+        const reg = new RegExp(escapeRegExp(content), 'gi');
+        return (title: string) => reg.test(title);
       }
       return (title: string) => title.includes(content);
     });

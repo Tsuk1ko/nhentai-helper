@@ -17,6 +17,8 @@ export default {
     language: '语言',
     other: '其他',
     resetToDefault: '重置为默认',
+    regexp: '正则表达式',
+    ignoreCase: '忽略大小写',
     abbr: {
       english: '英',
       japanese: '日',
@@ -60,7 +62,14 @@ export default {
     comicInfoTagsExtraInclude: 'Tags 额外包含',
     comicInfoTagsExtraWithType: '额外包含附带类型前缀',
     titleReplacement: '标题替换',
+    titleReplacementTable: {
+      from: '从',
+      to: '替换为',
+    },
     titleBlacklist: '标题黑名单',
+    titleBlacklistTable: {
+      content: '内容',
+    },
     galleryContextmenuPreview: '右击预览',
     customFilenameFunction: '自定义文件名函数',
     history: {

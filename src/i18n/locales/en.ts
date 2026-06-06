@@ -17,6 +17,8 @@ export default {
     language: 'Language',
     other: 'Other',
     resetToDefault: 'Reset to default',
+    regexp: 'RegExp',
+    ignoreCase: 'Ignore case',
     abbr: {
       english: 'EN',
       japanese: 'JP',
@@ -60,7 +62,14 @@ export default {
     comicInfoTagsExtraInclude: 'Tags extra include',
     comicInfoTagsExtraWithType: 'Extra tags with type prefix',
     titleReplacement: 'Title replacement',
+    titleReplacementTable: {
+      from: 'From',
+      to: 'To',
+    },
     titleBlacklist: 'Title blacklist',
+    titleBlacklistTable: {
+      content: 'Content',
+    },
     galleryContextmenuPreview: 'Context menu preview',
     customFilenameFunction: 'Custom filename function',
     history: {

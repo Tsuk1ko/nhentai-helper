@@ -9,14 +9,19 @@
         </span>
       </template>
       <el-table :data="settings.titleBlacklist">
-        <el-table-column label="Content">
+        <el-table-column :label="t('setting.titleBlacklistTable.content')">
           <template #default="{ row }">
             <RegExpInput v-model="row.content" :regexp="row.regexp" />
           </template>
         </el-table-column>
-        <el-table-column label="RegExp" width="80">
+        <el-table-column :label="t('common.regexp')" width="110">
           <template #default="{ row }">
             <el-switch v-model="row.regexp" />
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.ignoreCase')" width="110">
+          <template #default="{ row }">
+            <el-switch v-model="row.ignoreCase" />
           </template>
         </el-table-column>
         <el-table-column width="70">
@@ -52,7 +57,7 @@ import { writeableSettings as settings } from '@/utils/settings';
 const { t } = useI18n();
 
 const addTitleBlacklist = () => {
-  settings.titleBlacklist.push({ content: '', regexp: false });
+  settings.titleBlacklist.push({ content: '', regexp: false, ignoreCase: false });
 };
 
 const delTitleBlacklist = (index: number) => {

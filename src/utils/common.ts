@@ -1,5 +1,5 @@
 import { GM_addStyle, GM_getResourceText } from '$';
-import { last } from 'es-toolkit';
+import { escapeRegExp as esEscapeRegExp, last } from 'es-toolkit';
 import { template } from 'es-toolkit/compat';
 import $ from 'jquery';
 import { markRaw, reactive } from 'vue';
@@ -88,3 +88,5 @@ export const tryParseJSON = <T = unknown>(str: unknown): T | undefined => {
 export const needRunComplexDebug = () => settings.collectLog || IS_DEV;
 
 export const alwaysFalse = () => false;
+
+export const escapeRegExp = (str: string) => RegExp.escape?.(str) ?? esEscapeRegExp(str);
