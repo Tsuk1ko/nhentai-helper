@@ -83,7 +83,7 @@ class LastDownloadStore {
   private addStyle(gid: number) {
     this.removeStyle();
     this.styleEl = GM_addStyle(
-      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:block;inset:auto 0 0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:bold;line-height:16px;pointer-events:none;backdrop-filter:blur(4px)}`,
+      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:flex;align-items:center;justify-content:center;inset:0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:16px;font-weight:bold;line-height:16px;border-radius:4px 4px 0 0;pointer-events:none;backdrop-filter:blur(4px);transition:opacity 0.2s ease-in-out;}${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]:hover::after{opacity:0}`,
     );
   }
 }
