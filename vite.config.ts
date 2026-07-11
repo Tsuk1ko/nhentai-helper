@@ -6,8 +6,7 @@ import copy from 'rollup-plugin-copy';
 import type { UserConfigFnPromise } from 'vite';
 import { defineConfig } from 'vite';
 import monkey, { cdn, util } from 'vite-plugin-monkey';
-import fixDevWorkerPlugin from './plugins/fixDevWorkerPlugin';
-import minifyWorkerPlugin from './plugins/minifyWorkerPlugin';
+import fixDevWorkerImportPlugin from './plugins/fixDevWorkerImportPlugin';
 
 // https://vitejs.dev/config/
 const config: UserConfigFnPromise = async ({ mode }) => ({
@@ -18,13 +17,15 @@ const config: UserConfigFnPromise = async ({ mode }) => ({
     open: true,
   },
   build: {
-    minify: true,
+    minify: false,
     cssMinify: true,
   },
-  esbuild: {
-    legalComments: 'none',
-    minifyWhitespace: false,
-    minifyIdentifiers: false,
+  worker: {
+    rolldownOptions: {
+      output: {
+        minify: true,
+      },
+    },
   },
   resolve: {
     alias: {
@@ -33,8 +34,7 @@ const config: UserConfigFnPromise = async ({ mode }) => ({
     },
   },
   plugins: [
-    minifyWorkerPlugin(),
-    fixDevWorkerPlugin(),
+    fixDevWorkerImportPlugin(),
     vue(),
     vueI18nPlugin({
       module: 'petite-vue-i18n',
