@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.29.1
+// @version            3.29.3
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -17,11 +17,11 @@
 // @match              https://nhentai.xxx/*
 // @match              https://nhentai.to/*
 // @match              https://nhentai.website/*
-// @require            https://unpkg.com/vue@3.5.33/dist/vue.global.prod.js
-// @require            data:application/javascript,window.Vue%3DVue%2Cwindow.Date.now%7C%7C(window.Date.now%3D()%3D%3Enew%20Date().getTime())%3B
-// @require            https://unpkg.com/element-plus@2.13.7/dist/index.full.min.js
+// @require            https://unpkg.com/vue@3.5.39/dist/vue.global.prod.js
+// @require            data:application/javascript,%3B(()%20%3D%3E%20%7B%0A%09%09%09%09%09%09window.Vue%20%3D%20Vue%3B%0A%09%09%09%09%09%09if%20(!window.Date.now)%20window.Date.now%20%3D%20()%20%3D%3E%20(%2F*%20%40__PURE__%20*%2F%20new%20Date()).getTime()%3B%0A%09%09%09%09%09%7D)()%3B
+// @require            https://unpkg.com/element-plus@2.14.3/dist/index.full.min.js
 // @require            https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
-// @resource           element-plus-css  https://unpkg.com/element-plus@2.13.7/dist/index.css
+// @resource           element-plus-css  https://unpkg.com/element-plus@2.14.3/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            i1.nhentai.net
