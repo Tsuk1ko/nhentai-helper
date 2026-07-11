@@ -99,11 +99,17 @@ const initMutationObserver = () => {
         if (!isHTMLElement(node)) return;
 
         // Svelte
-        if (target.parentElement?.matches(selector.gallery)) {
-          const el = target.parentElement;
-          (el as any)._nhentaiHelperDestroy?.();
-          initGallery.call(el);
-          if (el.parentElement) debounceDoFilterTags(el.parentElement);
+        {
+          const el = target.parentElement?.matches(selector.gallery)
+            ? target.parentElement
+            : node.matches(selector.gallery)
+              ? node
+              : null;
+          if (el) {
+            (el as any)._nhentaiHelperDestroy?.();
+            initGallery.call(el);
+            if (el.parentElement) debounceDoFilterTags(el.parentElement);
+          }
         }
 
         // Super Preloader / 东方永页机
