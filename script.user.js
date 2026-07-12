@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.29.3
+// @version            3.29.4
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -1196,14 +1196,14 @@
 	var isTitleBlacklisted = (0, vue.computed)(() => {
 		const list = settings.titleBlacklist.filter((item) => item?.content).map(({ content, regexp, ignoreCase }) => {
 			if (regexp) try {
-				const reg = new RegExp(content, ignoreCase ? "gi" : "g");
+				const reg = new RegExp(content, ignoreCase ? "i" : void 0);
 				return (title) => reg.test(title);
 			} catch (error) {
 				logger.error("title blacklist regexp:", error);
 				return alwaysFalse;
 			}
 			if (ignoreCase) {
-				const reg = new RegExp(escapeRegExp(content), "gi");
+				const reg = new RegExp(escapeRegExp(content), "i");
 				return (title) => reg.test(title);
 			}
 			return (title) => title.includes(content);
