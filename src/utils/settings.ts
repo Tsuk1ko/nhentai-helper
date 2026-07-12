@@ -463,7 +463,7 @@ export const isTitleBlacklisted = computed<(title: string) => boolean>(() => {
     .map(({ content, regexp, ignoreCase }) => {
       if (regexp) {
         try {
-          const reg = new RegExp(content, ignoreCase ? 'gi' : 'g');
+          const reg = new RegExp(content, ignoreCase ? 'i' : undefined);
           return (title: string) => reg.test(title);
         } catch (error) {
           logger.error('title blacklist regexp:', error);
@@ -471,7 +471,7 @@ export const isTitleBlacklisted = computed<(title: string) => boolean>(() => {
         }
       }
       if (ignoreCase) {
-        const reg = new RegExp(escapeRegExp(content), 'gi');
+        const reg = new RegExp(escapeRegExp(content), 'i');
         return (title: string) => reg.test(title);
       }
       return (title: string) => title.includes(content);
