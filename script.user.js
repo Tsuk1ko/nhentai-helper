@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.29.4
+// @version            3.29.5
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -12555,6 +12555,19 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 	var loadHTML = (html) => {
 		return (0, jquery.default)(new DOMParser().parseFromString(html, "text/html").body);
 	};
+	var TimeLock = class {
+		timeout;
+		releaseTime = 0;
+		constructor(timeout) {
+			this.timeout = timeout;
+		}
+		lock(timeout = this.timeout) {
+			this.releaseTime = Date.now() + timeout;
+		}
+		isLocked() {
+			return Date.now() < this.releaseTime;
+		}
+	};
 	var OrderCache = class extends Map {
 		maxSize;
 		order = [];
@@ -12659,6 +12672,9 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 	var NHentaiImageRev = invert(NHentaiImgExt);
 	var nHentaiImgExtReversed = invert(NHentaiImgExt);
 	var getTypeFromExt = (ext) => nHentaiImgExtReversed[ext.toLowerCase()];
+	var isNHentaiError = (e) => {
+		return typeof e === "object" && typeof e?.error === "string";
+	};
 	var nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
 	var getNHentaiDownloadHost = (mid) => {
 		switch (settings.nHentaiDownloadHost) {
@@ -12675,26 +12691,48 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 	var getImageTypeFromPath = (path) => {
 		return NHentaiImageRev[path.split(".").pop()];
 	};
+	var apiRateLimitLock = new TimeLock(3e5);
 	var getGalleryFromApi = async (gid) => {
-		const resp = await fetchJSON(`https://nhentai.net/api/v2/galleries/${gid}`);
-		resp.images = {
-			pages: resp.pages.map((p) => ({
+		let res;
+		apiRateLimitLock.lock();
+		const isRateLimited = apiRateLimitLock.isLocked();
+		if (isRateLimited) {
+			logger.info("temporarily use webpage fallback");
+			res = await getGalleryFromWebApi(gid);
+		} else res = await fetchJSON(`https://nhentai.net/api/v2/galleries/${gid}`);
+		if (isNHentaiError(res)) if (res.error === "Rate limit exceeded" && !isRateLimited) {
+			apiRateLimitLock.lock();
+			logger.warn("nHentai API rate limit exceeded, use webpage fallback for next 5 minutes");
+			res = await getGalleryFromWebApi(gid);
+		} else throw new Error(res.error);
+		return convertNewGalleryToOld(res);
+	};
+	var getGalleryFromWebApi = async (gid) => {
+		const html = await fetchText(`https://nhentai.net/g/${gid}`);
+		const script = (0, jquery.default)(new DOMParser().parseFromString(html, "text/html").body).find("script[data-sveltekit-fetched][data-url^=\"/api/v2/galleries/\"]").text();
+		if (!script) throw new Error("cannot find sveltekit fetched script");
+		const { body } = JSON.parse(script);
+		return JSON.parse(body);
+	};
+	var convertNewGalleryToOld = (gallery) => {
+		gallery.images = {
+			pages: gallery.pages.map((p) => ({
 				w: p.width,
 				h: p.height,
 				t: getImageTypeFromPath(p.path)
 			})),
 			cover: {
-				w: resp.cover.width,
-				h: resp.cover.height,
-				t: getImageTypeFromPath(resp.cover.path)
+				w: gallery.cover.width,
+				h: gallery.cover.height,
+				t: getImageTypeFromPath(gallery.cover.path)
 			},
 			thumbnail: {
-				w: resp.thumbnail.width,
-				h: resp.thumbnail.height,
-				t: getImageTypeFromPath(resp.thumbnail.path)
+				w: gallery.thumbnail.width,
+				h: gallery.thumbnail.height,
+				t: getImageTypeFromPath(gallery.thumbnail.path)
 			}
 		};
-		return resp;
+		return gallery;
 	};
 	var fixGalleryObj = (gallery, gid) => {
 		if (gid) gallery.id = Number(gid);
