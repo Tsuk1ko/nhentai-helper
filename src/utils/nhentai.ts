@@ -14,6 +14,7 @@ import { compileTemplate, tryParseJSON } from './common';
 import { Counter } from './counter';
 import { removeIllegalFilenameChars } from './formatter';
 import { loadHTML } from './html';
+import { TimeLock } from './lock';
 import { logger } from './logger';
 import { OrderCache } from './orderCache';
 import { fetchJSON, fetchText } from './request';
@@ -114,6 +115,14 @@ export interface NHentaiGalleryInfo {
   gallery: NHentaiGallery;
 }
 
+export interface NHentaiError {
+  error: string;
+}
+
+export const isNHentaiError = (e: any): e is NHentaiError => {
+  return typeof e === 'object' && typeof e?.error === 'string';
+};
+
 export const nHentaiDownloadHostCounter = new Counter(nHentaiDownloadHosts);
 
 const getNHentaiDownloadHost = (mid: string) => {
@@ -139,30 +148,67 @@ const getImageTypeFromPath = (path: string): NHentaiImgExtShort => {
   return NHentaiImageRev[ext];
 };
 
-const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> => {
-  const url = `https://nhentai.net/api/v2/galleries/${gid}`;
-  const resp = await fetchJSON<NHentaiGallery>(url);
+const apiRateLimitLock = new TimeLock(300_000);
 
-  // convert to old format
-  resp.images = {
-    pages: resp.pages!.map(p => ({
+const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> => {
+  let res: NHentaiGallery | NHentaiError;
+
+  apiRateLimitLock.lock();
+
+  const isRateLimited = apiRateLimitLock.isLocked();
+
+  if (isRateLimited) {
+    logger.info('temporarily use webpage fallback');
+    res = await getGalleryFromWebApi(gid);
+  } else {
+    res = await fetchJSON<NHentaiGallery | NHentaiError>(
+      `https://nhentai.net/api/v2/galleries/${gid}`,
+    );
+  }
+
+  if (isNHentaiError(res)) {
+    if (res.error === 'Rate limit exceeded' && !isRateLimited) {
+      apiRateLimitLock.lock();
+      logger.warn('nHentai API rate limit exceeded, use webpage fallback for next 5 minutes');
+      res = await getGalleryFromWebApi(gid);
+    } else throw new Error(res.error);
+  }
+
+  return convertNewGalleryToOld(res);
+};
+
+const getGalleryFromWebApi = async (gid: number | string): Promise<NHentaiGallery> => {
+  const html = await fetchText(`https://nhentai.net/g/${gid}`);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const $doc = $(doc.body);
+
+  const script = $doc.find('script[data-sveltekit-fetched][data-url^="/api/v2/galleries/"]').text();
+  if (!script) throw new Error('cannot find sveltekit fetched script');
+
+  const { body } = JSON.parse(script);
+  return JSON.parse(body);
+};
+
+const convertNewGalleryToOld = (gallery: NHentaiGallery): NHentaiGallery => {
+  gallery.images = {
+    pages: gallery.pages!.map(p => ({
       w: p.width,
       h: p.height,
       t: getImageTypeFromPath(p.path),
     })),
     cover: {
-      w: resp.cover!.width,
-      h: resp.cover!.height,
-      t: getImageTypeFromPath(resp.cover!.path),
+      w: gallery.cover!.width,
+      h: gallery.cover!.height,
+      t: getImageTypeFromPath(gallery.cover!.path),
     },
     thumbnail: {
-      w: resp.thumbnail!.width,
-      h: resp.thumbnail!.height,
-      t: getImageTypeFromPath(resp.thumbnail!.path),
+      w: gallery.thumbnail!.width,
+      h: gallery.thumbnail!.height,
+      t: getImageTypeFromPath(gallery.thumbnail!.path),
     },
   };
-
-  return resp;
+  return gallery;
 };
 
 const fixGalleryObj = (gallery: NHentaiGallery, gid?: number | string) => {
