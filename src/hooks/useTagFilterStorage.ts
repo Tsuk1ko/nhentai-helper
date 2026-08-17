@@ -3,7 +3,7 @@ import { computed, watch } from 'vue';
 import { logger } from '@/utils/logger';
 import { settings } from '@/utils/settings';
 
-const STORAGE_KEY = 'filterTagsKeys';
+const STORAGE_KEY = 'nHelper.filterTagsKeys';
 
 export const useTagFilterStorage = () => {
   const sessionValue = useSessionStorage<string[]>(STORAGE_KEY, [], {
