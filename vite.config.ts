@@ -6,7 +6,6 @@ import copy from 'rollup-plugin-copy';
 import type { UserConfigFnPromise } from 'vite';
 import { defineConfig } from 'vite';
 import monkey, { cdn, util } from 'vite-plugin-monkey';
-import fixDevWorkerImportPlugin from './plugins/fixDevWorkerImportPlugin';
 
 // https://vitejs.dev/config/
 const config: UserConfigFnPromise = async ({ mode }) => ({
@@ -29,12 +28,14 @@ const config: UserConfigFnPromise = async ({ mode }) => ({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      'qr-scanner': resolve(__dirname, 'node_modules/qr-scanner/qr-scanner.legacy.min.js'),
+      '@': resolve(import.meta.dirname, 'src'),
+      'qr-scanner': resolve(
+        import.meta.dirname,
+        'node_modules/qr-scanner/qr-scanner.legacy.min.js',
+      ),
     },
   },
   plugins: [
-    fixDevWorkerImportPlugin(),
     vue(),
     vueI18nPlugin({
       module: 'petite-vue-i18n',
