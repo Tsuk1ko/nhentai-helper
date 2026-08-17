@@ -4,6 +4,8 @@
 
 支持 [Tampermonkey](https://www.tampermonkey.net/) 和 [Violentmonkey](https://violentmonkey.github.io/)，不支持也不会支持 Greasemonkey
 
+如需反馈问题，建议前往 [GitHub Issue](https://github.com/Tsuk1ko/nhentai-helper/issues)，Greasy Fork 的反馈系统不便追踪问题，且缺少部分 Markdown 功能
+
 ## 安装
 
 [从 Greasy Fork 安装](https://greasyfork.org/scripts/375992)（由于成人内容，需要登录才能安装）

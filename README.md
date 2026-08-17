@@ -6,6 +6,8 @@
 
 Support [Tampermonkey](https://www.tampermonkey.net/) and [Violentmonkey](https://violentmonkey.github.io/). Not and will not support Greasemonkey.
 
+Please report issues on [GitHub Issues](https://github.com/Tsuk1ko/nhentai-helper/issues). Greasy Fork's feedback system is inconvenient for tracking issues and lacks some Markdown features.
+
 ## Installation
 
 [Via Greasy Fork](https://greasyfork.org/scripts/375992) (login required due to adult content)
