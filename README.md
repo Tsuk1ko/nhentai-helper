@@ -74,6 +74,8 @@ Please report issues on [GitHub Issues](https://github.com/Tsuk1ko/nhentai-helpe
   Show an button that allow you to mark or unmark the manga as downloaded.
 - **Context menu preview**  
   Able to preview information and thumbnails directly by right click a manga on manga list page.
+- **Remember filter selection**  
+  Remember the selected filters. By default, filters are only remembered in the current tab.
 - **Judge downloaded manga by title**  
   You can specify the title used to judge whether the manga has been downloaded. If nothing selected, the script will never warn you when a manga has been downloaded.  
   Note that `Pretty` is not available in most mirror sites.

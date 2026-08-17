@@ -107,6 +107,8 @@ export interface Settings {
   downloadedTitleColor: string;
   /** 收集日志 */
   collectLog: boolean;
+  /** 记住筛选设置 */
+  persistTagsFilter: boolean;
 }
 
 interface SettingsDefault {
@@ -339,6 +341,11 @@ export const settingDefinitions: Readonly<{
   },
   collectLog: {
     key: 'collect_log',
+    default: false,
+    validator: booleanValidator,
+  },
+  persistTagsFilter: {
+    key: 'persist_tags_filter',
     default: false,
     validator: booleanValidator,
   },

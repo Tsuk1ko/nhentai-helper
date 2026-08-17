@@ -71,6 +71,7 @@ export default {
       content: 'Content',
     },
     galleryContextmenuPreview: 'Context menu preview',
+    persistTagsFilter: 'Remember filter selection',
     customFilenameFunction: 'Custom filename function',
     history: {
       title: 'Download History',

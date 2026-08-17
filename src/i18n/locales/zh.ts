@@ -71,6 +71,7 @@ export default {
       content: '内容',
     },
     galleryContextmenuPreview: '右击预览',
+    persistTagsFilter: '记住筛选设置',
     customFilenameFunction: '自定义文件名函数',
     history: {
       title: '下载历史',

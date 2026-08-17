@@ -28,19 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { useSessionStorage } from '@vueuse/core';
 import { ElOption, ElOptionGroup, ElSelect } from 'element-plus';
 import { compact } from 'es-toolkit';
 import { computed, watch } from 'vue';
+import { useTagFilterStorage } from '@/hooks/useTagFilterStorage';
 import { i18n } from '@/i18n';
 import type { JQElement } from '@/utils/tagsFilter';
 import { doFilterTags, filterTagsKeysGrouped, filterTagsMap } from '@/utils/tagsFilter';
 
 const { t } = i18n.global;
 
-const filterTagsKeys = useSessionStorage<string[]>('filterTagsKeys', [], {
-  listenToStorageChanges: false,
-});
+const filterTagsKeys = useTagFilterStorage();
 
 const filterTags = computed(() => compact(filterTagsKeys.value.map(key => filterTagsMap[key])));
 

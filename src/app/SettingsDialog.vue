@@ -74,6 +74,10 @@
         <el-form-item :label="t('setting.galleryContextmenuPreview')">
           <el-switch v-model="settings.galleryContextmenuPreview" />
         </el-form-item>
+        <!-- 记住筛选设置 -->
+        <el-form-item :label="t('setting.persistTagsFilter')">
+          <el-switch v-model="settings.persistTagsFilter" />
+        </el-form-item>
         <!-- 已下载判断 key -->
         <el-form-item :label="t('setting.judgeDownloadedMangaByTitle')">
           <el-checkbox v-model="settings.judgeDownloadedByEnglish" :label="t('common.english')" />
