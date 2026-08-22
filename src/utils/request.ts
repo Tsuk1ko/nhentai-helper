@@ -41,7 +41,7 @@ export const requestArrayBufferGm = (params: {
         onload: r => {
           const { status, response } = r;
           if (status === 200) resolve(response);
-          else if (retry === 0) reject(r);
+          else if (status === 429 || retry === 0) reject(r);
           else {
             const additionRetry = status === 404 ? on404?.(r.finalUrl) : false;
             logger.warn('Request error, retry', status, url, r);

@@ -38,11 +38,17 @@ export const downloadAgainConfirm = async (title: string, hasQueue = false): Pro
   });
 };
 
-export const errorRetryConfirm = (
-  action: ErrorAction,
-  noCb?: () => void,
-  yesCb?: () => void,
-): void => {
+export const errorRetryConfirm = ({
+  action,
+  noCb,
+  yesCb,
+  http429,
+}: {
+  action: ErrorAction;
+  noCb?: () => void;
+  yesCb?: () => void;
+  http429?: boolean;
+}): void => {
   if (settings.autoRetryWhenErrorOccurs) {
     errorRetryTip(action);
     yesCb?.();
@@ -50,13 +56,15 @@ export const errorRetryConfirm = (
   }
   const n = new Noty({
     ...notyConfirmOption,
-    text: t('dialog.errorRetryConfirm', { action }),
+    text: http429
+      ? t('dialog.http429errorRetryConfirm')
+      : t('dialog.errorRetryConfirm', { action }),
     buttons: [
       Noty.button(t('dialog.no'), 'btn btn-noty-blue btn-noty', () => {
         n.close();
         noCb?.();
       }),
-      Noty.button(t('dialog.yes'), 'btn btn-noty-green btn-noty', () => {
+      Noty.button(t('common.retry'), 'btn btn-noty-green btn-noty', () => {
         n.close();
         yesCb?.();
       }),

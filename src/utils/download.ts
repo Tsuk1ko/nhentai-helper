@@ -249,16 +249,17 @@ export const addDownloadGalleryTask = (
   dlQueue.push(async () => {
     const zipFunc = await downloadGalleryByInfo(info, { progressDisplayController }).catch(e => {
       progressDisplayController?.error();
-      errorRetryConfirm(
-        ErrorAction.DOWNLOAD,
-        () => {
+      errorRetryConfirm({
+        action: ErrorAction.DOWNLOAD,
+        noCb: () => {
           dlQueue.skipFromError().catch(logger.error);
         },
-        () => {
+        yesCb: () => {
           info.error = false;
           dlQueue.restartFromError().catch(logger.error);
         },
-      );
+        http429: e?.status === 429,
+      });
       throw e;
     });
 

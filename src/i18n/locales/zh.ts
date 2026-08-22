@@ -19,6 +19,7 @@ export default {
     resetToDefault: '重置为默认',
     regexp: '正则表达式',
     ignoreCase: '忽略大小写',
+    retry: '重试',
     abbr: {
       english: '英',
       japanese: '日',
@@ -104,6 +105,7 @@ export default {
     downloadedTip: '《{title}》已经下载过或在队列中',
     getMediaUrlTemplateFailed:
       "获取图片下载地址失败，请手动设置“@:{'setting.customDownloadUrl'}”，或前往 github issue 或脚本页面反馈并附带当前网址",
+    http429errorRetryConfirm: '当前 IP 已触发站点请求限制，请稍后再试，或使用/更换代理节点后重试',
   },
   button: {
     download: '下载',

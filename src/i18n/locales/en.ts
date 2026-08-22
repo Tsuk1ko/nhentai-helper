@@ -19,6 +19,7 @@ export default {
     resetToDefault: 'Reset to default',
     regexp: 'RegExp',
     ignoreCase: 'Ignore case',
+    retry: 'Retry',
     abbr: {
       english: 'EN',
       japanese: 'JP',
@@ -106,6 +107,8 @@ export default {
     downloadedTip: '<i>{title}</i> is already downloaded or in queue.',
     getMediaUrlTemplateFailed:
       'Fail to get image download url. Please set "@:{\'setting.customDownloadUrl\'}" manually, or open a github issue to report with current url.',
+    http429errorRetryConfirm:
+      'The current IP has triggered the site rate limit. Please try again later, or retry after using/switching a proxy.',
   },
   button: {
     download: 'Download',

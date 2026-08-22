@@ -274,7 +274,7 @@ const initGallery = function (this: HTMLElement) {
     } catch (error) {
       logger.error(error);
       progressDisplayController.error();
-      errorRetryConfirm(ErrorAction.GET_INFO, undefined, startDownload);
+      errorRetryConfirm({ action: ErrorAction.GET_INFO, yesCb: startDownload });
       return;
     }
 
