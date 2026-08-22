@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.30.1
+// @version            3.30.2
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -19,9 +19,9 @@
 // @match              https://nhentai.website/*
 // @require            https://unpkg.com/vue@3.5.41/dist/vue.global.prod.js
 // @require            data:application/javascript,%3B(()%20%3D%3E%20%7B%0A%09%09%09%09%09%09window.Vue%20%3D%20Vue%3B%0A%09%09%09%09%09%09if%20(!window.Date.now)%20window.Date.now%20%3D%20()%20%3D%3E%20(%2F*%20%40__PURE__%20*%2F%20new%20Date()).getTime()%3B%0A%09%09%09%09%09%7D)()%3B
-// @require            https://unpkg.com/element-plus@2.14.4/dist/index.full.min.js
+// @require            https://unpkg.com/element-plus@2.14.5/dist/index.full.min.js
 // @require            https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
-// @resource           element-plus-css  https://unpkg.com/element-plus@2.14.4/dist/index.css
+// @resource           element-plus-css  https://unpkg.com/element-plus@2.14.5/dist/index.css
 // @connect            nhentai.net
 // @connect            i.nhentai.net
 // @connect            i1.nhentai.net
@@ -8656,6 +8656,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 					"s": "Ignore case"
 				}
 			},
+			"retry": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "Retry"
+				}
+			},
 			"abbr": {
 				"english": {
 					"t": 0,
@@ -9204,6 +9212,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 						}
 					]
 				}
+			},
+			"http429errorRetryConfirm": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "The current IP has triggered the site rate limit. Please try again later, or retry after using/switching a proxy."
+				}
 			}
 		},
 		"button": {
@@ -9517,6 +9533,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 					"t": 2,
 					"i": [{ "t": 3 }],
 					"s": "忽略大小写"
+				}
+			},
+			"retry": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "重试"
 				}
 			},
 			"abbr": {
@@ -10066,6 +10090,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 							"v": "”，或前往 github issue 或脚本页面反馈并附带当前网址"
 						}
 					]
+				}
+			},
+			"http429errorRetryConfirm": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "当前 IP 已触发站点请求限制，请稍后再试，或使用/更换代理节点后重试"
 				}
 			}
 		},
@@ -12085,7 +12117,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			n.show();
 		});
 	};
-	var errorRetryConfirm = (action, noCb, yesCb) => {
+	var errorRetryConfirm = ({ action, noCb, yesCb, http429 }) => {
 		if (settings.autoRetryWhenErrorOccurs) {
 			errorRetryTip(action);
 			yesCb?.();
@@ -12093,11 +12125,11 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 		}
 		const n = new import_noty.default({
 			...notyConfirmOption,
-			text: t$3("dialog.errorRetryConfirm", { action }),
+			text: http429 ? t$3("dialog.http429errorRetryConfirm") : t$3("dialog.errorRetryConfirm", { action }),
 			buttons: [import_noty.default.button(t$3("dialog.no"), "btn btn-noty-blue btn-noty", () => {
 				n.close();
 				noCb?.();
-			}), import_noty.default.button(t$3("dialog.yes"), "btn btn-noty-green btn-noty", () => {
+			}), import_noty.default.button(t$3("common.retry"), "btn btn-noty-green btn-noty", () => {
 				n.close();
 				yesCb?.();
 			})]
@@ -12691,7 +12723,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 						onload: (r) => {
 							const { status, response } = r;
 							if (status === 200) resolve(response);
-							else if (retry === 0) reject(r);
+							else if (status === 429 || retry === 0) reject(r);
 							else {
 								const additionRetry = status === 404 ? on404?.(r.finalUrl) : false;
 								logger.warn("Request error, retry", status, url, r);
@@ -13139,11 +13171,16 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 		dlQueue.push(async () => {
 			const zipFunc = await downloadGalleryByInfo(info, { progressDisplayController }).catch((e) => {
 				progressDisplayController?.error();
-				errorRetryConfirm(ErrorAction.DOWNLOAD, () => {
-					dlQueue.skipFromError().catch(logger.error);
-				}, () => {
-					info.error = false;
-					dlQueue.restartFromError().catch(logger.error);
+				errorRetryConfirm({
+					action: ErrorAction.DOWNLOAD,
+					noCb: () => {
+						dlQueue.skipFromError().catch(logger.error);
+					},
+					yesCb: () => {
+						info.error = false;
+						dlQueue.restartFromError().catch(logger.error);
+					},
+					http429: e?.status === 429
 				});
 				throw e;
 			});
@@ -14330,7 +14367,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			} catch (error) {
 				logger.error(error);
 				progressDisplayController.error();
-				errorRetryConfirm(ErrorAction.GET_INFO, void 0, startDownload);
+				errorRetryConfirm({
+					action: ErrorAction.GET_INFO,
+					yesCb: startDownload
+				});
 				return;
 			}
 			if (!skipDownloadedCheck) {
