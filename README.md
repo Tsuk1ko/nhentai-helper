@@ -72,6 +72,8 @@ Please report issues on [GitHub Issues](https://github.com/Tsuk1ko/nhentai-helpe
   Help you to click the "Show all" button on manga detail page automatically.
 - **Show ignore button**  
   Show an button that allow you to mark or unmark the manga as downloaded.
+- **Show last download position**  
+  Show a mark on the last downloaded manga in the list. Enabled by default.
 - **Context menu preview**  
   Able to preview information and thumbnails directly by right click a manga on manga list page.
 - **Remember filter selection**  
