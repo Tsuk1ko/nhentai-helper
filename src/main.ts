@@ -32,6 +32,7 @@ init();
 
 GM_registerMenuCommand(i18n.global.t('common.settings'), openSettingsDialog);
 GM_registerMenuCommand(i18n.global.t('menu.restoreLastDownload'), () => lastDownload.restore());
+GM_registerMenuCommand(i18n.global.t('menu.clearLastDownload'), () => lastDownload.clear());
 
 if (IS_SETTINGS_DIALOG_DEV) {
   document.body.outerHTML = '<body></body>';

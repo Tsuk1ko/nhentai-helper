@@ -71,6 +71,8 @@ export interface Settings {
   autoShowAll: boolean;
   /** 显示忽略按钮 */
   showIgnoreButton: boolean;
+  /** 显示上次下载位置 */
+  showLastDownloadPosition: boolean;
   /** 阻止控制台清空 */
   preventConsoleClearing: boolean;
   /** 已下载判断 english 标题 */
@@ -231,6 +233,11 @@ export const settingDefinitions: Readonly<{
   showIgnoreButton: {
     key: 'show_ignore_button',
     default: false,
+    validator: booleanValidator,
+  },
+  showLastDownloadPosition: {
+    key: 'show_last_download_position',
+    default: true,
     validator: booleanValidator,
   },
   preventConsoleClearing: {

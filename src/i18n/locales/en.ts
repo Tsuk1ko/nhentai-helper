@@ -46,6 +46,7 @@ export default {
     autoRetryWhenErrorOccurs: 'Auto retry when error occurs',
     autoShowAll: 'Auto show all',
     showIgnoreButton: 'Show "Ignore" button',
+    showLastDownloadPosition: 'Show last download position',
     judgeDownloadedMangaByTitle: 'Judge downloaded manga by title',
     customDownloadUrl: 'Custom download URL',
     compressionStreamFiles: 'Compression "streamFiles"',
@@ -142,5 +143,6 @@ export default {
   },
   menu: {
     restoreLastDownload: 'Restore last download position',
+    clearLastDownload: 'Clear last download position',
   },
 };

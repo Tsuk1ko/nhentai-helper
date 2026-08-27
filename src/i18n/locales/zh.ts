@@ -46,6 +46,7 @@ export default {
     autoRetryWhenErrorOccurs: '发生错误时自动重试',
     autoShowAll: '自动显示全部',
     showIgnoreButton: '显示“忽略”按钮',
+    showLastDownloadPosition: '显示上次下载位置',
     judgeDownloadedMangaByTitle: '用标题判断本子是否下载过',
     customDownloadUrl: '自定义下载地址',
     compressionStreamFiles: '压缩 "streamFiles" 选项',
@@ -139,5 +140,6 @@ export default {
   },
   menu: {
     restoreLastDownload: '还原上次下载位置记录',
+    clearLastDownload: '清除上次下载位置记录',
   },
 };

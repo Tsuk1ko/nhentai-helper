@@ -1,12 +1,13 @@
-import { GM_addStyle } from '$';
 import { once } from 'es-toolkit';
 import localforage from 'localforage';
+import { ref } from 'vue';
 import { IDB_NAME, IS_DEV } from '@/const';
 import { isPageMangaList } from '@/env';
 import { useStyle } from '@/hooks/useStyle';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
 import { logger } from './logger';
+import { settings } from './settings';
 
 class LastDownloadStore {
   private readonly store = localforage.createInstance({
@@ -17,12 +18,13 @@ class LastDownloadStore {
   private key = '';
   private latestGid: number = 0;
   private lastGid: number = 0;
-  private styleEl?: HTMLStyleElement;
+  private gidForStyle = ref<number>();
 
   private onceInit = once(() => {
     useStyle(
       () =>
-        `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t('tip.lastDownloadedPosition')}"}`,
+        settings.showLastDownloadPosition &&
+        `:root{--nh-helper-text-last-downloaded-position:"${i18n.global.t('tip.lastDownloadedPosition')}"}${selector.gallery} ${selector.galleryCover}[href*="/${this.gidForStyle.value}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:flex;align-items:center;justify-content:center;inset:0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:16px;font-weight:bold;line-height:16px;border-radius:4px 4px 0 0;pointer-events:none;backdrop-filter:blur(4px);transition:opacity 0.2s ease-in-out;}${selector.gallery} ${selector.galleryCover}[href*="/${this.gidForStyle.value}/"]:hover::after{opacity:0}`,
     );
   });
 
@@ -37,7 +39,7 @@ class LastDownloadStore {
       }
       this.latestGid = gid;
       this.lastGid = gid;
-      this.addStyle(gid);
+      this.gidForStyle.value = gid;
       this.onceInit();
     } catch (error) {
       logger.error(error);
@@ -59,9 +61,15 @@ class LastDownloadStore {
 
   async restore() {
     if (!this.lastGid) return;
+    logger.info(`restore last download: ${this.lastGid}`);
     this.latestGid = this.lastGid;
     await this.store.setItem(this.key, this.lastGid);
-    logger.info(`restore last download: ${this.lastGid}`);
+  }
+
+  async clear() {
+    logger.info('clear last download');
+    this.reset();
+    await this.store.removeItem(this.key || this.getKey());
   }
 
   private getKey() {
@@ -72,19 +80,7 @@ class LastDownloadStore {
   private reset() {
     this.latestGid = 0;
     this.lastGid = 0;
-    this.removeStyle();
-  }
-
-  private removeStyle() {
-    this.styleEl?.remove();
-    this.styleEl = undefined;
-  }
-
-  private addStyle(gid: number) {
-    this.removeStyle();
-    this.styleEl = GM_addStyle(
-      `${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]::after{content:var(--nh-helper-text-last-downloaded-position);position:absolute;display:flex;align-items:center;justify-content:center;inset:0;background-color:rgba(237,37,83,.6);color:rgba(255,255,255,.9);font-size:16px;font-weight:bold;line-height:16px;border-radius:4px 4px 0 0;pointer-events:none;backdrop-filter:blur(4px);transition:opacity 0.2s ease-in-out;}${selector.gallery} ${selector.galleryCover}[href*="/${gid}/"]:hover::after{opacity:0}`,
-    );
+    this.gidForStyle.value = undefined;
   }
 }
 

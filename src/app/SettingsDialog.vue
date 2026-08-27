@@ -70,6 +70,10 @@
         <el-form-item class="refresh-required" :label="t('setting.showIgnoreButton')">
           <el-switch v-model="settings.showIgnoreButton" />
         </el-form-item>
+        <!-- 显示上次下载位置 -->
+        <el-form-item :label="t('setting.showLastDownloadPosition')">
+          <el-switch v-model="settings.showLastDownloadPosition" />
+        </el-form-item>
         <!-- 右击预览 -->
         <el-form-item :label="t('setting.galleryContextmenuPreview')">
           <el-switch v-model="settings.galleryContextmenuPreview" />
