@@ -274,7 +274,11 @@ const initGallery = function (this: HTMLElement) {
     } catch (error) {
       logger.error(error);
       progressDisplayController.error();
-      errorRetryConfirm({ action: ErrorAction.GET_INFO, yesCb: startDownload });
+      errorRetryConfirm({
+        action: ErrorAction.GET_INFO,
+        yesCb: startDownload,
+        http429: (error as { status?: number })?.status === 429,
+      });
       return;
     }
 

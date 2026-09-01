@@ -129,9 +129,7 @@ export const downloadGalleryByInfo = async (
 
     if (!urlGetter || urlGetterError) {
       info.error = true;
-      throw urlGetterError && urlGetterError instanceof Error
-        ? urlGetterError
-        : new Error('No available url');
+      throw urlGetterError ?? new Error('No available url');
     }
 
     if (typeof urlGetter !== 'function') {

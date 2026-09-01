@@ -1,5 +1,4 @@
 import { GM_xmlhttpRequest } from '$';
-import { sleep } from './common';
 import { logger } from './logger';
 
 class RequestAbortError extends Error {
@@ -71,48 +70,14 @@ export const requestArrayBufferGm = (params: {
   };
 };
 
-export const requestArrayBufferFetch = ({
-  url: urlGetter,
-  retry = 3,
-  on404,
-}: {
-  url: string | (() => string);
-  retry?: number;
-  /** Return `true` when there are available hosts */
-  on404?: (url: string) => boolean;
-}): { abort: () => void; dataPromise: Promise<ArrayBuffer> } => {
-  const controller = new AbortController();
+export const fetchText = (url: string): Promise<string> =>
+  fetch(url).then(r => {
+    if (!r.ok) throw r;
+    return r.text();
+  });
 
-  const doFetch = async (retry: number): Promise<ArrayBuffer> => {
-    const url = typeof urlGetter === 'function' ? urlGetter() : urlGetter;
-    try {
-      const r = await fetch(url, { credentials: 'include', signal: controller.signal });
-      const { status } = r;
-      if (status === 200) return r.arrayBuffer();
-      if (retry === 0) throw r;
-      const additionRetry = status === 404 ? on404?.(r.url) : false;
-      logger.warn('Request error, retry', status, url, r);
-      await sleep(1000);
-      return doFetch(retry - (additionRetry ? 0 : 1));
-    } catch (e) {
-      if (retry === 0) {
-        logger.error('Network error', url, e);
-        throw e;
-      }
-      logger.warn('Network error, retry', url, e);
-      await sleep(1000);
-      return doFetch(retry - 1);
-    }
-  };
-
-  return {
-    abort: () => {
-      controller.abort();
-    },
-    dataPromise: doFetch(retry),
-  };
-};
-
-export const fetchText = (url: string): Promise<string> => fetch(url).then(r => r.text());
-
-export const fetchJSON = <D = any>(url: string): Promise<D> => fetch(url).then(r => r.json());
+export const fetchJSON = <D = any>(url: string): Promise<D> =>
+  fetch(url).then(r => {
+    if (!r.ok) throw r;
+    return r.json();
+  });
