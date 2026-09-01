@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.31.0
+// @version            3.31.1
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -12795,8 +12795,14 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			})
 		};
 	};
-	var fetchText = (url) => fetch(url).then((r) => r.text());
-	var fetchJSON = (url) => fetch(url).then((r) => r.json());
+	var fetchText = (url) => fetch(url).then((r) => {
+		if (!r.ok) throw r;
+		return r.text();
+	});
+	var fetchJSON = (url) => fetch(url).then((r) => {
+		if (!r.ok) throw r;
+		return r.json();
+	});
 	var PROTOCOL_REGEXP = /^https?:\/\//;
 	var ensureProtocol = (url) => PROTOCOL_REGEXP.test(url) ? url : url.startsWith("//") ? `${location.protocol}${url}` : `${location.protocol}//${url}`;
 	var NHentaiImgExt = function(NHentaiImgExt) {
@@ -13135,7 +13141,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			});
 			if (!urlGetter || urlGetterError) {
 				info.error = true;
-				throw urlGetterError && urlGetterError instanceof Error ? urlGetterError : new Error("No available url");
+				throw urlGetterError ?? new Error("No available url");
 			}
 			if (typeof urlGetter !== "function") logger.info(`[${threadID}] ${urlGetter}`);
 			const { abort, dataPromise } = requestArrayBufferGm({
@@ -14415,7 +14421,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 				progressDisplayController.error();
 				errorRetryConfirm({
 					action: ErrorAction.GET_INFO,
-					yesCb: startDownload
+					yesCb: startDownload,
+					http429: error?.status === 429
 				});
 				return;
 			}
