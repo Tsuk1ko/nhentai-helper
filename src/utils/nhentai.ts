@@ -148,12 +148,10 @@ const getImageTypeFromPath = (path: string): NHentaiImgExtShort => {
   return NHentaiImageRev[ext];
 };
 
-const apiRateLimitLock = new TimeLock(300_000);
+const apiRateLimitLock = new TimeLock(60_000);
 
 const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> => {
   let res: NHentaiGallery | NHentaiError;
-
-  apiRateLimitLock.lock();
 
   const isRateLimited = apiRateLimitLock.isLocked();
 
@@ -163,11 +161,12 @@ const getGalleryFromApi = async (gid: number | string): Promise<NHentaiGallery> 
   } else {
     res = await fetchJSON<NHentaiGallery | NHentaiError>(
       `https://nhentai.net/api/v2/galleries/${gid}`,
+      { throwOnError: false },
     );
   }
 
   if (isNHentaiError(res)) {
-    if (res.error === 'Rate limit exceeded' && !isRateLimited) {
+    if (!isRateLimited && res.error === 'Rate limit exceeded') {
       apiRateLimitLock.lock();
       logger.warn('nHentai API rate limit exceeded, use webpage fallback for next 5 minutes');
       res = await getGalleryFromWebApi(gid);

@@ -76,8 +76,11 @@ export const fetchText = (url: string): Promise<string> =>
     return r.text();
   });
 
-export const fetchJSON = <D = any>(url: string): Promise<D> =>
+export const fetchJSON = <D = any>(
+  url: string,
+  { throwOnError = true }: { throwOnError?: boolean } = {},
+): Promise<D> =>
   fetch(url).then(r => {
-    if (!r.ok) throw r;
+    if (!r.ok && throwOnError) throw r;
     return r.json();
   });
