@@ -6,6 +6,7 @@ import { isPageMangaList } from '@/env';
 import { useStyle } from '@/hooks/useStyle';
 import { i18n } from '@/i18n';
 import { selector } from '@/rules/selector';
+import { showMessage } from './elementPlus';
 import { logger } from './logger';
 import { settings } from './settings';
 
@@ -49,7 +50,7 @@ class LastDownloadStore {
 
   async update(gid: string | number) {
     if (IS_DEV) {
-      logger.warn('skip update last download in dev mode');
+      logger.warn('skip update last download in dev mode', gid);
       return;
     }
     if (!isPageMangaList()) return;
@@ -64,12 +65,20 @@ class LastDownloadStore {
     logger.info(`restore last download: ${this.lastGid}`);
     this.latestGid = this.lastGid;
     await this.store.setItem(this.key, this.lastGid);
+    showMessage({
+      message: i18n.global.t('tip.lastDownloadRestored', { gid: this.lastGid }),
+      type: 'success',
+    });
   }
 
   async clear() {
     logger.info('clear last download');
     this.reset();
     await this.store.removeItem(this.key || this.getKey());
+    showMessage({
+      message: i18n.global.t('tip.lastDownloadCleared'),
+      type: 'success',
+    });
   }
 
   private getKey() {

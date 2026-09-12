@@ -137,6 +137,8 @@ export default {
   },
   tip: {
     lastDownloadedPosition: '上次下载位置',
+    lastDownloadRestored: ({ named }: MessageContext) => `已还原上次下载位置：${named('gid')}`,
+    lastDownloadCleared: '已清除上次下载位置',
   },
   menu: {
     restoreLastDownload: '还原上次下载位置记录',

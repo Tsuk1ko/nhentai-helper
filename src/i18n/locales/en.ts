@@ -140,6 +140,8 @@ export default {
   },
   tip: {
     lastDownloadedPosition: 'Last download position',
+    lastDownloadRestored: ({ named }: MessageContext) => `Last download position restored: ${named('gid')}`,
+    lastDownloadCleared: 'Last download position cleared',
   },
   menu: {
     restoreLastDownload: 'Restore last download position',
