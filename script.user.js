@@ -3,7 +3,7 @@
 // @name:zh-CN         nHentai 助手
 // @name:zh-TW         nHentai 助手
 // @namespace          https://github.com/Tsuk1ko
-// @version            3.31.1
+// @version            3.31.2
 // @author             Jindai Kirin
 // @description        Download nHentai manga as compression file easily, and add some useful features. Also support some mirror sites.
 // @description:zh-CN  为 nHentai 增加压缩打包下载方式以及一些辅助功能，同时还支持一些镜像站
@@ -78,7 +78,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css(" .download-item[data-v-e90bde63]{white-space:nowrap;color:#ffffffe6;padding:2px;position:relative;overflow:visible}.download-item--can-cancel[data-v-e90bde63]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-e90bde63]{cursor:pointer;color:#f44336;width:30px;font-size:20px;line-height:30px;position:absolute;top:0;right:-30px}.download-item__title[data-v-e90bde63]{text-overflow:ellipsis;text-align:left;overflow:hidden}.download-item__progress[data-v-e90bde63]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-e90bde63]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-e90bde63]{background-color:#00ff0080}.download-item__progress-text[data-v-e90bde63]{transform:scale(.8)}#download-panel[data-v-b1f64280]{z-index:100;background-color:#000000b3;width:calc(50vw - 620px);min-width:150px;max-width:300px;max-height:60vh;font-size:12px;position:fixed;top:20vh;right:0;overflow:hidden scroll}#download-panel[data-v-b1f64280]::-webkit-scrollbar{background-color:#000000b3;width:6px}#download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb{background-color:#fff9}.gap-inputs[data-v-577c6dc6]{gap:4px 12px;display:flex}.gap-inputs[data-v-577c6dc6] .el-button{margin:0}.collect-log-tip[data-v-577c6dc6]{margin-top:12px;line-height:1.5}.inline-item[data-v-5c8e4767]{display:inline-block}.inline-item[data-v-5c8e4767]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-5c8e4767]{-webkit-user-select:none;user-select:none;margin-right:4px}.monospace[data-v-e4fd1f32]{font-family:monospace}span.monospace[data-v-e4fd1f32]{-webkit-user-select:none;user-select:none}.downloaded-title-color-preview[data-v-297ff1d5]{width:unset!important;height:unset!important;inset:unset!important;-webkit-user-select:none!important;user-select:none!important;border-radius:0!important;margin-left:8px!important;padding:4px 16px!important;position:relative!important}.comic-info-tags-extra-include-popper .el-select-dropdown__footer{padding:0}.is-error[data-v-b6830946]{--el-input-border-color:var(--el-color-danger);--el-input-hover-border-color:var(--el-color-danger);--el-input-focus-border-color:var(--el-color-danger)}.nhentai-helper-setting-help-buttons[data-v-4bd82b78]{float:left;position:absolute}#nhentai-helper-setting-dialog-outside{width:80%;max-width:800px}#nhentai-helper-setting-dialog-outside .no-sl{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:\"*\";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]),#nhentai-helper-setting-dialog textarea{background:inherit;color:var(--el-input-text-color,var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:\"*\";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-form-item__content .el-link.is-underline:hover:after{bottom:8px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}#nhentai-helper-setting-dialog .el-link{color:var(--el-link-text-color)}#nhentai-helper-setting-dialog .el-link:hover{color:var(--el-link-hover-text-color)}#nhentai-helper-setting-dialog .el-collapse-item__header{font-family:inherit}.el-select-dropdown{-webkit-user-select:none;user-select:none}.bold[data-v-9fa42e74]{font-weight:700}.info-label[data-v-9fa42e74]{display:inline-block}.lang-zh .info-label[data-v-9fa42e74]{min-width:30px}.lang-en .info-label[data-v-9fa42e74]{min-width:80px}.info-tag-wrapper[data-v-9fa42e74]{display:flex}.info-tag[data-v-9fa42e74]{-webkit-user-select:none;user-select:none;margin:2px}.info-tag--pointer[data-v-9fa42e74]{cursor:pointer}.image-loading[data-v-9fa42e74]{background-color:#0009;width:100%;height:100%}.scroll-container[data-v-9fa42e74]{overscroll-behavior:none;min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-9fa42e74]::-webkit-scrollbar{width:6px}.scroll-container[data-v-9fa42e74]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-9fa42e74]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-9fa42e74]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__extra{white-space:nowrap;height:0}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%}.gallery-mini-popover-wrapper{overscroll-behavior:none;overflow:hidden}.gallery-mini-popover-wrapper .popover-transition{transition:var(--el-transition-all);transition-duration:.2s}.tags-filter[data-v-a8176084]{vertical-align:middle;align-items:center;padding-left:10px;display:inline-flex}.filter-option[data-v-a8176084]{text-align:center}.filter-option-group[data-v-a8176084] .el-select-group__title{text-align:left;padding:0 12px;line-height:24px}.filter-select[data-v-a8176084]{width:140px;margin-right:-140px}.filter-select[data-v-a8176084] .el-input__inner{color:var(--el-input-text-color,var(--el-text-color-regular))!important;background:0 0!important}@media screen and (width<=644px){.tags-filter[data-v-a8176084]{padding:10px 0}.filter-select[data-v-a8176084]{margin-right:0}}\n/*$vite$:1*/ ");
+	_css(" .download-item[data-v-e90bde63]{white-space:nowrap;color:#ffffffe6;padding:2px;position:relative;overflow:visible}.download-item--can-cancel[data-v-e90bde63]:hover{width:calc(100% - 30px)}.download-item__cancel[data-v-e90bde63]{cursor:pointer;color:#f44336;width:30px;font-size:20px;line-height:30px;position:absolute;top:0;right:-30px}.download-item__title[data-v-e90bde63]{text-overflow:ellipsis;text-align:left;overflow:hidden}.download-item__progress[data-v-e90bde63]{background-color:#0000ff80;line-height:10px}.download-item--error .download-item__progress[data-v-e90bde63]{background-color:#ff000080}.download-item--compressing .download-item__progress[data-v-e90bde63]{background-color:#00ff0080}.download-item__progress-text[data-v-e90bde63]{transform:scale(.8)}#download-panel[data-v-b1f64280]{z-index:100;background-color:#000000b3;width:calc(50vw - 620px);min-width:150px;max-width:300px;max-height:60vh;font-size:12px;position:fixed;top:20vh;right:0;overflow:hidden scroll}#download-panel[data-v-b1f64280]::-webkit-scrollbar{background-color:#000000b3;width:6px}#download-panel[data-v-b1f64280]::-webkit-scrollbar-thumb{background-color:#fff9}.gap-inputs[data-v-577c6dc6]{gap:4px 12px;display:flex}.gap-inputs[data-v-577c6dc6] .el-button{margin:0}.collect-log-tip[data-v-577c6dc6]{margin-top:12px;line-height:1.5}.inline-item[data-v-5c8e4767]{display:inline-block}.inline-item[data-v-5c8e4767]:not(:last-of-type){margin-right:8px}.inline-item__name[data-v-5c8e4767]{-webkit-user-select:none;user-select:none;margin-right:4px}.monospace[data-v-e4fd1f32]{font-family:monospace}span.monospace[data-v-e4fd1f32]{-webkit-user-select:none;user-select:none}.downloaded-title-color-preview[data-v-297ff1d5]{width:unset!important;height:unset!important;inset:unset!important;-webkit-user-select:none!important;user-select:none!important;border-radius:0!important;margin-left:8px!important;padding:4px 16px!important;position:relative!important}.comic-info-tags-extra-include-popper .el-select-dropdown__footer{padding:0}.is-error[data-v-b6830946]{--el-input-border-color:var(--el-color-danger);--el-input-hover-border-color:var(--el-color-danger);--el-input-focus-border-color:var(--el-color-danger)}.nhentai-helper-setting-help-buttons[data-v-4bd82b78]{float:left;position:absolute}#nhentai-helper-setting-dialog-outside{width:80%;max-width:800px}#nhentai-helper-setting-dialog-outside .no-sl{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .asterisk-example:before{content:\"*\";color:var(--el-color-danger);margin-right:4px}#nhentai-helper-setting-dialog label{font-weight:unset}#nhentai-helper-setting-dialog input:not([type=file]):not([type=checkbox]),#nhentai-helper-setting-dialog textarea{background:inherit;color:var(--el-input-text-color,var(--el-text-color-regular))}#nhentai-helper-setting-dialog .el-input.is-disabled .el-input__inner{color:var(--el-disabled-text-color)}#nhentai-helper-setting-dialog .el-slider__stop{border:solid 1px var(--el-slider-runway-bg-color)}#nhentai-helper-setting-dialog .el-form-item:last-of-type{margin-bottom:0}#nhentai-helper-setting-dialog .el-form-item.refresh-required>.el-form-item__label-wrap>.el-form-item__label:after{content:\"*\";color:var(--el-color-danger);margin-left:4px}#nhentai-helper-setting-dialog .el-form-item__content .el-link.is-underline:hover:after{bottom:8px}#nhentai-helper-setting-dialog .el-divider__text{color:var(--el-text-color-secondary);-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .m-l-16{margin-left:16px}#nhentai-helper-setting-dialog .m-b-32{margin-bottom:32px}#nhentai-helper-setting-dialog .el-form-item__label{-webkit-user-select:none;user-select:none}#nhentai-helper-setting-dialog .el-table .el-input__prefix,#nhentai-helper-setting-dialog .el-table .el-input__suffix{line-height:30px}#nhentai-helper-setting-dialog .el-table__empty-block{display:none}#nhentai-helper-setting-dialog .el-link{color:var(--el-link-text-color)}#nhentai-helper-setting-dialog .el-link:hover{color:var(--el-link-hover-text-color)}#nhentai-helper-setting-dialog .el-collapse-item__header{font-family:inherit}.el-select-dropdown{-webkit-user-select:none;user-select:none}.init-size[data-v-fdb55fd1]{height:700px;max-height:90vh}.loading-error[data-v-fdb55fd1]{text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:16px;display:flex}.loading-error .error-message[data-v-fdb55fd1]{overflow-wrap:anywhere;max-width:100%;font-size:16px}.bold[data-v-fdb55fd1]{font-weight:700}.info-label[data-v-fdb55fd1]{display:inline-block}.lang-zh .info-label[data-v-fdb55fd1]{min-width:30px}.lang-en .info-label[data-v-fdb55fd1]{min-width:80px}.info-tag-wrapper[data-v-fdb55fd1]{display:flex}.info-tag[data-v-fdb55fd1]{-webkit-user-select:none;user-select:none;margin:2px}.info-tag--pointer[data-v-fdb55fd1]{cursor:pointer}.image-loading[data-v-fdb55fd1]{background-color:#0009;width:100%;height:100%}.scroll-container[data-v-fdb55fd1]{overscroll-behavior:none;min-height:400px;margin:8px -8px 0;overflow-y:auto}.scroll-container[data-v-fdb55fd1]::-webkit-scrollbar{width:6px}.scroll-container[data-v-fdb55fd1]::-webkit-scrollbar-thumb{background-color:#0003;border-radius:10px;transition:all .2s ease-in-out}.scroll-container[data-v-fdb55fd1]::-webkit-scrollbar-track{border-radius:10px}.scroll-container-inner[data-v-fdb55fd1]{padding:0 8px}.gallery-mini-popover .el-descriptions__header{align-items:flex-start!important}.gallery-mini-popover .el-descriptions__extra{white-space:nowrap;height:0}.gallery-mini-popover .el-descriptions__title{text-align:left!important}.gallery-mini-popover .el-descriptions__cell{display:flex;padding-bottom:0!important}.gallery-mini-popover .el-descriptions__label{flex-grow:0;flex-shrink:0}.gallery-mini-popover .el-descriptions__content{flex-grow:1;flex-shrink:1}.gallery-mini-popover .el-link{color:var(--el-link-text-color)!important}.gallery-mini-popover .el-link:hover{color:var(--el-link-hover-text-color)!important}.gallery-mini-popover .el-image{width:100%}.gallery-mini-popover-wrapper{overscroll-behavior:none;overflow:hidden}.gallery-mini-popover-wrapper .popover-transition{transition:var(--el-transition-all);transition-duration:.2s}.tags-filter[data-v-a8176084]{vertical-align:middle;align-items:center;padding-left:10px;display:inline-flex}.filter-option[data-v-a8176084]{text-align:center}.filter-option-group[data-v-a8176084] .el-select-group__title{text-align:left;padding:0 12px;line-height:24px}.filter-select[data-v-a8176084]{width:140px;margin-right:-140px}.filter-select[data-v-a8176084] .el-input__inner{color:var(--el-input-text-color,var(--el-text-color-regular))!important;background:0 0!important}@media screen and (width<=644px){.tags-filter[data-v-a8176084]{padding:10px 0}.filter-select[data-v-a8176084]{margin-right:0}}\n/*$vite$:1*/ ");
 	var __create = Object.create;
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6555,6 +6555,19 @@
 			})]));
 		}
 	});
+	var refresh_right_default = (0, vue.defineComponent)({
+		name: "RefreshRight",
+		__name: "refresh-right",
+		setup(__props) {
+			return (_ctx, _cache) => ((0, vue.openBlock)(), (0, vue.createElementBlock)("svg", {
+				xmlns: "http://www.w3.org/2000/svg",
+				viewBox: "0 0 1024 1024"
+			}, [(0, vue.createElementVNode)("path", {
+				fill: "currentColor",
+				d: "M784.512 230.272v-50.56a32 32 0 1 1 64 0v149.056a32 32 0 0 1-32 32H667.52a32 32 0 1 1 0-64h92.992A320 320 0 1 0 524.8 833.152a320 320 0 0 0 320-320h64a384 384 0 0 1-384 384 384 384 0 0 1-384-384 384 384 0 0 1 643.712-282.88"
+			})]));
+		}
+	});
 	var upload_default = (0, vue.defineComponent)({
 		name: "Upload",
 		__name: "upload",
@@ -9401,14 +9414,25 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 				}
 			}
 		},
-		"tip": { "lastDownloadedPosition": {
-			"t": 0,
-			"b": {
-				"t": 2,
-				"i": [{ "t": 3 }],
-				"s": "Last download position"
+		"tip": {
+			"lastDownloadedPosition": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "Last download position"
+				}
+			},
+			"lastDownloadRestored": ({ named }) => `Last download position restored: ${named("gid")}`,
+			"lastDownloadCleared": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "Last download position cleared"
+				}
 			}
-		} },
+		},
 		"menu": {
 			"restoreLastDownload": {
 				"t": 0,
@@ -10298,14 +10322,25 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 				}
 			}
 		},
-		"tip": { "lastDownloadedPosition": {
-			"t": 0,
-			"b": {
-				"t": 2,
-				"i": [{ "t": 3 }],
-				"s": "上次下载位置"
+		"tip": {
+			"lastDownloadedPosition": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "上次下载位置"
+				}
+			},
+			"lastDownloadRestored": ({ named }) => `\u5DF2\u8FD8\u539F\u4E0A\u6B21\u4E0B\u8F7D\u4F4D\u7F6E\uFF1A${named("gid")}`,
+			"lastDownloadCleared": {
+				"t": 0,
+				"b": {
+					"t": 2,
+					"i": [{ "t": 3 }],
+					"s": "已清除上次下载位置"
+				}
 			}
-		} },
+		},
 		"menu": {
 			"restoreLastDownload": {
 				"t": 0,
@@ -10402,11 +10437,19 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			logger.info(`restore last download: ${this.lastGid}`);
 			this.latestGid = this.lastGid;
 			await this.store.setItem(this.key, this.lastGid);
+			showMessage({
+				message: i18n.global.t("tip.lastDownloadRestored", { gid: this.lastGid }),
+				type: "success"
+			});
 		}
 		async clear() {
 			logger.info("clear last download");
 			this.reset();
 			await this.store.removeItem(this.key || this.getKey());
+			showMessage({
+				message: i18n.global.t("tip.lastDownloadCleared"),
+				type: "success"
+			});
 		}
 		getKey() {
 			const url = new URL(location.href);
@@ -12799,8 +12842,8 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 		if (!r.ok) throw r;
 		return r.text();
 	});
-	var fetchJSON = (url) => fetch(url).then((r) => {
-		if (!r.ok) throw r;
+	var fetchJSON = (url, { throwOnError = true } = {}) => fetch(url).then((r) => {
+		if (!r.ok && throwOnError) throw r;
 		return r.json();
 	});
 	var PROTOCOL_REGEXP = /^https?:\/\//;
@@ -12834,17 +12877,16 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 	var getImageTypeFromPath = (path) => {
 		return NHentaiImageRev[path.split(".").pop()];
 	};
-	var apiRateLimitLock = new TimeLock(3e5);
+	var apiRateLimitLock = new TimeLock(6e4);
 	var getGalleryFromApi = async (gid) => {
 		let res;
-		apiRateLimitLock.lock();
 		const isRateLimited = apiRateLimitLock.isLocked();
 		if (isRateLimited) {
 			logger.info("temporarily use webpage fallback");
 			res = await getGalleryFromWebApi(gid);
-		} else res = await fetchJSON(`https://nhentai.net/api/v2/galleries/${gid}`);
+		} else res = await fetchJSON(`https://nhentai.net/api/v2/galleries/${gid}`, { throwOnError: false });
 		if (isNHentaiError(res)) {
-			if (res.error === "Rate limit exceeded" && !isRateLimited) {
+			if (!isRateLimited && res.error === "Rate limit exceeded") {
 				apiRateLimitLock.lock();
 				logger.warn("nHentai API rate limit exceeded, use webpage fallback for next 5 minutes");
 				res = await getGalleryFromWebApi(gid);
@@ -13486,6 +13528,10 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 	var _hoisted_5 = { class: "bold" };
 	var _hoisted_6 = { class: "info-label bold" };
 	var _hoisted_7 = { class: "scroll-container-inner" };
+	var _hoisted_8 = {
+		class: "error-message",
+		role: "alert"
+	};
 	var POPOVER_MAX_WIDTH = 720;
 	var POPOVER_THUMB_MORE_COL_WIDTH = 640;
 	var GalleryMiniPopover_default = _plugin_vue_export_helper_default((0, vue.defineComponent)({
@@ -13512,6 +13558,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 			const popoverWidth = (0, vue.ref)(0);
 			const popoverTransition = (0, vue.ref)(false);
 			const gallery = (0, vue.ref)(null);
+			const loadError = (0, vue.ref)(null);
 			const title = (0, vue.computed)(() => {
 				const t = gallery.value?.title;
 				return t ? t.japanese || t.english || t.pretty : "";
@@ -13558,21 +13605,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 				});
 			};
 			let loadingGid = "";
-			const open = async (el, gid) => {
-				if (virtualRef.value === el && gallery.value?.id === Number(gid)) return;
-				const rect = el.getBoundingClientRect();
-				const bodyWidth = document.body.clientWidth;
-				const showRight = rect.left + rect.right <= bodyWidth;
-				virtualRef.value = el;
-				popoverPlacement.value = showRight ? "right" : "left";
-				popoverTransition.value = false;
-				popoverWidth.value = Math.min(POPOVER_MAX_WIDTH, Math.round(showRight ? bodyWidth - rect.right : rect.left) - 16);
-				visible.value = true;
-				gallery.value = null;
-				setTimeout(() => {
-					if (!gallery.value) popoverTransition.value = true;
-				});
-				pageThumbs.value = [];
+			const loadGallery = async (gid) => {
 				try {
 					loadingGid = gid;
 					if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid);
@@ -13584,9 +13617,40 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 					popoverRef.value?.popperRef?.popperInstanceRef?.update();
 				} catch (error) {
 					logger.error(error);
+					if (loadingGid !== gid) return;
+					loadError.value = {
+						gid,
+						message: error instanceof Response ? error.status === 429 ? t("dialog.http429errorRetryConfirm") : `${error.status}: ${error.statusText}` : String(error)
+					};
 				} finally {
 					if (loadingGid === gid) loadingGid = "";
 				}
+			};
+			const open = async (el, gid) => {
+				if (virtualRef.value === el && gallery.value?.id === Number(gid)) return;
+				const rect = el.getBoundingClientRect();
+				const bodyWidth = document.body.clientWidth;
+				const showRight = rect.left + rect.right <= bodyWidth;
+				virtualRef.value = el;
+				popoverPlacement.value = showRight ? "right" : "left";
+				popoverTransition.value = false;
+				popoverWidth.value = Math.min(POPOVER_MAX_WIDTH, Math.round(showRight ? bodyWidth - rect.right : rect.left) - 16);
+				visible.value = true;
+				gallery.value = null;
+				loadError.value = null;
+				setTimeout(() => {
+					if (!gallery.value) popoverTransition.value = true;
+				});
+				pageThumbs.value = [];
+				await loadGallery(gid);
+			};
+			const retry = async () => {
+				if (!loadError.value) return;
+				const { gid } = loadError.value;
+				gallery.value = null;
+				pageThumbs.value = [];
+				loadError.value = null;
+				await loadGallery(gid);
 			};
 			const addPageThumbLine = () => {
 				const curLength = pageThumbs.value.length;
@@ -13625,7 +13689,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 					ref_key: "popoverRef",
 					ref: popoverRef,
 					visible: visible.value,
-					"onUpdate:visible": _cache[1] || (_cache[1] = ($event) => visible.value = $event),
+					"onUpdate:visible": _cache[2] || (_cache[2] = ($event) => visible.value = $event),
 					"popper-class": {
 						"gallery-mini-popover-wrapper": true,
 						"popover-transition": popoverTransition.value
@@ -13736,14 +13800,32 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 							_: 1
 						})])]),
 						_: 1
-					})], 4)) : (0, vue.createCommentVNode)("", true)], 2)) : (0, vue.withDirectives)(((0, vue.openBlock)(), (0, vue.createElementBlock)("div", {
+					})], 4)) : (0, vue.createCommentVNode)("", true)], 2)) : !loadError.value ? (0, vue.withDirectives)(((0, vue.openBlock)(), (0, vue.createElementBlock)("div", {
 						key: 1,
-						style: {
-							height: "700px",
-							maxHeight: "90vh"
-						},
+						class: "init-size",
 						onWheel: _cache[0] || (_cache[0] = (0, vue.withModifiers)(() => {}, ["prevent"]))
-					}, null, 544)), [[(0, vue.unref)(element_plus.vLoading), true]])]),
+					}, null, 544)), [[(0, vue.unref)(element_plus.vLoading), true]]) : ((0, vue.openBlock)(), (0, vue.createElementBlock)("div", {
+						key: 2,
+						class: "init-size loading-error",
+						onWheel: _cache[1] || (_cache[1] = (0, vue.withModifiers)(() => {}, ["prevent"]))
+					}, [
+						(0, vue.createVNode)((0, vue.unref)(element_plus.ElIcon), {
+							size: 48,
+							color: "var(--el-color-danger)"
+						}, {
+							default: (0, vue.withCtx)(() => [(0, vue.createVNode)((0, vue.unref)(close_bold_default))]),
+							_: 1
+						}),
+						(0, vue.createElementVNode)("div", _hoisted_8, (0, vue.toDisplayString)(loadError.value.message), 1),
+						(0, vue.createVNode)((0, vue.unref)(element_plus.ElButton), {
+							type: "primary",
+							icon: (0, vue.unref)(refresh_right_default),
+							onClick: retry
+						}, {
+							default: (0, vue.withCtx)(() => [(0, vue.createTextVNode)((0, vue.toDisplayString)((0, vue.unref)(t)("common.retry")), 1)]),
+							_: 1
+						}, 8, ["icon"])
+					], 32))]),
 					_: 1
 				}, 8, [
 					"visible",
@@ -13754,7 +13836,7 @@ ${EXPORT_HEADER_TITLE_PRETTY}${prettyTitles.join(EXPORT_SEPARATOR)}`;
 				]);
 			};
 		}
-	}), [["__scopeId", "data-v-9fa42e74"]]);
+	}), [["__scopeId", "data-v-fdb55fd1"]]);
 	var initApp = once(() => createAppAndMount(GalleryMiniPopover_default, (app) => {
 		app.use(i18n);
 	}));
