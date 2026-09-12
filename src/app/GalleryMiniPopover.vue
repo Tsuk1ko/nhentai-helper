@@ -86,23 +86,26 @@
         </el-scrollbar>
       </div>
     </div>
-    <div
-      v-else
-      v-loading="true"
-      :style="{ height: '700px', maxHeight: '90vh' }"
-      @wheel.prevent
-    ></div>
+    <div v-else-if="!loadError" v-loading="true" class="init-size" @wheel.prevent></div>
+    <div v-else class="init-size loading-error" @wheel.prevent>
+      <el-icon :size="48" color="var(--el-color-danger)"><CloseBold /></el-icon>
+      <div class="error-message" role="alert">{{ loadError.message }}</div>
+      <el-button type="primary" :icon="RefreshRight" @click="retry">
+        {{ t('common.retry') }}
+      </el-button>
+    </div>
   </el-popover>
 </template>
 
 <script setup lang="ts">
-import { CloseBold } from '@element-plus/icons-vue';
+import { CloseBold, RefreshRight } from '@element-plus/icons-vue';
 import { GM_openInTab, GM_setClipboard } from '$';
 import {
   ElButton,
   ElCol,
   ElDescriptions,
   ElDescriptionsItem,
+  ElIcon,
   ElImage,
   ElLink,
   ElPopover,
@@ -148,6 +151,7 @@ const popoverWidth = ref(0);
 const popoverTransition = ref(false);
 
 const gallery = ref<NHentaiGallery | null>(null);
+const loadError = ref<{ message: string; gid: string } | null>(null);
 
 const title = computed(() => {
   const t = gallery.value?.title;
@@ -212,6 +216,33 @@ const openTagUrl = (path?: string) => {
 
 let loadingGid: string = '';
 
+const loadGallery = async (gid: string) => {
+  try {
+    loadingGid = gid;
+    if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid);
+    const loadedGallery = await getGallery(gid);
+    if (loadingGid !== gid) return;
+    gallery.value = loadedGallery;
+    pageThumbs.value = loadedGallery.images.pages.slice(0, 12).map(getThumbInfo);
+    await nextTick();
+    popoverRef.value?.popperRef?.popperInstanceRef?.update();
+  } catch (error) {
+    logger.error(error);
+    if (loadingGid !== gid) return;
+    loadError.value = {
+      gid,
+      message:
+        error instanceof Response
+          ? error.status === 429
+            ? t('dialog.http429errorRetryConfirm')
+            : `${error.status}: ${error.statusText}`
+          : String(error),
+    };
+  } finally {
+    if (loadingGid === gid) loadingGid = '';
+  }
+};
+
 const open = async (el: HTMLElement, gid: string) => {
   if (virtualRef.value === el && gallery.value?.id === Number(gid)) return;
   const rect = el.getBoundingClientRect();
@@ -226,24 +257,21 @@ const open = async (el: HTMLElement, gid: string) => {
   );
   visible.value = true;
   gallery.value = null;
+  loadError.value = null;
   setTimeout(() => {
     if (!gallery.value) popoverTransition.value = true;
   });
   pageThumbs.value = [];
-  try {
-    loadingGid = gid;
-    if (!thumbUrlTemplate) thumbUrlTemplate = await getCompliedThumbMediaUrlTemplate(gid);
-    const loadedGallery = await getGallery(gid);
-    if (loadingGid !== gid) return;
-    gallery.value = loadedGallery;
-    pageThumbs.value = loadedGallery.images.pages.slice(0, 12).map(getThumbInfo);
-    await nextTick();
-    popoverRef.value?.popperRef?.popperInstanceRef?.update();
-  } catch (error) {
-    logger.error(error);
-  } finally {
-    if (loadingGid === gid) loadingGid = '';
-  }
+  await loadGallery(gid);
+};
+
+const retry = async () => {
+  if (!loadError.value) return;
+  const { gid } = loadError.value;
+  gallery.value = null;
+  pageThumbs.value = [];
+  loadError.value = null;
+  await loadGallery(gid);
 };
 
 const addPageThumbLine = () => {
@@ -290,6 +318,26 @@ defineExpose({ open });
 </script>
 
 <style lang="less" scoped>
+.init-size {
+  height: 700px;
+  max-height: 90vh;
+}
+
+.loading-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+
+  .error-message {
+    font-size: 16px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+}
+
 .bold {
   font-weight: bold;
 }
